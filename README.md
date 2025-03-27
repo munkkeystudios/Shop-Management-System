@@ -1,7 +1,5 @@
 # POS-System
 
-wassup
-
 In /backend: run following commands:
 
 run these commands:
