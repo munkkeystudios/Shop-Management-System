@@ -72,7 +72,7 @@ import StockAlerts from "../components/StockAlerts";
 import TopSellingProducts from "../components/TopSellingProducts";
 import PaymentsReceived from "../components/PaymentsReceived";
 import Alerts from "../components/Alerts";
-import Sidebar from "./sidebar";
+import Sidebar from "../components/sidebar";
 
 const MainDashboard = () => {
   const [overviewData] = useState({
