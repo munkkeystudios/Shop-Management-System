@@ -72,6 +72,7 @@ import StockAlerts from "../components/StockAlerts";
 import TopSellingProducts from "../components/TopSellingProducts";
 import PaymentsReceived from "../components/PaymentsReceived";
 import Alerts from "../components/Alerts";
+import Sidebar from "./sidebar";
 
 const MainDashboard = () => {
   const [overviewData] = useState({
@@ -89,38 +90,41 @@ const MainDashboard = () => {
   const [payments] = useState([]);
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
-      {/* Overview Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-        <OverviewCard title="Total Sales" value={overviewData.totalSales} color="bg-yellow-100 border border-yellow-300" />
-        <OverviewCard title="Total Purchases" value={overviewData.totalPurchases} color="bg-purple-100 border border-purple-300" />
-        <OverviewCard title="Total Products" value={overviewData.totalProducts} color="bg-green-100 border border-green-300" />
-        <OverviewCard title="Total Revenue" value={overviewData.totalRevenue} color="bg-red-100 border border-red-300" />
-      </div>
+    <div style={{ display: 'flex' }}>
+      <Sidebar />
+      <div className="p-6 bg-gray-100 min-h-screen">
+        {/* Overview Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+          <OverviewCard title="Total Sales" value={overviewData.totalSales} color="bg-yellow-100 border border-yellow-300" />
+          <OverviewCard title="Total Purchases" value={overviewData.totalPurchases} color="bg-purple-100 border border-purple-300" />
+          <OverviewCard title="Total Products" value={overviewData.totalProducts} color="bg-green-100 border border-green-300" />
+          <OverviewCard title="Total Revenue" value={overviewData.totalRevenue} color="bg-red-100 border border-red-300" />
+        </div>
 
-      {/* Sales Report & Alerts */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-        <div className="md:col-span-2 bg-white shadow-md rounded-xl p-6">
-          <SalesChart />
+        {/* Sales Report & Alerts */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+          <div className="md:col-span-2 bg-white shadow-md rounded-xl p-6">
+            <SalesChart />
+          </div>
+          <div className="bg-white shadow-md rounded-xl p-6">
+            <Alerts alerts={alerts} />
+          </div>
         </div>
-        <div className="bg-white shadow-md rounded-xl p-6">
-          <Alerts alerts={alerts} />
-        </div>
-      </div>
 
-      {/* Top Selling Products & Stock Alerts */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-        <div className="bg-white shadow-md rounded-xl p-6">
-          <TopSellingProducts />
+        {/* Top Selling Products & Stock Alerts */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+          <div className="bg-white shadow-md rounded-xl p-6">
+            <TopSellingProducts />
+          </div>
+          <div className="bg-white shadow-md rounded-xl p-6">
+            <StockAlerts alerts={alerts} />
+          </div>
         </div>
-        <div className="bg-white shadow-md rounded-xl p-6">
-          <StockAlerts alerts={alerts} />
-        </div>
-      </div>
 
-      {/* Payments Received */}
-      <div className="mt-6 bg-white shadow-md rounded-xl p-6">
-        <PaymentsReceived payments={payments} />
+        {/* Payments Received */}
+        <div className="mt-6 bg-white shadow-md rounded-xl p-6">
+          <PaymentsReceived payments={payments} />
+        </div>
       </div>
     </div>
   );
