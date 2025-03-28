@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Nav } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
+
 
 // sidebar layout:
 const SideBar = ({ children }) => {
@@ -78,51 +80,41 @@ function ToolsSidebar() {
 
     return (
         <SideBar>
-            <div 
-            style={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                padding: '15px 30px', 
-            }}
-        >
-            <img 
-                src="/path/to/logo.png" 
-                alt="Logo" 
-                style={{ 
-                    width: '48px', 
-                    height: '48px', 
-                    marginRight: '10px' 
-                }} 
-            />
-            <span style={{ fontWeight: 'semi-bold', fontSize: '29px' }}>FinTrack</span>
-        </div>
+            <div
+                style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    padding: '15px 30px',
+                }}
+            >
+                <img
+                    src="/path/to/logo.png"
+                    alt="Logo"
+                    style={{
+                        width: '48px',
+                        height: '48px',
+                        marginRight: '10px'
+                    }}
+                />
+                <span style={{ fontWeight: 'semi-bold', fontSize: '29px' }}>FinTrack</span>
+            </div>
             <Nav.Item style={{ padding: '10px 15px', textAlign: 'left', paddingLeft: '30px' }}>
-                <Nav.Link href="/dashboard">Dashboard</Nav.Link>
+                <Nav.Link href="/">Dashboard</Nav.Link>
             </Nav.Item>
 
-            <SideBar.Dropdown title="Products">
-                <SideBar.Item
+            <SideBar.Dropdown title="Products  (+)">
+                <Link to="/all_products"> <SideBar.Item
                     title="All Products"
                     onClick={() => handleItemClick("All Products")}
-                />
+                /> </Link>
                 <SideBar.Item
                     title="Create Product"
-                    onClick={() => handleItemClick("Create Product")} />
-                <SideBar.Item
+                    onClick={() => handleItemClick("Create Product")}
+                />
+                <Link to="/inventory"> <SideBar.Item
                     title="Inventory"
                     onClick={() => handleItemClick("Inventory")}
-                />
-            </SideBar.Dropdown>
-
-            <SideBar.Dropdown title="Orders">
-                <SideBar.Item
-                    title="Order List"
-                    onClick={() => handleItemClick("Order List")}
-                />
-                <SideBar.Item
-                    title="Create Order"
-                    onClick={() => handleItemClick("Create Order")}
-                />
+                /> </Link>
             </SideBar.Dropdown>
 
             <Nav.Item style={

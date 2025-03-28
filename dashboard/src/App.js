@@ -63,12 +63,24 @@
 import React from "react";
 import "./App.css";
 import MainDashboard from "./pages/main_dashboard"; // Ensure correct path
+import {BrowserRouter, Routes, Route} from 'react-router-dom';
+import AllProducts from "./pages/all_products";
+import Inventory from "./pages/inventory";  
+import Reports from "./pages/reports"; 
+
 
 function App() {
   return (
-    <div className="App">
-      <MainDashboard />
-    </div>
+    <BrowserRouter>
+      <div className="App">
+        <Routes>
+          <Route path="/" element={<MainDashboard />} />
+          <Route path="/all_products" element={<AllProducts />} />
+          <Route path="/inventory" element={<Inventory />} />
+          <Route path="/reports" element={<Reports />} />
+        </Routes>
+      </div>
+    </BrowserRouter>
   );
 }
 

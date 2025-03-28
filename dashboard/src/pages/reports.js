@@ -2,12 +2,12 @@ import React from 'react';
 import Sidebar from '../components/sidebar';
 
 
-const Pos = () => {
+const Reports = () => {
   return (
     <div style={{ display: 'flex' }}>
       <Sidebar />
       <div className="container">
-        <h1>POS SITE</h1>
+        <h1>REPORTS PAGE</h1>
         <p>This is a simple HTML page.</p>
         <section>
           <h2>About Me</h2>
@@ -22,4 +22,4 @@ const Pos = () => {
   );
 }
 
-export default Pos;
+export default Reports;
