@@ -1,6 +1,6 @@
 # POS-System
 
-In /backend: run following commands:
+### In /backend: run following commands:
 
 run these commands:
 
@@ -14,14 +14,16 @@ nodemon src/index.js
 
 then open this in browser to test: http://localhost:3000/
 
-in dashboard run:
+### in dashboard run:
 
 npm install 
 
 npm start
 
-Below are dependencies to keep track of:
+### Below are dependencies to keep track of:
 
 in dashboard ran:
 
 npm install react-bootstrap
+
+npm install react-router-dom
