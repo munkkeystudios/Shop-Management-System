@@ -5,17 +5,33 @@ import { Container, Row, Col, Form, Table, Button,Card } from 'react-bootstrap';
 import SearchBar from '../components/searchbarpos.jsx';
 
 const Pos = () => {
-    const [searchedProduct, setSearchedProduct] = useState('');
+    const [searchedProduct, setSearchedProduct] = useState(null);
+
+    const handleProductSearch = (product) => {
+        setSearchedProduct(product);
+    };
+
   return (
+
 
     <Container className="card-container">
             <div>
-                <SearchBar />
+                <SearchBar onProductSearch={handleProductSearch} />
             </div>
             {/* main content ie Product details card */}
             <Card style={{ width: '75%', maxWidth: '1200px' }}>
             <Card.Header as="h5" > Products</Card.Header>
             <Card.Body>
+
+
+            {searchedProduct && (
+                <Card style={{ width: '75%', maxWidth: '1200px' }}>
+                    <Card.Header as="h5">Product Details</Card.Header>
+                    <Card.Body>
+                        <pre>{JSON.stringify(searchedProduct, null, 2)}</pre>
+                    </Card.Body>
+                </Card>
+            )}
 
             
             <Table  striped bordered hover>
@@ -58,23 +74,3 @@ const Pos = () => {
 };
 
 export default Pos;
-
-// {products.map((product) => (
-//     <tr key={product.id}>
-//       <td>{product.name}</td>
-//       <td>${product.price.toFixed(2)}</td>
-//       <td>{product.discount}%</td>
-//       <td>{product.quantity}</td>
-//       <td>${(product.price * product.quantity * (1 - product.discount / 100)).toFixed(2)}</td>
-//       <td className="text-center">
-//         {/* TODO: ADD GARBAGE BIN ICON HERE (install fontawesome npm,), AND ADD FUNCTIONALITY */}
-//         <Button 
-//           size="sm" 
-//           variant="secondary"
-//         >
-//             bin
-//           {/* <FontAwesomeIcon icon="fa-solid fa-trash-can" size={16} /> */}
-//         </Button>
-//       </td>
-//     </tr>
-//   ))}

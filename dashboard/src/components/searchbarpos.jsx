@@ -1,87 +1,77 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 
-// passing as prop from pos.js, to store the data in pos.js
 
-const SearchBar = () => {
-    const [input, setinput] = useState("")
+// TODO: Need to implement  backend portion here, 
+// i created some frontend code, with this as dummy data. 
+// it probably won't run when the backend is implemented
 
-    // backend not implemented so cant call an API,
-    // hence use of dummy data, 
-    const fetchData = (value) => {
-        // fetch.('url').response.then()......json() basically you get a json object of size 1
-        
-        // hardcoded values. in this case im searching through this data and picking 1.
-        const [products] = [
-            {
-                id: 1,
-                name: "Sweat shirt",
-                price: 249.99,
-                discount: 0,
-                quantity: 1,
-                subtotal: 249.99,
-            },
-            {
-                id: 2,
-                name: "Red Hoodie",
-                price: 329.5,
-                discount: 20,
-                quantity: 2,
-                subtotal: 659.0,
-            },
-            {
-                id: 3,
-                name: "Skinny jeans",
-                price: 129.99,
-                discount: 10,
-                quantity: 3,
-                subtotal: 389.97,
-            },
-        ];
 
-        // Function to get product by ID, 
+// i made it with assumption that i will get a single json object after searching using product id (id is unique)
+const SearchBar = ({ onProductSearch }) => {
+    const [input, setInput] = useState("");
+    
+    // this is the entire database 
+    // Hardcoded products data
+    const products = [
+        {
+            id: 1,
+            name: "Sweat shirt",
+            price: 249.99,
+            discount: 0,
+            quantity: 1,
+            subtotal: 249.99,
+        },
+        {
+            id: 2,
+            name: "Red Hoodie",
+            price: 329.5,
+            discount: 20,
+            quantity: 2,
+            subtotal: 659.0,
+        },
+        {
+            id: 3,
+            name: "Skinny jeans",
+            price: 129.99,
+            discount: 10,
+            quantity: 3,
+            subtotal: 389.97,
+        },
+    ];
 
-        const getProductById = (id) => {
-            
-            for (let i = 0; i < products.length; i++) {
-                
-                if (products[i].id === id) {
-                    return products[i]; 
-                }
+    // this is scouring the database to find matching product id
+    //  yes i know for loops are bad. it doesnt matter anyway.
+    const getProductById = (id) => {
+        for (let i = 0; i < products.length; i++) {
+            if (products[i].id === Number(id)) {
+                return products[i];
             }
-            return null; // returns null if no match is found
-        };
-
-        // Fetch product with ID 
-        const product = getProductById(Number(value));
-
-        return (
-            <div>
-                <h2> JSON OBJECT</h2>
-                <pre>{JSON.stringify(product, null, 2)}</pre>
-            </div>
-        );
+        }
+        return null; // returns null if no match is found
     };
 
-    const handleClick = (input) => {
-        fetchData(input);
-    }
+    const handleClick = () => {
+        // Find the product
+        const product = getProductById(input);
+        
+        // Call the onProductSearch prop with the found product
+        if (onProductSearch) {
+            onProductSearch(product);
+        }
+    };
 
     return (
-            <div className = "input Wrapper" >
-                
-                <input 
+        <div className="input-wrapper">
+            <input
                 placeholder="Scan/Search Product by Code"
                 value={input}
-                
-                onChange={(e) => setinput(e.target.value)}
-                /> {/* sets e input variable to the target value ie stores the input */}
-                    
-                {/* plug search icon here */}
-                <button onClick={handleClick(input)}>Search</button>
-            </div >
-    );
+                onChange={(e) => setInput(e.target.value)}
+            />
 
+            {/* add a search icon button here, install react-icons eventually search button goes left of input field like the Bing search engine*/}
+            <button onClick={handleClick}>Search</button>
+        </div>
+    );
 };
 
 export default SearchBar;
