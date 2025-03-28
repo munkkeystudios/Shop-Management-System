@@ -1,50 +1,17 @@
 import React from 'react';
 import { useState } from 'react';
 import { Container, Row, Col, Form, Table, Button,Card } from 'react-bootstrap';
-
-
+// run npm install react-icons --save to get icons for trashbin, search
+import SearchBar from '../components/searchbarpos.jsx';
 
 const Pos = () => {
-    const [products, setProducts] = useState([
-        {
-          id: 1,
-          name: "Sweat shirt",
-          price: 249.99,
-          discount: 0,
-          quantity: 1,
-          subtotal: 249.99
-        },
-        {
-          id: 2,
-          name: "Red Hoodie",
-          price: 329.50,
-          discount: 20,
-          quantity: 2,
-          subtotal: 659.00
-        },
-        {
-          id: 3,
-          name: "Skinny jeans",
-          price: 129.99,
-          discount: 10,
-          quantity: 3,
-          subtotal: 389.97
-        }
-      ]);
-
+    const [searchedProduct, setSearchedProduct] = useState('');
   return (
 
     <Container className="card-container">
-
-          <div className="search-bar-container">
-            <div className="search-bar">
-              <Form.Control 
-                type="text" 
-                placeholder="Scan/Search Product by Code" 
-              />
+            <div>
+                <SearchBar />
             </div>
-            </div>
-            
             {/* main content ie Product details card */}
             <Card style={{ width: '75%', maxWidth: '1200px' }}>
             <Card.Header as="h5" > Products</Card.Header>
@@ -66,25 +33,7 @@ const Pos = () => {
               </thead>
               <tbody>
                 {/* Placeholder rows added here */}
-                {products.map((product) => (
-                <tr key={product.id}>
-                  <td>{product.name}</td>
-                  <td>${product.price.toFixed(2)}</td>
-                  <td>{product.discount}%</td>
-                  <td>{product.quantity}</td>
-                  <td>${(product.price * product.quantity * (1 - product.discount / 100)).toFixed(2)}</td>
-                  <td className="text-center">
-                    {/* TODO: ADD GARBAGE BIN ICON HERE (install fontawesome npm,), AND ADD FUNCTIONALITY */}
-                    <Button 
-                      size="sm" 
-                      variant="secondary"
-                    >
-                        bin
-                      {/* <FontAwesomeIcon icon="fa-solid fa-trash-can" size={16} /> */}
-                    </Button>
-                  </td>
-                </tr>
-              ))}
+                
               </tbody>
             </Table>
             
@@ -109,3 +58,23 @@ const Pos = () => {
 };
 
 export default Pos;
+
+// {products.map((product) => (
+//     <tr key={product.id}>
+//       <td>{product.name}</td>
+//       <td>${product.price.toFixed(2)}</td>
+//       <td>{product.discount}%</td>
+//       <td>{product.quantity}</td>
+//       <td>${(product.price * product.quantity * (1 - product.discount / 100)).toFixed(2)}</td>
+//       <td className="text-center">
+//         {/* TODO: ADD GARBAGE BIN ICON HERE (install fontawesome npm,), AND ADD FUNCTIONALITY */}
+//         <Button 
+//           size="sm" 
+//           variant="secondary"
+//         >
+//             bin
+//           {/* <FontAwesomeIcon icon="fa-solid fa-trash-can" size={16} /> */}
+//         </Button>
+//       </td>
+//     </tr>
+//   ))}

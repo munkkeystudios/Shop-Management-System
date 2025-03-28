@@ -67,6 +67,7 @@ import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import AllProducts from "./pages/all_products";
 import Inventory from "./pages/inventory";  
 import Reports from "./pages/reports"; 
+import Pos from "./pages/pos"
 
 
 function App() {
@@ -74,7 +75,8 @@ function App() {
     <BrowserRouter>
       <div className="App">
         <Routes>
-          <Route path="/" element={<MainDashboard />} />
+          <Route path="/" element={<Pos />} />
+          {/* <Route path="/" element={<MainDashboard />} /> */}
           <Route path="/all_products" element={<AllProducts />} />
           <Route path="/inventory" element={<Inventory />} />
           <Route path="/reports" element={<Reports />} />
