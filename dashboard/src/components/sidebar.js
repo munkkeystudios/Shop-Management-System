@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Nav } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 
 // sidebar layout:
@@ -74,8 +75,16 @@ SideBar.Item = SideBarItem;
 
 // main default sidebar function
 function ToolsSidebar() {
+    const { logout } = useAuth();
+    const navigate = useNavigate();
+
     const handleItemClick = (item) => {
         console.log(`Clicked: ${item}`);
+    };
+
+    const handleLogout = () => {
+        logout();
+        navigate('/login');
     };
 
     return (
@@ -98,32 +107,60 @@ function ToolsSidebar() {
                 />
                 <span style={{ fontWeight: 'semi-bold', fontSize: '29px' }}>FinTrack</span>
             </div>
+            
             <Nav.Item style={{ padding: '10px 15px', textAlign: 'left', paddingLeft: '30px' }}>
-                <Nav.Link href="/">Dashboard</Nav.Link>
+                <Link to="/dashboard" style={{ textDecoration: 'none', color: 'inherit' }}>Dashboard</Link>
             </Nav.Item>
 
             <SideBar.Dropdown title="Products  (+)">
-                <Link to="/all_products"> <SideBar.Item
-                    title="All Products"
-                    onClick={() => handleItemClick("All Products")}
-                /> </Link>
-                <SideBar.Item
-                    title="Create Product"
-                    onClick={() => handleItemClick("Create Product")}
-                />
-                <Link to="/inventory"> <SideBar.Item
-                    title="Inventory"
-                    onClick={() => handleItemClick("Inventory")}
-                /> </Link>
+                <Link to="/all_products" style={{ textDecoration: 'none', color: 'inherit' }}> 
+                    <SideBar.Item
+                        title="All Products"
+                        onClick={() => handleItemClick("All Products")}
+                    /> 
+                </Link>
+                <Link to="/create_product" style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <SideBar.Item
+                        title="Create Product"
+                        onClick={() => handleItemClick("Create Product")}
+                    />
+                </Link>
+                <Link to="/inventory" style={{ textDecoration: 'none', color: 'inherit' }}> 
+                    <SideBar.Item
+                        title="Inventory"
+                        onClick={() => handleItemClick("Inventory")}
+                    /> 
+                </Link>
             </SideBar.Dropdown>
 
-            <Nav.Item style={
-                {
+            <Nav.Item style={{
+                padding: '10px 15px',
+                textAlign: 'left',
+                paddingLeft: '30px'
+            }}>
+                <Link to="/reports" style={{ textDecoration: 'none', color: 'inherit' }}>Reports</Link>
+            </Nav.Item>
+
+            <Nav.Item style={{
+                padding: '10px 15px',
+                textAlign: 'left',
+                paddingLeft: '30px'
+            }}>
+                <Link to="/pos" style={{ textDecoration: 'none', color: 'inherit' }}>POS</Link>
+            </Nav.Item>
+
+            <Nav.Item 
+                onClick={handleLogout}
+                style={{
+                    cursor: 'pointer',
                     padding: '10px 15px',
                     textAlign: 'left',
-                    paddingLeft: '30px'
-                }}>
-                <Nav.Link href="/reports">Reports</Nav.Link>
+                    paddingLeft: '30px',
+                    marginTop: '20px',
+                    color: '#ff5252'
+                }}
+            >
+                Logout
             </Nav.Item>
         </SideBar>
     );

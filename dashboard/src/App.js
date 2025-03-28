@@ -62,27 +62,61 @@
 
 import React from "react";
 import "./App.css";
-import MainDashboard from "./pages/main_dashboard"; // Ensure correct path
-import {BrowserRouter, Routes, Route} from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import MainDashboard from "./pages/main_dashboard";
 import AllProducts from "./pages/all_products";
 import Inventory from "./pages/inventory";  
 import Reports from "./pages/reports"; 
-import Pos from "./pages/pos"
-
+import Pos from "./pages/pos";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import { AuthProvider } from "./context/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
-    <BrowserRouter>
-      <div className="App">
-        <Routes>
-          <Route path="/" element={<Pos />} />
-          {/* <Route path="/" element={<MainDashboard />} /> */}
-          <Route path="/all_products" element={<AllProducts />} />
-          <Route path="/inventory" element={<Inventory />} />
-          <Route path="/reports" element={<Reports />} />
-        </Routes>
-      </div>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <div className="App">
+          <Routes>
+            {/* Public routes */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            
+            {/* Protected routes */}
+            <Route path="/dashboard" element={
+              <ProtectedRoute>
+                <MainDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/all_products" element={
+              <ProtectedRoute>
+                <AllProducts />
+              </ProtectedRoute>
+            } />
+            <Route path="/inventory" element={
+              <ProtectedRoute>
+                <Inventory />
+              </ProtectedRoute>
+            } />
+            <Route path="/reports" element={
+              <ProtectedRoute>
+                <Reports />
+              </ProtectedRoute>
+            } />
+            <Route path="/pos" element={
+              <ProtectedRoute>
+                <Pos />
+              </ProtectedRoute>
+            } />
+            
+            {/* Redirect root to login */}
+            <Route path="/" element={<Navigate to="/login" replace />} />
+            <Route path="*" element={<Navigate to="/login" replace />} />
+          </Routes>
+        </div>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 

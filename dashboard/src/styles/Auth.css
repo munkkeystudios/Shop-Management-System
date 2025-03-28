@@ -1,0 +1,298 @@
+/* Auth Pages Styling - Based on the original HBS templates */
+.auth-container {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+/* Login page styles */
+.login-page .auth-card-left {
+  width: 45%;
+  background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  background-size: cover;
+  background-position: center;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 40px;
+  position: relative;
+}
+
+.login-page .logo-container {
+  position: absolute;
+  top: 20px;
+  left: 40px;
+  display: flex;
+  align-items: center;
+}
+
+.login-page .logo-container h1 {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.login-page .promo-content {
+  max-width: 800px;
+}
+
+.login-page .promo-content h2 {
+  font-size: 28px;
+  margin-bottom: 15px;
+}
+
+.login-page .promo-content p {
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.login-page .company-info {
+  opacity: 0.7;
+}
+
+.login-page .auth-card-right {
+  width: 55%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f4f4f4;
+}
+
+.login-page .form-content {
+  background-color: white;
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 500px;
+}
+
+.login-page .auth-header {
+  text-align: left;
+}
+
+.login-page .auth-header h2 {
+  color: #333;
+  margin-bottom: 10px;
+  font-size: 24px;
+}
+
+.login-page .auth-header p {
+  color: #666;
+  margin-bottom: 20px;
+}
+
+/* Signup page styles */
+.signup-page {
+  background: linear-gradient(135deg, #2b2b2b 0%, #424242 100%);
+}
+
+.signup-page .auth-card {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+}
+
+.signup-page .auth-card-left {
+  width: 40%;
+  min-width: 300px;
+  background-color: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(5px);
+  height: 100%;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+  animation: fadeIn 0.8s ease;
+}
+
+.signup-page .auth-logo h1 {
+  font-size: 2rem;
+  color: #fff;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.signup-page .auth-logo p {
+  font-size: 1rem;
+  color: #ccc;
+  width: 80%;
+  line-height: 1.4;
+}
+
+.signup-page .auth-card-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.signup-page .form-content {
+  width: 400px;
+  max-width: 90%;
+  margin-right: 5%;
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(8px);
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.8s ease;
+}
+
+.signup-page .auth-header h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-weight: 400;
+  color: #fff;
+}
+
+.signup-page .form-group label {
+  color: #ccc;
+}
+
+.signup-page .form-group input {
+  background-color: #2c2c3e;
+  color: #fff;
+}
+
+.signup-page .submit-button {
+  background-color: #0d6efd;
+  margin-bottom: 0;
+}
+
+.signup-page .submit-button:hover {
+  background-color: #0b5ed7;
+  transform: scale(1.02);
+}
+
+.signup-page .auth-footer {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.signup-page .auth-footer p {
+  margin-bottom: 0;
+  font-size: 0.9rem;
+  color: #ccc;
+}
+
+.signup-page .auth-footer a {
+  color: #0d6efd;
+}
+
+/* Shared styles */
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.remember-me {
+  display: flex;
+  align-items: center;
+}
+
+.remember-me input {
+  margin-right: 8px;
+}
+
+.forgot-password {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.submit-button {
+  width: 100%;
+  padding: 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.submit-button:hover {
+  background-color: #0056b3;
+}
+
+.auth-footer {
+  text-align: center;
+  margin-top: 15px;
+  color: #666;
+}
+
+.auth-footer a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.error-message {
+  padding: 12px;
+  margin-bottom: 20px;
+  background-color: #fef2f2;
+  color: #ef4444;
+  border-radius: 4px;
+  border-left: 4px solid #ef4444;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .auth-container {
+    flex-direction: column;
+  }
+  
+  .login-page .auth-card-left,
+  .signup-page .auth-card-left {
+    display: none;
+  }
+  
+  .login-page .auth-card-right,
+  .signup-page .auth-card-right {
+    width: 100%;
+    height: 100vh;
+  }
+  
+  .login-page .form-content,
+  .signup-page .form-content {
+    width: 90%;
+    margin: 0 auto;
+  }
+} 

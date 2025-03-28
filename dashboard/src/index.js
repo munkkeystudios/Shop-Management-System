@@ -27,6 +27,8 @@ import reportWebVitals from "./reportWebVitals";
 // Ensure Tailwind is imported if you're using it
 import "./styles/tailwind.css"; 
 
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>

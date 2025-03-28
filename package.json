@@ -1,5 +1,23 @@
 {
+  "name": "shop-management-system",
+  "version": "1.0.0",
+  "description": "Shop Management System with React frontend and Node.js backend",
+  "main": "index.js",
+  "scripts": {
+    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd backend && npm start",
+    "client": "cd dashboard && npm start",
+    "install-all": "npm install && cd backend && npm install && cd ../dashboard && npm install"
+  },
+  "keywords": [
+    "shop",
+    "management",
+    "react",
+    "nodejs"
+  ],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
-    "react-router-dom": "^7.4.0"
+    "concurrently": "^8.2.0"
   }
 }
