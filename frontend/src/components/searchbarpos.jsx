@@ -3,7 +3,7 @@ import React, { useState } from "react";
 
 // TODO: Need to implement  backend portion here, 
 // i created some frontend code, with this as dummy data. 
-// it probably won't run when the backend is implemented
+// it probably won't work when the backend is implemented
 
 
 // i made it with assumption that i will get a single json object after searching using product id (id is unique)
@@ -17,14 +17,17 @@ const SearchBar = ({ onProductSearch }) => {
             id: 1,
             name: "Sweat shirt",
             price: 249.99,
-            stock: 300,
+            discount: 0,
+            quantity: 1,
+            subtotal: 249.99,
             image : "place-holder"
         },
         {
             id: 2,
             name: "Red Hoodie",
             price: 329.5,
-            stock: 200,
+            discount: 20,
+            quantity: 1,
             subtotal: 659.0,
             image : "place-holder"
         },
@@ -32,7 +35,9 @@ const SearchBar = ({ onProductSearch }) => {
             id: 3,
             name: "Skinny jeans",
             price: 129.99,
-            stock: 300,
+            discount: 10,
+            quantity: 1,
+            subtotal: 389.97,
             image : "place-holder"
         },
     ];

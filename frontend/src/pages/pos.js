@@ -4,6 +4,8 @@ import { Container, Table, Button, Card } from 'react-bootstrap';
 // run npm install react-icons --save to get icons for trashbin, search
 import SearchBar from '../components/searchbarpos.jsx';
 
+// TODO : TABLE
+
 const Pos = () => {
   const [searchedProduct, setSearchedProduct] = useState(null); // product found from SearchBar
   const [cartItems, setCartItems] = useState([]); // products in cart/table
@@ -15,17 +17,17 @@ const Pos = () => {
   // This effect will add the searched product to the cart when it changes
   useEffect(() => {
     if (searchedProduct) {
-
+      // TODO: add an API here, need to update product stock 
       const existingProductIndex = cartItems.findIndex(item => item.id === searchedProduct.id);
       
       if (existingProductIndex !== -1) {
         // If product exists, update its quantity and subtotal
         const updatedCartItems = [...cartItems];
         updatedCartItems[existingProductIndex].quantity += 1;
-        // TODO: use subtotal calculation function here
+        // TODO: create a subtotal calculation function 
         updatedCartItems[existingProductIndex].subtotal = 
-          updatedCartItems[existingProductIndex].quantity * 
-          (updatedCartItems[existingProductIndex].price * (1 - updatedCartItems[existingProductIndex].discount / 100));
+        updatedCartItems[existingProductIndex].quantity * 
+        (updatedCartItems[existingProductIndex].price * (1 - updatedCartItems[existingProductIndex].discount / 100));
         
         setCartItems(updatedCartItems);
       } else {
@@ -72,18 +74,6 @@ const Pos = () => {
         <Card.Header as="h5" > Products</Card.Header>
         <Card.Body>
 
-          {/* at first this was just for debugging, but i kinda want to do it now. too bad its an additional feature
-            like a small notification saying ".... was added" next to the table header 
-            just have to make sure feature isn't annoying
-          {searchedProduct && (
-              <Card style={{ width: '75%', maxWidth: '1200px' }}>
-                          <Card.Header as="h5">Product Details</Card.Header>
-                          <Card.Body>
-                              <pre>{JSON.stringify(searchedProduct, null, 2)}</pre>
-                          </Card.Body>
-              </Card>
-            } */}
-
          
           <Table striped bordered hover>
             <thead>
@@ -113,7 +103,7 @@ const Pos = () => {
                   <td>
                     <div className="quantity-container">
                       <Button 
-                        variant="outline-secondary" 
+                        variant="outline-danger" 
                         size="sm"
                         onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
                       >
@@ -121,7 +111,7 @@ const Pos = () => {
                       </Button>
                       <span className="quantity-value">{item.quantity}</span>
                       <Button 
-                        variant="outline-secondary" 
+                        variant="outline-success" 
                         size="sm"
                         onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
                       >
@@ -131,8 +121,9 @@ const Pos = () => {
                   </td>
                   <td>${item.subtotal.toFixed(2)}</td>
                   <td>
+                     {/* TODO add trash bin icon here  */}
                     <Button 
-                      variant="outline-danger" 
+                      variant="danger" 
                       size="sm"
                       onClick={() => handleRemoveItem(item.id)}
                     >
