@@ -63,6 +63,35 @@ const Pos = () => {
     setCartItems(updatedCartItems);
   };
 
+  // TODO:: Add calculateCartTotal and CartTotals into a seperate script 
+  // Calculates the total value of all items in the cart 
+  const calculateCartTotal = (cartItems) => {
+    // Return 0 if cart is null or empty
+    if (!cartItems || cartItems.length === 0) {
+      return 0;
+    }
+    
+    const total = cartItems.reduce((sum, item) => {
+      return sum + (item.subtotal || 0);
+    }, 0);
+    
+    // Round to 2 decimal places
+    return Number(total.toFixed(2));
+  };
+
+  
+  const CartTotal = ({ cartItems }) => {
+    const totalPayable = calculateCartTotal(cartItems);
+    
+    return (
+      <div className="text-end">
+        <div className="pay-value">
+          Total Payable: ${totalPayable.toFixed(2)}
+        </div>
+      </div>
+    );
+  };  
+
   return (
 
     <Container className="card-container">
@@ -142,17 +171,11 @@ const Pos = () => {
 
         </Card.Body>
 
-        <Card.Footer className="end-transaction-row">
+        <Card.Footer className="d-flex justify-content-between align-items-center">
 
-          <Button variant="outline-secondary" size="lg">
-            Reset
-          </Button>
-          <div className="text-end">
-            <div className="pay-value">
-              Total Payable: $1,000.00
-            </div>
-            <Button variant="success">Pay Now</Button>
-          </div>
+          <Button variant="outline-secondary"> Reset </Button>
+          <CartTotal cartItems={cartItems} />
+          <Button variant="success">Pay Now</Button>
         </Card.Footer>
       </Card>
     </Container>
