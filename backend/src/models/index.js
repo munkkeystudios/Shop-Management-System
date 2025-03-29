@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
+const Product = require('./product');
+const Category = require('./category');
+const Supplier = require('./supplier');
+const User = require('./user');
+const Sale = require('./sale');
 
-// MongoDB Connection
+// Connect to MongoDB
 const connectDB = async () => {
   try {
     const conn = await mongoose.connect("mongodb+srv://khanmuhammadrayyan17:nBJPFX5JhtdlN0B6@cluster0.aowkj.mongodb.net/POS?retryWrites=true&w=majority", {
@@ -17,29 +22,13 @@ const connectDB = async () => {
   }
 };
 
-// Connect before exporting
+// Connect to MongoDB
 connectDB();
 
-// Schema
-const LogInSchema = new mongoose.Schema({
-  username: {
-    type: String,
-    required: true
-  },
-  password: {
-    type: String,
-    required: true
-  }
-});
-
-// Model with error handling
-let collection;
-try {
-  // Check if model already exists to prevent overwrite error
-  collection = mongoose.models.users || mongoose.model("users", LogInSchema);
-} catch (error) {
-  console.error(`Model Creation Error: ${error.message}`);
-  collection = mongoose.model("users", LogInSchema);
-}
-
-module.exports = collection;
+module.exports = {
+  Product,
+  Category,
+  Supplier,
+  User,
+  Sale
+}; 
