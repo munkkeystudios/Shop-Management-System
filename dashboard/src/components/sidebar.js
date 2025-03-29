@@ -107,29 +107,29 @@ function ToolsSidebar() {
                 />
                 <span style={{ fontWeight: 'semi-bold', fontSize: '29px' }}>FinTrack</span>
             </div>
-            
+
             <Nav.Item style={{ padding: '10px 15px', textAlign: 'left', paddingLeft: '30px' }}>
                 <Link to="/dashboard" style={{ textDecoration: 'none', color: 'inherit' }}>Dashboard</Link>
             </Nav.Item>
 
             <SideBar.Dropdown title="Products  (+)">
-                <Link to="/all_products" style={{ textDecoration: 'none', color: 'inherit' }}> 
+                <Link to="/all_products" style={{ textDecoration: 'none', color: 'inherit' }}>
                     <SideBar.Item
                         title="All Products"
                         onClick={() => handleItemClick("All Products")}
-                    /> 
+                    />
                 </Link>
-                <Link to="/create_product" style={{ textDecoration: 'none', color: 'inherit' }}>
+                <Link to="/create_products" style={{ textDecoration: 'none', color: 'inherit' }}>
                     <SideBar.Item
                         title="Create Product"
                         onClick={() => handleItemClick("Create Product")}
                     />
                 </Link>
-                <Link to="/inventory" style={{ textDecoration: 'none', color: 'inherit' }}> 
+                <Link to="/inventory" style={{ textDecoration: 'none', color: 'inherit' }}>
                     <SideBar.Item
                         title="Inventory"
                         onClick={() => handleItemClick("Inventory")}
-                    /> 
+                    />
                 </Link>
             </SideBar.Dropdown>
 
@@ -149,7 +149,7 @@ function ToolsSidebar() {
                 <Link to="/pos" style={{ textDecoration: 'none', color: 'inherit' }}>POS</Link>
             </Nav.Item>
 
-            <Nav.Item 
+            <Nav.Item
                 onClick={handleLogout}
                 style={{
                     cursor: 'pointer',

@@ -55,7 +55,7 @@ const Pos = () => {
             
             </Card.Body>
         
-        <Card.Footer className="end-transaction-    row">
+        <Card.Footer className="end-transaction-row">
             
             <Button variant="outline-secondary" size="lg">
                 Reset

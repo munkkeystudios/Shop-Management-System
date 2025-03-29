@@ -1,4 +1,3 @@
-
 # Shop Management System
 
 ## Getting Started
@@ -66,6 +65,7 @@ npm install react-bootstrap
 
 npm install react-router-dom
 ```
+
 ## In /backend: ran following commands:
 
 ```
@@ -81,11 +81,3 @@ nodemon src/index.js
 
 then open this in browser to test: http://localhost:3000/
 ```
-
-<!-- 
-### in dashboard run:
-
-npm install 
-
-npm start 
--->
