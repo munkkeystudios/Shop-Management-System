@@ -1,20 +1,13 @@
 const express = require("express");
 const cors = require("cors");
 const app = express();
-const path = require("path");
-const hbs = require("hbs");
 const collection = require("./mongodb");
-
 const jwt = require("jsonwebtoken");
 
 const JWT_SECRET = "your-secret-key-for-jwt-tokens";//store in env variable for deployment
 
-const templatePath = path.join(__dirname, "../templates");
-
 app.use(express.json());
 app.use(cors()); //enable CORS for all routes
-app.set("view engine", "hbs");
-app.set("views", templatePath);
 app.use(express.urlencoded({ extended: false }));
 
 // Basic error handling middleware
@@ -27,14 +20,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.get("/", (req, res) => {
-  res.render("login");
-});
-
-app.get("/signup", (req, res) => {
-  res.render("signup");
-});
-
+// API routes
 app.post("/api/signup", async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -153,30 +139,6 @@ app.get("/api/dashboard", verifyToken, (req, res) => {
     message: "Protected data", 
     user: req.user.username 
   });
-});
-
-// Keep the original routes for backward compatibility
-app.all("/login", async (req, res) => {
-  if (req.method === "GET") {
-    res.render("login");
-  } else if (req.method === "POST") {
-    try {
-      const check = await collection.findOne({ username: req.body.username });
-
-      if (check && check.password === req.body.password) {
-        res.render("home");
-      } else {
-        res.send("Incorrect Password or Username");
-      }
-    } catch (error) {
-      console.error("Traditional login error:", error);
-      res.send("Error during login!");
-    }
-  }
-});
-
-app.get("/logout", (req, res) => {
-  res.redirect("/login");
 });
 
 const PORT = process.env.PORT || 5002;
