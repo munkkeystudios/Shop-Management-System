@@ -17,25 +17,23 @@ const SearchBar = ({ onProductSearch }) => {
             id: 1,
             name: "Sweat shirt",
             price: 249.99,
-            discount: 0,
-            quantity: 1,
-            subtotal: 249.99,
+            stock: 300,
+            image : "place-holder"
         },
         {
             id: 2,
             name: "Red Hoodie",
             price: 329.5,
-            discount: 20,
-            quantity: 2,
+            stock: 200,
             subtotal: 659.0,
+            image : "place-holder"
         },
         {
             id: 3,
             name: "Skinny jeans",
             price: 129.99,
-            discount: 10,
-            quantity: 3,
-            subtotal: 389.97,
+            stock: 300,
+            image : "place-holder"
         },
     ];
 
