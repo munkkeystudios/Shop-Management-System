@@ -2,7 +2,9 @@ import React from 'react';
 import { useState,useEffect } from 'react';
 import { Container, Table, Button, Card } from 'react-bootstrap';
 // run npm install react-icons --save to get icons for trashbin, search
+import { FiTrash2  } from "react-icons/fi";
 import SearchBar from '../components/searchbarpos.jsx';
+import QuantityButton from '../components/quantitybutton.js';
 
 // TODO : TABLE
 
@@ -130,6 +132,7 @@ const Pos = () => {
                   <td>${item.price.toFixed(2)}</td>
                   <td>{item.discount}%</td>
                   <td>
+                    {/* TODO: REPLACE QUANTITY BUTTON, PASS ITEM AS PROP FOR NOW. MAKE CHANGE ONE WAY */}
                     <div className="quantity-container">
                       <Button 
                         variant="outline-danger" 
@@ -150,14 +153,9 @@ const Pos = () => {
                   </td>
                   <td>${item.subtotal.toFixed(2)}</td>
                   <td>
-                     {/* TODO add trash bin icon here  */}
-                    <Button 
-                      variant="danger" 
-                      size="sm"
+                    <FiTrash2  
                       onClick={() => handleRemoveItem(item.id)}
-                    >
-                      Remove
-                    </Button>
+                    />
                   </td>
                 </tr>
               ))}
@@ -175,9 +173,14 @@ const Pos = () => {
 
           <Button variant="outline-secondary"> Reset </Button>
           <CartTotal cartItems={cartItems} />
+
+          {/* TODO:  launch bootstrap modal here for accessing payment option  */}
           <Button variant="success">Pay Now</Button>
         </Card.Footer>
       </Card>
+      {/* <div> TODO:: DELETE THIS
+        <QuantityButton />
+      </div> */}
     </Container>
 
   );

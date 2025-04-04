@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import { IoIosSearch } from "react-icons/io";
 
 // TODO: Need to implement  backend portion here, 
 // i created some frontend code, with this as dummy data. 
@@ -64,15 +64,20 @@ const SearchBar = ({ onProductSearch }) => {
     };
 
     return (
+        // TODO: create another div wrapper. add qrcode icon, bharat design iconscout qr-code here 
+        // as button that does nothing for now. i have plans for later.
         <div className="input-wrapper">
+            <IoIosSearch 
+                    onClick={handleClick}
+                />
             <input
                 placeholder="Scan/Search Product by Code"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
             />
 
-            {/* add a search icon button here, install react-icons eventually search button goes left of input field like the Bing search engine*/}
-            <button onClick={handleClick}>Search</button>
+            {/* TODO: Should we remove the submit button? */}
+            {/* <button onClick={handleClick}>Search</button> */}
         </div>
     );
 };

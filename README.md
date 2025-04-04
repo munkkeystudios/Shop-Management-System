@@ -64,6 +64,9 @@ If you prefer to run services separately:
 npm install react-bootstrap
 
 npm install react-router-dom
+
+npm install react-icons --save
+
 ```
 
 ## In /backend: ran following commands:
