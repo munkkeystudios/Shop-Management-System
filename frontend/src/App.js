@@ -57,7 +57,7 @@ function App() {
             
             {/* Redirect root to login */} 
             {/* change navigation to /login later */}
-            <Route path="/" element={<Navigate to="/pos" replace />} />
+            <Route path="/" element={<Navigate to="/login" replace />} />
             <Route path="*" element={<Navigate to="/login" replace />} />
           </Routes>
         </div>
