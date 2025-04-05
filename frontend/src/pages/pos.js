@@ -161,7 +161,15 @@ const Pos = () => {
 
         <Card.Footer className="d-flex justify-content-between align-items-center">
 
-          <Button variant="outline-secondary"> Reset </Button>
+          <Button variant="outline-secondary"
+          onClick={() => {
+            if (cartItems.length > 0) {
+              setCartItems([]);
+            }
+          }}
+          > 
+          Reset 
+          </Button>
           <CartTotal cartItems={cartItems} />
 
           {/* TODO:  launch bootstrap modal here for accessing payment option  */}
