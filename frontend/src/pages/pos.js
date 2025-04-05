@@ -3,8 +3,8 @@ import { useState,useEffect } from 'react';
 import { Container, Table, Button, Card } from 'react-bootstrap';
 // run npm install react-icons --save to get icons for trashbin, search
 import { FiTrash2  } from "react-icons/fi";
-import SearchBar from '../components/searchbarpos.jsx';
-import QuantityButton from '../components/quantitybutton.js';
+import SearchBar from '../components/pos/searchbarpos.jsx';
+import QuantityButton from '../components/pos/quantitybutton.js';
 
 // TODO : TABLE
 
