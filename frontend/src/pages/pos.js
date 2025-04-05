@@ -132,23 +132,13 @@ const Pos = () => {
                   <td>${item.price.toFixed(2)}</td>
                   <td>{item.discount}%</td>
                   <td>
-                    {/* TODO: REPLACE QUANTITY BUTTON, PASS ITEM AS PROP FOR NOW. MAKE CHANGE ONE WAY */}
                     <div className="quantity-container">
-                      <Button 
-                        variant="outline-danger" 
-                        size="sm"
-                        onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
-                      >
-                        -
-                      </Button>
-                      <span className="quantity-value">{item.quantity}</span>
-                      <Button 
-                        variant="outline-success" 
-                        size="sm"
-                        onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
-                      >
-                        +
-                      </Button>
+
+                      <QuantityButton 
+                          key={item.id}
+                          item={item} 
+                          onQuantityChange={handleQuantityChange} 
+                        />
                     </div>
                   </td>
                   <td>${item.subtotal.toFixed(2)}</td>
@@ -176,11 +166,11 @@ const Pos = () => {
 
           {/* TODO:  launch bootstrap modal here for accessing payment option  */}
           <Button variant="success">Pay Now</Button>
+          {/* TODO:: DELETE THIS */}
+      
         </Card.Footer>
       </Card>
-      {/* <div> TODO:: DELETE THIS
-        <QuantityButton />
-      </div> */}
+      
     </Container>
 
   );

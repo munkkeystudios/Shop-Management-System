@@ -61,19 +61,29 @@ const SearchBar = ({ onProductSearch }) => {
         if (onProductSearch) {
             onProductSearch(product);
         }
+
+        // clear out the input form
+        setInput('');
     };
 
     return (
         // TODO: create another div wrapper. add qrcode icon, bharat design iconscout qr-code here 
         // as button that does nothing for now. i have plans for later.
         <div className="input-wrapper">
+            {/* search bar icon  */}
             <IoIosSearch 
                     onClick={handleClick}
-                />
+            />
             <input
                 placeholder="Scan/Search Product by Code"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
+                // TODO: when enter pressed, make event that empties out input form 
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === 'NumpadEnter') {
+                        handleClick();
+                    }
+                }}
             />
 
             {/* TODO: Should we remove the submit button? */}

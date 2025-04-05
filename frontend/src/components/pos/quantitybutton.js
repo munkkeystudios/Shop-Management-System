@@ -1,57 +1,90 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Button, Card } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { IoChevronDown,IoChevronUp  } from "react-icons/io5";
+import { IoChevronDown, IoChevronUp } from "react-icons/io5";
 
-export default function QuantityButton() {
-  const [count, setCount] = useState(1);
+const QuantityButton = ({ item, onQuantityChange }) => {
+
+  // Check if item exists before proceeding
+  if (!item) {
+    return null; 
+  }
 
   const increment = () => {
-    setCount(prev => prev + 1);
+    if (onQuantityChange) {
+      onQuantityChange(item.id, item.quantity + 1);
+    }
   };
-
+  
   const decrement = () => {
-    setCount(prev => Math.max(1, prev - 1));
+    if (item.quantity > 1 && onQuantityChange) {
+      onQuantityChange(item.id, item.quantity - 1);
+    }
   };
+  
 
   // Format the count to always have 2 digits
-  const formattedCount = count.toString().padStart(2, '0');
-
+  const formattedCount = item.quantity.toString().padStart(2, '0');
+  
   return (
-    <div className="d-flex justify-content-center align-items-center p-4">
-      <Card style={{ width: '180px', border: '1px solid #dee2e6', borderRadius: '0.5rem' }}>
-        <Card.Body className="p-0">
-          <div className="d-flex align-items-center">
-            <div className="flex-grow-1 ps-4 py-2">
-              <span style={{ fontSize: '1.25rem', color: '#212529', fontWeight: '400' }}>
-                {formattedCount}
-              </span>
-            </div>
-            <div className="d-flex flex-column">
-              <Button 
-                variant="link" 
-                className="p-1 m-0 border-0"
-                onClick={increment}
-                style={{ color: '#6c757d' }}
-              >
-                {/* Replace with your up arrow icon */}
-                <IoChevronUp />
-                {/* <span className="up-arrow">▲</span> */}
-              </Button>
-              <Button 
-                variant="link" 
-                className="p-1 m-0 border-0"
-                onClick={decrement}
-                style={{ color: '#6c757d' }}
-              >
-                {/* Replace with your down arrow icon */}
-                <IoChevronDown />
-                {/* <span className="down-arrow">▼</span> */}
-              </Button>
-            </div>
-          </div>
-        </Card.Body>
-      </Card>
+    <div style={{ display: 'inline-block' }}>
+      <div 
+        style={{ 
+          display: 'flex',
+          alignItems: 'center',
+          //TODO: border should be EAECF0
+          border: '1px solid #000000', 
+          borderRadius: '4px',
+          overflow: 'hidden',
+          width: '85px'
+        }}
+      >
+        <span 
+          style={{ 
+            padding: '5px 5px',
+            fontSize: '14px',
+            flexGrow: 1,
+            textAlign: 'center'
+          }}
+        >
+          {formattedCount}
+        </span>
+        <div style={{ display: 'flex', flexDirection: 'column', borderLeft: '1px solid #EAECF0' }}>
+          <button 
+            onClick={increment}
+            style={{ 
+              border: 'none',
+              background: 'none',
+              padding: '2px 4px',
+              cursor: 'pointer',
+              color: '#475569',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <IoChevronUp size={16} />
+          </button>
+          <div style={{ borderTop: '1px solid #EAECF0', width: '100%' }}></div>
+          <button 
+            onClick={decrement}
+            style={{ 
+              border: 'none',
+              background: 'none',
+              padding: '2px 4px',
+              cursor: 'pointer',
+              color: '#475569',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <IoChevronDown size={16} />
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
+
+export default QuantityButton;
