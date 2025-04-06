@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinTrack Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <span class="icon-placeholder">[Icon]</span> FinTrack
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="active"><a href="#"><span class="icon-placeholder">[Icon]</span> Dashboard</a></li>
+                    <li><a href="#"><span class="icon-placeholder">[Icon]</span> Products</a></li>
+                    <li><a href="#"><span class="icon-placeholder">[Icon]</span> Adjustments</a></li>
+                    <li><a href="#"><span class="icon-placeholder">[Icon]</span> Purchases</a></li>
+                    <li><a href="#"><span class="icon-placeholder">[Icon]</span> Users</a></li>
+                    <li><a href="#"><span class="icon-placeholder">[Icon]</span> Sales</a></li>
+                    <li><a href="#"><span class="icon-placeholder">[Icon]</span> Reports</a></li>
+                    <li><a href="#"><span class="icon-placeholder">[Icon]</span> Settings</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <div class="main-wrapper">
+            <header class="header">
+                <div class="header-left">
+                    <h1 class="page-title">Dashboard</h1>
+                </div>
+                <div class="header-center">
+                    <button class="pos-button"><span class="icon-placeholder">[Cart]</span> POS</button>
+                    <input type="search" class="search-bar" placeholder="Search...">
+                </div>
+                <div class="header-right">
+                    <div class="user-avatar">
+                        </div>
+                    <span class="icon-placeholder">[v]</span> </div>
+            </header>
+
+            <main class="main-content">
+                <section class="stats-cards">
+                    <article class="card stat-card sales">
+                        <div class="stat-icon">[Icon]</div>
+                        <div class="stat-label">Total Sales</div>
+                        <div class="stat-value">$06,850</div>
+                    </article>
+                    <article class="card stat-card purchase">
+                        <div class="stat-icon">[Icon]</div>
+                        <div class="stat-label">Total Purchase</div>
+                        <div class="stat-value">$12,850</div>
+                    </article>
+                    <article class="card stat-card products">
+                        <div class="stat-icon">[Icon]</div>
+                        <div class="stat-label">Total Products</div>
+                        <div class="stat-value">14,000</div>
+                    </article>
+                    <article class="card stat-card revenue">
+                        <div class="stat-icon">[Icon]</div>
+                        <div class="stat-label">Total Revenue</div>
+                        <div class="stat-value">$80</div>
+                    </article>
+                </section>
+
+                <section class="content-row">
+                    <article class="card sales-report">
+                        <div class="card-header">
+                            <h2>Sales Report</h2>
+                            <select class="report-control">
+                                <option>Monthly</option>
+                                </select>
+                        </div>
+                        <div class="chart-placeholder">
+                            <p style="text-align: center; padding: 40px 0; color: #999;">[Bar Chart Area - Max height ~100px. June highest.]</p>
+                        </div>
+                    </article>
+
+                    <aside class="card alerts-section">
+                         <div class="card-header">
+                            <h2>Alerts</h2>
+                         </div>
+                        <ul>
+                            <li><span class="alert-icon">[!]</span> Stock Alert! Green Shirt is low <span class="timestamp">1h ago</span></li>
+                             <li><span class="alert-icon">[!]</span> New order received #ORD004 <span class="timestamp">2h ago</span></li>
+                             <li><span class="alert-icon">[!]</span> Server maintenance scheduled <span class="timestamp">1d ago</span></li>
+                            </ul>
+                        <a href="#" class="view-all">View All</a>
+                    </aside>
+                </section>
+
+                <section class="card data-table-card">
+                    <div class="card-header">
+                      <h2>Top Selling Product</h2>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>SKU</th>
+                                <th>Total Sales</th>
+                                <th>Revenue</th>
+                                <th>Last Sold</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>1</td><td>SKU001</td><td>500</td><td>$50,000</td><td>29-Dec-2024</td></tr>
+                            <tr><td>2</td><td>SKU002</td><td>400</td><td>$40,000</td><td>28-Dec-2024</td></tr>
+                            <tr><td>3</td><td>SKU003</td><td>350</td><td>$35,000</td><td>27-Dec-2024</td></tr>
+                            <tr><td>4</td><td>SKU004</td><td>400</td><td>$40,000</td><td>28-Dec-2024</td></tr>
+                            <tr><td>5</td><td>SKU005</td><td>450</td><td>$45,000</td><td>29-Dec-2024</td></tr>
+                        </tbody>
+                    </table>
+                     <div class="pagination">
+                        <span>&lt;</span> <span class="active">1</span> <span>2</span> <span>3</span> <span>&gt;</span>
+                    </div>
+                </section>
+
+                 <section class="content-row">
+                   <article class="card data-table-card small-table">
+                       <div class="card-header">
+                           <h2>Products Out of Stock</h2>
+                       </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr><th>Product</th><th>SKU</th><th>Date Out</th><th>Restock Date</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Product 1</td><td>SKU001</td><td>01-Jan-2024</td><td>10-Jan-2024</td></tr>
+                                <tr><td>Product 2</td><td>SKU002</td><td>03-Jan-2024</td><td>12-Jan-2024</td></tr>
+                                </tbody>
+                        </table>
+                   </article>
+
+                   <article class="card data-table-card small-table">
+                       <div class="card-header">
+                           <h2>Top Payments Received</h2>
+                       </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr><th>Date</th><th>Order No</th><th>Customer</th><th>Amount</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>01-Jan-2024</td><td>ORD001</td><td>James Wilson</td><td>$2,000</td></tr>
+                                <tr><td>03-Jan-2024</td><td>ORD002</td><td>Jessica John</td><td>$1,800</td></tr>
+                                <tr><td>05-Jan-2024</td><td>ORD003</td><td>Stella Harper</td><td>$950</td></tr>
+                                </tbody>
+                        </table>
+                   </article>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
