@@ -3,7 +3,7 @@ import { Button, Card } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { IoChevronDown, IoChevronUp } from "react-icons/io5";
 
-const QuantityButton = ({ item, onQuantityChange }) => {
+const QuantityButton = ({ item, handleQuantityChange }) => {
 
   // Check if item exists before proceeding
   if (!item) {
@@ -11,14 +11,14 @@ const QuantityButton = ({ item, onQuantityChange }) => {
   }
 
   const increment = () => {
-    if (onQuantityChange) {
-      onQuantityChange(item.id, item.quantity + 1);
+    if (handleQuantityChange) {
+      handleQuantityChange(item.id, item.quantity + 1);
     }
   };
   
   const decrement = () => {
-    if (item.quantity > 1 && onQuantityChange) {
-      onQuantityChange(item.id, item.quantity - 1);
+    if (item.quantity > 1 && handleQuantityChange) {
+      handleQuantityChange(item.id, item.quantity - 1);
     }
   };
   

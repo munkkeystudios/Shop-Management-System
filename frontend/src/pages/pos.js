@@ -2,15 +2,14 @@ import React from 'react';
 import { useState,useEffect } from 'react';
 import { Container, Table, Button, Card } from 'react-bootstrap';
 // run npm install react-icons --save to get icons for trashbin, search
-import { FiTrash2  } from "react-icons/fi";
 import SearchBar from '../components/pos/searchbarpos.jsx';
-import QuantityButton from '../components/pos/quantitybutton.js';
+import CartTable from '../components/pos/CartTable.js';
 
 // TODO : TABLE
 
 const Pos = () => {
-  const [searchedProduct, setSearchedProduct] = useState(null); // product found from SearchBar
-  const [cartItems, setCartItems] = useState([]); // products in cart/table
+  const [searchedProduct, setSearchedProduct] = useState(null); // item found from SearchBar
+  const [cartItems, setCartItems] = useState([]); // items in CartTable
 
   const handleProductSearch = (product) => {
     setSearchedProduct(product);
@@ -105,57 +104,11 @@ const Pos = () => {
         <Card.Header as="h5" > Products</Card.Header>
         <Card.Body>
 
-         
-          <Table striped bordered hover>
-            <thead>
-              <tr>
-                <th width="320">Product</th>
-                <th width="150">Price</th>
-                <th width="150">Discount</th>
-                <th width="150">Qty</th>
-                <th width="150">Subtotal</th>
-                <th width="90">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cartItems.map(item => (
-                <tr key={item.id}>
-                  <td>
-                    <div className="product-container">
-                      <div className="product-image">{item.image}</div>
-                      <div className="product-info">
-                        <div className="product-name">{item.name}</div>
-                        <small className="product-id">ID: {item.id}</small>
-                      </div>
-                    </div>
-                  </td>
-                  <td>${item.price.toFixed(2)}</td>
-                  <td>{item.discount}%</td>
-                  <td>
-                    <div className="quantity-container">
-
-                      <QuantityButton 
-                          key={item.id}
-                          item={item} 
-                          onQuantityChange={handleQuantityChange} 
-                        />
-                    </div>
-                  </td>
-                  <td>${item.subtotal.toFixed(2)}</td>
-                  <td>
-                    <FiTrash2  
-                      onClick={() => handleRemoveItem(item.id)}
-                    />
-                  </td>
-                </tr>
-              ))}
-              {cartItems.length === 0 && (
-                <tr>
-                  <td colSpan="6" className="empty-cart">No products added yet</td>
-                </tr>
-              )}
-            </tbody>
-          </Table>
+          <CartTable 
+            cartItems={cartItems}
+            handleQuantityChange={handleQuantityChange}
+            handleRemoveItem={handleRemoveItem}
+          />
 
         </Card.Body>
 
@@ -174,7 +127,6 @@ const Pos = () => {
 
           {/* TODO:  launch bootstrap modal here for accessing payment option  */}
           <Button variant="success">Pay Now</Button>
-          {/* TODO:: DELETE THIS */}
       
         </Card.Footer>
       </Card>
