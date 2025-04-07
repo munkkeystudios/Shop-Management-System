@@ -3,12 +3,14 @@ import { Nav } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import logoImage from '../images/logo-small.png';
-
+import { RiShoppingBag4Line } from "react-icons/ri";
+import { LuPackage,LuPackagePlus, LuPackageSearch  } from "react-icons/lu";
+import { HiOutlineDocumentReport } from "react-icons/hi";
 
 // sidebar layout:
 const SideBar = ({ children }) => {
     return (
-        <Nav
+        <Nav 
             className="flex-column"
             style={{
                 width: '270px',
@@ -42,7 +44,7 @@ const SideBarDropdown = ({ title, children }) => {
             {isOpen && (
                 <div
                     style={{
-                        paddingLeft: '25px',
+                        paddingLeft: '10px',
                         textAlign: 'left'
                     }}
                 >
@@ -56,7 +58,7 @@ const SideBarDropdown = ({ title, children }) => {
 // properties for each item in sidebar
 const SideBarItem = ({ title, onClick }) => {
     return (
-        <Nav.Item
+        <Nav.Item 
             onClick={onClick}
             style={{
                 cursor: 'pointer',
@@ -110,44 +112,66 @@ function ToolsSidebar() {
             </div>
 
             <Nav.Item style={{ padding: '10px 15px', textAlign: 'left', paddingLeft: '30px' }}>
-                <Link to="/dashboard" style={{ textDecoration: 'none', color: 'inherit' }}>Dashboard</Link>
+                <Link to="/dashboard" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <RiShoppingBag4Line size={16} /> Dashboard
+                </Link>
             </Nav.Item>
 
-            <SideBar.Dropdown title="Products  (+)">
-                <Link to="/all_products" style={{ textDecoration: 'none', color: 'inherit' }}>
+            <SideBar.Dropdown title={
+                    <div style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <LuPackage size={16}/>Products  (+)
+                    </div>
+                }>
+                <Link to="/all_products" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <SideBar.Item
-                        title="All Products"
+                        title={
+                            <div >
+                                <LuPackage size={16} /> All Products
+                            </div>
+                        }
                         onClick={() => handleItemClick("All Products")}
                     />
                 </Link>
-                <Link to="/create_products" style={{ textDecoration: 'none', color: 'inherit' }}>
+                <Link to="/create_products" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <SideBar.Item
-                        title="Create Product"
+                        title={
+                            <div>
+                                <LuPackagePlus size={16} /> Create Product
+                            </div>
+                        }
                         onClick={() => handleItemClick("Create Product")}
                     />
                 </Link>
-                <Link to="/inventory" style={{ textDecoration: 'none', color: 'inherit' }}>
+                <Link to="/inventory" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <SideBar.Item
-                        title="Inventory"
+                        title={
+                            <div >
+                                <LuPackageSearch size={16} /> Inventory
+                            </div>
+                        }
                         onClick={() => handleItemClick("Inventory")}
                     />
                 </Link>
             </SideBar.Dropdown>
 
+            {/* For Nav.Item components */}
             <Nav.Item style={{
                 padding: '10px 15px',
                 textAlign: 'left',
                 paddingLeft: '30px'
             }}>
-                <Link to="/reports" style={{ textDecoration: 'none', color: 'inherit' }}>Reports</Link>
+                <Link to="/reports" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <HiOutlineDocumentReport size={16} /> Reports
+                </Link>
             </Nav.Item>
-
             <Nav.Item style={{
                 padding: '10px 15px',
                 textAlign: 'left',
                 paddingLeft: '30px'
             }}>
-                <Link to="/pos" style={{ textDecoration: 'none', color: 'inherit' }}>POS</Link>
+                <Link to="/pos" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    POS
+                </Link>
             </Nav.Item>
 
             <Nav.Item
