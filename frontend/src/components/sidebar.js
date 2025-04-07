@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Nav } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import logoImage from '../images/logo-small.png';
 
 
 // sidebar layout:
@@ -97,7 +98,7 @@ function ToolsSidebar() {
                 }}
             >
                 <img
-                    src="/path/to/logo.png"
+                    src={logoImage}
                     alt="Logo"
                     style={{
                         width: '48px',
