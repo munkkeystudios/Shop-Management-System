@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create New Product - FinTrack</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/topbar.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    </head>
+<body>
+
+    <!-- <aside class="sidebar">
+        <div class="logo">FinTrack</div>
+        <nav class="sidebar-nav">
+            <ul>
+                <li><a href="#"><span>Icon</span> Dashboard</a></li>
+                <li class="active has-submenu">
+                    <a href="#"><span>Icon</span> Products</a>
+                    <ul class="submenu">
+                        <li><a href="#">All Products</a></li>
+                        <li class="active-sub"><a href="#">Create Product</a></li>
+                    </ul>
+                </li>
+                <li><a href="#"><span>Icon</span> Inventory</a></li>
+                <li><a href="#"><span>Icon</span> Category</a></li>
+                <li><a href="#"><span>Icon</span> Brand</a></li>
+                <li><a href="#"><span>Icon</span> Adjustments</a></li>
+                <li><a href="#"><span>Icon</span> Purchases</a></li>
+                <li><a href="#"><span>Icon</span> Users</a></li>
+                <li><a href="#"><span>Icon</span> Sales</a></li>
+                <li><a href="#"><span>Icon</span> Reports</a></li>
+                <li><a href="#"><span>Icon</span> Settings</a></li>
+            </ul>
+        </nav>
+    </aside> -->
+
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <span class="icon-placeholder">[Icon]</span> FinTrack
+        </div>
+        <nav class="sidebar-nav">
+            <ul>
+                <li><a href="#"><span class="icon-placeholder">[Icon]</span> Dashboard</a></li>
+                <li><a href="#"><span class="icon-placeholder">[Icon]</span> Products</a></li>
+                <li><a href="#"><span class="icon-placeholder">[Icon]</span> Adjustments</a></li>
+                <li><a href="#"><span class="icon-placeholder">[Icon]</span> Purchases</a></li>
+                <li><a href="#"><span class="icon-placeholder">[Icon]</span> Users</a></li>
+                <li><a href="#"><span class="icon-placeholder">[Icon]</span> Sales</a></li>
+                <li><a href="#"><span class="icon-placeholder">[Icon]</span> Reports</a></li>
+                <li><a href="#"><span class="icon-placeholder">[Icon]</span> Settings</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <div class="main-container">
+
+        <header class="topbar">
+            <div class="topbar-left">
+                <div class="breadcrumbs">Products > Create New Product</div>
+                
+            </div>
+            <div class="topbar-center">
+                <!-- <button class="pos-button">POS </button> -->
+                <button class="pos-button"><span class="icon-placeholder">[Cart]</span> POS</button>
+                <input type="search" class="search-bar" placeholder="Search...">
+            </div>
+            <div class="topbar-right">
+                <div class="user-profile">
+                    <img src="img/placeholder-avatar.png" alt="User Avatar">
+                    </div>
+            </div>
+        </header>
+
+        <main class="content">
+            <h1>Create new product</h1>
+
+            <form class="product-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="warehouse">Select Warehouse</label>
+                        <select id="warehouse" name="warehouse">
+                            <option value="">Select Warehouse</option>
+                            <option value="main">Main Warehouse</option>
+                            <option value="secondary">Secondary Warehouse</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="title">Title</label>
+                        <input type="text" id="title" name="title" placeholder="Product Name">
+                    </div>
+                     <div class="form-group">
+                        <label for="brand">Select Brand</label>
+                        <select id="brand" name="brand">
+                            <option value="">Select Brand</option>
+                            <option value="brand_a">Brand A</option>
+                            <option value="brand_b">Brand B</option>
+                        </select>
+                    </div>
+                     <div class="form-group">
+                        <label for="category">Category</label>
+                        <select id="category" name="category">
+                            <option value="">Select Category</option>
+                            <option value="electronics">Electronics</option>
+                            <option value="furniture">Furniture</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="subcategory">Subcategory</label>
+                        <select id="subcategory" name="subcategory">
+                             <option value="">Select Subcategory</option>
+                            <option value="phones">Phones</option>
+                            <option value="tables">Tables</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="group">Group</label>
+                         <select id="group" name="group">
+                            <option value="">Select Group</option>
+                            <option value="new">New Arrivals</option>
+                            <option value="clearance">Clearance</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="supplier">Supplier</label>
+                        <select id="supplier" name="supplier">
+                            <option value="">Select Supplier</option>
+                            <option value="supplier_x">Supplier X</option>
+                            <option value="supplier_y">Supplier Y</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="size">Size</label>
+                        <select id="size" name="size">
+                            <option value="">Select Size</option>
+                            <option value="s">Small</option>
+                            <option value="m">Medium</option>
+                            <option value="l">Large</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="color">Color</label>
+                         <select id="color" name="color">
+                            <option value="">Select Color</option>
+                            <option value="red">Red</option>
+                            <option value="blue">Blue</option>
+                            <option value="green">Green</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group form-group-span-2"> {/* Spans both columns */}
+                        <label for="description">Description</label>
+                        <textarea id="description" name="description" rows="4" placeholder="Write a note here..."></textarea>
+                    </div>
+
+                    <div class="form-group form-group-span-2 image-uploader">
+                         <label for="product-image">Product Image</label>
+                         <input type="file" id="product-image" name="product-image" accept="image/svg+xml, image/png, image/jpeg">
+                         <p>Drag & drop or click to upload</p>
+                         <p><small>SVG, PNG, JPG (max. 2MB)</small></p>
+                     </div>
+
+                    <div class="form-group">
+                        <label for="sku">SKU / Product Code</label>
+                        <input type="text" id="sku" name="sku" placeholder="e.g., SKU12345">
+                    </div>
+                     <div class="form-group">
+                        <label for="sale-price">Sale Price</label>
+                        <input type="number" id="sale-price" name="sale_price" placeholder="0.00" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label for="purchase-price">Purchase Price</label>
+                        <input type="number" id="purchase-price" name="purchase_price" placeholder="0.00" step="0.01">
+                    </div>
+                     <div class="form-group">
+                        <label for="sale-unit">Sale Unit</label>
+                        <select id="sale-unit" name="sale_unit">
+                             <option value="">Select Unit</option>
+                            <option value="piece">Piece</option>
+                            <option value="box">Box</option>
+                            <option value="dozen">Dozen</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="gst">GST</label>
+                        <select id="gst" name="gst">
+                            <option value="">Select GST</option>
+                            <option value="5">5%</option>
+                            <option value="12">12%</option>
+                            <option value="18">18%</option>
+                         </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="purchase-unit">Purchase Unit</label>
+                        <select id="purchase-unit" name="purchase_unit">
+                             <option value="">Select Unit</option>
+                            <option value="piece">Piece</option>
+                            <option value="box">Box</option>
+                            <option value="dozen">Dozen</option>
+                        </select>
+                    </div>
+                     <div class="form-group">
+                        <label for="quantity">Quantity</label>
+                        <input type="number" id="quantity" name="quantity" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="stock-alert">Stock Alert</label>
+                        <input type="number" id="stock-alert" name="stock_alert" placeholder="e.g., 10">
+                    </div>
+                </div>
+
+                <div class="form-buttons">
+                    <button type="button" class="btn btn-discard">Discard</button>
+                    <button type="submit" class="btn btn-submit">Save & Submit</button>
+                </div>
+            </form>
+
+        </main>
+    </div>
+
+    </body>
+</html>

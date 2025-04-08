@@ -1,0 +1,107 @@
+/* Header / Topbar Styling */
+.topbar {
+ 
+    height: var(--header-height);
+    background-color: var(--header-bg);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px; /* Horizontal padding */
+    width: 100%;
+    position: sticky; /* Keep header sticky */
+    top: 0;
+    z-index: 10;
+}
+
+.topbar-left .breadcrumbs {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-heading);
+}
+
+.topbar-center {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+
+.topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 16px; /* Space between search and profile */
+}
+
+.topbar-right .icon-placeholder {
+    width: 16px; height: 16px; margin-right: 0; cursor: pointer; /* Dropdown icon */
+}
+
+
+/* Breadcrumbs */
+.breadcrumbs {
+    font-size: 14px;
+    color: #6b7280; /* Muted color */
+}
+
+.pos-button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+.pos-button .icon-placeholder {
+    width: 16px; height: 16px; margin-right: 40px; /* Smaller icon */
+}
+
+.search-bar {
+    background-color: var(--search-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 8px 12px;
+    width: 250px; /* Approx width */
+    font-size: 14px;
+}
+
+
+/* Search Bar */
+.search-bar input[type="search"] {
+    padding: 8px 12px;
+    border: 1px solid #DDDDDD;
+    border-radius: 6px;
+    min-width: 220px; /* Minimum width */
+    font-size: 14px;
+}
+.search-bar input[type="search"]::placeholder {
+    color: #9ca3af;
+}
+.search-bar input[type="search"]:focus {
+     outline: none;
+    border-color: #2374F5;
+    box-shadow: 0 0 0 2px rgba(35, 116, 245, 0.2);
+}
+/* Add styles for a search icon inside the input if needed */
+
+
+/* User Profile */
+.user-profile {
+    width: 40px;
+    height: 40px;
+    background-color: #ccc; /* Placeholder color */
+    border-radius: 50%; /* Circular */
+}
+
+.user-profile img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%; /* Circular avatar */
+    object-fit: cover; /* Ensure image covers the area well */
+    border: 1px solid #eee; /* Optional subtle border */
+}
+/* Add styles for a dropdown arrow next to the avatar if needed */
