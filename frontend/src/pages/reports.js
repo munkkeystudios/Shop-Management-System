@@ -1,15 +1,42 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Sidebar from '../components/sidebar';
 import axios from 'axios';
 
 const Reports = () => {
 
+  const getError = (error) => {
+    let e = error;
+    if (error.response) {
+      e = error.response.data;
+      if (error.response.data && error.response.data.error) {
+        e = error.response.data.error;
+      }
+    } else if (error.message) {
+      e = error.message;
+    } else {
+      e = "Unknown error occurred";
+    }
+    return e;
+  };
+
   const createProduct = async (newProduct) => {
     try {
-      const response = await axios.post('/api/products', newProduct);
-      console.log('Product created successfully:', response.data);
+      const token = localStorage.getItem('authToken');
+
+      if (!token) {
+        console.error('No token found. Please log in.');
+        return;
+      }
+
+      const result = await axios.post('/api/products', newProduct, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        }
+      });
+
+      console.log('Product created successfully:', result.data);
     } catch (err) {
-      console.error('Error creating product:', err);
+      console.error('Error creating product:', getError(err));
     }
   };
 
@@ -21,11 +48,6 @@ const Reports = () => {
     quantity: 100,
     category: "Casual Wear",
     supplier: "Packages",
-    images: ["/src/images/green-shirt.png"],
-    status: "active",
-    costPrice: 150.00,
-    taxRate: 5,
-    minStockLevel: 10
   };
 
   return (
@@ -38,7 +60,6 @@ const Reports = () => {
         <button onClick={() => createProduct(sampleProduct)}>
           Add Product
         </button>
-
       </div>
     </div>
   );
