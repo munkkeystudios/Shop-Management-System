@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import '../styles/Auth.css';
+import logoImage from '../images/logo-small.png';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -24,6 +25,7 @@ const Login = () => {
         <div className="logo-container">
           <div className="logo">
             {/* Logo image would be here */}
+              <img src={logoImage} alt="logo"></img>
           </div>
           <h1>FinTrack</h1>
         </div>

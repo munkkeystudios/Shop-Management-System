@@ -1,8 +1,5 @@
-const { User } = require('../models');
+const User = require('../models/user');
 const jwt = require('jsonwebtoken');
-
-//(make this an env var?
-const JWT_SECRET = "your-secret-key-for-jwt-tokens";
 
 //login logic
 exports.login = async (req, res) => {
@@ -19,12 +16,18 @@ exports.login = async (req, res) => {
     const user = await User.findOne({ username });
     
     if (user && user.password === password) {
+      // Check for JWT_SECRET
+      const jwtSecret = process.env.JWT_SECRET;
+      if (!jwtSecret) {
+        console.warn('Warning: JWT_SECRET environment variable not set. Using insecure default value.');
+      }
+      
       //generate token
       const token = jwt.sign({ 
         userId: user._id, 
         username: user.username,
         role: user.role 
-      }, JWT_SECRET, { expiresIn: '24h' });
+      }, jwtSecret || 'your-secret-key-for-jwt-tokens', { expiresIn: '24h' });
       
       res.status(200).json({
         success: true,
@@ -86,12 +89,18 @@ exports.register = async (req, res) => {
       role: role || 'cashier'//default with least priveleges
     });
 
+    // Check for JWT_SECRET
+    const jwtSecret = process.env.JWT_SECRET;
+    if (!jwtSecret) {
+      console.warn('Warning: JWT_SECRET environment variable not set. Using insecure default value.');
+    }
+
     //generate token
     const token = jwt.sign({ 
       userId: user._id,
       username: user.username,
       role: user.role
-    }, JWT_SECRET, { expiresIn: '24h' });
+    }, jwtSecret || 'your-secret-key-for-jwt-tokens', { expiresIn: '24h' });
 
     res.status(201).json({
       success: true,
@@ -143,7 +152,7 @@ exports.getAllUsers = async (req, res) => {
 
 exports.getProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.user.userId).select('-password');
+    const user = await User.findById(req.user._id).select('-password');
     
     if (!user) {
       return res.status(404).json({
@@ -173,7 +182,7 @@ exports.updateUser = async (req, res) => {
     const { username, password, role, active } = req.body;
     
     //check to ensure no unauthorized changes
-    if (req.user.role !== 'admin' && req.user.userId !== userId) {
+    if (req.user.role !== 'admin' && req.user._id.toString() !== userId) {
       return res.status(403).json({
         success: false,
         message: 'Access denied: You can only update your own profile'
@@ -233,32 +242,6 @@ exports.updateUser = async (req, res) => {
       success: false,
       message: 'Server Error',
       error: error.message
-    });
-  }
-};
-
-//middleware to verify token
-exports.verifyToken = (req, res, next) => {
-  try {
-    const authHeader = req.headers.authorization;
-    
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ 
-        success: false, 
-        message: "No token provided" 
-      });
-    }
-    
-    const token = authHeader.split(' ')[1];
-    
-    const decoded = jwt.verify(token, JWT_SECRET);
-    req.user = decoded;
-    next();
-  } catch (error) {
-    console.error("Token verification error:", error);
-    return res.status(401).json({ 
-      success: false, 
-      message: "Invalid token" 
     });
   }
 }; 
