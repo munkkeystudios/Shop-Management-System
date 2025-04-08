@@ -1,15 +1,14 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { Container, Table, Button, Card } from 'react-bootstrap';
-// run npm install react-icons --save to get icons for trashbin, search
+import { Container, Button, Card } from 'react-bootstrap';
 import SearchBar from '../components/pos/searchbarpos.jsx';
 import CartTable from '../components/pos/CartTable.js';
 import BillTab from '../components/pos/BillTab.js';
 import CreateBillButton from '../components/pos/CreateBillButton.js';
 import SalesTable from '../components/pos/SalesTable.js';
+import PayButton from '../components/pos/PayButton.js';
 
 
-// TODO : TABLE
 
 const Pos = () => {
   const [searchedProduct, setSearchedProduct] = useState(null); // item found from SearchBar
@@ -40,7 +39,6 @@ const Pos = () => {
         setCartItems([...cartItems, searchedProduct]);
       }
 
-      // Reset searchedProduct after adding to cart
       setSearchedProduct(null);
     }
   }, [searchedProduct])
@@ -68,7 +66,6 @@ const Pos = () => {
     setCartItems(updatedCartItems);
   };
 
-  // TODO:: Add calculateCartTotal and CartTotals into a seperate script 
   // Calculates the total value of all items in the cart 
   const calculateCartTotal = (cartItems) => {
     // Return 0 if cart is null or empty
@@ -163,7 +160,7 @@ const Pos = () => {
               <CartTotal cartItems={cartItems} />
 
               {/* TODO:  launch bootstrap modal here for accessing payment option  */}
-              <Button variant="success">Pay Now</Button>
+              <PayButton/>
 
             </Card.Footer>
           </Card>
