@@ -151,7 +151,7 @@ const Pos = () => {
 
             <Card.Footer className="d-flex justify-content-between align-items-center">
 
-              <Button variant="outline-secondary"
+              <Button variant="danger"
                 onClick={() => {
                   if (cartItems.length > 0) {
                     setCartItems([]);
