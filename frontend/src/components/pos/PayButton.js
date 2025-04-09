@@ -12,7 +12,7 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity }) => {
   
   // global sales tax
   const GST = 0.10
-  const endPayment = (totalPayable + (GST*totalPayable))
+  const endPayment = Number((totalPayable + (GST * totalPayable)).toFixed(2));
   
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -32,7 +32,7 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity }) => {
       })),
       subtotal: totalPayable,
       discount: 0, // values is hard coded for now
-      gst: GST*totalPayable,
+      gst: Number((GST*totalPayable).toFixed(2)),
       total: endPayment,
       paymentMethod: paymentMethod,
       received: '-', // values is hard coded for now
