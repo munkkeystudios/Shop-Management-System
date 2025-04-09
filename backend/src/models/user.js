@@ -25,10 +25,8 @@ const UserSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Create or get the existing model
 let User;
 try {
-  // Check if model already exists to prevent overwrite error
   User = mongoose.models.users || mongoose.model("users", UserSchema);
 } catch (error) {
   console.error(`Model Creation Error: ${error.message}`);

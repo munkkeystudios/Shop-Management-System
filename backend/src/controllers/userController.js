@@ -16,7 +16,6 @@ exports.login = async (req, res) => {
     const user = await User.findOne({ username });
     
     if (user && user.password === password) {
-      // Check for JWT_SECRET
       const jwtSecret = process.env.JWT_SECRET;
       if (!jwtSecret) {
         console.warn('Warning: JWT_SECRET environment variable not set. Using insecure default value.');

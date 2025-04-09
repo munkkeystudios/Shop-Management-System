@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-// Schema for individual sale items
 const SaleItemSchema = new mongoose.Schema({
   product: {
     type: mongoose.Schema.Types.ObjectId,
@@ -29,7 +28,6 @@ const SaleItemSchema = new mongoose.Schema({
   }
 });
 
-// Main sale schema
 const SaleSchema = new mongoose.Schema({
   billNumber: {
     type: String,
@@ -101,7 +99,6 @@ SaleSchema.index({ createdAt: -1 });
 SaleSchema.index({ createdBy: 1 });
 SaleSchema.index({ 'customer.name': 'text', 'customer.phone': 'text' });
 
-//create model or just get if it exists
 let Sale;
 try {
   Sale = mongoose.models.Sale || mongoose.model('Sale', SaleSchema);
