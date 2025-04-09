@@ -1,101 +1,101 @@
 import React, { useState } from "react";
 import { IoIosSearch } from "react-icons/io";
 import { HiMiniQrCode } from "react-icons/hi2";
+import axios from 'axios';
 
-// TODO: Need to implement  backend portion here, 
-// i created some frontend code, with this as dummy data. 
-// it probably won't work when the backend is implemented
-
-
-// i made it with assumption that i will get a single json object after searching using product id (id is unique)
 const SearchBar = ({ onProductSearch }) => {
     const [input, setInput] = useState("");
 
-    // this is the entire database 
-    // Hardcoded products data
-    const products = [
-        {
-            id: 1,
-            name: "Sweat shirt",
-            price: 249.99,
-            discount: 0,
-            quantity: 1,
-            subtotal: 249.99,
-            image: "place-holder"
-        },
-        {
-            id: 2,
-            name: "Red Hoodie",
-            price: 329.5,
-            discount: 20,
-            quantity: 1,
-            subtotal: 659.0,
-            image: "place-holder"
-        },
-        {
-            id: 3,
-            name: "Skinny jeans",
-            price: 129.99,
-            discount: 10,
-            quantity: 1,
-            subtotal: 389.97,
-            image: "place-holder"
-        },
-    ];
+    const fetchById = async (id) => {
+        try {
+            const token = localStorage.getItem('token');
 
-    // this is scouring the database to find matching product id
-    //  yes i know for loops are bad. it doesnt matter anyway.
-    const getProductById = (id) => {
-        for (let i = 0; i < products.length; i++) {
-            if (products[i].id === Number(id)) {
-                return products[i];
+            if (!token) {
+                window.location.href = '/login';
+                return;
             }
+
+            const response = await axios.get(`/api/products/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            const product = response.data.data;
+
+            const formattedProduct = {
+                id: product._id,
+                name: product.name,
+                price: product.price,
+                discount: 0,
+                quantity: 1,
+                subtotal: product.price * 1,
+                image: product.images.length > 0 ? product.images[0] : 'place-holder'
+            };
+
+            return formattedProduct;
+
+        } catch (error) {
+            console.error('Error fetching product:', error.response?.data?.message || error.message);
+            return null;
         }
-        return null; // returns null if no match is found
     };
 
-    const handleClick = () => {
-        // Find the product
-        const product = getProductById(input);
+    const handleClick = async () => {
+        if (!input) return;
 
-        // Call the onProductSearch prop with the found product
-        if (onProductSearch) {
-            onProductSearch(product);
+        const product = await fetchById(input);
+
+        if (!product) {
+            alert('Product not found!');
+            return;
         }
 
-        // clear out the input form
-        setInput('');
+        onProductSearch(product);
     };
 
     return (
-        
-        <div className="input-wrapper flex items-center justify-center" >
-            <HiMiniQrCode size={24}/>
 
-            <IoIosSearch 
+        <div className="input-wrapper flex items-center justify-center" >
+            <HiMiniQrCode size={24} />
+
+            <IoIosSearch
                 onClick={handleClick}
                 size={24}
             />
             <input
                 style={{
                     width: '90%',
-                    height: '24px',      
-                    fontSize: '1rem',    
-                    padding: '1rem',    
+                    height: '24px',
+                    fontSize: '1rem',
+                    padding: '1rem',
                     borderRadius: '2px',
                 }}
-            placeholder="Scan/Search Product by Code. type 1,2,3 (for testing, for now) "
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === 'NumpadEnter') {
-                    handleClick();
+                placeholder="Scan/Search Product by Code. type entire productid from db"
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === 'NumpadEnter') {
+                        handleClick();
+                    }
                 }
             }
-            }
             />
-
         </div>
+
+        // <div className="flex">
+        //     <input
+        //         type="text"
+        //         placeholder="Search by product ID..."
+        //         value={input}
+        //         onChange={(e) => setInput(e.target.value)}
+        //         className="border p-2"
+        //     />
+        //     <button onClick={handleClick}>
+        //         <IoIosSearch />
+        //     </button>
+        // </div>
     );
 };
 

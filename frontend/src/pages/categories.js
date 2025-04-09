@@ -15,8 +15,7 @@
 
 import React, { useState } from 'react';
 import Sidebar from '../components/sidebar';  // Ensure the sidebar import path is correct
-import React from 'react';
-import './CategoryPage.css';
+import './categories.css';
 import { Eye, Trash2, Edit } from 'lucide-react'; // Icons (optional, or use <svg>)
 
 const CategoryPage = () => {
