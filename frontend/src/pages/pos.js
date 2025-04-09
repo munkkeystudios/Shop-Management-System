@@ -1,19 +1,20 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { Container, Table, Button, Card } from 'react-bootstrap';
-// run npm install react-icons --save to get icons for trashbin, search
+import { Container, Button, Card } from 'react-bootstrap';
 import SearchBar from '../components/pos/searchbarpos.jsx';
 import CartTable from '../components/pos/CartTable.js';
 import BillTab from '../components/pos/BillTab.js';
 import CreateBillButton from '../components/pos/CreateBillButton.js';
 import SalesTable from '../components/pos/SalesTable.js';
+import PayButton from '../components/pos/PayButton.js';
 
 
-// TODO : TABLE
 
 const Pos = () => {
   const [searchedProduct, setSearchedProduct] = useState(null); // item found from SearchBar
   const [cartItems, setCartItems] = useState([]); // items in CartTable
+  const [totalPayable, setTotalPayable] = useState(0); // total payable (sum of subtotals)
+  const [totalQuantity, setTotalQuantity] = useState(0); // total items in cart
 
   const handleProductSearch = (product) => {
     setSearchedProduct(product);
@@ -40,7 +41,6 @@ const Pos = () => {
         setCartItems([...cartItems, searchedProduct]);
       }
 
-      // Reset searchedProduct after adding to cart
       setSearchedProduct(null);
     }
   }, [searchedProduct])
@@ -68,7 +68,6 @@ const Pos = () => {
     setCartItems(updatedCartItems);
   };
 
-  // TODO:: Add calculateCartTotal and CartTotals into a seperate script 
   // Calculates the total value of all items in the cart 
   const calculateCartTotal = (cartItems) => {
     // Return 0 if cart is null or empty
@@ -84,10 +83,19 @@ const Pos = () => {
     return Number(total.toFixed(2));
   };
 
+  // Calculations for quanitity
+  const calculateCartQuantity = (cartItems) => {
+    return cartItems.reduce((total, item) => total + item.quantity, 0);
+  };
 
+  // TODO: Put CartTotal + CalculateCartTotal + calculateCartQuantity into a different script
   const CartTotal = ({ cartItems }) => {
-    const totalPayable = calculateCartTotal(cartItems);
-
+    
+    useEffect(() => {
+      setTotalPayable(calculateCartTotal(cartItems));
+      setTotalQuantity(calculateCartQuantity(cartItems)); // TODO: Find a better place to calculate TotalQuantity
+    }, [cartItems]); 
+  
     return (
       <div className="text-end">
         <div className="pay-value">
@@ -95,11 +103,16 @@ const Pos = () => {
         </div>
       </div>
     );
+
   };
+
+  
+
+  
 
   return (
     <div className="app-container" style={{ display: 'flex', height: '100vh' }}>
-
+      
       {/* left section */}
       <div className="main-content" style={{ flex: '1', padding: '20px', display: 'flex', flexDirection: 'column' }}>
         <div className="bill-header" style={{
@@ -151,7 +164,7 @@ const Pos = () => {
 
             <Card.Footer className="d-flex justify-content-between align-items-center">
 
-              <Button variant="outline-secondary"
+              <Button variant="danger"
                 onClick={() => {
                   if (cartItems.length > 0) {
                     setCartItems([]);
@@ -163,7 +176,11 @@ const Pos = () => {
               <CartTotal cartItems={cartItems} />
 
               {/* TODO:  launch bootstrap modal here for accessing payment option  */}
-              <Button variant="success">Pay Now</Button>
+              < PayButton
+                cartItems={cartItems}
+                totalPayable={totalPayable}
+                totalQuantity={totalQuantity}
+              />
 
             </Card.Footer>
           </Card>
