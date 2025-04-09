@@ -13,6 +13,8 @@ import PayButton from '../components/pos/PayButton.js';
 const Pos = () => {
   const [searchedProduct, setSearchedProduct] = useState(null); // item found from SearchBar
   const [cartItems, setCartItems] = useState([]); // items in CartTable
+  const [totalPayable, setTotalPayable] = useState(0); // total payable (sum of subtotals)
+  const [totalQuantity, setTotalQuantity] = useState(0); // total items in cart
 
   const handleProductSearch = (product) => {
     setSearchedProduct(product);
@@ -81,10 +83,19 @@ const Pos = () => {
     return Number(total.toFixed(2));
   };
 
+  // Calculations for quanitity
+  const calculateCartQuantity = (cartItems) => {
+    return cartItems.reduce((total, item) => total + item.quantity, 0);
+  };
 
+  // TODO: Put CartTotal + CalculateCartTotal + calculateCartQuantity into a different script
   const CartTotal = ({ cartItems }) => {
-    const totalPayable = calculateCartTotal(cartItems);
-
+    
+    useEffect(() => {
+      setTotalPayable(calculateCartTotal(cartItems));
+      setTotalQuantity(calculateCartQuantity(cartItems)); // TODO: Find a better place to calculate TotalQuantity
+    }, [cartItems]); 
+  
     return (
       <div className="text-end">
         <div className="pay-value">
@@ -92,11 +103,16 @@ const Pos = () => {
         </div>
       </div>
     );
+
   };
+
+  
+
+  
 
   return (
     <div className="app-container" style={{ display: 'flex', height: '100vh' }}>
-
+      
       {/* left section */}
       <div className="main-content" style={{ flex: '1', padding: '20px', display: 'flex', flexDirection: 'column' }}>
         <div className="bill-header" style={{
@@ -160,7 +176,11 @@ const Pos = () => {
               <CartTotal cartItems={cartItems} />
 
               {/* TODO:  launch bootstrap modal here for accessing payment option  */}
-              <PayButton/>
+              < PayButton
+                cartItems={cartItems}
+                totalPayable={totalPayable}
+                totalQuantity={totalQuantity}
+              />
 
             </Card.Footer>
           </Card>
