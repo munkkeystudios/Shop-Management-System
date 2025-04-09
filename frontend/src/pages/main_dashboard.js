@@ -1,6 +1,6 @@
 import React from "react";
 import Sidebar from "../components/sidebar"; // Assuming sidebar structure is similar
-import "../styles/style.css"; // Import custom styles
+// TODO: FIx the css
 
 const MainDashboard = () => {
   return (
