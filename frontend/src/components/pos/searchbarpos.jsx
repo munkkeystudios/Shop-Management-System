@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { IoIosSearch } from "react-icons/io";
+import { HiMiniQrCode } from "react-icons/hi2";
 
 // TODO: Need to implement  backend portion here, 
 // i created some frontend code, with this as dummy data. 
@@ -9,7 +10,7 @@ import { IoIosSearch } from "react-icons/io";
 // i made it with assumption that i will get a single json object after searching using product id (id is unique)
 const SearchBar = ({ onProductSearch }) => {
     const [input, setInput] = useState("");
-    
+
     // this is the entire database 
     // Hardcoded products data
     const products = [
@@ -20,7 +21,7 @@ const SearchBar = ({ onProductSearch }) => {
             discount: 0,
             quantity: 1,
             subtotal: 249.99,
-            image : "place-holder"
+            image: "place-holder"
         },
         {
             id: 2,
@@ -29,7 +30,7 @@ const SearchBar = ({ onProductSearch }) => {
             discount: 20,
             quantity: 1,
             subtotal: 659.0,
-            image : "place-holder"
+            image: "place-holder"
         },
         {
             id: 3,
@@ -38,7 +39,7 @@ const SearchBar = ({ onProductSearch }) => {
             discount: 10,
             quantity: 1,
             subtotal: 389.97,
-            image : "place-holder"
+            image: "place-holder"
         },
     ];
 
@@ -56,7 +57,7 @@ const SearchBar = ({ onProductSearch }) => {
     const handleClick = () => {
         // Find the product
         const product = getProductById(input);
-        
+
         // Call the onProductSearch prop with the found product
         if (onProductSearch) {
             onProductSearch(product);
@@ -67,27 +68,33 @@ const SearchBar = ({ onProductSearch }) => {
     };
 
     return (
-        // TODO: create another div wrapper. add qrcode icon, bharat design iconscout qr-code here 
-        // as button that does nothing for now. i have plans for later.
-        <div className="input-wrapper">
-            {/* search bar icon  */}
+        
+        <div className="input-wrapper flex items-center justify-center" >
+            <HiMiniQrCode size={24}/>
+
             <IoIosSearch 
-                    onClick={handleClick}
+                onClick={handleClick}
+                size={24}
             />
             <input
-                placeholder="Scan/Search Product by Code"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                // TODO: when enter pressed, make event that empties out input form 
-                onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === 'NumpadEnter') {
-                        handleClick();
-                    }
+                style={{
+                    width: '90%',
+                    height: '24px',      
+                    fontSize: '1rem',    
+                    padding: '1rem',    
+                    borderRadius: '2px',
                 }}
+            placeholder="Scan/Search Product by Code. type 1,2,3 (for testing, for now) "
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === 'NumpadEnter') {
+                    handleClick();
+                }
+            }
+            }
             />
 
-            {/* TODO: Should we remove the submit button? */}
-            {/* <button onClick={handleClick}>Search</button> */}
         </div>
     );
 };

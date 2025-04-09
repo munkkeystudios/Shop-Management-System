@@ -58,7 +58,7 @@ If you prefer to run services separately:
 
 ### Below are dependencies to keep track of:
 
-## in dashboard ran:
+## in Frontend ran:
 
 ```
 npm install react-bootstrap
@@ -66,6 +66,8 @@ npm install react-bootstrap
 npm install react-router-dom
 
 npm install react-icons --save
+
+npm install axios
 
 ```
 

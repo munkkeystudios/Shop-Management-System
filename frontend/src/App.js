@@ -13,6 +13,69 @@ import CreateProducts from "./pages/create_products";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 
+// function App() {
+//   return (
+//     <AuthProvider>
+//       <BrowserRouter>
+//         <div className="App">
+//           <Routes>
+//             {/* Public routes */}
+//             <Route path="/login" element={<Login />} />
+//             <Route path="/signup" element={<Signup />} />
+            
+//             {/* Protected routes */}
+//             <Route path="/dashboard" element={
+//               <ProtectedRoute>
+//                 <MainDashboard />
+//               </ProtectedRoute>
+//             } />
+//             <Route path="/all_products" element={
+//               <ProtectedRoute>
+//                 <AllProducts />
+//               </ProtectedRoute>
+//             } />
+//             <Route path="/inventory" element={
+//               <ProtectedRoute>
+//                 <Inventory />
+//               </ProtectedRoute>
+//             } />
+//             <Route path="/reports" element={
+//               <ProtectedRoute>
+//                 <Reports />
+//               </ProtectedRoute>
+//             } />
+//             <Route path="/create_products" element={
+//               <ProtectedRoute>
+//                 <CreateProducts />
+//               </ProtectedRoute>
+//             } />
+//             <Route path="/pos" element={
+//               <ProtectedRoute>
+//                 <Pos />
+//               </ProtectedRoute>
+//             } />
+            
+//             {/* Redirect root to login */} 
+//             {/* change navigation to /login later */}
+// {/* <<<<<<< HEAD
+//             <Route path="/" element={<Navigate to="/dashboard" replace />} />
+// =======
+//             <Route path="/" element={<Navigate to="/login" replace />} />
+// >>>>>>> 98bc7567d52c2283e785bd8250452b38d862cfd1
+//             <Route path="*" element={<Navigate to="/login" replace />} />
+//           </Routes> */}
+//           <Routes>
+//           {/* Redirect root to login */}
+//           <Route path="/" element={<Navigate to="/login" replace />} />
+//           <Route path="*" element={<Navigate to="/login" replace />} />
+//         </Routes>
+
+//         </div>
+//       </BrowserRouter>
+//     </AuthProvider>
+//   );
+// }
+
 function App() {
   return (
     <AuthProvider>
@@ -56,8 +119,7 @@ function App() {
             } />
             
             {/* Redirect root to login */} 
-            {/* change navigation to /login later */}
-            <Route path="/" element={<Navigate to="/pos" replace />} />
+            <Route path="/" element={<Navigate to="/login" replace />} />
             <Route path="*" element={<Navigate to="/login" replace />} />
           </Routes>
         </div>
@@ -65,5 +127,6 @@ function App() {
     </AuthProvider>
   );
 }
+
 
 export default App;
