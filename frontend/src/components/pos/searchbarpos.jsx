@@ -84,7 +84,7 @@ const SearchBar = ({ onProductSearch }) => {
                     padding: '1rem',    
                     borderRadius: '2px',
                 }}
-            placeholder="Scan/Search Product by Code"
+            placeholder="Scan/Search Product by Code. type 1,2,3 (for testing, for now) "
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => {

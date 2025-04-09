@@ -12,6 +12,7 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity }) => {
   
   // global sales tax
   const GST = 0.10
+  const endPayment = (totalPayable + (GST*totalPayable))
   
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -32,10 +33,10 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity }) => {
       subtotal: totalPayable,
       discount: 0, // values is hard coded for now
       gst: GST*totalPayable,
-      total: totalPayable + (GST*totalPayable),
+      total: endPayment,
       paymentMethod: paymentMethod,
-      received: 10000, // values is hard coded for now
-      returned: 4000, // values is hard coded for now
+      received: '-', // values is hard coded for now
+      returned: '-', // values is hard coded for now
       date: new Date()
     };
     
@@ -115,7 +116,7 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity }) => {
           </div>
 
           <div className="bg-light p-3 rounded d-flex justify-content-between align-items-center">
-            <h5 className="m-0 text-success">Total Payable: ${totalPayable}</h5>
+            <h5 className="m-0 text-success">Total Payable: ${endPayment}</h5>
             <Button variant="success" onClick={handlePrintReceipt}>
               Print Receipt
             </Button>
