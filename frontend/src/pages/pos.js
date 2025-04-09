@@ -9,7 +9,6 @@ import SalesTable from '../components/pos/SalesTable.js';
 import PayButton from '../components/pos/PayButton.js';
 
 
-
 const Pos = () => {
   const [searchedProduct, setSearchedProduct] = useState(null); // item found from SearchBar
   const [cartItems, setCartItems] = useState([]); // items in CartTable
@@ -90,12 +89,12 @@ const Pos = () => {
 
   // TODO: Put CartTotal + CalculateCartTotal + calculateCartQuantity into a different script
   const CartTotal = ({ cartItems }) => {
-    
+
     useEffect(() => {
       setTotalPayable(calculateCartTotal(cartItems));
       setTotalQuantity(calculateCartQuantity(cartItems)); // TODO: Find a better place to calculate TotalQuantity
-    }, [cartItems]); 
-  
+    }, [cartItems]);
+
     return (
       <div className="text-end">
         <div className="pay-value">
@@ -106,13 +105,16 @@ const Pos = () => {
 
   };
 
-  
 
-  
+  const handleBackClick = () => {
+    window.history.back();  // This takes the user back to the previous page in the browser's history
+  };
+
+
 
   return (
     <div className="app-container" style={{ display: 'flex', height: '100vh' }}>
-      
+
       {/* left section */}
       <div className="main-content" style={{ flex: '1', padding: '20px', display: 'flex', flexDirection: 'column' }}>
         <div className="bill-header" style={{
@@ -124,16 +126,33 @@ const Pos = () => {
           paddingBottom: '10px'
         }}>
 
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <span style={{
-              fontWeight: 'bold',
-              marginRight: '15px'
-            }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <button
+              style={{
+                padding: '8px 16px',
+                fontSize: '14px',
+                backgroundColor: '#007bff',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer'
+              }}
+              onClick={handleBackClick}
+            >
+              Back
+            </button>
+            <span
+              style={{
+                fontWeight: 'bold',
+                marginRight: '16px',
+                fontSize: '18px'
+              }}
+            >
               Recent Bills:
             </span>
-
             <BillTab />
           </div>
+
 
           <div>
             <CreateBillButton />
