@@ -1,0 +1,328 @@
+/* General layout for the page */
+.inventory-page {
+    display: flex;
+    height: 100vh;
+    background-color: #f7fafc;
+  }
+  
+  .inventory-content {
+    flex: 1;
+    padding: 1.5rem;
+    background-color: white;
+    margin-left: 10px; /* Adjust according to sidebar width */
+  }
+  
+  /* Styling for the top header */
+  .inventory-content h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #333;
+  }
+  
+  .inventory-content .flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  /* Button styles */
+  .bg-green-500 {
+    background-color: #00A838;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    cursor: pointer;
+  }
+  
+  .bg-green-500:hover {
+    background-color: #059669;
+  }
+  
+  input[type="text"] {
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    border: 1px solid #d1d5db;
+  }
+  
+  /* Table styling */
+  .inventory-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .inventory-table th,
+  .inventory-table td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #d1d5db;
+  }
+  
+  .inventory-table th {
+    font-weight: 700;
+    background-color: #f3f4f6;
+  }
+  
+  .inventory-table td {
+    background-color: #fff;
+  }
+  
+  /* Image styling for the product photo */
+  .inventory-photo {
+    font-size: 1.5rem;
+    text-align: center;
+  }
+  
+  /* Styling for the "eye" button in actions */
+  .eye-button {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #10b981;
+  }
+  
+  .eye-button:hover {
+    color: #059669;
+  }
+  
+  /* Styling for the selected product dialog */
+  .dialog-content {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 0.375rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-top: 1.5rem;
+  }
+  
+  .dialog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  
+  .dialog-header h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #333;
+  }
+  
+  .dialog-photo {
+    font-size: 2rem;
+    text-align: center;
+  }
+  
+  .dialog-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .dialog-barcode {
+    font-size: 1.125rem;
+    margin-top: 1rem;
+    font-weight: 700;
+  }
+  
+  .label {
+    font-weight: 600;
+    color: #333;
+  }
+  
+  /* Sidebar Styles */
+  .sidebar {
+    width: 240px;
+    background-color: #2d3748;
+    color: white;
+    padding: 1rem;
+    position: fixed;
+    height: 100%;
+  }
+  
+  .sidebar a {
+    display: block;
+    padding: 1rem;
+    text-decoration: none;
+    color: white;
+    font-size: 1.125rem;
+  }
+  
+  .sidebar a:hover {
+    background-color: #4a5568;
+  }
+  
+  /* For responsiveness, adjust the sidebar and content on smaller screens */
+  @media (max-width: 768px) {
+    .inventory-page {
+      flex-direction: column;
+    }
+    .inventory-content {
+      margin-left: 0;
+    }
+    .sidebar {
+      width: 100%;
+      height: auto;
+    }
+  }
+
+  .print-button {
+    width: 127px;
+    height: 40px;
+    border-radius: 8px;
+    padding: 12px;
+    background-color: black;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  
+  .popup-container {
+    width: 671px;
+    height: 1266px; /* You can use a rounded value for height */
+    top: 46px;
+    left: 384px;
+    gap: 40px;
+    border-radius: 24px;
+    padding: 40px;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  .popup-text-container {
+    width: 591px;
+    height: 764px;
+    border-radius: 12px;
+    border-width: 1px;
+    border-color: #d1d5db;  /* Optional: adds light border color */
+    padding: 20px;  /* Padding inside the text container */
+    background-color: #f9fafb; /* Slight background color for contrast */
+  }
+  
+  .popup-text-container .grid {
+    gap: 24px;  /* Increase gap between each row */
+  }
+  
+  .popup-text-container .flex {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .popup-text-container .font-semibold {
+    font-weight: 600;
+    color: #4b5563;  /* Dark gray color for labels */
+    font-size: 16px;  /* Larger font size for better readability */
+  }
+  
+  .popup-text-container span {
+    font-size: 16px;
+    color: #1f2937;  /* Darker text for values */
+  }
+  
+  .text-center {
+    text-align: center;
+    margin-top: 24px; /* Increased margin for spacing */
+  }
+  
+  .text-center span {
+    font-size: 18px;  /* Slightly larger font size for barcode */
+    color: #9ca3af;  /* Lighter gray for barcode */
+  }
+  
+  .inventory-photo {
+    width: 53px;
+    height: 48px;
+    gap: 12px;
+    padding-top: 16px;
+    padding-right: 24px;
+    padding-bottom: 16px;
+    padding-left: 24px;
+    border-bottom-width: 1px;
+    
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .product-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;  /* Adjust the image fit */
+  }
+  
+  .product-image-container {
+    width: 591px;
+    height: 183px;
+    display: flex;
+    justify-content: center;
+    align-items: center;  /* Center the image within the container */
+  }
+  
+  .product-image-container img {
+    width: 204px;
+    height: 183px;
+    justify-content: center;
+  align-items: center;
+    object-fit: cover;  /* Ensure the image is properly scaled to fit */
+  }
+  
+  .text-xl {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 150%;
+    letter-spacing: 0;
+  }
+  
+  .create-new-product-button {
+    width: 161px;
+    height: 40px;
+    gap: 10px;
+    border-radius: 8px;
+    padding: 12px;
+    background-color: #4CAF50; /* Optional: Set the background color */
+    color: white; /* Optional: Set the text color */
+    font-weight: 600; /* Optional: Set the font weight */
+    border: none; /* Optional: Remove border */
+    cursor: pointer; /* Optional: Change cursor on hover */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .search-bar {
+    width: 359px;
+    height: 40px;
+    gap: 10px;
+    padding-top: 15px;
+    padding-right: 20px;
+    padding-bottom: 15px;
+    padding-left: 20px;
+    border-radius: 8px;
+    border: 1px solid #ddd; /* Optional: Add border color */
+    font-size: 16px; /* Optional: Set font size */
+    font-weight: 400; /* Optional: Set font weight */
+    background-color: #f9f9f9; /* Optional: Light background color */
+  }
+  
+  .search-bar:focus {
+    outline: none; /* Removes the default focus outline */
+    border-color: #4CAF50; /* Optional: Change border color on focus */
+  }
+  
+  .print-label-text {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 150%;
+    letter-spacing: 0%;
+    vertical-align: middle;
+    display: inline-flex;  /* Ensures the text and icon are inline */
+    white-space: nowrap;   /* Prevents the text from wrapping */
+    align-items: center;   /* Ensures the text and icon are vertically aligned */
+  }
+  
+  
