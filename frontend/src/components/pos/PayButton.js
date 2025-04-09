@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { Button, Modal, Form, Row, Col } from 'react-bootstrap';
+import { generateReceipt } from './generateReceipt';
+
 // the content of the Modal is mostly bootstrap because i plan on changing it in the future.
 
 
@@ -11,7 +13,31 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity }) => {
   const handleShow = () => setShow(true);
 
   const handlePrintReceipt = () => {
-    console.log("Printing receipt...");
+    
+    const transactionData = {
+      receiptNumber: '12336',
+      tokenType: 'Credit',
+      customerName: 'Walk in Customer',
+      warehouse: 'WH Multan',
+      items: [
+        { name: 'Baggy Pants Zara Men', price: 1200, quantity: 1, amount: 1200 },
+        { name: 'Zara Men', price: 1200, quantity: 1, amount: 1200 },
+        { name: 'Zara Baby Suit', price: 1200, quantity: 1, amount: 1200 },
+        { name: 'Jacket', price: 400, quantity: 1, amount: 400 }
+      ],
+      subtotal: 4000,
+      discount: 0,
+      gst: 2000,
+      total: 6000,
+      paymentMethod: 'Cash Payment',
+      received: 10000,
+      returned: 4000,
+      date: new Date()
+    };
+    
+    // Generate and download receipt
+    generateReceipt(transactionData);
+    
     handleClose();
   };
 
