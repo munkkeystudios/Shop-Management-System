@@ -44,7 +44,6 @@ export const generateReceipt = (transactionData) => {
            ${receiptNumber}
     -------------------------
     
-    Token Type                ${tokenType}
     Customer Name             ${customerName}
     Warehouse                 ${warehouse}
     

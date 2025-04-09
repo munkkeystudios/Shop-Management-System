@@ -8,30 +8,34 @@ import { generateReceipt } from './generateReceipt';
 const PayButton = ({ cartItems, totalPayable, totalQuantity }) => {
   const [show, setShow] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('cash'); // default is always cash
-
+  const [billNumber, setBillNumber] = useState('12336'); // TODO: bill Number needs to update
+  
+  // global sales tax
+  const GST = 0.10
+  
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
   const handlePrintReceipt = () => {
     
+    // TODO: improve the code below, its just me adding things to the handle
     const transactionData = {
-      receiptNumber: '12336',
-      tokenType: 'Credit',
+      receiptNumber: billNumber,
       customerName: 'Walk in Customer',
-      warehouse: 'WH Multan',
-      items: [
-        { name: 'Baggy Pants Zara Men', price: 1200, quantity: 1, amount: 1200 },
-        { name: 'Zara Men', price: 1200, quantity: 1, amount: 1200 },
-        { name: 'Zara Baby Suit', price: 1200, quantity: 1, amount: 1200 },
-        { name: 'Jacket', price: 400, quantity: 1, amount: 400 }
-      ],
-      subtotal: 4000,
-      discount: 0,
-      gst: 2000,
-      total: 6000,
-      paymentMethod: 'Cash Payment',
-      received: 10000,
-      returned: 4000,
+      warehouse: 'WH Lahore',
+      items: cartItems.map(item => ({
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+        amount: item.subtotal  //TODO: change attribute of subtotal eventually
+      })),
+      subtotal: totalPayable,
+      discount: 0, // values is hard coded for now
+      gst: GST*totalPayable,
+      total: totalPayable + (GST*totalPayable),
+      paymentMethod: paymentMethod,
+      received: 10000, // values is hard coded for now
+      returned: 4000, // values is hard coded for now
       date: new Date()
     };
     
