@@ -87,7 +87,6 @@ const SearchBar = ({ onProductSearch }) => {
             placeholder="Scan/Search Product by Code"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-                // TODO: when enter pressed, make event that empties out input form
             onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === 'NumpadEnter') {
                     handleClick();
@@ -96,8 +95,6 @@ const SearchBar = ({ onProductSearch }) => {
             }
             />
 
-            {/* TODO: Should we remove the submit button? */}
-            {/* <button onClick={handleClick}>Search</button> */}
         </div>
     );
 };
