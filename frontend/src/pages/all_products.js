@@ -1,6 +1,3 @@
-
-
-
 // To whoever is reading this. i have added starter code that you need to use. (scrum master moment)
 // we need to show the Tas, that were was a certain level of agreeement on how to implement the frontend. + we need this for future pages
 // besides the card you dont need to use any more bootstrap. https://react-bootstrap.github.io/docs/components/cards
@@ -13,65 +10,76 @@
 
 
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import './inventory.css';  // Ensure your CSS path is correct
 import Sidebar from '../components/sidebar';  // Ensure the sidebar import path is correct
 
-// Import images for all products
-import sodaImage from '../images/soda.jpeg';  // Soda Can image
-import chocolateImage from '../images/chocolate.jpeg';  // Chocolate Bar image (update path if needed)
-import milkImage from '../images/milk.jpg';  // Milk Carton image (update path if needed)
-
-const products = [
-  {
-    id: 1,
-    name: 'Soda Can',
-    photo: sodaImage,  // Use the imported image for the Soda Can
-    details: {
-      type: 'Drink',
-      brand: 'FizzUp',
-      price: '₹35',
-      weight: '330ml',
-      barcode: 'ABC1234567890',
-      qty: 50,  // Added quantity for product
-    }
-  },
-  {
-    id: 2,
-    name: 'Chocolate Bar',
-    photo: chocolateImage,  // Use the imported image for Chocolate Bar
-    details: {
-      type: 'Snack',
-      brand: 'ChocoLuxe',
-      price: '₹50',
-      weight: '100g',
-      barcode: 'XYZ9876543210',
-      qty: 30,  // Added quantity for product
-    }
-  },
-  {
-    id: 3,
-    name: 'Milk Carton',
-    photo: milkImage,  // Use the imported image for Milk Carton
-    details: {
-      type: 'Dairy',
-      brand: 'MilkyWay',
-      price: '₹25',
-      weight: '500ml',
-      barcode: 'LMN4561237890',
-      qty: 20,  // Added quantity for product
-    }
-  },
-];
+//
+import sodaImage from '../images/soda.jpeg';
+import chocolateImage from '../images/chocolate.jpeg';
+import milkImage from '../images/milk.jpg';
+import defaultProductImage from '../images/default-product-image.jpg'; // You might need to add this file
 
 const Inventory = () => {
+  //get the state
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  
+  //pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
-  // Filter products based on search term
+  //fetching on component mount or page change
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        // Get token from localStorage
+        const token = localStorage.getItem('token');
+        
+        if (!token) {
+          // Redirect to login if not authenticated
+          window.location.href = '/login';
+          return;
+        }
+        
+        const response = await axios.get(`/api/products?page=${currentPage}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        
+        setProducts(response.data.data);
+        setTotalPages(response.data.totalPages || 1);
+        setLoading(false);
+      } catch (err) {
+        console.error('Error fetching products:', err);
+        setError('Failed to load products. Please try again later.');
+        setLoading(false);
+      }
+    };
+    
+    fetchProducts();
+  }, [currentPage]); //re fetch/ reload on page change
+
+  //filtering products
   const filteredProducts = products.filter(product =>
     product.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const getProductImage = (product) => {
+    if (product.images && product.images.length > 0) {
+      return product.images[0]; //first image of prodcuts to be shown
+    }
+    if (product.name.toLowerCase().includes('soda')) return sodaImage;
+    if (product.name.toLowerCase().includes('chocolate')) return chocolateImage;
+    if (product.name.toLowerCase().includes('milk')) return milkImage;
+    return defaultProductImage; //fallback to deault img
+  };
 
   return (
     <div className="inventory-page">
@@ -124,32 +132,72 @@ const Inventory = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredProducts.map((product) => (
-                <tr key={product.id} className="product-row">
-                  <td className="py-2">{product.id}</td>
-                  <td className="py-2 inventory-photo">
-                    {/* Display the photo */}
-                    {product.photo && (
-                      <img src={product.photo} alt={product.name} className="product-img" />
-                    )}
-                  </td>
-                  <td className="py-2">{product.name}</td>
-                  <td className="py-2">{product.details.type}</td>
-                  <td className="py-2">{product.details.barcode}</td>
-                  <td className="py-2">{product.details.price}</td>
-                  <td className="py-2">{product.details.qty}</td>
-                  <td className="py-2">
-                    <button
-                      className="eye-button"
-                      onClick={() => setSelectedProduct(product)}
-                    >
-                      👁️
-                    </button>
-                  </td>
+              {loading ? (
+                <tr>
+                  <td colSpan="8" className="text-center py-4">Loading products...</td>
                 </tr>
-              ))}
+              ) : error ? (
+                <tr>
+                  <td colSpan="8" className="text-center py-4 text-red-500">{error}</td>
+                </tr>
+              ) : filteredProducts.length === 0 ? (
+                <tr>
+                  <td colSpan="8" className="text-center py-4">No products found</td>
+                </tr>
+              ) : (
+                filteredProducts.map((product) => (
+                  <tr key={product._id} className="product-row">
+                    <td className="py-2">{product._id.substring(0, 6)}</td>
+                    <td className="py-2 inventory-photo">
+                      <img 
+                        src={getProductImage(product)} 
+                        alt={product.name} 
+                        className="product-img" 
+                      />
+                    </td>
+                    <td className="py-2">{product.name}</td>
+                    <td className="py-2">{product.category ? product.category.name : 'Uncategorized'}</td>
+                    <td className="py-2">{product.barcode}</td>
+                    <td className="py-2">₹{product.price}</td>
+                    <td className="py-2">{product.quantity}</td>
+                    <td className="py-2">
+                      <button
+                        className="eye-button"
+                        onClick={() => setSelectedProduct(product)}
+                      >
+                        👁️
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
+
+          {/* Pagination controls */}
+          {!loading && !error && totalPages > 1 && (
+            <div className="flex justify-center mt-6">
+              <button 
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className={`px-4 py-2 mx-1 rounded ${currentPage === 1 ? 'bg-gray-300' : 'bg-blue-500 text-white'}`}
+              >
+                Previous
+              </button>
+              
+              <span className="px-4 py-2">
+                Page {currentPage} of {totalPages}
+              </span>
+              
+              <button 
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className={`px-4 py-2 mx-1 rounded ${currentPage === totalPages ? 'bg-gray-300' : 'bg-blue-500 text-white'}`}
+              >
+                Next
+              </button>
+            </div>
+          )}
         </div>
 
         {selectedProduct && (
@@ -176,46 +224,52 @@ const Inventory = () => {
               >
                 {/* Product Icon */}
                 <img
-                  src={selectedProduct.photo}
+                  src={getProductImage(selectedProduct)}
                   alt={selectedProduct.name}
-                  style={{ width: '204px', height: '183px', objectFit: 'cover' }}  // Center image and ensure correct dimensions
+                  style={{ width: '204px', height: '183px', objectFit: 'cover' }}
                 />
               </div>
 
               <div className="popup-text-container bg-gray-50 p-4 rounded-lg border">
                 <div className="grid grid-cols-2 gap-8 mb-4">
                   <div className="flex justify-between mb-4">
-                    <span className="font-semibold">Type</span>
-                    <span>{selectedProduct.details.type}</span>
+                    <span className="font-semibold">Category</span>
+                    <span>{selectedProduct.category ? selectedProduct.category.name : 'Uncategorized'}</span>
                   </div>
                   <div className="flex justify-between mb-4">
                     <span className="font-semibold">Product Code</span>
-                    <span>{selectedProduct.id}</span>
+                    <span>{selectedProduct._id.substring(0, 8)}</span>
                   </div>
                   <div className="flex justify-between mb-4">
                     <span className="font-semibold">Product</span>
                     <span>{selectedProduct.name}</span>
                   </div>
                   <div className="flex justify-between mb-4">
-                    <span className="font-semibold">Brand</span>
-                    <span>{selectedProduct.details.brand}</span>
+                    <span className="font-semibold">Supplier</span>
+                    <span>{selectedProduct.supplier ? selectedProduct.supplier.name : 'None'}</span>
                   </div>
                   <div className="flex justify-between mb-4">
-                    <span className="font-semibold">Category</span>
-                    <span>{selectedProduct.details.type}</span>
+                    <span className="font-semibold">Status</span>
+                    <span>{selectedProduct.status || 'Active'}</span>
                   </div>
                   <div className="flex justify-between mb-4">
                     <span className="font-semibold">Price</span>
-                    <span>{selectedProduct.details.price}</span>
+                    <span>₹{selectedProduct.price}</span>
                   </div>
                   <div className="flex justify-between mb-4">
                     <span className="font-semibold">Stock</span>
-                    <span>{selectedProduct.details.qty}</span>
+                    <span>{selectedProduct.quantity}</span>
                   </div>
+                  {selectedProduct.costPrice && (
+                    <div className="flex justify-between mb-4">
+                      <span className="font-semibold">Cost Price</span>
+                      <span>₹{selectedProduct.costPrice}</span>
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="text-center mt-4">
-                <span>{selectedProduct.details.barcode}</span>
+                <span>{selectedProduct.barcode}</span>
               </div>
             </div>
           </div>
