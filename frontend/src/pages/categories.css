@@ -97,3 +97,93 @@ th, td {
 .create-btn:hover {
     background-color: #218838;
 }
+
+.category-layout {
+    display: flex;
+}
+
+.category-page {
+    flex-grow: 1; /* This will make the main content take up the remaining space */
+    padding: 20px;
+    margin-left: 240px; /* Adjust this value based on the sidebar width */
+}
+
+.breadcrumb {
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.category-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.search-box {
+    padding: 8px;
+    font-size: 14px;
+}
+
+.category-table {
+    margin-top: 20px;
+}
+
+.table th,
+.table td {
+    padding: 10px;
+}
+
+.pagination {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.create-category {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.create-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+    margin-bottom: 10px;
+}
+
+.modal-actions button {
+    margin-right: 10px;
+}
+
+.search-box {
+    padding: 8px;
+    width: 200px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin: 10px 0;
+}
