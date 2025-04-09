@@ -1,18 +1,3 @@
-
-
-
-// To whoever is reading this. i have added starter code that you need to use. (scrum master moment)
-// we need to show the Tas, that were was a certain level of agreeement on how to implement the frontend. + we need this for future pages
-// besides the card you dont need to use any more bootstrap. https://react-bootstrap.github.io/docs/components/cards
-// You can use as much html as u want within the card.
-
-
-// if you are facing an issue, feel free to text me. i will probably be extremely confused/unhelpful 
-// but its free and whats there to loose besides my respect for you. 
-// delete this after reading.
-
-
-
 import React, { useState } from 'react';
 import Sidebar from '../components/sidebar';  // Ensure the sidebar import path is correct
 import './categories.css';

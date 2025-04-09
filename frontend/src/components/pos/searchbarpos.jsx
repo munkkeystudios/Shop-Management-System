@@ -84,18 +84,6 @@ const SearchBar = ({ onProductSearch }) => {
             />
         </div>
 
-        // <div className="flex">
-        //     <input
-        //         type="text"
-        //         placeholder="Search by product ID..."
-        //         value={input}
-        //         onChange={(e) => setInput(e.target.value)}
-        //         className="border p-2"
-        //     />
-        //     <button onClick={handleClick}>
-        //         <IoIosSearch />
-        //     </button>
-        // </div>
     );
 };
 
