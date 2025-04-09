@@ -9,6 +9,7 @@ import Reports from "./pages/reports";
 import Pos from "./pages/pos";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import CategoryPage from "./pages/categories";
 import CreateProducts from "./pages/create_products";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -100,6 +101,11 @@ function App() {
             <Route path="/inventory" element={
               <ProtectedRoute>
                 <Inventory />
+              </ProtectedRoute>
+            } />
+            <Route path="/categories" element={
+              <ProtectedRoute>
+                <CategoryPage />
               </ProtectedRoute>
             } />
             <Route path="/reports" element={

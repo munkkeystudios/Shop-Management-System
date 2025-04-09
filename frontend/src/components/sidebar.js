@@ -152,6 +152,16 @@ function ToolsSidebar() {
                         onClick={() => handleItemClick("Inventory")}
                     />
                 </Link>
+                <Link to="/categories" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <SideBar.Item
+                        title={
+                            <div >
+                                <LuPackageSearch size={16} /> categories
+                            </div>
+                        }
+                        onClick={() => handleItemClick("categories")}
+                    />
+                </Link>
             </SideBar.Dropdown>
 
             {/* For Nav.Item components */}
