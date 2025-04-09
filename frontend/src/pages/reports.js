@@ -38,7 +38,7 @@ const Reports = () => {
         },
       });
 
-      const supplierResult = await axios.get('/api/suppliers?name=Packages', {
+      const supplierResult = await axios.get('/api/suppliers?name=Best Supplies Co.', {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
