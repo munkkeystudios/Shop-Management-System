@@ -38,11 +38,11 @@ const Inventory = () => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        // Get token from localStorage
+        //get token
         const token = localStorage.getItem('token');
         
         if (!token) {
-          // Redirect to login if not authenticated
+          //not authenticated, redicrect to login
           window.location.href = '/login';
           return;
         }

@@ -68,7 +68,6 @@ const ProductSchema = new mongoose.Schema({
   timestamps: true //to automatically add createdat and updatedat
 });
 
-// Create indexes for faster queries
 ProductSchema.index({ name: 'text', barcode: 'text' });
 ProductSchema.index({ category: 1 });
 ProductSchema.index({ supplier: 1 });
@@ -79,10 +78,7 @@ ProductSchema.virtual('isLowStock').get(function() {
   return this.quantity <= this.minStockLevel;
 });
 
-// Pre-save hook for additional validations or transformations undertand this
 ProductSchema.pre('save', function(next) {
-  // You can add custom logic here
-  // For example, if price is updated, log the change, etc.
   next();
 });
 

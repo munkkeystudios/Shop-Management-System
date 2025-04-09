@@ -27,16 +27,13 @@
   
   /* Button styles */
   .bg-green-500 {
-    background-color: #00A838;
+    background-color: #3B82F6;
     color: white;
     padding: 0.5rem 1rem;
     border-radius: 0.375rem;
     cursor: pointer;
   }
-  
-  .bg-green-500:hover {
-    background-color: #059669;
-  }
+
   
   input[type="text"] {
     padding: 0.5rem 1rem;
@@ -283,7 +280,7 @@
     gap: 10px;
     border-radius: 8px;
     padding: 12px;
-    background-color: #4CAF50; /* Optional: Set the background color */
+    background-color: #3B82F6; /* Optional: Set the background color */
     color: white; /* Optional: Set the text color */
     font-weight: 600; /* Optional: Set the font weight */
     border: none; /* Optional: Remove border */
@@ -310,7 +307,7 @@
   
   .search-bar:focus {
     outline: none; /* Removes the default focus outline */
-    border-color: #4CAF50; /* Optional: Change border color on focus */
+    border-color: #3B82F6; /* Optional: Change border color on focus */
   }
   
   .print-label-text {

@@ -19,7 +19,6 @@ const CategorySchema = new mongoose.Schema({
   timestamps: true //to add createdAt and updatedAt
 });
 
-//creating or getting the existing model form the database
 let Category;
 try {
   Category = mongoose.models.Category || mongoose.model('Category', CategorySchema);
