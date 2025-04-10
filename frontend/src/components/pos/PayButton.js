@@ -1,99 +1,68 @@
 import { useState } from 'react';
 import { Button, Modal, Form, Row, Col } from 'react-bootstrap';
 import { generateReceipt } from './generateReceipt';
-import axios from 'axios';
+import { salesAPI } from '../../services/api'; // Use the salesAPI for creating a sale
 
 // the content of the Modal is mostly bootstrap because i plan on changing it in the future.
 
-
-const PayButton = ({ cartItems, totalPayable, totalQuantity }) => {
+const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateBillNumber }) => {
   const [show, setShow] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('cash'); // default is always cash
-  const [billNumber, setBillNumber] = useState('12336'); // TODO: bill Number needs to update
 
   // global sales tax
-  const GST = 0.10
-  const endPayment = Number((totalPayable + (GST * totalPayable)).toFixed(2));
+  const GST = 0.10;
+  const endPayment = Number((totalPayable + GST * totalPayable).toFixed(2));
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  const fetchById = async (id) => {
-    try {
-        const token = localStorage.getItem('token');
-
-        if (!token) {
-            window.location.href = '/login';
-            return;
-        }
-
-        const response = await axios.get(`/api/products/${id}`, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
-
-        const product = response.data.data;
-
-        return product;
-
-        } catch (error) {
-            console.error('Error fetching product:', error.response?.data?.message || error.message);
-            return null;
-        }
-    };
-
   const handlePrintReceipt = async () => {
     try {
-      // For each item in cartItems, update the quantity in backend
-      for (const item of cartItems) {
-        const product = await fetchById(item.id); // get latest product info from backend
-
-        if (!product) {
-          console.error(`Product with id ${item.id} not found`);
-          continue;
-        }
-
-        const newQuantity = product.quantity - item.quantity;
-
-        await axios.put(`/api/products/${item.id}`, {
-          quantity: newQuantity
-        }, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-          }
-        });
-      }
-
-      const transactionData = {
-        receiptNumber: billNumber,
+      // Prepare the sale data
+      const saleData = {
+        billNumber: billNumber, 
         customerName: 'Walk in Customer',
-        warehouse: 'WH Lahore',
-        items: cartItems.map(item => ({
-          name: item.name,
-          price: item.price,
+        customerPhone: 'N/A',
+        items: cartItems.map((item) => ({
+          product: item.id, // Use the product ID
           quantity: item.quantity,
-          amount: item.subtotal
+          price: item.price, // Include the price of the item
+          subtotal: item.subtotal, // Include the subtotal of the item
         })),
         subtotal: totalPayable,
         discount: 0,
-        gst: Number((GST * totalPayable).toFixed(2)),
+        tax: Number((GST * totalPayable).toFixed(2)),
         total: endPayment,
-        paymentMethod: paymentMethod,
-        received: '-',
-        returned: '-',
-        date: new Date()
+        paymentMethod,
+        amountPaid: endPayment,
+        change: 0,
+        notes: 'Thank you for your purchase!',
       };
 
-      generateReceipt(transactionData);
+      // Create the sale via the API
+      const response = await salesAPI.create(saleData);
+      console.log('Sale created successfully:', response.data);
+
+      // Update the billNumber for the next transaction
+      updateBillNumber(billNumber + 1); // Increment the billNumber
+
+      // Generate the receipt
+      generateReceipt({
+        ...saleData,
+        items: cartItems.map((item) => ({
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
+          amount: item.subtotal,
+        })),
+        date: new Date(),
+      });
 
       handleClose();
-
     } catch (error) {
       console.error('Error during checkout:', error.response?.data?.message || error.message);
     }
   };
-
 
   return (
     <>
@@ -135,10 +104,7 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity }) => {
           {paymentMethod === 'card' && (
             <div className="mb-4">
               <h5>Invoice Number</h5>
-              <Form.Control
-                type="text"
-                placeholder="Enter Invoice Number"
-              />
+              <Form.Control type="text" placeholder="Enter Invoice Number" />
             </div>
           )}
 
@@ -150,12 +116,10 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity }) => {
             </Row>
             <Row className="mb-2">
               <Col>GST</Col>
-              {/* TODO: hard coded for now change this later */}
               <Col className="text-end">10%</Col>
             </Row>
             <Row className="mb-2">
               <Col>Discount</Col>
-              {/* TODO: hard coded for now change this later */}
               <Col className="text-end">0</Col>
             </Row>
             <Row className="mb-2 fw-bold">
@@ -174,6 +138,6 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity }) => {
       </Modal>
     </>
   );
-}
+};
 
 export default PayButton;

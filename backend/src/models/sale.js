@@ -30,7 +30,7 @@ const SaleItemSchema = new mongoose.Schema({
 
 const SaleSchema = new mongoose.Schema({
   billNumber: {
-    type: String,
+    type: Number,
     required: true,
     unique: true
   },

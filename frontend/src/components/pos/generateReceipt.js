@@ -8,14 +8,14 @@
 export const generateReceipt = (transactionData) => {
   // Destructure transaction data with defaults
   const {
-    receiptNumber = '12336',
+    billNumber = 0,
     tokenType = 'Credit',
     customerName = 'Walk in Customer',
     warehouse = 'WH Multan',
     items = [],
     subtotal = 0,
     discount = 0,
-    gst = 0,
+    tax = 0, // Replaced gst with tax
     total = 0,
     paymentMethod = 'Cash Payment',
     received = 0,
@@ -41,7 +41,7 @@ export const generateReceipt = (transactionData) => {
     ${formattedDate}
     
     ------- Receipt# -------
-           ${receiptNumber}
+           ${billNumber}
     -------------------------
     
     Customer Name             ${customerName}
@@ -67,7 +67,7 @@ export const generateReceipt = (transactionData) => {
     ----------------------------------------
     Subtotal                         ${subtotal.toString().padStart(7, ' ')}
     Discount                         ${discount.toString().padStart(7, ' ')}
-    GST                              ${gst.toString().padStart(7, ' ')}
+    Tax                              ${tax.toString().padStart(7, ' ')}  <!-- Updated label -->
     
     Total                            ${total.toString().padStart(7, ' ')}
     
@@ -92,9 +92,7 @@ export const generateReceipt = (transactionData) => {
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
-  link.download = `Receipt_${receiptNumber}_${date.getTime()}.txt`;
-
-
+  link.download = `Receipt_${billNumber}_${date.getTime()}.txt`;
 
   // Trigger download
   document.body.appendChild(link);

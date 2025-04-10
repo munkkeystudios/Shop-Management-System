@@ -1,11 +1,9 @@
 import { Tabs, Tab } from 'react-bootstrap';
 
-function BillTab() {
+function BillTab({ billNumber }) {
   return (
-    <Tabs defaultActiveKey="#12336" id="bill-tab">
-      <Tab eventKey="#12335" title="#12335">
-      </Tab>
-      <Tab eventKey="#12336" title="#12336">
+    <Tabs defaultActiveKey={`#${billNumber}`} id="bill-tab">
+      <Tab eventKey={`#${billNumber}`} title={`#${billNumber}`}>
       </Tab>
     </Tabs>
   );
