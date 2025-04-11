@@ -6,6 +6,7 @@ import logoImage from '../images/logo-small.png';
 import { RiShoppingBag4Line } from "react-icons/ri";
 import { LuPackage,LuPackagePlus, LuPackageSearch  } from "react-icons/lu";
 import { HiOutlineDocumentReport } from "react-icons/hi";
+import { FiUsers } from "react-icons/fi";
 
 // sidebar layout:
 const SideBar = ({ children }) => {
@@ -164,7 +165,12 @@ function ToolsSidebar() {
                 </Link>
             </SideBar.Dropdown>
 
-            {/* For Nav.Item components */}
+            <Nav.Item style={{ padding: '10px 15px', textAlign: 'left', paddingLeft: '30px' }}>
+                <Link to="/all_users" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <FiUsers size={16} /> Users
+                </Link>
+            </Nav.Item>
+
             <Nav.Item style={{
                 padding: '10px 15px',
                 textAlign: 'left',
