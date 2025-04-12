@@ -4,14 +4,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import logoImage from '../images/logo-small.png';
 import { RiShoppingBag4Line } from "react-icons/ri";
-import { LuPackage,LuPackagePlus, LuPackageSearch  } from "react-icons/lu";
+import { LuPackage, LuPackagePlus, LuPackageSearch } from "react-icons/lu";
 import { HiOutlineDocumentReport } from "react-icons/hi";
 import { FiUsers } from "react-icons/fi";
 
 // sidebar layout:
 const SideBar = ({ children }) => {
     return (
-        <Nav 
+        <Nav
             className="flex-column"
             style={{
                 width: '270px',
@@ -59,7 +59,7 @@ const SideBarDropdown = ({ title, children }) => {
 // properties for each item in sidebar
 const SideBarItem = ({ title, onClick }) => {
     return (
-        <Nav.Item 
+        <Nav.Item
             onClick={onClick}
             style={{
                 cursor: 'pointer',
@@ -119,10 +119,10 @@ function ToolsSidebar() {
             </Nav.Item>
 
             <SideBar.Dropdown title={
-                    <div style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <LuPackage size={16}/>Products  (+)
-                    </div>
-                }>
+                <div style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <LuPackage size={16} />Products  (+)
+                </div>
+            }>
                 <Link to="/all_products" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <SideBar.Item
                         title={
@@ -165,11 +165,36 @@ function ToolsSidebar() {
                 </Link>
             </SideBar.Dropdown>
 
-            <Nav.Item style={{ padding: '10px 15px', textAlign: 'left', paddingLeft: '30px' }}>
+            <SideBar.Dropdown
+                title={
+                    <div style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <FiUsers size={16} /> Users (+)
+                    </div>
+                }
+            >
                 <Link to="/all_users" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <FiUsers size={16} /> Users
+                    <SideBar.Item
+                        title={
+                            <div>
+                                <FiUsers size={16} /> All Users
+                            </div>
+                        }
+                        onClick={() => handleItemClick("All Users")}
+                    />
                 </Link>
-            </Nav.Item>
+                {/* uncomment this to create user page */}
+                {/* <Link to="/create_user" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <SideBar.Item
+                        title={
+                            <div>
+                                replace this icon with the one you want 
+                                <FiUsers size={16} /> Create User
+                            </div>
+                        }
+                        onClick={() => handleItemClick("Create User")}
+                    />
+                </Link> */}
+            </SideBar.Dropdown>
 
             <Nav.Item style={{
                 padding: '10px 15px',
