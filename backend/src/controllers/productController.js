@@ -145,7 +145,8 @@ exports.createProduct = async (req, res) => {
       status,
       costPrice,
       taxRate,
-      minStockLevel
+      minStockLevel,
+      discountRate
     } = req.body;
     
     //make sure these fields are always provided
@@ -189,14 +190,15 @@ exports.createProduct = async (req, res) => {
       barcode,
       description,
       price,
-      quantity: quantity || 0,
+      quantity,
       category,
       supplier,
-      images: images || [],
-      status: status || 'active',
+      images,
+      status,
       costPrice,
       taxRate,
-      minStockLevel
+      minStockLevel,
+      discountRate
     });
     
     await product.populate('category', 'name');
@@ -232,7 +234,8 @@ exports.updateProduct = async (req, res) => {
       status,
       costPrice,
       taxRate,
-      minStockLevel
+      minStockLevel,
+      discountRate
     } = req.body;
     
     //first find the product
@@ -242,6 +245,14 @@ exports.updateProduct = async (req, res) => {
       return res.status(404).json({
         success: false,
         message: 'Product not found'
+      });
+    }
+    
+    //validate discout rate
+    if (discountRate !== undefined && (discountRate < 0 || discountRate > 100)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Discount rate must be between 0 and 100'
       });
     }
     
@@ -290,7 +301,8 @@ exports.updateProduct = async (req, res) => {
       status: status !== undefined ? status : product.status,
       costPrice: costPrice !== undefined ? costPrice : product.costPrice,
       taxRate: taxRate !== undefined ? taxRate : product.taxRate,
-      minStockLevel: minStockLevel !== undefined ? minStockLevel : product.minStockLevel
+      minStockLevel: minStockLevel !== undefined ? minStockLevel : product.minStockLevel,
+      discountRate: discountRate !== undefined ? discountRate : product.discountRate
     };
     
     //update laststocked if quantity changed

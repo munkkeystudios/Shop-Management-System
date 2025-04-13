@@ -5,52 +5,93 @@ exports.createSale = async (req, res) => {
     try {
         const {
             billNumber,
-            customerName,
-            customerPhone,
+            customer,
             items,
-            subtotal,
-            discount,
-            tax,
-            total,
             paymentMethod,
             amountPaid,
-            change,
             notes
         } = req.body;
 
         //check if items selected
         if (!items || !Array.isArray(items) || items.length === 0) {
-            return res.status(400).json({ message: 'Sale items are required' });
+            return res.status(400).json({ 
+                success: false,
+                message: 'Sale items are required' 
+            });
         }
+
+        const processedItems = [];
+        let subtotal = 0;
+        let totalDiscount = 0;
+        let totalTax = 0;
 
         //check if product exists and has enough stock
         for (const item of items) {
             const product = await Product.findById(item.product);
             if (!product) {
-                return res.status(404).json({ message: `Product ${item.product} not found` });
+                return res.status(404).json({ 
+                    success: false,
+                    message: `Product ${item.product} not found` 
+                });
             }
             if (product.quantity < item.quantity) {
                 return res.status(400).json({ 
+                    success: false,
                     message: `Insufficient stock for product ${product.name}. Available: ${product.quantity}` 
                 });
             }
+
+            //item price with product discount
+            const originalPrice = product.price;
+            const discountRate = product.discountRate;
+            const effectivePrice = originalPrice - (originalPrice * discountRate / 100);
+            const itemDiscount = (originalPrice - effectivePrice) * item.quantity;
+            
+            const taxAmount = (effectivePrice * product.taxRate / 100) * item.quantity;
+            
+            const itemSubtotal = effectivePrice * item.quantity;
+            
+            const processedItem = {
+                product: item.product,
+                quantity: item.quantity,
+                price: originalPrice,
+                productDiscountRate: discountRate,
+                effectivePrice: effectivePrice,
+                subtotal: itemSubtotal
+            };
+            
+            processedItems.push(processedItem);
+            subtotal += itemSubtotal;
+            totalDiscount += itemDiscount;
+            totalTax += taxAmount;
+            
             //update product quantity
             product.quantity -= item.quantity;
             await product.save();
         }
 
+        //final amounts
+        const total = subtotal + totalTax;
+        
+        const paymentStatus = amountPaid >= total ? 'paid' : (amountPaid > 0 ? 'partial' : 'pending');
+        
+        const change = Math.max(0, amountPaid - total);
+
         //create sale
         const sale = new Sale({
             billNumber,
-            customerName,
-            customerPhone,
-            items,
+            customer: {
+                name: customer?.name ,
+                phone: customer?.phone ,
+                email: customer?.email 
+            },
+            items: processedItems,
             subtotal,
-            discount,
-            tax,
+            discount: totalDiscount,
+            tax: totalTax,
             total,
             paymentMethod,
-            paymentStatus: amountPaid >= total ? 'paid' : 'partial',
+            paymentStatus,
             amountPaid,
             change,
             notes,
@@ -58,10 +99,19 @@ exports.createSale = async (req, res) => {
         });
 
         await sale.save();
-        res.status(201).json(sale);
+        
+        res.status(201).json({
+            success: true,
+            message: 'Sale created successfully',
+            data: sale
+        });
     } catch (error) {
         console.error('Create sale error:', error);
-        res.status(500).json({ message: 'Error creating sale', error: error.message });
+        res.status(500).json({ 
+            success: false,
+            message: 'Error creating sale', 
+            error: error.message 
+        });
     }
 };
 

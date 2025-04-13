@@ -22,14 +22,18 @@ const SearchBar = ({ onProductSearch }) => {
             });
 
             const product = response.data.data;
+            
+            const discountRate = product.discountRate;
+            const originalPrice = product.price;
+            const effectivePrice = originalPrice * (1 - discountRate / 100);
 
             const formattedProduct = {
                 id: product._id,
                 name: product.name,
                 price: product.price,
-                discount: 0,
+                discount: discountRate,
                 quantity: 1,
-                subtotal: product.price * 1,
+                subtotal: effectivePrice * 1,
                 image: product.images.length > 0 ? product.images[0] : 'place-holder'
             };
 

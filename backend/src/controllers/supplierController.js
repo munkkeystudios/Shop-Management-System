@@ -20,14 +20,14 @@ exports.getAllSuppliers = async (req, res) => {
 exports.getSupplierById = async (req, res) => {
   try {
     const supplier = await Supplier.findById(req.params.id);
-    
+
     if (!supplier) {
       return res.status(404).json({
         success: false,
         message: 'Supplier not found'
       });
     }
-    
+
     res.status(200).json({
       success: true,
       data: supplier
@@ -46,24 +46,24 @@ exports.getSupplierById = async (req, res) => {
 exports.createSupplier = async (req, res) => {
   try {
     const { name, contactPerson, email, phone, address, active, notes } = req.body;
-    
+
     if (!name) {
       return res.status(400).json({
         success: false,
         message: 'Please provide a supplier name'
       });
     }
-    
-    // Check for existing supplier with the same name
+
+    //matching supplier name
     const existingSupplier = await Supplier.findOne({ name });
-    
+
     if (existingSupplier) {
       return res.status(400).json({
         success: false,
         message: 'A supplier with this name already exists'
       });
     }
-    
+
     const supplier = await Supplier.create({
       name,
       contactPerson,
@@ -73,7 +73,7 @@ exports.createSupplier = async (req, res) => {
       active,
       notes
     });
-    
+
     res.status(201).json({
       success: true,
       message: 'Supplier created successfully',
@@ -93,21 +93,21 @@ exports.createSupplier = async (req, res) => {
 exports.updateSupplier = async (req, res) => {
   try {
     const { name, contactPerson, email, phone, address, active, notes } = req.body;
-    
-    // Find the supplier by ID
+
+    //find supplier by id
     let supplier = await Supplier.findById(req.params.id);
-    
+
     if (!supplier) {
       return res.status(404).json({
         success: false,
         message: 'Supplier not found'
       });
     }
-    
+
     //check if name duplicate
     if (name && name !== supplier.name) {
       const existingSupplier = await Supplier.findOne({ name });
-      
+
       if (existingSupplier) {
         return res.status(400).json({
           success: false,
@@ -115,11 +115,11 @@ exports.updateSupplier = async (req, res) => {
         });
       }
     }
-    
+
     //update supplier
     supplier = await Supplier.findByIdAndUpdate(
       req.params.id,
-      { 
+      {
         name: name || supplier.name,
         contactPerson: contactPerson !== undefined ? contactPerson : supplier.contactPerson,
         email: email !== undefined ? email : supplier.email,
@@ -130,7 +130,7 @@ exports.updateSupplier = async (req, res) => {
       },
       { new: true, runValidators: true }
     );
-    
+
     res.status(200).json({
       success: true,
       message: 'Supplier updated successfully',
@@ -150,16 +150,16 @@ exports.updateSupplier = async (req, res) => {
 exports.deleteSupplier = async (req, res) => {
   try {
     const supplier = await Supplier.findById(req.params.id);
-    
+
     if (!supplier) {
       return res.status(404).json({
         success: false,
         message: 'Supplier not found'
       });
     }
-    
+
     await Supplier.findByIdAndDelete(req.params.id);
-    
+
     res.status(200).json({
       success: true,
       message: 'Supplier deleted successfully'

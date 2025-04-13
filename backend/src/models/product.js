@@ -21,6 +21,18 @@ const ProductSchema = new mongoose.Schema({
     required: true,
     min: 0
   },
+  discountRate: {
+    type: Number,
+    default: 0,
+    min: 0,
+    max: 100,
+    validate: {
+      validator: function(v) {
+        return v >= 0 && v <= 100;
+      },
+      message: 'Discount rate must be between 0 and 100'
+    }
+  },
   quantity: {
     type: Number,
     required: true,
@@ -42,7 +54,7 @@ const ProductSchema = new mongoose.Schema({
     default: Date.now
   },
   images: {
-    type: [String], // Array of image URLs/paths
+    type: [String], //array of img urls or paths
     default: []
   },
   status: {
@@ -66,6 +78,14 @@ const ProductSchema = new mongoose.Schema({
   }
 }, {
   timestamps: true //to automatically add createdat and updatedat
+});
+
+ProductSchema.virtual('discountedPrice').get(function() {
+  if (!this.discountRate || this.discountRate === 0) {
+    return this.price;
+  }
+  const discountAmount = (this.price * this.discountRate) / 100;
+  return parseFloat((this.price - discountAmount).toFixed(2));
 });
 
 ProductSchema.index({ name: 'text', barcode: 'text' });

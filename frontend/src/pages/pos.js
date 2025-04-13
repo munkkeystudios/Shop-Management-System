@@ -75,10 +75,13 @@ const Pos = () => {
 
     const updatedCartItems = cartItems.map(item => {
       if (item.id === id) {
+        //price after dicount
+        const discountedPrice = item.price * (1 - item.discount / 100);
+        
         const updatedItem = {
           ...item,
           quantity: newQuantity,
-          subtotal: newQuantity * (item.price * (1 - item.discount / 100))
+          subtotal: newQuantity * discountedPrice
         };
         return updatedItem;
       }

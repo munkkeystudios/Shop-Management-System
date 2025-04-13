@@ -5,7 +5,6 @@ import { FiSearch, FiFilter, FiPlus } from 'react-icons/fi';
 import { FaFileExcel, FaFilePdf, FaEdit, FaTrash } from 'react-icons/fa';
 
 const AllUsers = () => {
-  // Sample user data - would be fetched from API in production
   const [users, setUsers] = useState([
     {
       id: 1,
@@ -93,14 +92,11 @@ const AllUsers = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
 
-  // Filter users based on search term
   const filteredUsers = users.filter(user =>
     user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.role.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  // Calculate pagination
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentUsers = filteredUsers.slice(indexOfFirstItem, indexOfLastItem);

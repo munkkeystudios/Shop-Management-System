@@ -1,4 +1,4 @@
-/* Main layout */
+
 .users-page {
   display: flex;
   width: 100%;
@@ -15,7 +15,6 @@
   max-width: 100%;
 }
 
-/* Header section */
 .header-section {
   margin-bottom: 20px;
   width: 100%;
@@ -28,7 +27,6 @@
   color: #333;
 }
 
-/* Search and filters */
 .search-filter-container {
   display: flex;
   justify-content: space-between;
@@ -110,12 +108,12 @@ button:active {
 }
 
 .export-button.pdf {
-  background-color: #be123c; /* dark red */
+  background-color: #be123c;
   color: white;
 }
 
 .export-button.excel {
-  background-color: #15803d; /* dark green */
+  background-color: #15803d;
   color: white;
 }
 
@@ -124,7 +122,6 @@ button:active {
   color: white;
 }
 
-/* Table styles */
 .table-container {
   background: white;
   border-radius: 12px;
@@ -136,7 +133,7 @@ button:active {
 .users-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 800px; /* Ensures table doesn't get too compressed */
+  min-width: 800px; 
   table-layout: fixed;
 }
 
@@ -258,7 +255,6 @@ button:active {
   color: #6b7280;
 }
 
-/* Pagination */
 .pagination {
   display: flex;
   justify-content: space-between;
@@ -290,7 +286,6 @@ button:active {
   font-size: 14px;
 }
 
-/* Responsive adjustments */
 @media (max-width: 1024px) {
   .search-filter-container {
     flex-direction: column;
@@ -324,7 +319,6 @@ button:active {
     font-size: 13px;
   }
   
-  /* Hide less important columns on small screens */
   .users-table th:nth-child(3),
   .users-table td:nth-child(3) {
     display: none;
@@ -340,7 +334,6 @@ button:active {
     font-size: 20px;
   }
   
-  /* Hide more columns on very small screens */
   .users-table th:nth-child(4),
   .users-table td:nth-child(4) {
     display: none;

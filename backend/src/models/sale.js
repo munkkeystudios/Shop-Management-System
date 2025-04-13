@@ -16,9 +16,15 @@ const SaleItemSchema = new mongoose.Schema({
     required: true,
     min: 0
   },
-  discount: {
+  productDiscountRate: {
     type: Number,
     default: 0,
+    min: 0,
+    max: 100
+  },
+  effectivePrice: {
+    type: Number,
+    required: true,
     min: 0
   },
   subtotal: {
@@ -65,7 +71,7 @@ const SaleSchema = new mongoose.Schema({
   },
   paymentMethod: {
     type: String,
-    enum: ['cash', 'card', 'mobile_payment', 'credit'],//not sure if we can add all these method?
+    enum: ['cash', 'card', 'mobile_payment', 'credit'],
     default: 'cash'
   },
   paymentStatus: {

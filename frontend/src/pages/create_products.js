@@ -24,7 +24,9 @@ const getInitialState = () => ({
     gst: '',
     purchaseUnit: '',
     quantity: '',
-    stockAlert: ''
+    stockAlert: '',
+    discountRate: '',
+    discountAmount: ''
 });
 
 
@@ -40,10 +42,42 @@ const CreateProducts = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prevData => ({
-      ...prevData,
-      [name]: value
-    }));
+    setFormData(prevData => {
+      const newData = {
+        ...prevData,
+        [name]: value
+      };
+      //discount logic 
+      if (name === 'discountAmount' && value !== '' && newData.salePrice !== '') {
+        const salePrice = parseFloat(newData.salePrice);
+        const discountAmount = parseFloat(value);
+        if (!isNaN(salePrice) && !isNaN(discountAmount) && salePrice > 0) {
+          newData.discountRate = ((discountAmount / salePrice) * 100).toFixed(2);
+        }
+      } else if (name === 'discountRate' && value !== '' && newData.salePrice !== '') {
+        const salePrice = parseFloat(newData.salePrice);
+        const discountRate = parseFloat(value);
+        if (!isNaN(salePrice) && !isNaN(discountRate)) {
+          newData.discountAmount = ((salePrice * discountRate) / 100).toFixed(2);
+        }
+      } else if (name === 'salePrice' && value !== '') {
+        if (newData.discountRate !== '') {
+          const discountRate = parseFloat(newData.discountRate);
+          const salePrice = parseFloat(value);
+          if (!isNaN(discountRate) && !isNaN(salePrice)) {
+            newData.discountAmount = ((salePrice * discountRate) / 100).toFixed(2);
+          }
+        } else if (newData.discountAmount !== '') {
+          const discountAmount = parseFloat(newData.discountAmount);
+          const salePrice = parseFloat(value);
+          if (!isNaN(discountAmount) && !isNaN(salePrice) && salePrice > 0) {
+            newData.discountRate = ((discountAmount / salePrice) * 100).toFixed(2);
+          }
+        }
+      }
+
+      return newData;
+    });
     if (error) setError('');
     if (success) setSuccess('');
   };
@@ -84,6 +118,7 @@ const CreateProducts = () => {
       supplier: formData.supplier,
       taxRate: formData.gst !== '' ? parseFloat(formData.gst) : undefined,
       minStockLevel: formData.stockAlert !== '' ? parseInt(formData.stockAlert, 10) : undefined,
+      discountRate: formData.discountRate !== '' ? parseFloat(formData.discountRate) : undefined
     };
 
     console.log("Data being sent to API:", productData);
@@ -112,6 +147,9 @@ const CreateProducts = () => {
     }
     if (productData.minStockLevel !== undefined && (isNaN(productData.minStockLevel) || !Number.isInteger(productData.minStockLevel) || productData.minStockLevel < 0)) {
         setError('Stock Alert must be a valid non-negative integer.'); setIsLoading(false); return;
+    }
+    if (productData.discountRate !== undefined && (isNaN(productData.discountRate) || productData.discountRate < 0 || productData.discountRate > 100)) {
+        setError('Discount Rate must be between 0 and 100.'); setIsLoading(false); return;
     }
     if (!isValidObjectId(productData.category)) {
         setError('Selected Category value is not a valid ID format.'); setIsLoading(false); return;
@@ -214,6 +252,14 @@ const CreateProducts = () => {
                 <div className="form-group">
                   <label htmlFor="purchasePrice">Purchase Price (Cost)</label>
                   <input type="number" id="purchasePrice" name="purchasePrice" value={formData.purchasePrice} onChange={handleChange} placeholder="0.00" min="0" step="0.01" />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="discountRate">Discount Rate (%)</label>
+                  <input type="number" id="discountRate" name="discountRate" value={formData.discountRate} onChange={handleChange} placeholder="0" min="0" max="100" step="0.01" />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="discountAmount">Discount Amount</label>
+                  <input type="number" id="discountAmount" name="discountAmount" value={formData.discountAmount} onChange={handleChange} placeholder="0.00" min="0" step="0.01" />
                 </div>
                  <div className="form-group">
                   <label htmlFor="quantity">Quantity {requiredStar}</label>

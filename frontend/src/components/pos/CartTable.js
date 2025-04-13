@@ -8,48 +8,55 @@ const CartTable = ({ cartItems, handleQuantityChange, handleRemoveItem }) => {
     <Table striped bordered hover>
       <thead>
         <tr>
-          <th width="320">Product</th>
-          <th width="150">Price</th>
-          <th width="150">Discount</th>
-          <th width="150">Qty</th>
-          <th width="150">Subtotal</th>
-          <th width="90">Action</th>
+          <th width="300">Product</th>
+          <th width="120">Price</th>
+          <th width="120">Discount</th>
+          <th width="120">Price After Discount</th>
+          <th width="100">Qty</th>
+          <th width="120">Subtotal</th>
+          <th width="60">Action</th>
         </tr>
       </thead>
       <tbody>
-        {cartItems.map(item => (
-          <tr key={item.id}>
-            <td>
-              <div className="product-container">
-                <div className="product-image">{item.image}</div>
-                <div className="product-info">
-                  <div className="product-name">{item.name}</div>
-                  <small className="product-id">ID: {item.id}</small>
+        {cartItems.map(item => {
+          const discountedPrice = item.price * (1 - item.discount / 100);
+          
+          return (
+            <tr key={item.id}>
+              <td>
+                <div className="product-container">
+                  <div className="product-image">{item.image}</div>
+                  <div className="product-info">
+                    <div className="product-name">{item.name}</div>
+                    <small className="product-id">ID: {item.id}</small>
+                  </div>
                 </div>
-              </div>
-            </td>
-            <td>${item.price.toFixed(2)}</td>
-            <td>{item.discount}%</td>
-            <td>
-              <div className="quantity-container">
-                <QuantityButton
-                  key={item.id}
-                  item={item}
-                  handleQuantityChange={handleQuantityChange}
+              </td>
+              <td>${item.price.toFixed(2)}</td>
+              <td>{item.discount > 0 ? `${item.discount}%` : '-'}</td>
+              <td>${discountedPrice.toFixed(2)}</td>
+              <td>
+                <div className="quantity-container">
+                  <QuantityButton
+                    key={item.id}
+                    item={item}
+                    handleQuantityChange={handleQuantityChange}
+                  />
+                </div>
+              </td>
+              <td>${item.subtotal.toFixed(2)}</td>
+              <td>
+                <FiTrash2
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => handleRemoveItem(item.id)}
                 />
-              </div>
-            </td>
-            <td>${item.subtotal.toFixed(2)}</td>
-            <td>
-              <FiTrash2  
-                onClick={() => handleRemoveItem(item.id)}
-              />
-            </td>
-          </tr>
-        ))}
+              </td>
+            </tr>
+          );
+        })}
         {cartItems.length === 0 && (
           <tr>
-            <td colSpan="6" className="empty-cart">No products added yet</td>
+            <td colSpan="7" className="empty-cart">No products added yet</td>
           </tr>
         )}
       </tbody>
