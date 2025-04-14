@@ -1,4 +1,4 @@
-===== File: D:\Shop-Management-System-main\backend\src\controllers\saleController.js =====
+
 const { Sale, Product } = require('../models');
 
 //new sale
