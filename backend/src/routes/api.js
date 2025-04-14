@@ -7,6 +7,7 @@ const productController = require('../controllers/productController');
 const userController = require('../controllers/userController');
 const saleController = require('../controllers/saleController');
 const importController = require('../controllers/importController');
+const purchaseController = require('../controllers/purchaseController');
 const auth = require('../middleware/auth');
 
 router.post('/login', userController.login);
@@ -17,7 +18,10 @@ router.use(auth);
 
 router.get('/users', userController.getAllUsers);
 router.get('/users/profile', userController.getProfile);
+router.get('/users/export', userController.exportUsers);
 router.put('/users/:userId', userController.updateUser);
+router.post('/users', userController.adminCreateUser); 
+
 
 router.get('/categories', categoryController.getAllCategories);
 router.get('/categories/:id', categoryController.getCategoryById);
@@ -35,6 +39,7 @@ router.get('/products', productController.getAllProducts);
 router.get('/products/search', productController.searchProducts);
 router.get('/products/low-stock', productController.getLowStockProducts);
 router.get('/products/:id', productController.getProductById);
+router.post('/products', productController.createProduct);
 router.put('/products/:id', productController.updateProduct);
 router.delete('/products/:id', productController.deleteProduct);
 router.patch('/products/:id/stock', productController.updateStock);
@@ -46,5 +51,14 @@ router.get('/sales/last-bill-number', saleController.getLastBillNumber); // Spec
 router.get('/sales/stats', saleController.getSalesStats); // Another specific route
 router.put('/sales/:id/payment', saleController.updatePaymentStatus); // More specific than :id
 router.get('/sales/:id', saleController.getSaleById); // Generic route last
+
+
+
+router.post('/purchases', purchaseController.createPurchase);
+router.get('/purchases', purchaseController.getAllPurchases);
+router.get('/purchases/export', purchaseController.exportPurchases);
+router.get('/purchases/:id', purchaseController.getPurchaseById);
+
+
 
 module.exports = router;
