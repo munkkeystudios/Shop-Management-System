@@ -1,33 +1,44 @@
+
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt'); // *** ADDED: Import bcrypt ***
 
 //login logic
 exports.login = async (req, res) => {
   try {
     const { username, password } = req.body;
-    
+
     if (!username || !password) {
       return res.status(400).json({
         success: false,
         message: "Username and password are required"
       });
     }
-    
+
     const user = await User.findOne({ username });
-    
-    if (user && user.password === password) {
+
+    // *** MODIFIED: Use password comparison method ***
+    if (user && (await user.matchPassword(password))) {
+      // *** Check if user is active ***
+      if (!user.active) {
+         return res.status(403).json({
+            success: false,
+            message: "Account is inactive. Please contact an administrator."
+         });
+      }
+
       const jwtSecret = process.env.JWT_SECRET;
       if (!jwtSecret) {
         console.warn('Warning: JWT_SECRET environment variable not set. Using insecure default value.');
       }
-      
+
       //generate token
-      const token = jwt.sign({ 
-        userId: user._id, 
+      const token = jwt.sign({
+        userId: user._id,
         username: user.username,
-        role: user.role 
+        role: user.role
       }, jwtSecret || 'your-secret-key-for-jwt-tokens', { expiresIn: '24h' });
-      
+
       res.status(200).json({
         success: true,
         message: "Login successful",
@@ -54,86 +65,100 @@ exports.login = async (req, res) => {
   }
 };
 
-//register logic
+// *** REMOVED/COMMENTED OUT: Public registration logic ***
+/*
 exports.register = async (req, res) => {
-  try {
-    const { username, password, role } = req.body;
-
-    if (!username || !password) {
-      return res.status(400).json({
-        success: false,
-        message: "Username and password are required"
-      });
-    }
-
-    if (password.length < 6) {
-      return res.status(400).json({ 
-        success: false, 
-        message: "Password must be at least 6 characters long."
-      });
-    }
-
-    const existingUser = await User.findOne({ username });
-    if (existingUser) {
-      return res.status(400).json({ 
-        success: false, 
-        message: "Username already exists"
-      });
-    }
-
-    //create new user
-    const user = await User.create({
-      username,
-      password,
-      role: role || 'cashier'//default with least priveleges
-    });
-
-    // Check for JWT_SECRET
-    const jwtSecret = process.env.JWT_SECRET;
-    if (!jwtSecret) {
-      console.warn('Warning: JWT_SECRET environment variable not set. Using insecure default value.');
-    }
-
-    //generate token
-    const token = jwt.sign({ 
-      userId: user._id,
-      username: user.username,
-      role: user.role
-    }, jwtSecret || 'your-secret-key-for-jwt-tokens', { expiresIn: '24h' });
-
-    res.status(201).json({
-      success: true,
-      message: "User registered successfully",
-      token,
-      user: {
-        id: user._id,
-        username: user.username,
-        role: user.role
-      }
-    });
-  } catch (error) {
-    console.error("Registration error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Error creating user",
-      error: error.message
-    });
-  }
+  // ... (original registration code removed as per requirement) ...
 };
+*/
+
+// *** ADDED: Admin creates user ***
+exports.adminCreateUser = async (req, res) => {
+    try {
+        // 1. Check if requesting user is admin
+        if (!req.user || req.user.role !== 'admin') { // Added check for req.user existence
+            return res.status(403).json({
+                success: false,
+                message: 'Access denied: Only admins can create users.'
+            });
+        }
+
+        // 2. Get user data from request body
+        const { username, password, role, active, name, phone } = req.body;
+
+        // 3. Validate required fields
+        if (!username || !password || !role) {
+            return res.status(400).json({
+                success: false,
+                message: "Username, password, and role are required."
+            });
+        }
+
+        // 4. Validate password length (optional here, model enforces too)
+        if (password.length < 6) {
+            return res.status(400).json({
+                success: false,
+                message: "Password must be at least 6 characters long."
+            });
+        }
+
+        // 5. Check if username already exists
+        const existingUser = await User.findOne({ username });
+        if (existingUser) {
+            return res.status(400).json({
+                success: false,
+                message: "Username already exists."
+            });
+        }
+
+        // 6. Create the new user (password will be hashed by pre-save hook)
+        const user = await User.create({
+            username,
+            password,
+            role,
+            active: active !== undefined ? active : true, // Default to active if not provided
+            name, // Include new fields
+            phone
+        });
+
+        // 7. Return success response (don't return password)
+         const userResponse = user.toObject();
+         delete userResponse.password;
+
+        res.status(201).json({
+            success: true,
+            message: "User created successfully by admin.",
+            data: userResponse
+        });
+
+    } catch (error) {
+        console.error("Admin create user error:", error);
+         // Handle potential validation errors from Mongoose
+        if (error.name === 'ValidationError') {
+            return res.status(400).json({ success: false, message: error.message });
+        }
+        res.status(500).json({
+            success: false,
+            message: "Error creating user",
+            error: error.message
+        });
+    }
+};
+
 
 //get all users (admin access)
 exports.getAllUsers = async (req, res) => {
   try {
     //check if requesting user is admin
-    if (req.user.role !== 'admin') {
+    if (!req.user || req.user.role !== 'admin') { // Added check for req.user existence
       return res.status(403).json({
         success: false,
         message: 'Access denied: Admin privileges required'
       });
     }
-    
-    const users = await User.find({}).select('-password');
-    
+
+    const users = await User.find({}).select('-password'); // Ensure password exclusion
+
     res.status(200).json({
       success: true,
       count: users.length,
@@ -143,23 +168,27 @@ exports.getAllUsers = async (req, res) => {
     console.error('Error fetching users:', error);
     res.status(500).json({
       success: false,
-      message: 'Server Error',
+      message: 'Server Error fetching users', // More specific message
       error: error.message
     });
   }
 };
 
+// Get current user's profile
 exports.getProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id).select('-password');
-    
+     if (!req.user || !req.user._id) {
+         return res.status(401).json({ success: false, message: 'Authentication required.' });
+     }
+    const user = await User.findById(req.user._id).select('-password'); // Ensure password exclusion
+
     if (!user) {
       return res.status(404).json({
         success: false,
         message: 'User not found'
       });
     }
-    
+
     res.status(200).json({
       success: true,
       data: user
@@ -168,79 +197,229 @@ exports.getProfile = async (req, res) => {
     console.error('Error fetching user profile:', error);
     res.status(500).json({
       success: false,
-      message: 'Server Error',
+      message: 'Server Error fetching profile', // More specific message
       error: error.message
     });
   }
 };
 
+
 //update user (admin can update anyone, users can only update themselves)
 exports.updateUser = async (req, res) => {
   try {
     const { userId } = req.params;
-    const { username, password, role, active } = req.body;
-    
+    // *** MODIFIED: Include new fields ***
+    const { username, password, role, active, name, phone } = req.body;
+
+    if (!req.user || !req.user._id) {
+       return res.status(401).json({ success: false, message: 'Authentication required.' });
+    }
+
     //check to ensure no unauthorized changes
     if (req.user.role !== 'admin' && req.user._id.toString() !== userId) {
       return res.status(403).json({
         success: false,
-        message: 'Access denied: You can only update your own profile'
+        message: 'Access denied: You can only update your own profile or require admin privileges.'
       });
     }
-    
+
     //find user
     let user = await User.findById(userId);
-    
+
     if (!user) {
       return res.status(404).json({
         success: false,
         message: 'User not found'
       });
     }
-    
-    //allow role change if admin 
-    if (role && req.user.role !== 'admin') {
+
+    //allow role change only if admin
+    if (role && role !== user.role && req.user.role !== 'admin') {
       return res.status(403).json({
         success: false,
         message: 'Access denied: Only admins can change user roles'
       });
     }
-    
-    //make sure username is unique
+     // Allow active status change only if admin and status is different
+    if (active !== undefined && active !== user.active && req.user.role !== 'admin') {
+         return res.status(403).json({
+            success: false,
+            message: 'Access denied: Only admins can change user active status'
+         });
+    }
+
+
+    //make sure username is unique if changed
     if (username && username !== user.username) {
       const existingUser = await User.findOne({ username });
-      if (existingUser) {
+      if (existingUser && existingUser._id.toString() !== userId) { // Ensure it's not the same user
         return res.status(400).json({
           success: false,
           message: 'Username already exists'
         });
       }
+      user.username = username; // Update username
     }
-    
-    //applying updates
-    const updateData = {};
-    if (username) updateData.username = username;
-    if (password) updateData.password = password;
-    if (role && req.user.role === 'admin') updateData.role = role;
-    if (active !== undefined && req.user.role === 'admin') updateData.active = active;
-    
-    user = await User.findByIdAndUpdate(
-      userId,
-      updateData,
-      { new: true, runValidators: true }
-    ).select('-password');
-    
+
+    // *** ADDED: Update optional fields ***
+    if (name !== undefined) user.name = name;
+    if (phone !== undefined) user.phone = phone;
+
+    // Update role if admin and provided and different
+    if (role && role !== user.role && req.user.role === 'admin') {
+        user.role = role;
+    }
+
+    // Update active status if admin and provided and different
+    if (active !== undefined && active !== user.active && req.user.role === 'admin') {
+        user.active = active;
+    }
+
+    // *** MODIFIED: Update password only if provided (hashing handled by pre-save hook) ***
+    if (password) {
+      if (password.length < 6) {
+         return res.status(400).json({ success: false, message: "Password must be at least 6 characters long." });
+      }
+      user.password = password; // Set the new password, hook will hash
+    }
+
+    // Save the updated user (pre-save hook handles hashing if password changed)
+    const updatedUser = await user.save();
+
+    // Return updated user data (excluding password)
+    const userResponse = updatedUser.toObject(); // Convert to plain object to delete password
+    delete userResponse.password;
+
+
     res.status(200).json({
       success: true,
       message: 'User updated successfully',
-      data: user
+      data: userResponse
     });
   } catch (error) {
     console.error('Error updating user:', error);
+    // Handle potential validation errors from Mongoose
+    if (error.name === 'ValidationError') {
+        return res.status(400).json({ success: false, message: error.message });
+    }
+     // Handle potential duplicate key errors (e.g., username)
+     if (error.code === 11000) {
+         return res.status(400).json({ success: false, message: 'Username already exists.' });
+     }
     res.status(500).json({
       success: false,
-      message: 'Server Error',
+      message: 'Server Error updating user', // More specific
       error: error.message
     });
   }
-}; 
+};
+
+// *** ADDED: Export users function ***
+exports.exportUsers = async (req, res) => {
+  try {
+    // Ensure requesting user is admin
+    if (!req.user || req.user.role !== 'admin') { // Added check for req.user
+      return res.status(403).json({
+        success: false,
+        message: 'Access denied: Admin privileges required for export'
+      });
+    }
+
+    const { format = 'csv' } = req.query; // Default to CSV
+
+    // Fetch users, explicitly excluding password
+    const users = await User.find({}).select('-password').lean();
+
+    if (format.toLowerCase() === 'csv') {
+      // --- CSV Export Logic ---
+      if (users.length === 0) {
+        return res.status(200).send('No user data to export.');
+      }
+
+      const { Parser } = require('json2csv'); // npm install json2csv
+
+      // Define fields to include in the CSV
+      const fields = ['_id', 'username', 'role', 'name', 'phone', 'active', 'createdAt', 'updatedAt']; // Added name, phone
+      const json2csvParser = new Parser({ fields });
+      const csv = json2csvParser.parse(users);
+
+      res.header('Content-Type', 'text/csv');
+      res.attachment('users.csv');
+      res.status(200).send(csv);
+
+    } else if (format.toLowerCase() === 'pdf') {
+      // --- PDF Export Logic ---
+      const PDFDocument = require('pdfkit'); // npm install pdfkit
+      const doc = new PDFDocument({ margin: 50, layout: 'landscape' });
+
+      res.header('Content-Type', 'application/pdf');
+      res.attachment('users.pdf');
+      doc.pipe(res);
+
+      doc.fontSize(18).text('User Report', { align: 'center' }).moveDown();
+
+       if (users.length === 0) {
+         doc.fontSize(12).text('No user data to export.');
+         doc.end();
+         return;
+      }
+
+      const tableTop = doc.y;
+      const headers = ['ID', 'Username', 'Name', 'Phone', 'Role', 'Active', 'Created At'];
+      const colWidths = [120, 100, 120, 100, 80, 50, 90]; // Adjust widths
+      let x = doc.page.margins.left;
+
+      // Draw headers
+      headers.forEach((header, i) => {
+        doc.fontSize(9).text(header, x, tableTop, { width: colWidths[i], align: 'left', underline: true });
+        x += colWidths[i];
+      });
+
+      let y = tableTop + 20;
+      users.forEach(user => {
+        x = doc.page.margins.left;
+        const row = [
+          user._id.toString(),
+          user.username,
+          user.name || '', // Handle optional fields
+          user.phone || '', // Handle optional fields
+          user.role,
+          user.active ? 'Yes' : 'No',
+          user.createdAt.toDateString()
+        ];
+
+        // Draw row
+        row.forEach((cell, i) => {
+          doc.fontSize(8).text(cell, x, y, { width: colWidths[i], align: 'left' });
+          x += colWidths[i];
+        });
+
+        y += 20;
+        if (y > doc.page.height - doc.page.margins.bottom - 20) { // Add new page if needed
+          doc.addPage({layout: 'landscape'});
+          y = doc.page.margins.top; // Reset Y position for new page
+           // Redraw headers on new page
+           x = doc.page.margins.left;
+           headers.forEach((header, i) => {
+             doc.fontSize(9).text(header, x, y, { width: colWidths[i], align: 'left', underline: true });
+             x += colWidths[i];
+           });
+           y += 20; // Space after header
+        }
+      });
+
+      doc.end();
+
+    } else {
+      res.status(400).json({ success: false, message: "Invalid export format specified. Use 'csv' or 'pdf'." });
+    }
+
+  } catch (error) {
+    console.error('Error exporting users:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server Error exporting users',
+      error: error.message
+    });
+  }
+};
