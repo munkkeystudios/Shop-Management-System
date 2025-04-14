@@ -6,6 +6,7 @@ const supplierController = require('../controllers/supplierController');
 const productController = require('../controllers/productController');
 const userController = require('../controllers/userController');
 const saleController = require('../controllers/saleController');
+const importController = require('../controllers/importController');
 const auth = require('../middleware/auth');
 
 
@@ -52,6 +53,8 @@ router.get('/products/:id', productController.getProductById);
 router.put('/products/:id', productController.updateProduct);
 router.delete('/products/:id', productController.deleteProduct);
 router.patch('/products/:id/stock', productController.updateStock);
+
+router.post('/products/import', importController.uploadMiddleware, importController.importProducts);
 
 
 router.post('/sales', saleController.createSale);
