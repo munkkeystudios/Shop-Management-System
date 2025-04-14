@@ -1,4 +1,4 @@
-===== File: D:\Shop-Management-System-main\backend\src\models\index.js =====
+
 const mongoose = require('mongoose');
 const Product = require('./product');
 const Category = require('./category');
