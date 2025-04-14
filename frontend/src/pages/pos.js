@@ -19,13 +19,11 @@ const Pos = () => {
   useEffect(() => {
     const fetchLastBillNumber = async () => {
       try {
-        const response = await salesAPI.getAll();
-        const sales = response.data.sales; // Access the sales array from the response
-        console.log('Fetched sales:', sales); // Log the fetched sales data
+        // Call the new API endpoint to get the last bill number
+        const response = await salesAPI.getLastBillNumber();
+        const lastBillNumber = response.data.lastBillNumber; // Extract the last bill number from the response
 
-        if (Array.isArray(sales) && sales.length > 0) {
-          // Directly use the last billNumber as a number
-          const lastBillNumber = sales[0].billNumber;
+        if (lastBillNumber) {
           setBillNumber(lastBillNumber + 1); // Increment for the new bill
         } else {
           setBillNumber(1); // Start from 1 if no sales exist
@@ -77,7 +75,7 @@ const Pos = () => {
       if (item.id === id) {
         //price after dicount
         const discountedPrice = item.price * (1 - item.discount / 100);
-        
+
         const updatedItem = {
           ...item,
           quantity: newQuantity,
@@ -212,7 +210,7 @@ const Pos = () => {
                 totalPayable={totalPayable}
                 totalQuantity={totalQuantity}
                 billNumber={billNumber} // Pass billNumber as a prop
-                updateBillNumber={setBillNumber} 
+                updateBillNumber={setBillNumber}
               />
             </Card.Footer>
           </Card>

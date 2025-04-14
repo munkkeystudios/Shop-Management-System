@@ -63,6 +63,8 @@ export const inventoryAPI = {
 export const salesAPI = {
   getAll: () => api.get('/sales'),
   create: (saleData) => api.post('/sales', saleData),
+  getLastBillNumber: () => api.get('/sales/last-bill-number'), // Add the new API method
+
 };
 
 // Dashboard API
