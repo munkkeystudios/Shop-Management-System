@@ -23,12 +23,18 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateB
         billNumber: billNumber, 
         customerName: 'Walk in Customer',
         customerPhone: 'N/A',
-        items: cartItems.map((item) => ({
-          product: item.id, // Use the product ID
-          quantity: item.quantity,
-          price: item.price, // Include the price of the item
-          subtotal: item.subtotal, // Include the subtotal of the item
-        })),
+        items: cartItems.map((item) => {
+          const discountRate = item.discount || 0; // Default discount is 0 if not provided
+          const effectivePrice = item.price * (1 - discountRate / 100); // Calculate effective price
+
+          return {
+            product: item.id, // Use the product ID
+            quantity: item.quantity,
+            price: item.price, // Include the price of the item
+            effectivePrice: Number(effectivePrice.toFixed(2)), // Include the effective price
+            subtotal: item.subtotal, // Include the subtotal of the item
+          };
+        }),
         subtotal: totalPayable,
         discount: 0,
         tax: Number((GST * totalPayable).toFixed(2)),

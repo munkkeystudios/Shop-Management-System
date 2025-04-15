@@ -11,7 +11,7 @@ const purchaseController = require('../controllers/purchaseController');
 const auth = require('../middleware/auth');
 
 router.post('/login', userController.login);
-router.post('/signup', userController.register);
+// router.post('/signup', userController.register);
 
 router.post('/products', productController.createProduct);
 router.use(auth);

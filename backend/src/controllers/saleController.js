@@ -309,3 +309,75 @@ exports.getSalesStats = async (req, res) => {
         res.status(500).json({ success: false, message: 'Error fetching sales statistics', error: error.message });
     }
 };
+
+// Get the last bill number
+
+ 
+
+exports.getLastBillNumber = async (req, res) => {
+ 
+
+    try {
+ 
+
+        const lastSale = await Sale.findOne().sort({ createdAt: -1 }).select('billNumber'); // Fetch the most recent billNumber
+ 
+
+        if (!lastSale) {
+ 
+
+            return res.status(404).json({ 
+ 
+
+                success: false, 
+ 
+
+                message: 'No sales found' 
+ 
+
+            });
+ 
+
+        }
+ 
+
+
+ 
+
+        res.json({
+ 
+
+            success: true,
+ 
+
+            lastBillNumber: lastSale.billNumber
+ 
+
+        });
+ 
+
+    } catch (error) {
+ 
+
+        console.error('Get last bill number error:', error);
+ 
+
+        res.status(500).json({ 
+ 
+
+            success: false, 
+ 
+
+            message: 'Error fetching last bill number', 
+ 
+
+            error: error.message 
+ 
+
+        });
+ 
+
+    }
+ 
+
+};

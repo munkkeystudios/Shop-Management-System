@@ -18,7 +18,11 @@ if (!mongoURI) {
 }
 
 // Connect to MongoDB
-mongoose.connect(mongoURI || 'mongodb://localhost:27017/shop-management')
+mongoose.connect(mongoURI || 'mongodb://localhost:27017/shop-management', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    serverSelectionTimeoutMS: 30000, // Increase timeout to 30 seconds
+})
     .then(() => console.log('Connected to MongoDB'))
     .catch(err => console.error('MongoDB connection error:', err));
 
@@ -43,4 +47,4 @@ app.use((req, res) => {
 const PORT = process.env.PORT || 5002;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
-}); 
+});

@@ -67,7 +67,7 @@ export const generateReceipt = (transactionData) => {
     ----------------------------------------
     Subtotal                         ${subtotal.toString().padStart(7, ' ')}
     Discount                         ${discount.toString().padStart(7, ' ')}
-    Tax                              ${tax.toString().padStart(7, ' ')}  <!-- Updated label -->
+    Tax                              ${tax.toString().padStart(7, ' ')}  
     
     Total                            ${total.toString().padStart(7, ' ')}
     

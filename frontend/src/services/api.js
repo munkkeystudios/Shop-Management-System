@@ -100,6 +100,8 @@ export const inventoryAPI = {
   // If it's just product stock, use productsAPI.updateStock
   // getAll: () => api.get('/inventory'),
   // updateStock: (id, quantity) => api.put(`/inventory/${id}`, { quantity }), // Likely handled by product patch
+
+  // i think this is just more just product stock, i dont think we are doing another inventory schema - Walid
 };
 
 // Sales API

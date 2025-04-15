@@ -1,4 +1,4 @@
-===== File: D:\Shop-Management-System-main\backend\src\models\user.js =====
+// ===== File: D:\Shop-Management-System-main\backend\src\models\user.js =====
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt'); // *** ADDED: Import bcrypt ***
 
