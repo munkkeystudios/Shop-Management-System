@@ -268,13 +268,12 @@ function ToolsSidebar() {
                             onClick={() => handleItemClick("All Users")}
                         />
                     </Link>
-                    {/* Uncomment this to create user page
-                    <Link to="/create_user" className="sidebar-link" style={{
+                    <Link to="/create-user" className="sidebar-link" style={{
                         textDecoration: 'none',
                         color: 'inherit'
                     }}>
                         <SideBarItem
-                            isActive={isPathActive('/create_user')}
+                            isActive={isPathActive('/create-user')}
                             title={
                                 <div style={{
                                     display: 'flex',
@@ -287,7 +286,6 @@ function ToolsSidebar() {
                             onClick={() => handleItemClick("Create User")}
                         />
                     </Link>
-                    */}
                 </SideBarDropdown>
 
                 <Nav.Item className="sidebar-nav-item" style={{

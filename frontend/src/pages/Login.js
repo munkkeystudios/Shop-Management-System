@@ -103,12 +103,6 @@ const Login = () => {
                 className="submit-button"
               />
             </div>
-            <div className="sign-up-link auth-footer">
-              <p>
-                Don't have an account?
-                <Link to="/signup"> Register</Link>
-              </p>
-            </div>
           </form>
         </div>
       </div>

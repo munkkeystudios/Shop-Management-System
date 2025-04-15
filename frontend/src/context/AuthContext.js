@@ -1,6 +1,5 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 
 const AuthContext = createContext();
 
@@ -8,12 +7,16 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
   useEffect(() => {
-    // Check if user is logged in on mount
     const token = localStorage.getItem('token');
     if (token) {
-      setUser({ token });
+      try {
+        setUser({ token });
+      } catch (err) {
+        console.error('Invalid token:', err);
+        localStorage.removeItem('token');
+      }
     }
     setLoading(false);
   }, []);
@@ -22,9 +25,9 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       setError(null);
-      
+
       const response = await axios.post('/api/login', { username, password });
-      
+
       if (response.data.success) {
         const { token } = response.data;
         localStorage.setItem('token', token);
@@ -39,34 +42,13 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const signup = async (username, password) => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      const response = await axios.post('/api/signup', { username, password });
-      
-      if (response.data.success) {
-        const { token } = response.data;
-        localStorage.setItem('token', token);
-        setUser({ token });
-        return true;
-      }
-    } catch (err) {
-      setError(err.response?.data?.message || 'Signup failed');
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const logout = () => {
     localStorage.removeItem('token');
     setUser(null);
   };
 
   const isAuthenticated = () => {
-    return !!user;
+    return !!user && !!localStorage.getItem('token');
   };
 
   return (
@@ -76,7 +58,6 @@ export const AuthProvider = ({ children }) => {
         loading,
         error,
         login,
-        signup,
         logout,
         isAuthenticated,
       }}
@@ -88,4 +69,4 @@ export const AuthProvider = ({ children }) => {
 
 export const useAuth = () => useContext(AuthContext);
 
-export default AuthContext; 
+export default AuthContext;

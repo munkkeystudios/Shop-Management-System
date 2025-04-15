@@ -1,5 +1,4 @@
 import React from "react";
-import "./App.css";
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 // eventually make it so all this import components/pages comes in 1 line
 import MainDashboard from "./pages/main_dashboard";
@@ -15,69 +14,6 @@ import AllUsers from "./pages/all_users";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 
-// function App() {
-//   return (
-//     <AuthProvider>
-//       <BrowserRouter>
-//         <div className="App">
-//           <Routes>
-//             {/* Public routes */}
-//             <Route path="/login" element={<Login />} />
-//             <Route path="/signup" element={<Signup />} />
-            
-//             {/* Protected routes */}
-//             <Route path="/dashboard" element={
-//               <ProtectedRoute>
-//                 <MainDashboard />
-//               </ProtectedRoute>
-//             } />
-//             <Route path="/all_products" element={
-//               <ProtectedRoute>
-//                 <AllProducts />
-//               </ProtectedRoute>
-//             } />
-//             <Route path="/inventory" element={
-//               <ProtectedRoute>
-//                 <Inventory />
-//               </ProtectedRoute>
-//             } />
-//             <Route path="/reports" element={
-//               <ProtectedRoute>
-//                 <Reports />
-//               </ProtectedRoute>
-//             } />
-//             <Route path="/create_products" element={
-//               <ProtectedRoute>
-//                 <CreateProducts />
-//               </ProtectedRoute>
-//             } />
-//             <Route path="/pos" element={
-//               <ProtectedRoute>
-//                 <Pos />
-//               </ProtectedRoute>
-//             } />
-            
-//             {/* Redirect root to login */} 
-//             {/* change navigation to /login later */}
-// {/* <<<<<<< HEAD
-//             <Route path="/" element={<Navigate to="/dashboard" replace />} />
-// =======
-//             <Route path="/" element={<Navigate to="/login" replace />} />
-// >>>>>>> 98bc7567d52c2283e785bd8250452b38d862cfd1
-//             <Route path="*" element={<Navigate to="/login" replace />} />
-//           </Routes> */}
-//           <Routes>
-//           {/* Redirect root to login */}
-//           <Route path="/" element={<Navigate to="/login" replace />} />
-//           <Route path="*" element={<Navigate to="/login" replace />} />
-//         </Routes>
-
-//         </div>
-//       </BrowserRouter>
-//     </AuthProvider>
-//   );
-// }
-
 function App() {
   return (
     <AuthProvider>
@@ -86,9 +22,7 @@ function App() {
           <Routes>
             {/* Public routes */}
             <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            
-            {/* Protected routes */}
+                        
             <Route path="/dashboard" element={
               <ProtectedRoute>
                 <MainDashboard />
@@ -129,8 +63,13 @@ function App() {
                 <AllUsers />
               </ProtectedRoute>
             } />
+            <Route path="/create-user" element={
+              <ProtectedRoute>
+                <Signup />
+              </ProtectedRoute>
+            } />
             
-            {/* Redirect root to login */} 
+            {/* Redirect root to login */}
             <Route path="/" element={<Navigate to="/login" replace />} />
             <Route path="*" element={<Navigate to="/login" replace />} />
           </Routes>
@@ -139,6 +78,5 @@ function App() {
     </AuthProvider>
   );
 }
-
 
 export default App;

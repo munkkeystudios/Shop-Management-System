@@ -1,4 +1,3 @@
-
 import axios from 'axios';
 
 // Create an Axios instance with default config
@@ -52,16 +51,13 @@ export const authAPI = {
 
 // Users API Group *** ADDED/MODIFIED ***
 export const usersAPI = {
-    getAll: () => api.get('/users'),
-    update: (id, userData) => api.put(`/users/${id}`, userData),
-    // Add other user-related endpoints like delete if needed
-    // delete: (id) => api.delete(`/users/${id}`),
-    exportUsers: (format = 'csv') => api.get(`/users/export?format=${format}`, {
-        responseType: 'blob', // Important for handling file download
-        // Optionally add error handling specific to blob responses if needed
-    }),
+  getAll: () => api.get('/users'),
+  update: (id, userData) => api.put(`/users/${id}`, userData),
+  create: (userData) => api.post('/users', userData), // Call adminCreateUser endpoint
+  exportUsers: (format = 'csv') => api.get(`/users/export?format=${format}`, {
+    responseType: 'blob', // Important for handling file download
+  }),
 };
-
 
 // Products API
 export const productsAPI = {
@@ -89,7 +85,7 @@ export const suppliersAPI = {
     getAll: () => api.get('/suppliers'),
     getById: (id) => api.get(`/suppliers/${id}`),
     create: (supplierData) => api.post('/suppliers', supplierData),
-    update: (id, supplierData) => api.put(`/suppliers/${id}`, supplierData),
+    update: (id, supplierData) => api.put(`/suppliers/${id}`),
     delete: (id) => api.delete(`/suppliers/${id}`),
 };
 

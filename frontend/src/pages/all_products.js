@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './inventory.css';  // Ensure your CSS path is correct
 import Sidebar from '../components/sidebar';  // Ensure the sidebar import path is correct
 
 //

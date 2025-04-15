@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import Sidebar from '../components/sidebar';  // Ensure the sidebar import path is correct
-import './categories.css';
 import { Eye, Trash2, Edit } from 'lucide-react'; // Icons
 
 const CategoryPage = () => {
-    const [isModalOpen, setIsModalOpen] = useState(false); // State to handle modal visibility
     const [newCategory, setNewCategory] = useState({ code: '', name: '' });
     const [searchTerm, setSearchTerm] = useState(''); // State to handle search input
     const [categories, setCategories] = useState([  // Manage the categories in state
@@ -26,11 +24,18 @@ const CategoryPage = () => {
 
     // Handle creating a new category
     const handleCreateCategory = () => {
+        if (!newCategory.code || !newCategory.name) {
+            alert('Please enter both category code and name.');
+            return;
+        }
+
         setCategories((prevCategories) => [
             ...prevCategories, 
             { code: newCategory.code, name: newCategory.name }
         ]);
-        setIsModalOpen(false); // Close the modal after creating the category
+
+        // Clear the input fields after creating the category
+        setNewCategory({ code: '', name: '' });
     };
 
     const handleChange = (e) => {
@@ -99,40 +104,27 @@ const CategoryPage = () => {
                 </div>
 
                 <div className="create-category">
-                    <button className="create-btn" onClick={() => setIsModalOpen(true)}>
+                    <input
+                        type="text"
+                        name="code"
+                        value={newCategory.code}
+                        onChange={handleChange}
+                        placeholder="Enter category code"
+                        className="category-input"
+                    />
+                    <input
+                        type="text"
+                        name="name"
+                        value={newCategory.name}
+                        onChange={handleChange}
+                        placeholder="Enter category name"
+                        className="category-input"
+                    />
+                    <button className="create-btn" onClick={handleCreateCategory}>
                         Create New Category
                     </button>
                 </div>
             </div>
-
-            {/* Modal for creating new category */}
-            {isModalOpen && (
-                <div className="modal-overlay">
-                    <div className="modal">
-                        <h3>Create New Category</h3>
-                        <label htmlFor="categoryCode">Category Code:</label>
-                        <input
-                            type="text"
-                            id="categoryCode"
-                            name="code"
-                            value={newCategory.code}
-                            onChange={handleChange}
-                            placeholder="Enter category code"
-                        />
-                        <label htmlFor="categoryName">Category Name:</label>
-                        <input
-                            type="text"
-                            id="categoryName"
-                            name="name"
-                            value={newCategory.name}
-                            onChange={handleChange}
-                            placeholder="Enter category name"
-                        />
-                        <button onClick={handleCreateCategory}>Create Category</button>
-                        <button onClick={() => setIsModalOpen(false)}>Cancel</button>
-                    </div>
-                </div>
-            )}
         </div>
     );
 };
