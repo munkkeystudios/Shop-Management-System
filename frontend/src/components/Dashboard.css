@@ -1,131 +1,367 @@
-/* Dashboard.css */
-
-/* General Styles */
+/* Dashboard Specific Styles */
 .dashboard-container {
-  padding: 24px;
-  background-color: #f3f4f6;
+  display: flex;
+  font-family: 'Inter', sans-serif;
+}
+
+.main-wrapper {
+  flex: 1;
+  background-color: #f1f5f9;
   min-height: 100vh;
 }
 
-/* Overview Cards */
-.overview-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
-}
-
-.overview-card {
-  padding: 16px;
-  border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+/* Header Styles */
+.header {
+  background-color: white;
+  padding: 1rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.card-text {
-  color: #374151;
-}
-
-.card-title {
-  font-size: 14px;
-  color: #6b7280;
-}
-
-.card-value {
-  font-size: 22px;
+.page-title {
+  font-size: 1.25rem;
   font-weight: 600;
+  color: #1e293b;
 }
 
-.card-icon {
-  color: #374151;
+.header-center {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
-/* Sales Report & Alerts */
-.sales-alerts-grid {
+.pos-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 0.25rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.search-bar {
+  padding: 0.375rem 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.25rem;
+  outline: none;
+}
+
+.user-avatar {
+  width: 2rem;
+  height: 2rem;
+  background-color: #e2e8f0;
+  border-radius: 50%;
+}
+
+/* Main Content */
+.main-content {
+  padding: 1.5rem;
+}
+
+/* Stats Cards */
+.stats-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+}
+
+@media (max-width: 1024px) {
+  .stats-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .stats-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+.stat-card {
+  background-color: white;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.stat-icon {
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  width: 2rem;
+  height: 2rem;
+  background-color: rgba(234, 88, 12, 0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ea580c;
+}
+
+.stats-cards article:nth-child(1) .stat-icon {
+  background-color: rgba(234, 88, 12, 0.1);
+  color: #ea580c;
+}
+
+.stats-cards article:nth-child(2) .stat-icon {
+  background-color: rgba(168, 85, 247, 0.1);
+  color: #a855f7;
+}
+
+.stats-cards article:nth-child(3) .stat-icon {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+
+.stats-cards article:nth-child(4) .stat-icon {
+  background-color: rgba(249, 115, 22, 0.1);
+  color: #f97316;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin-bottom: 0.5rem;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+/* Content Row Layout */
+.content-row {
   display: grid;
   grid-template-columns: 2fr 1fr;
-  gap: 16px;
-  margin-top: 24px;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
 }
 
+@media (max-width: 768px) {
+  .content-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Card Styles */
 .card {
-  background: white;
-  padding: 24px;
-  border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
 }
 
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 1rem;
 }
 
-.card-header h3 {
-  font-size: 18px;
+.card-header h2 {
+  font-size: 1.125rem;
   font-weight: 600;
+  color: #1e293b;
 }
 
-.dropdown {
-  border: 1px solid #d1d5db;
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 14px;
+/* Sales Report */
+.sales-report {
+  position: relative;
 }
 
-/* Alerts */
-.alert {
-  padding: 8px 0;
-  border-bottom: 1px solid #e5e7eb;
+.report-control {
+  padding: 0.25rem 0.5rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  outline: none;
 }
 
-.alert:last-child {
-  border-bottom: none;
+/* Alerts Section */
+.alerts-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
-.alert-message {
-  font-size: 14px;
+.alerts-section li {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.alert-time {
-  font-size: 12px;
-  color: #6b7280;
+.alert-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  border-radius: 50%;
+  margin-right: 0.5rem;
 }
 
-/* Table Styles */
-.table-container {
-  margin-top: 24px;
-  background: white;
-  padding: 24px;
-  border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+.timestamp {
+  font-size: 0.75rem;
+  color: #94a3b8;
 }
 
-.table {
+.view-all {
+  display: block;
+  text-align: right;
+  color: #3b82f6;
+  text-decoration: none;
+  font-size: 0.875rem;
+  margin-top: 1rem;
+}
+
+/* Data Tables */
+.data-table-card {
+  overflow-x: auto;
+}
+
+.data-table {
   width: 100%;
   border-collapse: collapse;
 }
 
-.table th, .table td {
-  padding: 12px;
+.data-table th,
+.data-table td {
+  padding: 0.75rem 1rem;
   text-align: left;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e2e8f0;
 }
 
-.table th {
-  font-weight: 600;
-  color: #374151;
+.data-table th {
+  font-weight: 500;
+  color: #64748b;
+  font-size: 0.75rem;
+  text-transform: uppercase;
 }
 
-.checkbox {
-  transform: scale(1.2);
+.data-table td {
+  font-size: 0.875rem;
+  color: #1e293b;
 }
 
-/* Responsive Design */
+.data-table tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+/* Table Row Highlight */
+.data-table tbody tr:hover {
+  cursor: pointer;
+}
+
+/* Updated Pagination - Centered with better styling */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 0.5rem;
+}
+
+.pagination span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  height: 2rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pagination span.active {
+  background-color: #3b82f6;
+  color: white;
+  font-weight: 500;
+}
+
+.pagination span:first-child,
+.pagination span:last-child {
+  color: #94a3b8;
+}
+
+.pagination span:hover:not(.active) {
+  background-color: #f1f5f9;
+}
+
+/* Small Tables Section */
+.small-table .data-table {
+  font-size: 0.875rem;
+}
+
+/* Monthly dropdown */
+select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M8 10.5L4.5 7l.797-.797L8 8.89l2.703-2.687L11.5 7 8 10.5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  padding-right: 2rem;
+}
+
+/* Make table cells align with the design */
+.data-table th:first-child,
+.data-table td:first-child {
+  padding-left: 0.5rem;
+}
+
+/* Add styling for table headers */
+.data-table th {
+  color: #64748b;
+  text-transform: uppercase;
+  font-weight: 500;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+/* Add subtle zebra striping for better readability */
+.data-table tbody tr:nth-child(even) {
+  background-color: #f8fafc;
+}
+
+/* Style the revenue column to highlight it */
+.data-table td:nth-child(4) {
+  color: #0369a1;
+  font-weight: 500;
+}
+
+/* Responsive helpers */
 @media (max-width: 768px) {
-  .sales-alerts-grid {
-    grid-template-columns: 1fr;
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .header-center {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .header-right {
+    align-self: flex-end;
+  }
+  
+  .pagination {
+    overflow-x: auto;
+    width: 100%;
+    justify-content: center;
   }
 }

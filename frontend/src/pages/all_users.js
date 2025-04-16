@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/sidebar';
 import { FiSearch, FiFilter, FiPlus } from 'react-icons/fi';
 import { FaFileExcel, FaFilePdf, FaEdit, FaTrash } from 'react-icons/fa';
+import './all_users.css'; // Import the CSS file here
 
 const AllUsers = () => {
   const [users, setUsers] = useState([

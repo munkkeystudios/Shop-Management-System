@@ -1,43 +1,4 @@
-/* --- Global Styles & Variables --- */
-:root {
-    --font-family-main: 'Inter', sans-serif;
-    --primary-color: #3B82F6; /* Blue */
-    --text-heading: #1E1E1E;
-    --text-body: #555555;
-    --text-dark-gray: #1E1E1E;
-    --text-light-gray: #555; /* Alias for clarity */
-    --border-color: #E0E0E0;
-    --sidebar-bg: #FFFFFF;
-    --header-bg: #FFFFFF;
-    --card-bg: #FFFFFF;
-    --active-link-bg: #E5F0FB;
-    --search-bg: #F9FAFB; /* Light grey */
-    --stat-sales-bg: #FFF9E6;
-    --stat-purchase-bg: #F5F0FF;
-    --stat-products-bg: #E7FAF0;
-    --stat-revenue-bg: #FFEDE8;
-    --border-radius: 12px;
-    --card-padding: 20px; /* Approx */
-    --card-gap: 20px;
-    --shadow-light: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); /* Subtle shadow */
-    --sidebar-width: 240px;
-    --header-height: 60px;
-}
 
-/* --- Basic Reset --- */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: var(--font-family-main);
-    background-color: #F9FAFB; /* Light background for the area outside main sections */
-    color: var(--text-body);
-    display: flex;
-    min-height: 100vh;
-}
 
 a {
     text-decoration: none;
