@@ -1,189 +1,181 @@
-.category-page {
-    padding: 2rem;
-    background-color: #f5f7fa;
-    font-family: Arial, sans-serif;
+.categories-main-container {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  background-color: #f8f9fa;
 }
 
-.breadcrumb {
-    font-size: 0.9rem;
-    color: #666;
-    margin-bottom: 1rem;
+.categories-frame {
+  flex: 1;
+  padding: 20px;
 }
 
-.breadcrumb .active {
-    font-weight: bold;
+.categories-div-2 {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.category-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
+.categories-div-3 {
+  margin-bottom: 20px;
 }
 
-.search-box {
-    padding: 8px 12px;
-    width: 250px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
+.categories-div-4 {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
 }
 
-.category-table {
-    background: white;
-    border-radius: 10px;
-    padding: 1rem;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    overflow-x: auto;
+.categories-text-2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #212529;
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.95rem;
+.categories-search-container {
+  display: flex;
+  align-items: center;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  padding: 8px 12px;
+  margin-bottom: 20px;
+  border: 1px solid #dee2e6;
+  width: 100%;
 }
 
-thead {
-    background-color: #f0f2f5;
+.categories-search-icon {
+  color: #6c757d;
+  margin-right: 8px;
 }
 
-th, td {
-    padding: 12px 16px;
-    text-align: left;
-    border-bottom: 1px solid #eee;
+.categories-search-input {
+  border: none;
+  background: none;
+  outline: none;
+  color: #212529;
+  width: 100%;
+  font-size: 14px;
 }
 
-.action-icons svg {
-    margin-right: 10px;
-    cursor: pointer;
-    color: #666;
-    transition: 0.2s;
+.categories-search-input::placeholder {
+  color: #6c757d;
 }
 
-.action-icons svg:hover {
-    color: #000;
+.categories-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
-.pagination {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    margin-top: 1rem;
-    gap: 1rem;
+.categories-table th,
+.categories-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #dee2e6;
 }
 
-.pagination button {
-    padding: 6px 12px;
-    border: 1px solid #ccc;
-    background: white;
-    border-radius: 4px;
-    cursor: pointer;
+.categories-table th:first-child {
+  border-top-left-radius: 8px;
 }
 
-.create-category {
-    margin-top: 1rem;
+.categories-table th:last-child {
+  border-top-right-radius: 8px;
 }
 
-.create-btn {
-    padding: 10px 16px;
-    background-color: #28a745;
-    color: white;
-    font-weight: bold;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background 0.3s ease;
+.categories-table tr:last-child td:first-child {
+  border-bottom-left-radius: 8px;
 }
 
-.create-btn:hover {
-    background-color: #218838;
+.categories-table tr:last-child td:last-child {
+  border-bottom-right-radius: 8px;
 }
 
-.category-layout {
-    display: flex;
+.categories-table tbody tr:nth-child(even) {
+  background-color: #f8f9fa;
 }
 
-.category-page {
-    flex-grow: 1; /* This will make the main content take up the remaining space */
-    padding: 20px;
-    margin-left: 240px; /* Adjust this value based on the sidebar width */
+.categories-table tbody tr:nth-child(odd) {
+  background-color: #ffffff;
 }
 
-.breadcrumb {
-    font-size: 14px;
-    margin-bottom: 10px;
+.categories-table tbody tr:hover {
+  background-color: #f3f4f6;
 }
 
-.category-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.categories-table th {
+  font-weight: 600;
+  color: #212529;
+  background-color: #f8f9fa;
 }
 
-.search-box {
-    padding: 8px;
-    font-size: 14px;
+.categories-action-buttons {
+  display: flex;
+  gap: 8px;
 }
 
-.category-table {
-    margin-top: 20px;
+.categories-action-button {
+  background: none;
+  border: none;
+  padding: 6px;
+  cursor: pointer;
+  color: #6c757d;
+  transition: color 0.2s;
 }
 
-.table th,
-.table td {
-    padding: 10px;
+.categories-action-button:hover {
+  color: #0d6efd;
 }
 
-.pagination {
-    margin-top: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.categories-action-button.primary {
+  background-color: #0d6efd;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.create-category {
-    margin-top: 20px;
-    display: flex;
-    justify-content: flex-end;
+.categories-action-button.primary:hover {
+  background-color: #0b5ed7;
+  color: white;
 }
 
-.create-btn {
-    padding: 10px 20px;
-    font-size: 14px;
-    cursor: pointer;
+.categories-pagination-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
 }
 
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.categories-pagination-controls {
+  display: flex;
+  gap: 8px;
 }
 
-.modal {
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    width: 400px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+.categories-pagination-button {
+  color: #6c757d;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
 }
 
-.form-group {
-    margin-bottom: 10px;
+.categories-pagination-button:hover {
+  color: #0d6efd;
 }
 
-.modal-actions button {
-    margin-right: 10px;
+.categories-page-info {
+  color: #6c757d;
+  font-size: 14px;
 }
 
-.search-box {
-    padding: 8px;
-    width: 200px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    margin: 10px 0;
-}
+.categories-action-buttons-container {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-start;
+} 

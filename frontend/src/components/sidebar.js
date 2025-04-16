@@ -8,6 +8,7 @@ import { LuPackage, LuPackagePlus, LuPackageSearch } from "react-icons/lu";
 import { HiOutlineDocumentReport } from "react-icons/hi";
 import { FiUsers } from "react-icons/fi";
 import { BsCartCheck } from "react-icons/bs";
+import { TbReportMoney } from "react-icons/tb";
 
 // sidebar layout:
 const SideBar = ({ children }) => {
@@ -319,6 +320,27 @@ function ToolsSidebar() {
                         />
                     </Link>
                 </SideBarDropdown>
+
+                <Nav.Item className="sidebar-nav-item" style={{
+                    padding: '12px 16px',
+                    textAlign: 'left',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    color: isPathActive('/sales') ? '#357EC7' : '#505050',
+                    backgroundColor: isPathActive('/sales') ? '#f0f7ff' : 'transparent',
+                    margin: '2px 8px',
+                    borderRadius: '4px'
+                }}>
+                    <Link to="/sales" className="sidebar-link" style={{
+                        textDecoration: 'none',
+                        color: 'inherit',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px'
+                    }}>
+                        <TbReportMoney size={16} /> Sales
+                    </Link>
+                </Nav.Item>
 
                 <Nav.Item className="sidebar-nav-item" style={{
                     padding: '12px 16px',

@@ -14,6 +14,7 @@ import AllUsers from "./pages/all_users";
 import { Frame } from "./pages/supplier";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { Frame as Sales } from "./pages/sales";
 
 function App() {
   return (
@@ -72,6 +73,11 @@ function App() {
             <Route path="/create-user" element={
               <ProtectedRoute>
                 <Signup />
+              </ProtectedRoute>
+            } />
+            <Route path="/sales" element={
+              <ProtectedRoute>
+                <Sales />
               </ProtectedRoute>
             } />
             
