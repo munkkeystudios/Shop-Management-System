@@ -7,6 +7,7 @@ import { RiShoppingBag4Line } from "react-icons/ri";
 import { LuPackage, LuPackagePlus, LuPackageSearch } from "react-icons/lu";
 import { HiOutlineDocumentReport } from "react-icons/hi";
 import { FiUsers } from "react-icons/fi";
+import { BsCartCheck } from "react-icons/bs";
 
 // sidebar layout:
 const SideBar = ({ children }) => {
@@ -284,6 +285,37 @@ function ToolsSidebar() {
                                 </div>
                             }
                             onClick={() => handleItemClick("Create User")}
+                        />
+                    </Link>
+                </SideBarDropdown>
+
+                <SideBarDropdown
+                    isActive={isGroupActive(['/purchases', '/supplier'])}
+                    title={
+                        <div className="sidebar-link" style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '12px'
+                        }}>
+                            <BsCartCheck size={16}/> Purchases
+                        </div>
+                    }>
+                    <Link to="/supplier" className="sidebar-link" style={{
+                        textDecoration: 'none',
+                        color: 'inherit'
+                    }}>
+                        <SideBarItem
+                            isActive={isPathActive('/supplier')}
+                            title={
+                                <div style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '12px'
+                                }}>
+                                    <BsCartCheck size={16} /> Suppliers
+                                </div>
+                            }
+                            onClick={() => handleItemClick("Suppliers")}
                         />
                     </Link>
                 </SideBarDropdown>

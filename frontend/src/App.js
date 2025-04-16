@@ -11,6 +11,7 @@ import Signup from "./pages/Signup";
 import CategoryPage from "./pages/categories";
 import CreateProducts from "./pages/create_products";
 import AllUsers from "./pages/all_users";
+import { Frame } from "./pages/supplier";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -61,6 +62,11 @@ function App() {
             <Route path="/all_users" element={
               <ProtectedRoute>
                 <AllUsers />
+              </ProtectedRoute>
+            } />
+            <Route path="/supplier" element={
+              <ProtectedRoute>
+                <Frame />
               </ProtectedRoute>
             } />
             <Route path="/create-user" element={
