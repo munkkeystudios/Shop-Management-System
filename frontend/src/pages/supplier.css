@@ -146,20 +146,24 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 20px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #dee2e6;
 }
 
 .supplier-pagination-controls {
   display: flex;
+  align-items: center;
   gap: 8px;
 }
 
 .supplier-pagination-button {
-  color: #6c757d;
   background: none;
   border: none;
+  color: #6c757d;
   cursor: pointer;
   font-size: 14px;
+  padding: 0;
 }
 
 .supplier-pagination-button:hover {
