@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import Sidebar from '../components/sidebar';  // Keeping the sidebar import as is
+import { FaSearch, FaFilter, FaFileExcel, FaFilePdf, FaPlus, FaEdit, FaTrash, FaEye } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import Sidebar from '../components/sidebar';
+import './all_products.css';
 
 // Import images
 import sodaImage from '../images/soda.jpeg';
@@ -9,6 +13,8 @@ import milkImage from '../images/milk.jpg';
 import defaultProductImage from '../images/default-product-image.jpg';
 
 const Inventory = () => {
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   // State management
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -74,7 +80,8 @@ const Inventory = () => {
 
   // Filter products based on search term
   const filteredProducts = products.filter(product =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase())
+    product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    product.barcode.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // Helper function to get product image
@@ -88,155 +95,135 @@ const Inventory = () => {
     return defaultProductImage;
   };
 
-  return (
-    <div className="flex h-screen bg-gray-100">
-      <Sidebar />
-      <div className="flex-1 overflow-auto">
-        <div className="p-6">
-          {/* Header with title and search */}
-          <div className="flex justify-between items-center mb-6">
-            <h1 className="text-2xl font-bold text-gray-800">All Products</h1>
-            <div className="flex items-center space-x-4">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search for products"
-                  className="border border-gray-300 rounded-md px-4 py-2 w-64 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-              <button className="bg-green-500 hover:bg-green-600 text-white font-medium px-4 py-2 rounded-md transition duration-200">
-                Create New Product
-              </button>
-            </div>
-          </div>
+  const handleCreateProduct = () => {
+    if (isAuthenticated()) {
+      navigate('/create_products');
+    } else {
+      navigate('/login');
+    }
+  };
 
-          {/* Products table */}
-          <div className="bg-white rounded-lg shadow">
-            <div className="overflow-x-auto">
-              <table className="w-full table-auto">
-                <thead>
-                  <tr className="bg-gray-50 text-left text-gray-600 text-sm">
-                    <th className="px-4 py-3 font-medium">
-                      <input 
-                        type="checkbox" 
-                        className="form-checkbox h-4 w-4 text-blue-600"
-                        checked={selectedItems.length === filteredProducts.length && filteredProducts.length > 0}
-                        onChange={toggleSelectAll}
-                      />
-                    </th>
-                    <th className="px-4 py-3 font-medium">P-Code</th>
-                    <th className="px-4 py-3 font-medium">Photo</th>
-                    <th className="px-4 py-3 font-medium">Title</th>
-                    <th className="px-4 py-3 font-medium">Category</th>
-                    <th className="px-4 py-3 font-medium">SKU</th>
-                    <th className="px-4 py-3 font-medium">Sale Price</th>
-                    <th className="px-4 py-3 font-medium">Qty</th>
-                    <th className="px-4 py-3 font-medium">Action</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {loading ? (
+  return (
+    <div className="products-main-container">
+      <Sidebar />
+      <div className="products-frame">
+        <div className="products-div-2">
+          <div className="products-div-3">
+            <div className="products-div-4">
+              <div className="products-text-2">All Products</div>
+              <div className="products-controls-container">
+                <div className="products-search-container">
+                  <FaSearch className="products-search-icon" />
+                  <input
+                    type="text"
+                    placeholder="Search this table"
+                    className="products-search-input"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
+                <div className="products-action-buttons">
+                  <button 
+                    className="products-create-button"
+                    onClick={handleCreateProduct}
+                  >
+                    <FaPlus /> Create New Product
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="products-div-6">
+              <div className="products-div-7">
+                <table className="products-table">
+                  <thead>
                     <tr>
-                      <td colSpan="9" className="text-center py-4">Loading products...</td>
+                      <th>
+                        <input 
+                          type="checkbox" 
+                          className="products-checkbox"
+                          onChange={toggleSelectAll}
+                          checked={selectedItems.length === filteredProducts.length}
+                        />
+                      </th>
+                      <th>P-Code</th>
+                      <th>Photo</th>
+                      <th>Title</th>
+                      <th>Category</th>
+                      <th>SKU</th>
+                      <th>Sale Price</th>
+                      <th>Qty</th>
+                      <th>Action</th>
                     </tr>
-                  ) : error ? (
-                    <tr>
-                      <td colSpan="9" className="text-center py-4 text-red-500">{error}</td>
-                    </tr>
-                  ) : filteredProducts.length === 0 ? (
-                    <tr>
-                      <td colSpan="9" className="text-center py-4">No products found</td>
-                    </tr>
-                  ) : (
-                    filteredProducts.map((product) => (
-                      <tr key={product._id} className="hover:bg-gray-50">
-                        <td className="px-4 py-3">
+                  </thead>
+                  <tbody>
+                    {filteredProducts.map((product) => (
+                      <tr key={product._id}>
+                        <td>
                           <input 
                             type="checkbox" 
-                            className="form-checkbox h-4 w-4 text-blue-600"
+                            className="products-checkbox"
                             checked={selectedItems.includes(product._id)}
                             onChange={() => toggleSelect(product._id)}
                           />
                         </td>
-                        <td className="px-4 py-3 text-sm text-gray-600">
-                          {product._id.substring(0, 4)}
-                        </td>
-                        <td className="px-4 py-3">
-                          <div className="w-10 h-10 flex-shrink-0">
+                        <td>{product.barcode}</td>
+                        <td>
+                          <div className="products-image-container">
                             <img 
                               src={getProductImage(product)} 
-                              alt={product.name} 
-                              className="w-full h-full object-cover rounded"
+                              alt={product.name}
+                              className="products-image"
                             />
                           </div>
                         </td>
-                        <td className="px-4 py-3 text-sm font-medium text-gray-800">
-                          {product.name}
-                        </td>
-                        <td className="px-4 py-3 text-sm text-gray-600">
-                          {product.category ? product.category.name : 'Uncategorized'}
-                        </td>
-                        <td className="px-4 py-3 text-sm text-gray-600">
-                          {product.barcode}
-                        </td>
-                        <td className="px-4 py-3 text-sm text-gray-600">
-                          ${product.price?.toFixed(2)}
-                        </td>
-                        <td className="px-4 py-3 text-sm text-gray-600">
-                          {product.quantity}
-                        </td>
-                        <td className="px-4 py-3">
-                          <div className="flex space-x-2">
+                        <td>{product.name}</td>
+                        <td>{product.category ? product.category.name : 'Uncategorized'}</td>
+                        <td>{product.barcode}</td>
+                        <td>${product.price?.toFixed(2)}</td>
+                        <td>{product.quantity}</td>
+                        <td>
+                          <div className="products-action-buttons">
                             <button 
-                              className="text-blue-600 hover:text-blue-800"
+                              className="products-action-button"
                               onClick={() => setSelectedProduct(product)}
                             >
-                              👁️
+                              <FaEye />
                             </button>
-                            <button className="text-red-600 hover:text-red-800">
-                              🗑️
+                            <button className="products-action-button">
+                              <FaEdit />
                             </button>
-                            <button className="text-green-600 hover:text-green-800">
-                              ✏️
+                            <button className="products-action-button">
+                              <FaTrash />
                             </button>
                           </div>
                         </td>
                       </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
-            
-            {/* Pagination */}
-            {!loading && !error && totalPages > 1 && (
-              <div className="px-4 py-3 flex items-center justify-between border-t border-gray-200">
-                <div className="flex-1 flex justify-between items-center">
-                  <button
-                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                    disabled={currentPage === 1}
-                    className={`relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md ${
-                      currentPage === 1 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-white text-gray-700 hover:bg-gray-50'
-                    }`}
-                  >
-                    Previous
-                  </button>
-                  <div className="text-sm text-gray-700">
-                    Page {currentPage} of {totalPages}
+                    ))}
+                  </tbody>
+                </table>
+
+                <div className="products-pagination-container">
+                  <div className="products-pagination-controls">
+                    <button
+                      onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                      disabled={currentPage === 1}
+                      className="products-pagination-button"
+                    >
+                      Previous
+                    </button>
+                    <button
+                      onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                      disabled={currentPage === totalPages}
+                      className="products-pagination-button"
+                    >
+                      Next
+                    </button>
                   </div>
-                  <button
-                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                    disabled={currentPage === totalPages}
-                    className={`relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md ${
-                      currentPage === totalPages ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-white text-gray-700 hover:bg-gray-50'
-                    }`}
-                  >
-                    Next
-                  </button>
+                  <span className="products-page-info">Page {currentPage} of {totalPages}</span>
                 </div>
               </div>
-            )}
+            </div>
           </div>
         </div>
       </div>
@@ -244,82 +231,90 @@ const Inventory = () => {
       {/* Product Details Modal */}
       {selectedProduct && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4">
-            <div className="flex justify-between items-center p-6 border-b">
-              <h2 className="text-xl font-semibold text-gray-800">Product Details</h2>
+          <div className="bg-white rounded-lg w-[671px] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            {/* Header */}
+            <div className="flex items-center justify-between px-4 py-2 border-b">
+              <div className="flex items-center gap-2">
+                <span className="bg-black text-white text-xs px-2 py-0.5 rounded">Print Label</span>
+                <span className="text-base">Product Details</span>
+              </div>
               <button
-                className="text-gray-400 hover:text-gray-600 text-xl"
+                className="text-gray-400 hover:text-gray-600"
                 onClick={() => setSelectedProduct(null)}
               >
                 ×
               </button>
             </div>
-            
-            <div className="p-6 grid grid-cols-3 gap-6">
-              <div className="col-span-1">
-                <div className="aspect-square w-full rounded-lg overflow-hidden bg-gray-100">
-                  <img
-                    src={getProductImage(selectedProduct)}
-                    alt={selectedProduct.name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              </div>
-              
-              <div className="col-span-2 space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500">Product Name</h3>
-                    <p className="mt-1 text-lg font-medium text-gray-900">{selectedProduct.name}</p>
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500">Category</h3>
-                    <p className="mt-1 text-lg font-medium text-gray-900">
-                      {selectedProduct.category ? selectedProduct.category.name : 'Uncategorized'}
-                    </p>
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500">SKU</h3>
-                    <p className="mt-1 text-lg font-medium text-gray-900">{selectedProduct.barcode}</p>
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500">Product Code</h3>
-                    <p className="mt-1 text-lg font-medium text-gray-900">{selectedProduct._id.substring(0, 8)}</p>
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500">Sale Price</h3>
-                    <p className="mt-1 text-lg font-medium text-gray-900">${selectedProduct.price?.toFixed(2)}</p>
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500">Quantity</h3>
-                    <p className="mt-1 text-lg font-medium text-gray-900">{selectedProduct.quantity}</p>
-                  </div>
-                  {selectedProduct.costPrice && (
-                    <div>
-                      <h3 className="text-sm font-medium text-gray-500">Cost Price</h3>
-                      <p className="mt-1 text-lg font-medium text-gray-900">${selectedProduct.costPrice?.toFixed(2)}</p>
-                    </div>
-                  )}
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500">Status</h3>
-                    <p className="mt-1 text-lg font-medium text-gray-900">{selectedProduct.status || 'Active'}</p>
-                  </div>
-                </div>
-              </div>
+
+            {/* Image Section */}
+            <div className="bg-gray-50 flex justify-center items-center" style={{ height: '183px' }}>
+              <img
+                src={getProductImage(selectedProduct)}
+                alt={selectedProduct.name}
+                style={{ width: '204px', height: '183px', objectFit: 'contain' }}
+              />
             </div>
-            
-            <div className="bg-gray-50 px-6 py-4 flex justify-end gap-3 border-t">
-              <button
-                className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-50 font-medium"
-                onClick={() => setSelectedProduct(null)}
-              >
-                Close
-              </button>
-              <button
-                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 font-medium"
-              >
-                Edit Product
-              </button>
+
+            {/* Details Section */}
+            <div className="p-4">
+              <div className="space-y-3">
+                <div className="grid grid-cols-2 text-sm">
+                  <span className="text-gray-500">Type</span>
+                  <span>Single</span>
+                </div>
+                <div className="grid grid-cols-2 text-sm">
+                  <span className="text-gray-500">Code Product</span>
+                  <span>{selectedProduct._id.substring(0, 8)}</span>
+                </div>
+                <div className="grid grid-cols-2 text-sm">
+                  <span className="text-gray-500">Product</span>
+                  <span>{selectedProduct.name}</span>
+                </div>
+                <div className="grid grid-cols-2 text-sm">
+                  <span className="text-gray-500">Brand</span>
+                  <span>{selectedProduct.brand || 'N/A'}</span>
+                </div>
+                <div className="grid grid-cols-2 text-sm">
+                  <span className="text-gray-500">Category</span>
+                  <span>{selectedProduct.category ? selectedProduct.category.name : 'Uncategorized'}</span>
+                </div>
+                <div className="grid grid-cols-2 text-sm">
+                  <span className="text-gray-500">Cost</span>
+                  <span>${selectedProduct.costPrice?.toFixed(2) || '0.00'}</span>
+                </div>
+                <div className="grid grid-cols-2 text-sm">
+                  <span className="text-gray-500">Warehouse</span>
+                  <span>Warehouse 1</span>
+                </div>
+                <div className="grid grid-cols-2 text-sm">
+                  <span className="text-gray-500">Price</span>
+                  <span>${selectedProduct.price?.toFixed(2) || '0.00'}</span>
+                </div>
+                <div className="grid grid-cols-2 text-sm">
+                  <span className="text-gray-500">Unit</span>
+                  <span>Pc</span>
+                </div>
+                <div className="grid grid-cols-2 text-sm">
+                  <span className="text-gray-500">Tax</span>
+                  <span>0.00%</span>
+                </div>
+                <div className="grid grid-cols-2 text-sm">
+                  <span className="text-gray-500">Stock</span>
+                  <span>{selectedProduct.quantity || '0'}</span>
+                </div>
+              </div>
+
+              {/* Barcode Section */}
+              <div className="mt-4 pt-4 border-t flex justify-center">
+                <div className="text-center">
+                  <svg className="w-32 h-12" viewBox="0 0 100 30">
+                    <rect x="10" y="5" width="80" height="20" fill="#fff" stroke="#ddd" />
+                    <text x="50" y="28" textAnchor="middle" fontSize="8">
+                      {selectedProduct.barcode || '000000000000'}
+                    </text>
+                  </svg>
+                </div>
+              </div>
             </div>
           </div>
         </div>
