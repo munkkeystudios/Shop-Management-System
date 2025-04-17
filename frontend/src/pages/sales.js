@@ -1,9 +1,53 @@
-import React from "react";
+import React, { useState } from "react";
 import { FaSearch, FaFilter, FaFileExcel, FaFilePdf } from 'react-icons/fa';
 import Sidebar from '../components/sidebar';
 import './sales.css';
 
 export const Frame = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  // Sample data - replace with your actual data source
+  const [sales] = useState([
+    {
+      date: '2024-01-27',
+      reference: 'SL_2119',
+      addedBy: 'William Castillo',
+      customer: 'Thomas',
+      status: 'Received',
+      grandTotal: '322.00',
+      paid: '322.00',
+      due: '322.00',
+      paymentStatus: 'Paid'
+    },
+    {
+      date: '2024-01-26',
+      reference: 'SL_2118',
+      addedBy: 'William Castillo',
+      customer: 'Jack',
+      status: 'Ordered',
+      grandTotal: '680.00',
+      paid: '680.00',
+      due: '680.00',
+      paymentStatus: 'Unpaid'
+    },
+    {
+      date: '2024-01-25',
+      reference: 'SL_2117',
+      addedBy: 'William Castillo',
+      customer: 'Will',
+      status: 'Pending',
+      grandTotal: '1500.00',
+      paid: '1500.00',
+      due: '1500.00',
+      paymentStatus: 'Paid'
+    }
+  ]);
+
+  // Filter sales based on reference number
+  const filteredSales = sales.filter(sale =>
+    sale.reference.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="sales-main-container">
       <Sidebar />
@@ -19,6 +63,8 @@ export const Frame = () => {
                     type="text"
                     placeholder="Search this table"
                     className="sales-search-input"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
                   />
                 </div>
                 <div className="sales-action-buttons">
@@ -55,39 +101,19 @@ export const Frame = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td>2024-01-27</td>
-                      <td>SL_2119</td>
-                      <td>William Castillo</td>
-                      <td>Thomas</td>
-                      <td><span className="sales-status-badge received">Received</span></td>
-                      <td>322.00</td>
-                      <td>322.00</td>
-                      <td>322.00</td>
-                      <td><span className="sales-status-badge paid">Paid</span></td>
-                    </tr>
-                    <tr>
-                      <td>2024-01-26</td>
-                      <td>SL_2118</td>
-                      <td>William Castillo</td>
-                      <td>Jack</td>
-                      <td><span className="sales-status-badge ordered">Ordered</span></td>
-                      <td>680.00</td>
-                      <td>680.00</td>
-                      <td>680.00</td>
-                      <td><span className="sales-status-badge unpaid">Unpaid</span></td>
-                    </tr>
-                    <tr>
-                      <td>2024-01-25</td>
-                      <td>SL_2117</td>
-                      <td>William Castillo</td>
-                      <td>Will</td>
-                      <td><span className="sales-status-badge pending">Pending</span></td>
-                      <td>1500.00</td>
-                      <td>1500.00</td>
-                      <td>1500.00</td>
-                      <td><span className="sales-status-badge paid">Paid</span></td>
-                    </tr>
+                    {filteredSales.map((sale, index) => (
+                      <tr key={index}>
+                        <td>{sale.date}</td>
+                        <td>{sale.reference}</td>
+                        <td>{sale.addedBy}</td>
+                        <td>{sale.customer}</td>
+                        <td><span className={`sales-status-badge ${sale.status.toLowerCase()}`}>{sale.status}</span></td>
+                        <td>{sale.grandTotal}</td>
+                        <td>{sale.paid}</td>
+                        <td>{sale.due}</td>
+                        <td><span className={`sales-status-badge ${sale.paymentStatus.toLowerCase()}`}>{sale.paymentStatus}</span></td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
 

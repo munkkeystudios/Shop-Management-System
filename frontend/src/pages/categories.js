@@ -1,9 +1,36 @@
-import React from "react";
-import { FaEdit, FaTrash, FaSearch, FaPlus } from 'react-icons/fa';
+import React, { useState } from "react";
+import { FaEdit, FaTrash, FaSearch, FaPlus, FaTimes } from 'react-icons/fa';
 import Sidebar from '../components/sidebar';
 import './categories.css';
 
 const CategoryPage = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [categoryCode, setCategoryCode] = useState('');
+  const [categoryName, setCategoryName] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+
+  // Sample data - replace with your actual data source
+  const [categories] = useState([
+    { code: 'CA9', name: 'Jeans' },
+    { code: 'CA8', name: 'Shirts' },
+    { code: 'CA7', name: 'Shorts' },
+    { code: 'CA6', name: 'Jacket' },
+  ]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Add your form submission logic here
+    console.log({ categoryCode, categoryName });
+    setIsModalOpen(false);
+    setCategoryCode('');
+    setCategoryName('');
+  };
+
+  // Filter categories based on search term
+  const filteredCategories = categories.filter(category =>
+    category.code.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="categories-main-container">
       <Sidebar />
@@ -19,6 +46,8 @@ const CategoryPage = () => {
                 type="text"
                 placeholder="Search this table"
                 className="categories-search-input"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
 
@@ -33,62 +62,22 @@ const CategoryPage = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td>CA9</td>
-                      <td>Jeans</td>
-                      <td>
-                        <div className="categories-action-buttons">
-                          <button className="categories-action-button">
-                            <FaEdit />
-                          </button>
-                          <button className="categories-action-button">
-                            <FaTrash />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>CA8</td>
-                      <td>Shirts</td>
-                      <td>
-                        <div className="categories-action-buttons">
-                          <button className="categories-action-button">
-                            <FaEdit />
-                          </button>
-                          <button className="categories-action-button">
-                            <FaTrash />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>CA7</td>
-                      <td>Shorts</td>
-                      <td>
-                        <div className="categories-action-buttons">
-                          <button className="categories-action-button">
-                            <FaEdit />
-                          </button>
-                          <button className="categories-action-button">
-                            <FaTrash />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>CA6</td>
-                      <td>Jacket</td>
-                      <td>
-                        <div className="categories-action-buttons">
-                          <button className="categories-action-button">
-                            <FaEdit />
-                          </button>
-                          <button className="categories-action-button">
-                            <FaTrash />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
+                    {filteredCategories.map((category, index) => (
+                      <tr key={index}>
+                        <td>{category.code}</td>
+                        <td>{category.name}</td>
+                        <td>
+                          <div className="categories-action-buttons">
+                            <button className="categories-action-button">
+                              <FaEdit />
+                            </button>
+                            <button className="categories-action-button">
+                              <FaTrash />
+                            </button>
+                    </div>
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
 
@@ -104,12 +93,50 @@ const CategoryPage = () => {
           </div>
 
           <div className="categories-action-buttons-container">
-            <button className="categories-action-button primary">
+            <button 
+              className="categories-action-button primary"
+              onClick={() => setIsModalOpen(true)}
+            >
               <FaPlus /> Create New Category
             </button>
+                      </div>
+                    </div>
+                  </div>
+
+      {isModalOpen && (
+        <div className="categories-modal-overlay">
+          <div className="categories-modal">
+            <button 
+              className="categories-modal-close"
+              onClick={() => setIsModalOpen(false)}
+            >
+              <FaTimes />
+            </button>
+            <h2 className="categories-modal-title">Create Category</h2>
+            <form className="categories-modal-form" onSubmit={handleSubmit}>
+              <input
+                type="text"
+                placeholder="Enter category code"
+                className="categories-modal-input"
+                value={categoryCode}
+                onChange={(e) => setCategoryCode(e.target.value)}
+                required
+              />
+              <input
+                type="text"
+                placeholder="Enter category name"
+                className="categories-modal-input"
+                value={categoryName}
+                onChange={(e) => setCategoryName(e.target.value)}
+                required
+              />
+              <button type="submit" className="categories-modal-submit">
+                Submit
+              </button>
+            </form>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
