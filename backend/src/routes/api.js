@@ -5,6 +5,7 @@ const categoryController = require('../controllers/categoryController');
 const supplierController = require('../controllers/supplierController');
 const productController = require('../controllers/productController');
 const userController = require('../controllers/userController');
+const importPurchaseController = require('../controllers/importPurchaseController');
 const saleController = require('../controllers/saleController');
 const importController = require('../controllers/importController');
 const purchaseController = require('../controllers/purchaseController');
@@ -58,6 +59,23 @@ router.post('/purchases', purchaseController.createPurchase);
 router.get('/purchases', purchaseController.getAllPurchases);
 router.get('/purchases/export', purchaseController.exportPurchases);
 router.get('/purchases/:id', purchaseController.getPurchaseById);
+
+
+router.post('/import-purchases', importPurchaseController.createImportPurchase);
+router.get('/import-purchases', importPurchaseController.getAllImportPurchases);
+router.get('/import-purchases/:id', importPurchaseController.getImportPurchaseById);
+router.put('/import-purchases/:id', importPurchaseController.updateImportPurchase);
+router.delete('/import-purchases/:id', importPurchaseController.deleteImportPurchase);
+router.get('/import-purchases/export', importPurchaseController.exportImportPurchases);
+router.get('/import-purchases/stats', importPurchaseController.getImportPurchaseStats);
+router.get('/import-purchases/last-bill-number', importPurchaseController.getLastBillNumber); // Specific route first
+router.get('/import-purchases/:id', importPurchaseController.getImportPurchaseById); // Generic route last
+router.get('/import-purchases/supplier/:supplierId', importPurchaseController.getImportPurchasesBySupplierId); // Specific route first
+router.get('/import-purchases/user/:userId', importPurchaseController.getImportPurchasesByUserId); // Specific route first
+router.get('/import-purchases/date-range', importPurchaseController.getImportPurchasesByDateRange); // Specific route first
+router.get('/import-purchases/total-amount', importPurchaseController.getTotalImportPurchasesAmount); // Specific route first
+router.get('/import-purchases/total-amount/:supplierId', importPurchaseController.getTotalImportPurchasesAmountBySupplier); // Specific route first
+router.get('/import-purchases/total-amount/:userId', importPurchaseController.getTotalImportPurchasesAmountByUser); // Specific route first
 
 
 
