@@ -54,6 +54,7 @@ export const usersAPI = {
   getAll: () => api.get('/users'),
   update: (id, userData) => api.put(`/users/${id}`, userData),
   create: (userData) => api.post('/users', userData), // Call adminCreateUser endpoint
+  delete: (id) => api.delete(`/users/${id}`), // Add delete method
   exportUsers: (format = 'csv') => api.get(`/users/export?format=${format}`, {
     responseType: 'blob', // Important for handling file download
   }),
@@ -85,7 +86,7 @@ export const suppliersAPI = {
     getAll: () => api.get('/suppliers'),
     getById: (id) => api.get(`/suppliers/${id}`),
     create: (supplierData) => api.post('/suppliers', supplierData),
-    update: (id, supplierData) => api.put(`/suppliers/${id}`),
+    update: (id, supplierData) => api.put(`/suppliers/${id}`, supplierData),
     delete: (id) => api.delete(`/suppliers/${id}`),
 };
 
