@@ -21,7 +21,7 @@ router.get('/users/profile', userController.getProfile);
 router.get('/users/export', userController.exportUsers);
 router.put('/users/:userId', userController.updateUser);
 router.post('/users', userController.adminCreateUser); 
-
+router.delete('/users/:userId', userController.deleteUser);
 
 router.get('/categories', categoryController.getAllCategories);
 router.get('/categories/:id', categoryController.getCategoryById);

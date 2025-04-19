@@ -7,7 +7,7 @@ import Inventory from "./pages/inventory";
 import Reports from "./pages/reports"; 
 import Pos from "./pages/pos";
 import Login from "./pages/Login";
-import Signup from "./pages/Signup";
+import CreateUser from "./pages/create_user";
 import CategoryPage from "./pages/categories";
 import CreateProducts from "./pages/create_products";
 import AllUsers from "./pages/all_users";
@@ -78,7 +78,7 @@ function App() {
             } />
             <Route path="/create-user" element={
               <ProtectedRoute>
-                <Signup />
+                <CreateUser />
               </ProtectedRoute>
             } />
             <Route path="/sales" element={

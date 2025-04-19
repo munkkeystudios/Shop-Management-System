@@ -69,7 +69,7 @@ const styles = `
   }
 `;
 
-const Signup = () => {
+const CreateUser = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -134,7 +134,6 @@ const Signup = () => {
         {/* Sidebar Component */}
         <Sidebar />
 
-        {/* Signup Form */}
         <div className="content">
           <div className="auth-container signup-page">
             <div className="form-card">
@@ -240,4 +239,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default CreateUser;

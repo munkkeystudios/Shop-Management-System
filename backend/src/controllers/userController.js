@@ -314,6 +314,50 @@ exports.updateUser = async (req, res) => {
   }
 };
 
+// Delete user (admin only)
+exports.deleteUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    if (!req.user || req.user.role !== 'admin') {
+      return res.status(403).json({
+        success: false,
+        message: 'Access denied: Only admins can delete users'
+      });
+    }
+
+    if (req.user._id.toString() === userId) {
+      return res.status(400).json({
+        success: false,
+        message: 'You cannot delete your own account'
+      });
+    }
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    await User.findByIdAndDelete(userId);
+
+    res.status(200).json({
+      success: true,
+      message: 'User deleted successfully'
+    });
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error when deleting user',
+      error: error.message
+    });
+  }
+};
+
 // *** ADDED: Export users function ***
 exports.exportUsers = async (req, res) => {
   try {
