@@ -3,8 +3,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 // eventually make it so all this import components/pages comes in 1 line
 import MainDashboard from "./pages/main_dashboard";
 import AllProducts from "./pages/all_products";
-import Inventory from "./pages/inventory";  
-import Reports from "./pages/reports"; 
+import Inventory from "./pages/inventory";
+import Reports from "./pages/reports";
 import Pos from "./pages/pos";
 import Login from "./pages/Login";
 import CreateUser from "./pages/create_user";
@@ -16,6 +16,7 @@ import { Frame } from "./pages/supplier";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { Frame as Sales } from "./pages/sales";
+import SalesReport from "./pages/sales-report";
 
 function App() {
   return (
@@ -25,7 +26,7 @@ function App() {
           <Routes>
             {/* Public routes */}
             <Route path="/login" element={<Login />} />
-                        
+
             <Route path="/dashboard" element={
               <ProtectedRoute>
                 <MainDashboard />
@@ -86,7 +87,12 @@ function App() {
                 <Sales />
               </ProtectedRoute>
             } />
-            
+            <Route path="/sales-report" element={
+              <ProtectedRoute>
+                <SalesReport />
+              </ProtectedRoute>
+            } />
+
             {/* Redirect root to login */}
             <Route path="/" element={<Navigate to="/login" replace />} />
             <Route path="*" element={<Navigate to="/login" replace />} />

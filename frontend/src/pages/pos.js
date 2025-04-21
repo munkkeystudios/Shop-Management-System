@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Button, Card } from 'react-bootstrap';
+import Layout from '../components/Layout';
 import SearchBar from '../components/pos/searchbarpos.jsx';
 import CartTable from '../components/pos/CartTable.js';
 import BillTab from '../components/pos/BillTab.js';
@@ -30,13 +31,13 @@ const Pos = () => {
         const lastBillNumber = response.data.lastBillNumber;
 
         if (lastBillNumber) {
-          setBillNumber(lastBillNumber + 1); 
+          setBillNumber(lastBillNumber + 1);
         } else {
           setBillNumber(1); // Start from 1 if no sales exist
         }
       } catch (error) {
         console.error('Error fetching last bill number:', error);
-        setBillNumber('Error'); 
+        setBillNumber('Error');
       }
     };
 
@@ -69,9 +70,10 @@ const Pos = () => {
   };
 
   return (
-    <div className="app-container" style={{ display: 'flex', height: '100vh' }}>
-      {/* left section */}
-      <div className="main-content" style={{ flex: '1', padding: '20px', display: 'flex', flexDirection: 'column' }}>
+    <Layout title="Point of Sale">
+      <div className="app-container" style={{ display: 'flex', height: 'calc(100vh - 80px)' }}>
+        {/* left section */}
+        <div className="main-content" style={{ flex: '1', padding: '0', display: 'flex', flexDirection: 'column' }}>
         <div className="bill-header" style={{
           display: 'flex',
           justifyContent: 'space-between',
@@ -174,6 +176,7 @@ const Pos = () => {
         </Card>
       </div>
     </div>
+    </Layout>
   );
 };
 

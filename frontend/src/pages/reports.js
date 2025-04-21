@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Sidebar from '../components/sidebar';
+import Layout from '../components/Layout';
 import axios from 'axios';
 
 const Reports = () => {
@@ -96,8 +96,7 @@ const Reports = () => {
   };
 
   return (
-    <div style={{ display: 'flex' }}>
-      <Sidebar />
+    <Layout title="Reports">
       <div className="container">
         <h1>REPORTS PAGE</h1>
         <p>This is a simple HTML page.</p>
@@ -106,7 +105,7 @@ const Reports = () => {
           Add Product
         </button>
       </div>
-    </div>
+    </Layout>
   );
 };
 

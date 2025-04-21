@@ -1,29 +1,11 @@
 import React from "react";
-import Sidebar from "../components/sidebar"; // Assuming sidebar structure is similar
+import Layout from "../components/Layout";
 import "../components/Dashboard.css";
 
 
 const MainDashboard = () => {
   return (
-    <div className="dashboard-container" style={{ display: "flex" }}>
-      <Sidebar />
-      <div className="main-wrapper bg-gray-100 min-h-screen">
-        {/* Header */}
-        <header className="header flex justify-between items-center p-4 bg-white shadow-md">
-          <div className="header-left">
-            <h1 className="page-title text-xl font-semibold">Dashboard</h1>
-          </div>
-          <div className="header-center flex items-center gap-4">
-            <button className="pos-button flex items-center gap-1 px-4 py-2 bg-blue-500 text-white rounded">
-              <span className="icon-placeholder">[Cart]</span> POS
-            </button>
-            <input type="search" className="search-bar px-2 py-1 border rounded" placeholder="Search..." />
-          </div>
-          <div className="header-right flex items-center gap-2">
-            <div className="user-avatar" />
-            <span className="icon-placeholder">[v]</span>
-          </div>
-        </header>
+    <Layout title="Dashboard">
 
         <main className="main-content p-6">
           {/* Stats Cards */}
@@ -146,8 +128,7 @@ const MainDashboard = () => {
             </article>
           </section>
         </main>
-      </div>
-    </div>
+    </Layout>
   );
 };
 

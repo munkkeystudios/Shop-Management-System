@@ -1,12 +1,11 @@
 import React from 'react';
-import Sidebar from '../components/sidebar';
+import Layout from '../components/Layout';
 import CustomCard from '../components/ui/CustomCard'; // Import the CustomCard component
 
 const Inventory = () => {
   return (
-    <div style={{ display: 'flex' }}>
-      <Sidebar />
-      <div className="container" style={{ padding: '20px', flex: 1 }}>
+    <Layout title="Inventory">
+      <div className="container">
         <h1>Inventory PAGE</h1>
         <p>This is a simple HTML page.</p>
 
@@ -22,7 +21,7 @@ const Inventory = () => {
           </CustomCard>
         </div>
       </div>
-    </div>
+    </Layout>
   );
 };
 

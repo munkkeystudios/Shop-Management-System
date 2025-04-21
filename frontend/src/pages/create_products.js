@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Sidebar from '../components/sidebar';
+import Layout from '../components/Layout';
 import { Card, Alert } from 'react-bootstrap';
 import "../styles/topbar.css";
 import "../styles/product_page.css";
@@ -47,7 +47,7 @@ const CreateProducts = () => {
         ...prevData,
         [name]: value
       };
-      //discount logic 
+      //discount logic
       if (name === 'discountAmount' && value !== '' && newData.salePrice !== '') {
         const salePrice = parseFloat(newData.salePrice);
         const discountAmount = parseFloat(value);
@@ -194,9 +194,8 @@ const CreateProducts = () => {
   const requiredStar = <span style={{ color: 'red' }}>*</span>;
 
   return (
-    <div style={{ display: 'flex' }}>
-      <Sidebar />
-      <div style={{ flex: 1, padding: '20px' }}>
+    <Layout title="Create Product">
+      <div>
         <Card>
           <Card.Header>Create New Product</Card.Header>
           <Card.Body>
@@ -286,7 +285,7 @@ const CreateProducts = () => {
           </Card.Body>
         </Card>
       </div>
-    </div>
+    </Layout>
   );
 }
 
