@@ -108,8 +108,8 @@ export const salesAPI = {
   getById: (id) => api.get(`/sales/${id}`),
   updatePayment: (id, paymentData) => api.put(`/sales/${id}/payment`, paymentData),
   getStats: (params = {}) => api.get('/sales/stats', { params }), // Allow date range params
-  // *** ADDED BACK from user's version, required by pos.js ***
   getLastBillNumber: () => api.get('/sales/last-bill-number'),
+  getLastTenSales: () => api.get('/sales/last-ten'), 
 };
 
 // Purchases API *** ADDED ***

@@ -48,6 +48,7 @@ router.patch('/products/:id/stock', productController.updateStock);
 router.post('/sales', saleController.createSale);
 router.get('/sales', saleController.getSales);
 router.get('/sales/last-bill-number', saleController.getLastBillNumber); // Specific route first
+router.get('/sales/last-ten', saleController.getLastTenSales); // Add this route for last 10 sales
 router.get('/sales/stats', saleController.getSalesStats); // Another specific route
 router.put('/sales/:id/payment', saleController.updatePaymentStatus); // More specific than :id
 router.get('/sales/:id', saleController.getSaleById); // Generic route last

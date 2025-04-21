@@ -1,4 +1,3 @@
-
 const { Sale, Product } = require('../models');
 
 //new sale
@@ -24,10 +23,10 @@ exports.createSale = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Sale items are required' });
         }
         if (billNumber === undefined || total === undefined || amountPaid === undefined) {
-             return res.status(400).json({ success: false, message: 'Bill number, total, and amount paid are required' });
+            return res.status(400).json({ success: false, message: 'Bill number, total, and amount paid are required' });
         }
         if (!req.user || !req.user._id) {
-             return res.status(401).json({ success: false, message: 'User authentication required to create sale.' });
+            return res.status(401).json({ success: false, message: 'User authentication required to create sale.' });
         }
 
         // *** MODIFIED: Robust Stock Check and Update ***
@@ -77,10 +76,10 @@ exports.createSale = async (req, res) => {
         for (const update of productUpdates) {
             await Product.findByIdAndUpdate(update.id, { $inc: { quantity: update.quantityChange } });
             // TODO: Add more sophisticated stock status updates if needed (e.g., based on minStockLevel, status='out_of_stock')
-             const updatedProduct = await Product.findById(update.id).select('quantity status');
-             if (updatedProduct && updatedProduct.quantity <= 0 && updatedProduct.status !== 'out_of_stock') {
-                 await Product.findByIdAndUpdate(update.id, { status: 'out_of_stock' });
-             }
+            const updatedProduct = await Product.findById(update.id).select('quantity status');
+            if (updatedProduct && updatedProduct.quantity <= 0 && updatedProduct.status !== 'out_of_stock') {
+                await Product.findByIdAndUpdate(update.id, { status: 'out_of_stock' });
+            }
         }
 
         res.status(201).json({ success: true, message: "Sale created successfully", data: sale }); // Return success and the created sale
@@ -89,7 +88,7 @@ exports.createSale = async (req, res) => {
         console.error('Create sale error:', error);
         // Handle potential duplicate billNumber error
         if (error.code === 11000 && error.keyPattern && error.keyPattern.billNumber) {
-             return res.status(409).json({ success: false, message: 'Bill number already exists.', error: 'Duplicate bill number' });
+            return res.status(409).json({ success: false, message: 'Bill number already exists.', error: 'Duplicate bill number' });
         }
         res.status(500).json({ success: false, message: 'Error creating sale', error: error.message });
     }
@@ -114,7 +113,7 @@ exports.getSales = async (req, res) => {
         if (billNumber) {
             const billNum = parseInt(billNumber, 10);
             if (!isNaN(billNum)) {
-               query.billNumber = billNum;
+                query.billNumber = billNum;
             }
         }
 
@@ -122,14 +121,14 @@ exports.getSales = async (req, res) => {
         if (startDate || endDate) {
             query.createdAt = {};
             if (startDate) {
-                 try { query.createdAt.$gte = new Date(startDate); } catch (e) { /* ignore invalid date */ }
+                try { query.createdAt.$gte = new Date(startDate); } catch (e) { /* ignore invalid date */ }
             }
             if (endDate) {
-                 try {
-                     const endOfDay = new Date(endDate);
-                     endOfDay.setHours(23, 59, 59, 999); // Ensure end date includes the whole day
-                     query.createdAt.$lte = endOfDay;
-                 } catch (e) { /* ignore invalid date */ }
+                try {
+                    const endOfDay = new Date(endDate);
+                    endOfDay.setHours(23, 59, 59, 999); // Ensure end date includes the whole day
+                    query.createdAt.$lte = endOfDay;
+                } catch (e) { /* ignore invalid date */ }
             }
         }
 
@@ -151,23 +150,23 @@ exports.getSales = async (req, res) => {
         // Use mongoose-paginate-v2 if installed, otherwise basic skip/limit
         let result;
         if (Sale.paginate) { // Check if pagination plugin is available
-           result = await Sale.paginate(query, options);
+            result = await Sale.paginate(query, options);
         } else {
-             const skip = (options.page - 1) * options.limit;
-             const sales = await Sale.find(query)
+            const skip = (options.page - 1) * options.limit;
+            const sales = await Sale.find(query)
                 .populate(options.populate)
                 .sort(options.sort)
                 .skip(skip)
                 .limit(options.limit)
                 .exec();
-             const count = await Sale.countDocuments(query);
-             result = {
-                 docs: sales,
-                 totalDocs: count,
-                 totalPages: Math.ceil(count / options.limit),
-                 page: options.page,
-                 limit: options.limit,
-             };
+            const count = await Sale.countDocuments(query);
+            result = {
+                docs: sales,
+                totalDocs: count,
+                totalPages: Math.ceil(count / options.limit),
+                page: options.page,
+                limit: options.limit,
+            };
         }
 
 
@@ -198,7 +197,7 @@ exports.getSaleById = async (req, res) => {
         res.status(200).json({ success: true, data: sale }); // Added success flag
     } catch (error) {
         console.error('Get sale error:', error);
-         if (error.name === 'CastError') {
+        if (error.name === 'CastError') {
             return res.status(400).json({ success: false, message: 'Invalid Sale ID format' });
         }
         res.status(500).json({ success: false, message: 'Error fetching sale', error: error.message });
@@ -209,9 +208,9 @@ exports.getSaleById = async (req, res) => {
 exports.updatePaymentStatus = async (req, res) => {
     try {
         const { amountPaid } = req.body;
-         if (amountPaid === undefined || typeof amountPaid !== 'number' || amountPaid < 0) {
-             return res.status(400).json({ success: false, message: 'Valid amountPaid is required.' });
-         }
+        if (amountPaid === undefined || typeof amountPaid !== 'number' || amountPaid < 0) {
+            return res.status(400).json({ success: false, message: 'Valid amountPaid is required.' });
+        }
 
         const sale = await Sale.findById(req.params.id);
 
@@ -243,14 +242,14 @@ exports.getSalesStats = async (req, res) => {
         if (startDate || endDate) {
             query.createdAt = {};
             if (startDate) {
-                 try { query.createdAt.$gte = new Date(startDate); } catch(e) {/* ignore */}
+                try { query.createdAt.$gte = new Date(startDate); } catch (e) {/* ignore */ }
             }
             if (endDate) {
                 try {
-                     const endOfDay = new Date(endDate);
-                     endOfDay.setHours(23, 59, 59, 999);
-                     query.createdAt.$lte = endOfDay;
-                } catch(e) {/* ignore */}
+                    const endOfDay = new Date(endDate);
+                    endOfDay.setHours(23, 59, 59, 999);
+                    query.createdAt.$lte = endOfDay;
+                } catch (e) {/* ignore */ }
             }
         }
 
@@ -266,7 +265,7 @@ exports.getSalesStats = async (req, res) => {
                     totalTransactions: { $sum: 1 }
                 }
             },
-             {
+            {
                 $project: { // Round the average value
                     _id: 0, // Exclude the _id field
                     totalSalesValue: 1,
@@ -287,7 +286,7 @@ exports.getSalesStats = async (req, res) => {
                     totalValue: { $sum: '$total' } // Renamed for clarity
                 }
             },
-             { $sort: { _id: 1 } } // Sort by payment method name
+            { $sort: { _id: 1 } } // Sort by payment method name
         ]);
 
         // Ensure default values if no sales found
@@ -310,74 +309,51 @@ exports.getSalesStats = async (req, res) => {
     }
 };
 
-// Get the last bill number
-
- 
-
 exports.getLastBillNumber = async (req, res) => {
- 
-
     try {
- 
 
         const lastSale = await Sale.findOne().sort({ createdAt: -1 }).select('billNumber'); // Fetch the most recent billNumber
- 
-
         if (!lastSale) {
- 
-
-            return res.status(404).json({ 
- 
-
-                success: false, 
- 
-
-                message: 'No sales found' 
- 
-
+            return res.status(404).json({
+                success: false,
+                message: 'No sales found'
             });
- 
-
         }
- 
-
-
- 
 
         res.json({
- 
-
             success: true,
- 
-
             lastBillNumber: lastSale.billNumber
- 
-
         });
- 
-
     } catch (error) {
- 
-
         console.error('Get last bill number error:', error);
- 
-
-        res.status(500).json({ 
- 
-
-            success: false, 
- 
-
-            message: 'Error fetching last bill number', 
- 
-
-            error: error.message 
- 
-
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching last bill number',
+            error: error.message
         });
- 
-
     }
- 
+};
 
+exports.getLastTenSales = async (req, res) => {
+    try {
+        const sales = await Sale.find()
+            .sort({ createdAt: -1 }) // Sort by newest first
+            .limit(10) 
+            .populate('items.product', 'name price') 
+            .populate('createdBy', 'username name') 
+            .lean(); // Use lean for better performance if only reading data
+
+        res.status(200).json({
+            success: true,
+            data: sales
+        });
+        
+    } catch (error) {
+        console.error('Get last 10 sales error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching last 10 sales',
+            error: error.message
+        });
+    }
 };
