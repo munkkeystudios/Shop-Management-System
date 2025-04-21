@@ -1,0 +1,123 @@
+.product-label-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 3000;
+}
+
+.product-label-container {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 350px;
+  max-width: 90vw;
+  overflow: hidden;
+}
+
+.product-label-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.product-label-header h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.product-label-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #9ca3af;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.product-label-close:hover {
+  color: #6b7280;
+}
+
+.product-label-content-wrapper {
+  padding: 16px;
+  display: flex;
+  justify-content: center;
+}
+
+.product-label-content {
+  width: 204px;
+  height: 183px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.product-label-content .product-name {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  margin-top: 10px;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.product-label-content .product-price {
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  margin: 5px 0;
+}
+
+.product-label-content .barcode-container {
+  text-align: center;
+  margin: 15px 0 10px;
+}
+
+.product-label-content .barcode-container img {
+  max-width: 100%;
+  height: 60px;
+}
+
+.product-label-actions {
+  padding: 12px 16px;
+  display: flex;
+  justify-content: center;
+  border-top: 1px solid #e5e7eb;
+}
+
+.product-label-print-btn {
+  background-color: #0d6efd;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.2s;
+}
+
+.product-label-print-btn:hover {
+  background-color: #0b5ed7;
+}
+
+@media (max-width: 480px) {
+  .product-label-container {
+    width: 95vw;
+  }
+}

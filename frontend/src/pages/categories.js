@@ -1,39 +1,150 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaEdit, FaTrash, FaSearch, FaPlus, FaTimes } from 'react-icons/fa';
-import Sidebar from '../components/sidebar';
+import Layout from '../components/Layout';
 import './categories.css';
 
 const CategoryPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [categoryCode, setCategoryCode] = useState('');
   const [categoryName, setCategoryName] = useState('');
+  const [categoryDescription, setCategoryDescription] = useState('');
+  const [active, setActive] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingId, setEditingId] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [categories, setCategories] = useState([]);
 
-  // Sample data - replace with your actual data source
-  const [categories] = useState([
-    { code: 'CA9', name: 'Jeans' },
-    { code: 'CA8', name: 'Shirts' },
-    { code: 'CA7', name: 'Shorts' },
-    { code: 'CA6', name: 'Jacket' },
-  ]);
+  // Fetch categories from the backend
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          window.location.href = '/login';
+          return;
+        }
+        const response = await fetch('/api/categories', {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        const data = await response.json();
+        if (data.success) {
+          setCategories(data.data);
+        } else {
+          console.warn('Categories fetch failed:', data.message);
+        }
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+    fetchCategories();
+  }, []);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Add your form submission logic here
-    console.log({ categoryCode, categoryName });
-    setIsModalOpen(false);
-    setCategoryCode('');
-    setCategoryName('');
+  const handleDelete = async (id) => {
+    const confirmDelete = window.confirm('Are you sure you want to delete this category?');
+    if (!confirmDelete) return;
+
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        window.location.href = '/login';
+        return;
+      }
+
+      const response = await fetch(`/api/categories/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setCategories(prev => prev.filter(category => category._id !== id));
+      } else {
+        alert(data.message || 'Failed to delete category');
+      }
+    } catch (error) {
+      console.error('Error deleting category:', error);
+      alert('Something went wrong while deleting category.');
+    }
   };
+
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        window.location.href = '/login';
+        return;
+      }
+
+      const method = isEditing ? 'PUT' : 'POST';
+      const url = isEditing
+        ? `/api/categories/${editingId}`
+        : '/api/categories';
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          name: categoryName,
+          description: categoryDescription,
+          active,
+        }),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        if (isEditing) {
+          setCategories(prev =>
+            prev.map(cat => (cat._id === editingId ? data.data : cat))
+          );
+        } else {
+          setCategories(prev => [...prev, data.data]);
+        }
+
+        setIsModalOpen(false);
+        setIsEditing(false);
+        setEditingId(null);
+        setCategoryName('');
+        setCategoryDescription('');
+        setActive(true);
+      } else {
+        alert(data.message || 'Operation failed');
+      }
+    } catch (error) {
+      console.error('Error saving category:', error);
+      alert('Something went wrong.');
+    }
+  };
+
+  const handleEdit = (category) => {
+    setIsEditing(true);
+    setEditingId(category._id);
+    setCategoryName(category.name);
+    setCategoryDescription(category.description);
+    setActive(category.active);
+    setIsModalOpen(true);
+  };
+
 
   // Filter categories based on search term
   const filteredCategories = categories.filter(category =>
-    category.code.toLowerCase().includes(searchTerm.toLowerCase())
+    category._id.toLowerCase().includes(searchTerm.toLowerCase()) || // Use _id for category code
+    category.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
-    <div className="categories-main-container">
-      <Sidebar />
+    <Layout title="Categories">
       <div className="categories-frame">
         <div className="categories-div-2">
           <div className="categories-div-3">
@@ -56,25 +167,28 @@ const CategoryPage = () => {
                 <table className="categories-table">
                   <thead>
                     <tr>
-                      <th>Category Code</th>
                       <th>Category Name</th>
+                      <th>Category Description</th>
                       <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredCategories.map((category, index) => (
-                      <tr key={index}>
-                        <td>{category.code}</td>
-                        <td>{category.name}</td>
+                    {filteredCategories.map((category) => (
+                      <tr key={category._id}>
+                        <td>{category.name}</td> {/* Displaying the category name */}
+                        <td>{category.description}</td> {/* Displaying the category description */}
                         <td>
                           <div className="categories-action-buttons">
-                            <button className="categories-action-button">
+                            <button className="categories-action-button"
+                            onClick={() => handleEdit(category)}
+                            >
                               <FaEdit />
                             </button>
-                            <button className="categories-action-button">
+                            <button className="categories-action-button"
+                            onClick={() => handleDelete(category._id)}>
                               <FaTrash />
                             </button>
-                    </div>
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -93,20 +207,20 @@ const CategoryPage = () => {
           </div>
 
           <div className="categories-action-buttons-container">
-            <button 
+            <button
               className="categories-action-button primary"
               onClick={() => setIsModalOpen(true)}
             >
               <FaPlus /> Create New Category
             </button>
-                      </div>
-                    </div>
-                  </div>
+          </div>
+        </div>
+      </div>
 
       {isModalOpen && (
         <div className="categories-modal-overlay">
           <div className="categories-modal">
-            <button 
+            <button
               className="categories-modal-close"
               onClick={() => setIsModalOpen(false)}
             >
@@ -116,20 +230,31 @@ const CategoryPage = () => {
             <form className="categories-modal-form" onSubmit={handleSubmit}>
               <input
                 type="text"
-                placeholder="Enter category code"
-                className="categories-modal-input"
-                value={categoryCode}
-                onChange={(e) => setCategoryCode(e.target.value)}
-                required
-              />
-              <input
-                type="text"
                 placeholder="Enter category name"
                 className="categories-modal-input"
                 value={categoryName}
                 onChange={(e) => setCategoryName(e.target.value)}
                 required
               />
+              <input
+                type="text"
+                placeholder="Enter category description"
+                className="categories-modal-input"
+                value={categoryDescription}
+                onChange={(e) => setCategoryDescription(e.target.value)}
+                required
+              />
+              <label className="categories-modal-label">
+  Active Status:
+  <select
+    className="categories-modal-input"
+    value={active}
+    onChange={(e) => setActive(e.target.value === 'true')}
+  >
+    <option value="true">Active</option>
+    <option value="false">Inactive</option>
+  </select>
+</label>
               <button type="submit" className="categories-modal-submit">
                 Submit
               </button>
@@ -137,7 +262,7 @@ const CategoryPage = () => {
           </div>
         </div>
       )}
-    </div>
+    </Layout>
   );
 };
 

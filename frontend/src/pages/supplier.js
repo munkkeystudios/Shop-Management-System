@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 import { FaEdit, FaTrash, FaSearch, FaPlus, FaTimes } from 'react-icons/fa';
-import Sidebar from '../components/sidebar';
+import Layout from '../components/Layout';
 import './supplier.css';
 
 export const Frame = () => {
@@ -9,23 +9,127 @@ export const Frame = () => {
   const [contactNumber, setContactNumber] = useState('');
   const [address, setAddress] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [suppliers, setSuppliers] = useState([]);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editingSupplierId, setEditingSupplierId] = useState(null);
+
 
   // Sample data - replace with your actual data source
-  const [suppliers] = useState([
-    { id: 1, name: 'James', contact: '+1234567890', location: 'NYC, USA' },
-    { id: 2, name: 'Alex', contact: '+0987654321', location: 'NYC, USA' },
-    { id: 3, name: 'John', contact: '+1122334455', location: 'NYC, USA' },
-  ]);
+// Fetch suppliers from the backend
+useEffect(() => {
+  const fetchSuppliers = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        // Not logged in → force login
+        window.location.href = '/login';
+        return;
+      }
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Add your form submission logic here
-    console.log({ supplierName, contactNumber, address });
-    setIsModalOpen(false);
-    setSupplierName('');
-    setContactNumber('');
-    setAddress('');
+      const response = await fetch('/api/suppliers', {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      // you might also want:
+      // if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+      const data = await response.json();
+      if (data.success) {
+        setSuppliers(data.data);
+      } else {
+        console.warn('Suppliers fetch failed:', data.message);
+      }
+    } catch (error) {
+      console.error('Error fetching suppliers:', error);
+    }
   };
+
+  fetchSuppliers();
+}, []); // empty deps → run once on mount
+
+const handleEdit = (supplier) => {
+  setSupplierName(supplier.name);
+  setContactNumber(supplier.phone);
+  setAddress(supplier.address);
+  setEditingSupplierId(supplier._id);
+  setIsEditMode(true);
+  setIsModalOpen(true);
+};
+
+const handleDelete = async (id) => {
+  const confirm = window.confirm("Are you sure you want to delete this supplier?");
+  if (!confirm) return;
+
+  try {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`/api/suppliers/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      setSuppliers(prev => prev.filter(s => s._id !== id));
+    } else {
+      alert(data.message || 'Error deleting supplier');
+    }
+  } catch (error) {
+    console.error('Delete supplier error:', error);
+  }
+};
+
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    const token = localStorage.getItem('token');
+    const url = isEditMode ? `/api/suppliers/${editingSupplierId}` : '/api/suppliers';
+    const method = isEditMode ? 'PUT' : 'POST';
+
+    const response = await fetch(url, {
+      method,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        name: supplierName,
+        phone: contactNumber,
+        address
+      })
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      if (isEditMode) {
+        setSuppliers(prev =>
+          prev.map(s => (s._id === editingSupplierId ? data.data : s))
+        );
+      } else {
+        setSuppliers(prev => [...prev, data.data]);
+      }
+      setIsModalOpen(false);
+      setSupplierName('');
+      setContactNumber('');
+      setAddress('');
+      setIsEditMode(false);
+      setEditingSupplierId(null);
+    } else {
+      alert(data.message || 'Error saving supplier');
+    }
+  } catch (error) {
+    console.error('Save supplier error:', error);
+  }
+};
+
+
 
   // Filter suppliers based on search term
   const filteredSuppliers = suppliers.filter(supplier =>
@@ -33,8 +137,7 @@ export const Frame = () => {
   );
 
   return (
-    <div className="supplier-main-container">
-      <Sidebar />
+    <Layout title="Suppliers">
       <div className="supplier-frame">
         <div className="supplier-div-2">
           <div className="supplier-div-3">
@@ -67,16 +170,18 @@ export const Frame = () => {
                   <tbody>
                     {filteredSuppliers.map((supplier) => (
                       <tr key={supplier.id}>
-                        <td>{supplier.id}</td>
+                        <td>{supplier._id}</td>
                         <td>{supplier.name}</td>
-                        <td>{supplier.contact}</td>
-                        <td>{supplier.location}</td>
+                        <td>{supplier.phone}</td>
+                        <td>{supplier.address}</td>
                         <td>
                           <div className="supplier-action-buttons">
-                            <button className="supplier-action-button">
+                            <button className="supplier-action-button"
+                            onClick={() => handleEdit(supplier)}>
                               <FaEdit />
                             </button>
-                            <button className="supplier-action-button">
+                            <button className="supplier-action-button"
+                            onClick={() => handleDelete(supplier._id)}>
                               <FaTrash />
                             </button>
                     </div>
@@ -98,7 +203,7 @@ export const Frame = () => {
           </div>
 
           <div className="supplier-action-buttons-container">
-            <button 
+            <button
               className="supplier-action-button primary"
               onClick={() => setIsModalOpen(true)}
             >
@@ -111,7 +216,7 @@ export const Frame = () => {
       {isModalOpen && (
         <div className="supplier-modal-overlay">
           <div className="supplier-modal">
-            <button 
+            <button
               className="supplier-modal-close"
               onClick={() => setIsModalOpen(false)}
             >
@@ -150,6 +255,6 @@ export const Frame = () => {
           </div>
         </div>
       )}
-    </div>
+    </Layout>
   );
 };

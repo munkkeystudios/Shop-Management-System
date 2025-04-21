@@ -234,6 +234,203 @@ exports.updatePaymentStatus = async (req, res) => {
     }
 };
 
+// Export sales to CSV or PDF
+exports.exportSales = async (req, res) => {
+  try {
+    const { format = 'csv', startDate, endDate, paymentStatus } = req.query;
+
+    // Build query based on filters
+    const query = {};
+
+    // Date range filter
+    if (startDate || endDate) {
+      query.createdAt = {};
+      if (startDate) {
+        query.createdAt.$gte = new Date(startDate);
+      }
+      if (endDate) {
+        const endOfDay = new Date(endDate);
+        endOfDay.setHours(23, 59, 59, 999);
+        query.createdAt.$lte = endOfDay;
+      }
+    }
+
+    // Payment status filter
+    if (paymentStatus) {
+      query.paymentStatus = paymentStatus;
+    }
+
+    // Fetch sales with populated fields
+    const sales = await Sale.find(query)
+      .populate('items.product', 'name barcode price')
+      .populate('createdBy', 'username name')
+      .sort({ createdAt: -1 })
+      .lean();
+
+    if (format.toLowerCase() === 'csv') {
+      // CSV Export Logic
+      if (sales.length === 0) {
+        return res.status(200).send('No sales data to export.');
+      }
+
+      const { Parser } = require('json2csv');
+
+      // Flatten the data for CSV export
+      const flattenedData = sales.map(sale => ({
+        saleId: sale._id,
+        billNumber: sale.billNumber,
+        date: sale.createdAt.toISOString().split('T')[0],
+        time: sale.createdAt.toISOString().split('T')[1].substring(0, 8),
+        customerName: sale.customer?.name || 'Walk-in Customer',
+        customerPhone: sale.customer?.phone || 'N/A',
+        subtotal: sale.subtotal,
+        discount: sale.discount,
+        tax: sale.tax,
+        total: sale.total,
+        paymentMethod: sale.paymentMethod,
+        paymentStatus: sale.paymentStatus,
+        amountPaid: sale.amountPaid,
+        change: sale.change,
+        createdBy: sale.createdBy ? sale.createdBy.name || sale.createdBy.username : 'N/A',
+        itemCount: sale.items.length,
+        notes: sale.notes || ''
+      }));
+
+      const fields = [
+        'saleId', 'billNumber', 'date', 'time', 'customerName', 'customerPhone',
+        'subtotal', 'discount', 'tax', 'total', 'paymentMethod', 'paymentStatus',
+        'amountPaid', 'change', 'createdBy', 'itemCount', 'notes'
+      ];
+
+      const json2csvParser = new Parser({ fields });
+      const csv = json2csvParser.parse(flattenedData);
+
+      res.header('Content-Type', 'text/csv');
+      res.attachment('sales.csv');
+      res.status(200).send(csv);
+
+    } else if (format.toLowerCase() === 'pdf') {
+      // PDF Export Logic
+      const PDFDocument = require('pdfkit');
+      const doc = new PDFDocument({ margin: 50, layout: 'landscape' });
+
+      res.header('Content-Type', 'application/pdf');
+      res.attachment('sales.pdf');
+      doc.pipe(res);
+
+      // Add title
+      doc.fontSize(18).text('Sales Report', { align: 'center' }).moveDown();
+
+      if (sales.length === 0) {
+        doc.fontSize(12).text('No sales data to export.');
+        doc.end();
+        return;
+      }
+
+      // Add filters information if any
+      let filterText = 'Filters: ';
+      let hasFilters = false;
+
+      if (startDate) {
+        filterText += `From ${new Date(startDate).toLocaleDateString()} `;
+        hasFilters = true;
+      }
+
+      if (endDate) {
+        filterText += `To ${new Date(endDate).toLocaleDateString()} `;
+        hasFilters = true;
+      }
+
+      if (paymentStatus) {
+        filterText += `Payment Status: ${paymentStatus} `;
+        hasFilters = true;
+      }
+
+      if (hasFilters) {
+        doc.fontSize(10).text(filterText, { align: 'left' }).moveDown();
+      }
+
+      // Define table headers and column widths
+      const headers = ['Bill #', 'Date', 'Customer', 'Total', 'Payment Method', 'Status', 'Created By'];
+      const colWidths = [60, 80, 120, 70, 100, 80, 100];
+
+      // Draw headers
+      let y = doc.y;
+      let x = doc.page.margins.left;
+
+      headers.forEach((header, i) => {
+        doc.fontSize(10).text(header, x, y, { width: colWidths[i], align: 'left', underline: true });
+        x += colWidths[i];
+      });
+
+      y += 20;
+
+      // Draw rows
+      sales.forEach((sale, index) => {
+        x = doc.page.margins.left;
+
+        // Format date
+        const date = new Date(sale.createdAt).toLocaleDateString();
+
+        // Draw cells
+        doc.fontSize(9).text(sale.billNumber.toString(), x, y, { width: colWidths[0] });
+        x += colWidths[0];
+
+        doc.fontSize(9).text(date, x, y, { width: colWidths[1] });
+        x += colWidths[1];
+
+        doc.fontSize(9).text(sale.customer?.name || 'Walk-in Customer', x, y, { width: colWidths[2] });
+        x += colWidths[2];
+
+        doc.fontSize(9).text(sale.total.toFixed(2), x, y, { width: colWidths[3] });
+        x += colWidths[3];
+
+        doc.fontSize(9).text(sale.paymentMethod, x, y, { width: colWidths[4] });
+        x += colWidths[4];
+
+        doc.fontSize(9).text(sale.paymentStatus, x, y, { width: colWidths[5] });
+        x += colWidths[5];
+
+        doc.fontSize(9).text(sale.createdBy ? sale.createdBy.name || sale.createdBy.username : 'N/A', x, y, { width: colWidths[6] });
+
+        y += 20;
+
+        // Add new page if needed
+        if (y > doc.page.height - doc.page.margins.bottom - 20) {
+          doc.addPage({ layout: 'landscape' });
+          y = doc.page.margins.top;
+
+          // Redraw headers on new page
+          x = doc.page.margins.left;
+          headers.forEach((header, i) => {
+            doc.fontSize(10).text(header, x, y, { width: colWidths[i], align: 'left', underline: true });
+            x += colWidths[i];
+          });
+
+          y += 20;
+        }
+      });
+
+      // Add summary at the end
+      doc.moveDown();
+      const totalAmount = sales.reduce((sum, sale) => sum + sale.total, 0);
+      doc.fontSize(12).text(`Total Sales: ${sales.length}`, { align: 'right' });
+      doc.fontSize(12).text(`Total Amount: $${totalAmount.toFixed(2)}`, { align: 'right' });
+
+      doc.end();
+    } else {
+      res.status(400).json({ success: false, message: "Invalid export format specified. Use 'csv' or 'pdf'." });
+    }
+  } catch (error) {
+    console.error('Error exporting sales:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server Error exporting sales',
+      error: error.message
+    });
+  }
+};
+
 //sales statistics
 exports.getSalesStats = async (req, res) => {
     try {
@@ -312,72 +509,72 @@ exports.getSalesStats = async (req, res) => {
 
 // Get the last bill number
 
- 
+
 
 exports.getLastBillNumber = async (req, res) => {
- 
+
 
     try {
- 
+
 
         const lastSale = await Sale.findOne().sort({ createdAt: -1 }).select('billNumber'); // Fetch the most recent billNumber
- 
+
 
         if (!lastSale) {
- 
 
-            return res.status(404).json({ 
- 
 
-                success: false, 
- 
+            return res.status(404).json({
 
-                message: 'No sales found' 
- 
+
+                success: false,
+
+
+                message: 'No sales found'
+
 
             });
- 
+
 
         }
- 
 
 
- 
+
+
 
         res.json({
- 
+
 
             success: true,
- 
+
 
             lastBillNumber: lastSale.billNumber
- 
+
 
         });
- 
+
 
     } catch (error) {
- 
+
 
         console.error('Get last bill number error:', error);
- 
 
-        res.status(500).json({ 
- 
 
-            success: false, 
- 
+        res.status(500).json({
 
-            message: 'Error fetching last bill number', 
- 
 
-            error: error.message 
- 
+            success: false,
+
+
+            message: 'Error fetching last bill number',
+
+
+            error: error.message
+
 
         });
- 
+
 
     }
- 
+
 
 };

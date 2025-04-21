@@ -110,6 +110,11 @@ export const salesAPI = {
   getStats: (params = {}) => api.get('/sales/stats', { params }), // Allow date range params
   // *** ADDED BACK from user's version, required by pos.js ***
   getLastBillNumber: () => api.get('/sales/last-bill-number'),
+  // Export sales to CSV or PDF
+  exportSales: (format = 'csv', params = {}) => api.get(`/sales/export`, {
+    params: { format, ...params },
+    responseType: 'blob', // Important for handling file download
+  }),
 };
 
 // Purchases API *** ADDED ***
@@ -126,9 +131,9 @@ export const purchasesAPI = {
 };
 
 
-// Dashboard API 
+// Dashboard API
 export const dashboardAPI = {
-  // getSummary: () => api.get('/dashboard/summary'), 
+  // getSummary: () => api.get('/dashboard/summary'),
 };
 
 export default api; // Export the configured instance
