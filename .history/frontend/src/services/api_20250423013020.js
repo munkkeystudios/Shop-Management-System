@@ -140,4 +140,9 @@ export const dashboardAPI = {
   // getSummary: () => api.get('/dashboard/summary'),
 };
 
+<<<<<<< HEAD
 export default api; // Export the configured instance
+=======
+export default api;
+
+>>>>>>> 06cec42 (Adding employee management, create and import sale)

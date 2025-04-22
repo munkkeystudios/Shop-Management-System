@@ -280,6 +280,7 @@ exports.updateUser = async (req, res) => {
       if (password.length < 6) {
          return res.status(400).json({ success: false, message: "Password must be at least 6 characters long." });
       }
+<<<<<<< HEAD
       user.password = password; // Set the new password, hook will hash
     }
 
@@ -288,6 +289,14 @@ exports.updateUser = async (req, res) => {
 
     // Return updated user data (excluding password)
     const userResponse = updatedUser.toObject(); // Convert to plain object to delete password
+=======
+      user.password = password;
+    }
+
+    const updatedUser = await user.save();
+
+    const userResponse = updatedUser.toObject();
+>>>>>>> 06cec42 (Adding employee management, create and import sale)
     delete userResponse.password;
 
 
@@ -298,33 +307,92 @@ exports.updateUser = async (req, res) => {
     });
   } catch (error) {
     console.error('Error updating user:', error);
+<<<<<<< HEAD
     // Handle potential validation errors from Mongoose
     if (error.name === 'ValidationError') {
         return res.status(400).json({ success: false, message: error.message });
     }
      // Handle potential duplicate key errors (e.g., username)
+=======
+    if (error.name === 'ValidationError') {
+        return res.status(400).json({ success: false, message: error.message });
+    }
+>>>>>>> 06cec42 (Adding employee management, create and import sale)
      if (error.code === 11000) {
          return res.status(400).json({ success: false, message: 'Username already exists.' });
      }
     res.status(500).json({
       success: false,
+<<<<<<< HEAD
       message: 'Server Error updating user', // More specific
+=======
+      message: 'Server Error updating user',
+>>>>>>> 06cec42 (Adding employee management, create and import sale)
       error: error.message
     });
   }
 };
 
+<<<<<<< HEAD
 // Delete user (admin only)
+=======
+
+exports.updateMyPassword = async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+
+        if (!currentPassword || !newPassword) {
+            return res.status(400).json({ success: false, message: 'Current and new passwords are required.' });
+        }
+
+        if (newPassword.length < 6) {
+            return res.status(400).json({ success: false, message: 'New password must be at least 6 characters long.' });
+        }
+
+        if (!req.user || !req.user._id) {
+            return res.status(401).json({ success: false, message: 'Authentication required.' });
+        }
+
+        const user = await User.findById(req.user._id);
+
+        if (!user) {
+             return res.status(404).json({ success: false, message: 'User not found.' });
+        }
+
+        if (!(await user.matchPassword(currentPassword))) {
+            return res.status(401).json({ success: false, message: 'Incorrect current password.' });
+        }
+
+        user.password = newPassword;
+        await user.save();
+
+        res.status(200).json({ success: true, message: 'Password updated successfully' });
+
+    } catch (error) {
+        console.error('Error updating own password:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Server Error updating password',
+            error: error.message
+        });
+    }
+};
+
+
+>>>>>>> 06cec42 (Adding employee management, create and import sale)
 exports.deleteUser = async (req, res) => {
   try {
     const { userId } = req.params;
 
+<<<<<<< HEAD
     if (!req.user || req.user.role !== 'admin') {
       return res.status(403).json({
         success: false,
         message: 'Access denied: Only admins can delete users'
       });
     }
+=======
+>>>>>>> 06cec42 (Adding employee management, create and import sale)
 
     if (req.user._id.toString() === userId) {
       return res.status(400).json({
@@ -341,6 +409,16 @@ exports.deleteUser = async (req, res) => {
         message: 'User not found'
       });
     }
+<<<<<<< HEAD
+=======
+     if (user.role === 'admin') {
+        return res.status(403).json({
+            success: false,
+            message: 'Cannot delete an admin account.'
+        });
+    }
+
+>>>>>>> 06cec42 (Adding employee management, create and import sale)
 
     await User.findByIdAndDelete(userId);
 
@@ -358,6 +436,7 @@ exports.deleteUser = async (req, res) => {
   }
 };
 
+<<<<<<< HEAD
 // *** ADDED: Export users function ***
 exports.exportUsers = async (req, res) => {
   try {
@@ -376,14 +455,30 @@ exports.exportUsers = async (req, res) => {
 
     if (format.toLowerCase() === 'csv') {
       // --- CSV Export Logic ---
+=======
+exports.exportUsers = async (req, res) => {
+  try {
+
+    const { format = 'csv' } = req.query;
+
+    const users = await User.find({}).select('-password').lean();
+
+    if (format.toLowerCase() === 'csv') {
+>>>>>>> 06cec42 (Adding employee management, create and import sale)
       if (users.length === 0) {
         return res.status(200).send('No user data to export.');
       }
 
+<<<<<<< HEAD
       const { Parser } = require('json2csv'); // npm install json2csv
 
       // Define fields to include in the CSV
       const fields = ['_id', 'username', 'role', 'name', 'phone', 'active', 'createdAt', 'updatedAt']; // Added name, phone
+=======
+      const { Parser } = require('json2csv');
+
+      const fields = ['_id', 'username', 'role', 'name', 'phone', 'active', 'createdAt', 'updatedAt'];
+>>>>>>> 06cec42 (Adding employee management, create and import sale)
       const json2csvParser = new Parser({ fields });
       const csv = json2csvParser.parse(users);
 
@@ -392,8 +487,12 @@ exports.exportUsers = async (req, res) => {
       res.status(200).send(csv);
 
     } else if (format.toLowerCase() === 'pdf') {
+<<<<<<< HEAD
       // --- PDF Export Logic ---
       const PDFDocument = require('pdfkit'); // npm install pdfkit
+=======
+      const PDFDocument = require('pdfkit');
+>>>>>>> 06cec42 (Adding employee management, create and import sale)
       const doc = new PDFDocument({ margin: 50, layout: 'landscape' });
 
       res.header('Content-Type', 'application/pdf');
@@ -410,10 +509,16 @@ exports.exportUsers = async (req, res) => {
 
       const tableTop = doc.y;
       const headers = ['ID', 'Username', 'Name', 'Phone', 'Role', 'Active', 'Created At'];
+<<<<<<< HEAD
       const colWidths = [120, 100, 120, 100, 80, 50, 90]; // Adjust widths
       let x = doc.page.margins.left;
 
       // Draw headers
+=======
+      const colWidths = [120, 100, 120, 100, 80, 50, 90];
+      let x = doc.page.margins.left;
+
+>>>>>>> 06cec42 (Adding employee management, create and import sale)
       headers.forEach((header, i) => {
         doc.fontSize(9).text(header, x, tableTop, { width: colWidths[i], align: 'left', underline: true });
         x += colWidths[i];
@@ -425,30 +530,48 @@ exports.exportUsers = async (req, res) => {
         const row = [
           user._id.toString(),
           user.username,
+<<<<<<< HEAD
           user.name || '', // Handle optional fields
           user.phone || '', // Handle optional fields
+=======
+          user.name || '',
+          user.phone || '',
+>>>>>>> 06cec42 (Adding employee management, create and import sale)
           user.role,
           user.active ? 'Yes' : 'No',
           user.createdAt.toDateString()
         ];
 
+<<<<<<< HEAD
         // Draw row
+=======
+>>>>>>> 06cec42 (Adding employee management, create and import sale)
         row.forEach((cell, i) => {
           doc.fontSize(8).text(cell, x, y, { width: colWidths[i], align: 'left' });
           x += colWidths[i];
         });
 
         y += 20;
+<<<<<<< HEAD
         if (y > doc.page.height - doc.page.margins.bottom - 20) { // Add new page if needed
           doc.addPage({layout: 'landscape'});
           y = doc.page.margins.top; // Reset Y position for new page
            // Redraw headers on new page
+=======
+        if (y > doc.page.height - doc.page.margins.bottom - 20) {
+          doc.addPage({layout: 'landscape'});
+          y = doc.page.margins.top;
+>>>>>>> 06cec42 (Adding employee management, create and import sale)
            x = doc.page.margins.left;
            headers.forEach((header, i) => {
              doc.fontSize(9).text(header, x, y, { width: colWidths[i], align: 'left', underline: true });
              x += colWidths[i];
            });
+<<<<<<< HEAD
            y += 20; // Space after header
+=======
+           y += 20;
+>>>>>>> 06cec42 (Adding employee management, create and import sale)
         }
       });
 
@@ -467,3 +590,7 @@ exports.exportUsers = async (req, res) => {
     });
   }
 };
+<<<<<<< HEAD
+=======
+
+>>>>>>> 06cec42 (Adding employee management, create and import sale)

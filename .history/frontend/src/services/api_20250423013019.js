@@ -123,6 +123,7 @@ export const salesAPI = {
 
 // Purchases API *** ADDED ***
 export const purchasesAPI = {
+<<<<<<< HEAD
     getAll: (params = {}) => api.get('/purchases', { params }),
     create: (purchaseData) => api.post('/purchases', purchaseData),
     getById: (id) => api.get(`/purchases/${id}`),
@@ -135,9 +136,28 @@ export const purchasesAPI = {
 };
 
 
+=======
+  getAll: (params = {}) => api.get('/purchases', { params }),
+  create: (purchaseData) => api.post('/purchases', purchaseData),
+  getById: (id) => api.get(`/purchases/${id}`),
+  exportPurchases: (format = 'csv') =>
+    api.get(`/purchases/export?format=${format}`, {
+      responseType: 'blob', // Important for file download
+    }),
+  // Add update/delete if needed
+  // update: (id, purchaseData) => api.put(`/purchases/${id}`, purchaseData),
+  // delete: (id) => api.delete(`/purchases/${id}`),
+};
+
+>>>>>>> 06cec42 (Adding employee management, create and import sale)
 // Dashboard API
 export const dashboardAPI = {
   // getSummary: () => api.get('/dashboard/summary'),
 };
 
+<<<<<<< HEAD
 export default api; // Export the configured instance
+=======
+export default api;
+
+>>>>>>> 06cec42 (Adding employee management, create and import sale)

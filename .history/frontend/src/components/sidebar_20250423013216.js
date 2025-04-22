@@ -269,6 +269,7 @@ function ToolsSidebar() {
                             alignItems: 'center',
                             gap: '12px'
                         }}>
+<<<<<<< HEAD
                             <FiUsers size={16} /> Users
                         </div>
                     }>
@@ -314,10 +315,87 @@ function ToolsSidebar() {
                     isActive={isGroupActive(['/purchases',/'all_purchases','/create_purchases','/import_purchases', '/supplier'])}
                     title={
                         <div className="sidebar-link" style={{
+=======
+                            <TbReportMoney size={16} /> Sales
+                        </Link>
+                    </Nav.Item>
+                )}
+
+                {/* Reports Dropdown (Manager+) - Merged (using File 2's structure and File 1's role check) */}
+                {isManagerOrHigher && (
+                     <SideBarDropdown
+                        isActive={isGroupActive(['/reports', '/sales-report'])}
+                        title={
+                            <div className="sidebar-link" style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '12px'
+                            }}>
+                                <HiOutlineDocumentReport size={16}/> Reports
+                            </div>
+                        }>
+                        {/* General Reports (Manager+) - From File 2 */}
+                        <Link to="/reports" className="sidebar-link" style={{
+                            textDecoration: 'none',
+                            color: 'inherit'
+                        }}>
+                            <SideBarItem
+                                isActive={isPathActive('/reports')}
+                                title={
+                                    <div style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '12px'
+                                    }}>
+                                        <HiOutlineDocumentReport size={16} /> General Reports
+                                    </div>
+                                }
+                                onClick={() => handleItemClick("General Reports")}
+                            />
+                        </Link>
+                        {/* Sales Report (Manager+) - From File 2 */}
+                        <Link to="/sales-report" className="sidebar-link" style={{
+                            textDecoration: 'none',
+                            color: 'inherit'
+                        }}>
+                            <SideBarItem
+                                isActive={isPathActive('/sales-report')}
+                                title={
+                                    <div style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '12px'
+                                    }}>
+                                        <TbReportMoney size={16} /> Sales Report
+                                    </div>
+                                }
+                                onClick={() => handleItemClick("Sales Report")}
+                            />
+                        </Link>
+                    </SideBarDropdown>
+                )}
+
+                {/* POS Link (Cashier+) - From File 1 */}
+                 {isCashierOrHigher && (
+                    <Nav.Item className="sidebar-nav-item" style={{
+                        padding: '12px 16px',
+                        textAlign: 'left',
+                        fontSize: '14px',
+                        fontWeight: '500',
+                        color: isPathActive('/pos') ? '#357EC7' : '#505050',
+                        backgroundColor: isPathActive('/pos') ? '#f0f7ff' : 'transparent',
+                        margin: '2px 8px',
+                        borderRadius: '4px'
+                    }}>
+                        <Link to="/pos" className="sidebar-link" style={{
+                            textDecoration: 'none',
+                            color: 'inherit',
+>>>>>>> 06cec42 (Adding employee management, create and import sale)
                             display: 'flex',
                             alignItems: 'center',
                             gap: '12px'
                         }}>
+<<<<<<< HEAD
                             <BsCartCheck size={16}/> Purchases
                         </div>
                     }>
@@ -532,6 +610,15 @@ function ToolsSidebar() {
                     </Link>
                 </Nav.Item>
 
+=======
+                            {/* Consider adding a POS icon if you have one */}
+                            POS
+                        </Link>
+                    </Nav.Item>
+                 )}
+
+                {/* Logout Link (Always visible) - Identical */}
+>>>>>>> 06cec42 (Adding employee management, create and import sale)
                 <Nav.Item
                     onClick={handleLogout}
                     className="sidebar-nav-item sidebar-logout"

@@ -112,6 +112,10 @@ function ToolsSidebar() {
 
     return (
         <SideBar>
+<<<<<<< HEAD
+=======
+            {/* Logo Section (Identical) */}
+>>>>>>> 06cec42 (Adding employee management, create and import sale)
             <div className="sidebar-logo-container" style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -136,6 +140,7 @@ function ToolsSidebar() {
             </div>
 
             <div style={{ padding: '10px 0' }}>
+<<<<<<< HEAD
                 <Nav.Item className="sidebar-nav-item" style={{
                     padding: '12px 16px',
                     textAlign: 'left',
@@ -161,10 +166,28 @@ function ToolsSidebar() {
                     isActive={isGroupActive(['/products', '/all_products', '/create_products', '/inventory', '/categories', '/brands'])} // Updated to include brands
                     title={
                         <div className="sidebar-link" style={{
+=======
+                {/* Dashboard (Cashier+) - From File 1 */}
+                {isCashierOrHigher && (
+                    <Nav.Item className="sidebar-nav-item" style={{
+                        padding: '12px 16px',
+                        textAlign: 'left',
+                        fontSize: '14px',
+                        fontWeight: '500',
+                        color: isPathActive('/dashboard') ? '#357EC7' : '#505050',
+                        backgroundColor: isPathActive('/dashboard') ? '#f0f7ff' : 'transparent',
+                        margin: '2px 8px',
+                        borderRadius: '4px'
+                    }}>
+                        <Link to="/dashboard" className="sidebar-link" style={{
+                            textDecoration: 'none',
+                            color: 'inherit',
+>>>>>>> 06cec42 (Adding employee management, create and import sale)
                             display: 'flex',
                             alignItems: 'center',
                             gap: '12px'
                         }}>
+<<<<<<< HEAD
                             <LuPackage size={16}/> Products
                         </div>
                     }>
@@ -265,10 +288,340 @@ function ToolsSidebar() {
                     isActive={isGroupActive(['/users', '/all_users', '/create_user'])}
                     title={
                         <div className="sidebar-link" style={{
+=======
+                            <RiShoppingBag4Line size={16} /> Dashboard
+                        </Link>
+                    </Nav.Item>
+                )}
+
+                {/* Products Dropdown (Cashier+) - Merged */}
+                 {isCashierOrHigher && (
+                    <SideBarDropdown
+                        // Updated paths for isActive check based on merged content
+                        isActive={isGroupActive(['/all_products', '/create_products', '/inventory', '/categories', '/brands'])}
+                        title={
+                            <div className="sidebar-link" style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '12px'
+                            }}>
+                                <LuPackage size={16}/> Products
+                            </div>
+                        }>
+                        {/* All Products (Cashier+) - From File 1 */}
+                        <Link to="/all_products" className="sidebar-link" style={{
+                            textDecoration: 'none',
+                            color: 'inherit'
+                        }}>
+                            <SideBarItem
+                                isActive={isPathActive('/all_products')}
+                                title={
+                                    <div style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '12px'
+                                    }}>
+                                        <LuPackage size={16} /> All Products
+                                    </div>
+                                }
+                                onClick={() => handleItemClick("All Products")}
+                            />
+                        </Link>
+                        {/* Create Product (Manager+) - From File 1 */}
+                        {isManagerOrHigher && (
+                            <Link to="/create_products" className="sidebar-link" style={{
+                                textDecoration: 'none',
+                                color: 'inherit'
+                            }}>
+                                <SideBarItem
+                                    isActive={isPathActive('/create_products')}
+                                    title={
+                                        <div style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '12px'
+                                        }}>
+                                            <LuPackagePlus size={16} /> Create Product
+                                        </div>
+                                    }
+                                    onClick={() => handleItemClick("Create Product")}
+                                />
+                            </Link>
+                        )}
+                         {/* Inventory (Cashier+) - From File 1 */}
+                        <Link to="/inventory" className="sidebar-link" style={{
+                            textDecoration: 'none',
+                            color: 'inherit'
+                        }}>
+                            <SideBarItem
+                                isActive={isPathActive('/inventory')}
+                                title={
+                                    <div style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '12px'
+                                    }}>
+                                        <LuPackageSearch size={16} /> Inventory
+                                    </div>
+                                }
+                                onClick={() => handleItemClick("Inventory")}
+                            />
+                        </Link>
+                        {/* Categories (Manager+) - From File 1 */}
+                        {isManagerOrHigher && (
+                            <Link to="/categories" className="sidebar-link" style={{
+                                textDecoration: 'none',
+                                color: 'inherit'
+                            }}>
+                                <SideBarItem
+                                    isActive={isPathActive('/categories')}
+                                    title={
+                                        <div style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '12px'
+                                        }}>
+                                            <LuPackageSearch size={16} /> Categories
+                                        </div>
+                                    }
+                                    onClick={() => handleItemClick("Categories")}
+                                />
+                            </Link>
+                        )}
+                        {/* Brands (Manager+) - Added from File 2, assumed Manager+ role */}
+                         {isManagerOrHigher && (
+                            <Link to="/brands" className="sidebar-link" style={{
+                                textDecoration: 'none',
+                                color: 'inherit'
+                            }}>
+                                <SideBarItem
+                                    isActive={isPathActive('/brands')}
+                                    title={
+                                        <div style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '12px'
+                                        }}>
+                                            {/* Using same icon as Categories, change if needed */}
+                                            <LuPackageSearch size={16} /> Brands
+                                        </div>
+                                    }
+                                    onClick={() => handleItemClick("Brands")}
+                                />
+                            </Link>
+                         )}
+                    </SideBarDropdown>
+                 )}
+
+
+{}
+{isManagerOrHigher && ( 
+     <SideBarDropdown
+         isActive={isGroupActive(['/sales', '/sales-report', '/create-sale', '/import-sales'])} // Add new paths
+         title={
+             <div className="sidebar-link" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                 <TbReportMoney size={16} /> Sales
+             </div>
+         }>
+
+         {/* Sales List (Manager+) */}
+         <Link to="/sales" className="sidebar-link" style={{ textDecoration: 'none', color: 'inherit' }}>
+             <SideBarItem
+                 isActive={isPathActive('/sales')}
+                 title={<div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><TbReportMoney size={16} /> All Sales</div>}
+                 onClick={() => handleItemClick("All Sales")}
+             />
+         </Link>
+
+         {/* Sales Report (Manager+) */}
+         <Link to="/sales-report" className="sidebar-link" style={{ textDecoration: 'none', color: 'inherit' }}>
+              <SideBarItem
+                   isActive={isPathActive('/sales-report')}
+                   title={
+                        <div style={{
+                             display: 'flex',
+                             alignItems: 'center',
+                             gap: '12px'
+                        }}>
+                             <TbReportMoney size={16} /> Sales Report {/* Use appropriate icon */}
+                        </div>
+                   }
+                   onClick={() => handleItemClick("Sales Report")}
+              />
+         </Link>
+
+          {}
+          {isCashierOrHigher && (
+              <Link to="/create-sale" className="sidebar-link" style={{ textDecoration: 'none', color: 'inherit' }}>
+                   <SideBarItem
+                        isActive={isPathActive('/create-sale')}
+                        title={<div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><FaPlus size={14} /> Create Sale</div>}
+                        onClick={() => handleItemClick("Create Sale")}
+                   />
+              </Link>
+          )}
+
+          {}
+          {isManagerOrHigher && (
+              <Link to="/import-sales" className="sidebar-link" style={{ textDecoration: 'none', color: 'inherit' }}>
+                   <SideBarItem
+                        isActive={isPathActive('/import-sales')}
+                        title={<div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><FaUpload size={14} /> Import Sales</div>}
+                        onClick={() => handleItemClick("Import Sales")}
+                   />
+              </Link>
+          )}
+
+     </SideBarDropdown>
+ )}
+
+
+                {}
+                {isAdmin && (
+                    <SideBarDropdown
+                        isActive={isGroupActive(['/employee-management', '/create-user'])}
+                        title={
+                            <div className="sidebar-link" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                <FiUsers size={16} /> Employee Management
+                            </div>
+                        }>
+                        <Link to="/employee-management" className="sidebar-link" style={{ textDecoration: 'none', color: 'inherit' }}>
+                            <SideBarItem
+                                isActive={isPathActive('/employee-management')}
+                                title={<div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><FiUsers size={16} /> Manage Employees</div>}
+                                onClick={() => handleItemClick("Manage Employees")}
+                            />
+                        </Link>
+                        <Link to="/create-user" className="sidebar-link" style={{ textDecoration: 'none', color: 'inherit' }}>
+                            <SideBarItem
+                                isActive={isPathActive('/create-user')}
+                                title={<div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><FiUserPlus size={16} /> Create Employee</div>}
+                                onClick={() => handleItemClick("Create Employee")}
+                            />
+                        </Link>
+                    </SideBarDropdown>
+                )}
+
+                {/* Purchases Dropdown (Manager+) - Merged (using File 2's items and File 1's role check) */}
+                {isManagerOrHigher && (
+                    <SideBarDropdown
+                        // Updated paths for isActive check based on merged content
+                        isActive={isGroupActive([
+                            '/supplier',
+                            '/all_purchases',
+                            '/create_purchases',
+                            '/import_purchases'
+                            // Removed '/purchases' unless it's a specific overview page not listed
+                        ])}
+                        title={
+                            <div className="sidebar-link" style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '12px'
+                            }}>
+                                <BsCartCheck size={16}/> Purchases
+                            </div>
+                        }>
+                         {/* Suppliers (Manager+) */}
+                        <Link to="/supplier" className="sidebar-link" style={{
+                            textDecoration: 'none',
+                            color: 'inherit'
+                        }}>
+                            <SideBarItem
+                                isActive={isPathActive('/supplier')}
+                                title={
+                                    <div style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '12px'
+                                    }}>
+                                        <BsCartCheck size={16} /> Suppliers
+                                    </div>
+                                }
+                                onClick={() => handleItemClick("Suppliers")}
+                            />
+                        </Link>
+                        {/* All Purchases (Manager+) - From File 2 */}
+                         <Link to="/all_purchases" className="sidebar-link" style={{
+                             textDecoration: 'none',
+                             color: 'inherit'
+                         }}>
+                             <SideBarItem
+                                 isActive={isPathActive('/all_purchases')}
+                                 title={
+                                     <div style={{
+                                         display: 'flex',
+                                         alignItems: 'center',
+                                         gap: '12px'
+                                     }}>
+                                         <BsCartCheck size={16} /> All Purchases
+                                     </div>
+                                 }
+                                 onClick={() => handleItemClick("All Purchases")}
+                             />
+                         </Link>
+                        {/* Create Purchase (Manager+) - From File 2 */}
+                         <Link to="/create_purchases" className="sidebar-link" style={{
+                             textDecoration: 'none',
+                             color: 'inherit'
+                         }}>
+                             <SideBarItem
+                                 isActive={isPathActive('/create_purchases')}
+                                 title={
+                                     <div style={{
+                                         display: 'flex',
+                                         alignItems: 'center',
+                                         gap: '12px'
+                                     }}>
+                                         <BsCartCheck size={16} /> Create Purchase
+                                     </div>
+                                 }
+                                 onClick={() => handleItemClick("Create Purchase")}
+                             />
+                         </Link>
+                        {/* Import Purchases (Manager+) - From File 2 */}
+                         <Link to="/import_purchases" className="sidebar-link" style={{
+                             textDecoration: 'none',
+                             color: 'inherit'
+                         }}>
+                             <SideBarItem
+                                 isActive={isPathActive('/import_purchases')}
+                                 title={
+                                     <div style={{
+                                         display: 'flex',
+                                         alignItems: 'center',
+                                         gap: '12px'
+                                     }}>
+                                         <BsCartCheck size={16} /> Import Purchases
+                                     </div>
+                                 }
+                                 onClick={() => handleItemClick("Import Purchases")}
+                             />
+                         </Link>
+                    </SideBarDropdown>
+                )}
+
+                {/* Sales Link (Manager+) - From File 1 */}
+                {isManagerOrHigher && (
+                    <Nav.Item className="sidebar-nav-item" style={{
+                        padding: '12px 16px',
+                        textAlign: 'left',
+                        fontSize: '14px',
+                        fontWeight: '500',
+                        color: isPathActive('/sales') ? '#357EC7' : '#505050',
+                        backgroundColor: isPathActive('/sales') ? '#f0f7ff' : 'transparent',
+                        margin: '2px 8px',
+                        borderRadius: '4px'
+                    }}>
+                        <Link to="/sales" className="sidebar-link" style={{
+                            textDecoration: 'none',
+                            color: 'inherit',
+>>>>>>> 06cec42 (Adding employee management, create and import sale)
                             display: 'flex',
                             alignItems: 'center',
                             gap: '12px'
                         }}>
+<<<<<<< HEAD
                             <FiUsers size={16} /> Users
                         </div>
                     }>
@@ -314,10 +667,87 @@ function ToolsSidebar() {
                     isActive={isGroupActive(['/purchases',/'all_purchases','/create_purchases','/import_purchases', '/supplier'])}
                     title={
                         <div className="sidebar-link" style={{
+=======
+                            <TbReportMoney size={16} /> Sales
+                        </Link>
+                    </Nav.Item>
+                )}
+
+                {/* Reports Dropdown (Manager+) - Merged (using File 2's structure and File 1's role check) */}
+                {isManagerOrHigher && (
+                     <SideBarDropdown
+                        isActive={isGroupActive(['/reports', '/sales-report'])}
+                        title={
+                            <div className="sidebar-link" style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '12px'
+                            }}>
+                                <HiOutlineDocumentReport size={16}/> Reports
+                            </div>
+                        }>
+                        {/* General Reports (Manager+) - From File 2 */}
+                        <Link to="/reports" className="sidebar-link" style={{
+                            textDecoration: 'none',
+                            color: 'inherit'
+                        }}>
+                            <SideBarItem
+                                isActive={isPathActive('/reports')}
+                                title={
+                                    <div style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '12px'
+                                    }}>
+                                        <HiOutlineDocumentReport size={16} /> General Reports
+                                    </div>
+                                }
+                                onClick={() => handleItemClick("General Reports")}
+                            />
+                        </Link>
+                        {/* Sales Report (Manager+) - From File 2 */}
+                        <Link to="/sales-report" className="sidebar-link" style={{
+                            textDecoration: 'none',
+                            color: 'inherit'
+                        }}>
+                            <SideBarItem
+                                isActive={isPathActive('/sales-report')}
+                                title={
+                                    <div style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '12px'
+                                    }}>
+                                        <TbReportMoney size={16} /> Sales Report
+                                    </div>
+                                }
+                                onClick={() => handleItemClick("Sales Report")}
+                            />
+                        </Link>
+                    </SideBarDropdown>
+                )}
+
+                {/* POS Link (Cashier+) - From File 1 */}
+                 {isCashierOrHigher && (
+                    <Nav.Item className="sidebar-nav-item" style={{
+                        padding: '12px 16px',
+                        textAlign: 'left',
+                        fontSize: '14px',
+                        fontWeight: '500',
+                        color: isPathActive('/pos') ? '#357EC7' : '#505050',
+                        backgroundColor: isPathActive('/pos') ? '#f0f7ff' : 'transparent',
+                        margin: '2px 8px',
+                        borderRadius: '4px'
+                    }}>
+                        <Link to="/pos" className="sidebar-link" style={{
+                            textDecoration: 'none',
+                            color: 'inherit',
+>>>>>>> 06cec42 (Adding employee management, create and import sale)
                             display: 'flex',
                             alignItems: 'center',
                             gap: '12px'
                         }}>
+<<<<<<< HEAD
                             <BsCartCheck size={16}/> Purchases
                         </div>
                     }>
@@ -532,6 +962,15 @@ function ToolsSidebar() {
                     </Link>
                 </Nav.Item>
 
+=======
+                            {/* Consider adding a POS icon if you have one */}
+                            POS
+                        </Link>
+                    </Nav.Item>
+                 )}
+
+                {/* Logout Link (Always visible) - Identical */}
+>>>>>>> 06cec42 (Adding employee management, create and import sale)
                 <Nav.Item
                     onClick={handleLogout}
                     className="sidebar-nav-item sidebar-logout"

@@ -49,6 +49,7 @@ UserSchema.pre('save', async function (next) {
     return next();
   }
   try {
+<<<<<<< HEAD
     const saltRounds = 10; // Store salt rounds in config/env ideally
     const salt = await bcrypt.genSalt(saltRounds); // Generate salt
     this.password = await bcrypt.hash(this.password, salt); // Hash password
@@ -60,11 +61,26 @@ UserSchema.pre('save', async function (next) {
 });
 
 // *** ADDED: Method to compare entered password with hashed password ***
+=======
+    const saltRounds = 10;
+    const salt = await bcrypt.genSalt(saltRounds);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+  } catch (error) {
+    console.error('Error hashing password:', error);
+    next(error);
+  }
+});
+
+>>>>>>> 06cec42 (Adding employee management, create and import sale)
 UserSchema.methods.matchPassword = async function (enteredPassword) {
    try {
       return await bcrypt.compare(enteredPassword, this.password);
    } catch (error) {
+<<<<<<< HEAD
      // Handle potential bcrypt errors if necessary, though compare usually just returns false
+=======
+>>>>>>> 06cec42 (Adding employee management, create and import sale)
      console.error("Error comparing password:", error);
      return false;
    }
@@ -73,6 +89,7 @@ UserSchema.methods.matchPassword = async function (enteredPassword) {
 
 let User;
 try {
+<<<<<<< HEAD
   // Use 'users' consistently as the model name
   User = mongoose.models.users || mongoose.model("users", UserSchema);
 } catch (error) {
@@ -81,3 +98,14 @@ try {
 }
 
 module.exports = User;
+=======
+  User = mongoose.models.users || mongoose.model("users", UserSchema);
+} catch (error) {
+  console.error(`User Model Creation Error: ${error.message}`);
+  User = mongoose.model("users", UserSchema);
+}
+
+module.exports = User;
+
+
+>>>>>>> 06cec42 (Adding employee management, create and import sale)

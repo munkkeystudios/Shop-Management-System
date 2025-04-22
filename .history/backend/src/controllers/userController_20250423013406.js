@@ -448,7 +448,11 @@ exports.exportUsers = async (req, res) => {
              doc.fontSize(9).text(header, x, y, { width: colWidths[i], align: 'left', underline: true });
              x += colWidths[i];
            });
+<<<<<<< HEAD
            y += 20; // Space after header
+=======
+           y += 20;
+>>>>>>> 06cec42 (Adding employee management, create and import sale)
         }
       });
 
@@ -467,3 +471,7 @@ exports.exportUsers = async (req, res) => {
     });
   }
 };
+<<<<<<< HEAD
+=======
+
+>>>>>>> 06cec42 (Adding employee management, create and import sale)

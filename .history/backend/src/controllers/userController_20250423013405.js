@@ -439,16 +439,26 @@ exports.exportUsers = async (req, res) => {
         });
 
         y += 20;
+<<<<<<< HEAD
         if (y > doc.page.height - doc.page.margins.bottom - 20) { // Add new page if needed
           doc.addPage({layout: 'landscape'});
           y = doc.page.margins.top; // Reset Y position for new page
            // Redraw headers on new page
+=======
+        if (y > doc.page.height - doc.page.margins.bottom - 20) {
+          doc.addPage({layout: 'landscape'});
+          y = doc.page.margins.top;
+>>>>>>> 06cec42 (Adding employee management, create and import sale)
            x = doc.page.margins.left;
            headers.forEach((header, i) => {
              doc.fontSize(9).text(header, x, y, { width: colWidths[i], align: 'left', underline: true });
              x += colWidths[i];
            });
+<<<<<<< HEAD
            y += 20; // Space after header
+=======
+           y += 20;
+>>>>>>> 06cec42 (Adding employee management, create and import sale)
         }
       });
 
@@ -467,3 +477,7 @@ exports.exportUsers = async (req, res) => {
     });
   }
 };
+<<<<<<< HEAD
+=======
+
+>>>>>>> 06cec42 (Adding employee management, create and import sale)

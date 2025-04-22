@@ -87,6 +87,7 @@ export const categoriesAPI = {
 
 // Suppliers API *** ADDED ***
 export const suppliersAPI = {
+<<<<<<< HEAD
     getAll: () => api.get('/suppliers'),
     getById: (id) => api.get(`/suppliers/${id}`),
     create: (supplierData) => api.post('/suppliers', supplierData),
@@ -103,6 +104,32 @@ export const inventoryAPI = {
   // updateStock: (id, quantity) => api.put(`/inventory/${id}`, { quantity }), // Likely handled by product patch
 
   // i think this is just more just product stock, i dont think we are doing another inventory schema - Walid
+=======
+  getAll: () => api.get('/suppliers'),
+  getById: (id) => api.get(`/suppliers/${id}`),
+  create: (supplierData) => api.post('/suppliers', supplierData),
+  update: (id, supplierData) => api.put(`/suppliers/${id}`, supplierData),
+  delete: (id) => api.delete(`/suppliers/${id}`),
+};
+
+// Inventory API (Note: May overlap with product stock updates, clarify usage)
+// export const inventoryAPI = {
+//   // Assuming '/inventory' might provide a summary or specific inventory view
+//   // If it's just product stock, use productsAPI.updateStock
+//   // getAll: () => api.get('/inventory'),
+//   // updateStock: (id, quantity) => api.put(`/inventory/${id}`, { quantity }), // Likely handled by product patch
+//
+//   // i think this is just more just product stock, i dont think we are doing another inventory schema - Walid
+// };
+
+// Brands API (Assuming you might need this later)
+export const brandsAPI = {
+  getAll: () => api.get('/brands'),
+  getById: (id) => api.get(`/brands/${id}`),
+  create: (brandData) => api.post('/brands', brandData),
+  update: (id, brandData) => api.put(`/brands/${id}`, brandData),
+  delete: (id) => api.delete(`/brands/${id}`),
+>>>>>>> 06cec42 (Adding employee management, create and import sale)
 };
 
 // Sales API
@@ -115,14 +142,30 @@ export const salesAPI = {
   // *** ADDED BACK from user's version, required by pos.js ***
   getLastBillNumber: () => api.get('/sales/last-bill-number'),
   // Export sales to CSV or PDF
+<<<<<<< HEAD
   exportSales: (format = 'csv', params = {}) => api.get(`/sales/export`, {
     params: { format, ...params },
     responseType: 'blob', // Important for handling file download
   }),
+=======
+  exportSales: (format = 'csv', params = {}) =>
+    api.get(`/sales/export`, {
+      params: { format, ...params },
+      responseType: 'blob', // Important for handling file download
+    }),
+  // <-- NEW IMPORT FUNCTION -->
+  importSales: (formData) =>
+    api.post('/import/sales', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data', // Important for file uploads
+      },
+    }),
+>>>>>>> 06cec42 (Adding employee management, create and import sale)
 };
 
 // Purchases API *** ADDED ***
 export const purchasesAPI = {
+<<<<<<< HEAD
     getAll: (params = {}) => api.get('/purchases', { params }),
     create: (purchaseData) => api.post('/purchases', purchaseData),
     getById: (id) => api.get(`/purchases/${id}`),
@@ -135,9 +178,28 @@ export const purchasesAPI = {
 };
 
 
+=======
+  getAll: (params = {}) => api.get('/purchases', { params }),
+  create: (purchaseData) => api.post('/purchases', purchaseData),
+  getById: (id) => api.get(`/purchases/${id}`),
+  exportPurchases: (format = 'csv') =>
+    api.get(`/purchases/export?format=${format}`, {
+      responseType: 'blob', // Important for file download
+    }),
+  // Add update/delete if needed
+  // update: (id, purchaseData) => api.put(`/purchases/${id}`, purchaseData),
+  // delete: (id) => api.delete(`/purchases/${id}`),
+};
+
+>>>>>>> 06cec42 (Adding employee management, create and import sale)
 // Dashboard API
 export const dashboardAPI = {
   // getSummary: () => api.get('/dashboard/summary'),
 };
 
+<<<<<<< HEAD
 export default api; // Export the configured instance
+=======
+export default api;
+
+>>>>>>> 06cec42 (Adding employee management, create and import sale)

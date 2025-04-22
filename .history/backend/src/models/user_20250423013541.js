@@ -64,7 +64,10 @@ UserSchema.methods.matchPassword = async function (enteredPassword) {
    try {
       return await bcrypt.compare(enteredPassword, this.password);
    } catch (error) {
+<<<<<<< HEAD
      // Handle potential bcrypt errors if necessary, though compare usually just returns false
+=======
+>>>>>>> 06cec42 (Adding employee management, create and import sale)
      console.error("Error comparing password:", error);
      return false;
    }
@@ -73,6 +76,7 @@ UserSchema.methods.matchPassword = async function (enteredPassword) {
 
 let User;
 try {
+<<<<<<< HEAD
   // Use 'users' consistently as the model name
   User = mongoose.models.users || mongoose.model("users", UserSchema);
 } catch (error) {
@@ -81,3 +85,14 @@ try {
 }
 
 module.exports = User;
+=======
+  User = mongoose.models.users || mongoose.model("users", UserSchema);
+} catch (error) {
+  console.error(`User Model Creation Error: ${error.message}`);
+  User = mongoose.model("users", UserSchema);
+}
+
+module.exports = User;
+
+
+>>>>>>> 06cec42 (Adding employee management, create and import sale)

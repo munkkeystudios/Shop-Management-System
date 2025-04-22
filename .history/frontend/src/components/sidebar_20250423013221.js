@@ -318,6 +318,7 @@ function ToolsSidebar() {
                             alignItems: 'center',
                             gap: '12px'
                         }}>
+<<<<<<< HEAD
                             <BsCartCheck size={16}/> Purchases
                         </div>
                     }>
@@ -532,6 +533,15 @@ function ToolsSidebar() {
                     </Link>
                 </Nav.Item>
 
+=======
+                            {/* Consider adding a POS icon if you have one */}
+                            POS
+                        </Link>
+                    </Nav.Item>
+                 )}
+
+                {/* Logout Link (Always visible) - Identical */}
+>>>>>>> 06cec42 (Adding employee management, create and import sale)
                 <Nav.Item
                     onClick={handleLogout}
                     className="sidebar-nav-item sidebar-logout"
