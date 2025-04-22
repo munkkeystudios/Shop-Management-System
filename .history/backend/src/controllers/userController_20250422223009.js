@@ -1,0 +1,439 @@
+
+
+
+const User = require('../models/user');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+
+exports.login = async (req, res) => {
+  try {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Username and password are required"
+      });
+    }
+
+    const user = await User.findOne({ username });
+
+    if (user && (await user.matchPassword(password))) {
+      if (!user.active) {
+         return res.status(403).json({
+            success: false,
+            message: "Account is inactive. Please contact an administrator."
+         });
+      }
+
+      const jwtSecret = process.env.JWT_SECRET;
+      if (!jwtSecret) {
+        console.warn('Warning: JWT_SECRET environment variable not set. Using insecure default value.');
+      }
+
+      const token = jwt.sign({
+        userId: user._id,
+        username: user.username,
+        role: user.role
+      }, jwtSecret || 'your-secret-key-for-jwt-tokens', { expiresIn: '24h' });
+
+      res.status(200).json({
+        success: true,
+        message: "Login successful",
+        token,
+        user: {
+          id: user._id,
+          username: user.username,
+          role: user.role,
+          name: user.name // Include name in login response
+        }
+      });
+    } else {
+      res.status(401).json({
+        success: false,
+        message: "Invalid username or password"
+      });
+    }
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error during login",
+      error: error.message
+    });
+  }
+};
+
+exports.adminCreateUser = async (req, res) => {
+    try {
+        const { username, password, role, active, name, phone } = req.body;
+
+        if (!username || !password || !role) {
+            return res.status(400).json({
+                success: false,
+                message: "Username, password, and role are required."
+            });
+        }
+
+        if (!['manager', 'cashier'].includes(role)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid role specified. Can only create 'manager' or 'cashier'."
+            });
+        }
+
+        if (password.length < 6) {
+            return res.status(400).json({
+                success: false,
+                message: "Password must be at least 6 characters long."
+            });
+        }
+
+        const existingUser = await User.findOne({ username });
+        if (existingUser) {
+            return res.status(400).json({
+                success: false,
+                message: "Username already exists."
+            });
+        }
+
+        const user = await User.create({
+            username,
+            password,
+            role,
+            active: active !== undefined ? active : true,
+            name,
+            phone
+        });
+
+         const userResponse = user.toObject();
+         delete userResponse.password;
+
+        res.status(201).json({
+            success: true,
+            message: "User created successfully by admin.",
+            data: userResponse
+        });
+
+    } catch (error) {
+        console.error("Admin create user error:", error);
+        if (error.name === 'ValidationError') {
+            return res.status(400).json({ success: false, message: error.message });
+        }
+        res.status(500).json({
+            success: false,
+            message: "Error creating user",
+            error: error.message
+        });
+    }
+};
+
+
+exports.getAllUsers = async (req, res) => {
+  try {
+
+    const users = await User.find({}).select('-password');
+
+    res.status(200).json({
+      success: true,
+      count: users.length,
+      data: users
+    });
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server Error fetching users',
+      error: error.message
+    });
+  }
+};
+
+exports.getProfile = async (req, res) => {
+  try {
+     if (!req.user || !req.user._id) {
+         return res.status(401).json({ success: false, message: 'Authentication required.' });
+     }
+    const user = await User.findById(req.user._id).select('-password');
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: user
+    });
+  } catch (error) {
+    console.error('Error fetching user profile:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server Error fetching profile',
+      error: error.message
+    });
+  }
+};
+
+exports.updateUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { username, password, role, active, name, phone } = req.body;
+
+    let user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    if (role && role !== user.role) {
+        if (!['manager', 'cashier'].includes(role)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid role specified. Can only assign 'manager' or 'cashier'."
+            });
+        }
+        user.role = role;
+    }
+
+     if (active !== undefined && active !== user.active) {
+         user.active = active;
+    }
+
+
+    if (username && username !== user.username) {
+      const existingUser = await User.findOne({ username });
+      if (existingUser && existingUser._id.toString() !== userId) {
+        return res.status(400).json({
+          success: false,
+          message: 'Username already exists'
+        });
+      }
+      user.username = username;
+    }
+
+    if (name !== undefined) user.name = name;
+    if (phone !== undefined) user.phone = phone;
+
+
+    if (password) {
+      if (password.length < 6) {
+         return res.status(400).json({ success: false, message: "Password must be at least 6 characters long." });
+      }
+      user.password = password;
+    }
+
+    const updatedUser = await user.save();
+
+    const userResponse = updatedUser.toObject();
+    delete userResponse.password;
+
+
+    res.status(200).json({
+      success: true,
+      message: 'User updated successfully',
+      data: userResponse
+    });
+  } catch (error) {
+    console.error('Error updating user:', error);
+    if (error.name === 'ValidationError') {
+        return res.status(400).json({ success: false, message: error.message });
+    }
+     if (error.code === 11000) {
+         return res.status(400).json({ success: false, message: 'Username already exists.' });
+     }
+    res.status(500).json({
+      success: false,
+      message: 'Server Error updating user',
+      error: error.message
+    });
+  }
+};
+
+
+exports.updateMyPassword = async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+
+        if (!currentPassword || !newPassword) {
+            return res.status(400).json({ success: false, message: 'Current and new passwords are required.' });
+        }
+
+        if (newPassword.length < 6) {
+            return res.status(400).json({ success: false, message: 'New password must be at least 6 characters long.' });
+        }
+
+        if (!req.user || !req.user._id) {
+            return res.status(401).json({ success: false, message: 'Authentication required.' });
+        }
+
+        const user = await User.findById(req.user._id);
+
+        if (!user) {
+             return res.status(404).json({ success: false, message: 'User not found.' });
+        }
+
+        if (!(await user.matchPassword(currentPassword))) {
+            return res.status(401).json({ success: false, message: 'Incorrect current password.' });
+        }
+
+        user.password = newPassword;
+        await user.save();
+
+        res.status(200).json({ success: true, message: 'Password updated successfully' });
+
+    } catch (error) {
+        console.error('Error updating own password:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Server Error updating password',
+            error: error.message
+        });
+    }
+};
+
+
+exports.deleteUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+
+    if (req.user._id.toString() === userId) {
+      return res.status(400).json({
+        success: false,
+        message: 'You cannot delete your own account'
+      });
+    }
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+     if (user.role === 'admin') {
+        return res.status(403).json({
+            success: false,
+            message: 'Cannot delete an admin account.'
+        });
+    }
+
+
+    await User.findByIdAndDelete(userId);
+
+    res.status(200).json({
+      success: true,
+      message: 'User deleted successfully'
+    });
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error when deleting user',
+      error: error.message
+    });
+  }
+};
+
+exports.exportUsers = async (req, res) => {
+  try {
+
+    const { format = 'csv' } = req.query;
+
+    const users = await User.find({}).select('-password').lean();
+
+    if (format.toLowerCase() === 'csv') {
+      if (users.length === 0) {
+        return res.status(200).send('No user data to export.');
+      }
+
+      const { Parser } = require('json2csv');
+
+      const fields = ['_id', 'username', 'role', 'name', 'phone', 'active', 'createdAt', 'updatedAt'];
+      const json2csvParser = new Parser({ fields });
+      const csv = json2csvParser.parse(users);
+
+      res.header('Content-Type', 'text/csv');
+      res.attachment('users.csv');
+      res.status(200).send(csv);
+
+    } else if (format.toLowerCase() === 'pdf') {
+      const PDFDocument = require('pdfkit');
+      const doc = new PDFDocument({ margin: 50, layout: 'landscape' });
+
+      res.header('Content-Type', 'application/pdf');
+      res.attachment('users.pdf');
+      doc.pipe(res);
+
+      doc.fontSize(18).text('User Report', { align: 'center' }).moveDown();
+
+       if (users.length === 0) {
+         doc.fontSize(12).text('No user data to export.');
+         doc.end();
+         return;
+      }
+
+      const tableTop = doc.y;
+      const headers = ['ID', 'Username', 'Name', 'Phone', 'Role', 'Active', 'Created At'];
+      const colWidths = [120, 100, 120, 100, 80, 50, 90];
+      let x = doc.page.margins.left;
+
+      headers.forEach((header, i) => {
+        doc.fontSize(9).text(header, x, tableTop, { width: colWidths[i], align: 'left', underline: true });
+        x += colWidths[i];
+      });
+
+      let y = tableTop + 20;
+      users.forEach(user => {
+        x = doc.page.margins.left;
+        const row = [
+          user._id.toString(),
+          user.username,
+          user.name || '',
+          user.phone || '',
+          user.role,
+          user.active ? 'Yes' : 'No',
+          user.createdAt.toDateString()
+        ];
+
+        row.forEach((cell, i) => {
+          doc.fontSize(8).text(cell, x, y, { width: colWidths[i], align: 'left' });
+          x += colWidths[i];
+        });
+
+        y += 20;
+        if (y > doc.page.height - doc.page.margins.bottom - 20) {
+          doc.addPage({layout: 'landscape'});
+          y = doc.page.margins.top;
+           x = doc.page.margins.left;
+           headers.forEach((header, i) => {
+             doc.fontSize(9).text(header, x, y, { width: colWidths[i], align: 'left', underline: true });
+             x += colWidths[i];
+           });
+           y += 20;
+        }
+      });
+
+      doc.end();
+
+    } else {
+      res.status(400).json({ success: false, message: "Invalid export format specified. Use 'csv' or 'pdf'." });
+    }
+
+  } catch (error) {
+    console.error('Error exporting users:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server Error exporting users',
+      error: error.message
+    });
+  }
+};
+
