@@ -11,12 +11,13 @@ import CreateUser from "./pages/create_user";
 import CategoryPage from "./pages/categories";
 import CreateProducts from "./pages/create_products";
 import AllUsers from "./pages/all_users";
-import  Brands  from "./pages/brands";
+import Brands from "./pages/brands";
 import { Frame } from "./pages/supplier";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { Frame as Sales } from "./pages/sales";
 import SalesReport from "./pages/sales-report";
+import Settings from "./pages/settings";
 
 function App() {
   return (
@@ -90,6 +91,11 @@ function App() {
             <Route path="/sales-report" element={
               <ProtectedRoute>
                 <SalesReport />
+              </ProtectedRoute>
+            } />
+            <Route path="/settings" element={
+              <ProtectedRoute>
+                <Settings />
               </ProtectedRoute>
             } />
 
