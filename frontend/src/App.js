@@ -18,6 +18,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import { Frame as Sales } from "./pages/sales";
 import SalesReport from "./pages/sales-report";
 import ImportPurchase from "./pages/ImportPurchase";
+import CreatePurchase from "./pages/CreatePurchase";
 
 
 
@@ -99,6 +100,11 @@ function App() {
             <Route path="/import_purchases" element={
               <ProtectedRoute>
                 <ImportPurchase />
+              </ProtectedRoute>
+            } />
+            <Route path="/create_purchase" element={
+              <ProtectedRoute>
+                <CreatePurchase />
               </ProtectedRoute>
             } />
 
