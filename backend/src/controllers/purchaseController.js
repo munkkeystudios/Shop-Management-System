@@ -241,3 +241,318 @@ exports.exportPurchases = async (req, res) => {
     });
   }
 };
+
+
+// Import functionality to add to your existing purchase controller
+
+// const fs = require('fs');
+// const path = require('path');
+// const multer = require('multer');
+// const csv = require('csv-parser');
+// const xlsx = require('xlsx');
+// const { Purchase, Product, Supplier } = require('../models');
+
+// // Configure multer for file upload storage
+// const storage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     const uploadDir = path.join(__dirname, '../../uploads/purchases');
+    
+//     // Create directory if it doesn't exist
+//     if (!fs.existsSync(uploadDir)) {
+//       fs.mkdirSync(uploadDir, { recursive: true });
+//     }
+    
+//     cb(null, uploadDir);
+//   },
+//   filename: (req, file, cb) => {
+//     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+//     const fileExt = path.extname(file.originalname);
+//     cb(null, 'purchase-import-' + uniqueSuffix + fileExt);
+//   }
+// });
+
+// const fileFilter = (req, file, cb) => {
+//   const allowedTypes = ['.csv', '.xls', '.xlsx'];
+//   const ext = path.extname(file.originalname).toLowerCase();
+  
+//   if (allowedTypes.includes(ext)) {
+//     cb(null, true);
+//   } else {
+//     cb(new Error('Only CSV, XLS, or XLSX files are allowed!'), false);
+//   }
+// };
+
+// const upload = multer({ 
+//   storage: storage, 
+//   fileFilter: fileFilter,
+//   limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
+// });
+
+// // Import purchase from file (CSV/Excel)
+// exports.importPurchase = async (req, res) => {
+//   try {
+//     // Process file upload using multer middleware
+//     upload.single('file')(req, res, async (err) => {
+//       if (err) {
+//         return res.status(400).json({ 
+//           success: false, 
+//           message: err.message 
+//         });
+//       }
+      
+//       if (!req.file) {
+//         return res.status(400).json({ 
+//           success: false, 
+//           message: 'Please upload a file.' 
+//         });
+//       }
+      
+//       if (!req.user || !req.user._id) {
+//         return res.status(401).json({ 
+//           success: false, 
+//           message: 'User authentication required to import purchase.' 
+//         });
+//       }
+      
+//       const filePath = req.file.path;
+//       const fileExt = path.extname(req.file.originalname).toLowerCase();
+      
+//       let purchaseItems = [];
+      
+//       // Process the file based on its type
+//       try {
+//         if (fileExt === '.csv') {
+//           purchaseItems = await processCSV(filePath);
+//         } else if (fileExt === '.xlsx' || fileExt === '.xls') {
+//           purchaseItems = processExcel(filePath);
+//         }
+//       } catch (error) {
+//         // Clean up file on error
+//         if (fs.existsSync(filePath)) {
+//           fs.unlinkSync(filePath);
+//         }
+        
+//         return res.status(400).json({ 
+//           success: false, 
+//           message: `Error processing file: ${error.message}` 
+//         });
+//       }
+      
+//       if (purchaseItems.length === 0) {
+//         // Clean up file if no items
+//         if (fs.existsSync(filePath)) {
+//           fs.unlinkSync(filePath);
+//         }
+        
+//         return res.status(400).json({ 
+//           success: false, 
+//           message: 'No valid purchase items found in file.' 
+//         });
+//       }
+      
+//       try {
+//         const { 
+//           supplier, 
+//           date = new Date(), 
+//           orderTax = 0, 
+//           discount = 0, 
+//           status = 'pending',
+//           warehouse = null,
+//           notes = '' 
+//         } = req.body;
+        
+//         // Validate supplier
+//         const supplierExists = await Supplier.findById(supplier);
+//         if (!supplierExists) {
+//           return res.status(400).json({ 
+//             success: false, 
+//             message: 'Supplier not found.' 
+//           });
+//         }
+        
+//         // Process purchase items
+//         const processedItems = [];
+//         let totalAmount = 0;
+        
+//         for (const item of purchaseItems) {
+//           // Find product by barcode/code or create new
+//           let product;
+          
+//           if (item.barcode || item.productCode) {
+//             const searchQuery = item.barcode 
+//               ? { barcode: item.barcode } 
+//               : { productCode: item.productCode };
+              
+//             product = await Product.findOne(searchQuery);
+//           }
+          
+//           // If product not found, create it
+//           if (!product && item.productName) {
+//             product = new Product({
+//               name: item.productName,
+//               barcode: item.barcode || null,
+//               productCode: item.productCode || null,
+//               price: item.sellingPrice || item.price || 0,
+//               purchasePrice: item.price || 0,
+//               // Add other fields as needed
+//             });
+            
+//             await product.save();
+//           }
+          
+//           if (product) {
+//             const quantity = parseInt(item.quantity) || 1;
+//             const price = parseFloat(item.price) || 0;
+//             const itemTotal = quantity * price;
+            
+//             processedItems.push({
+//               product: product._id,
+//               quantity: quantity,
+//               price: price
+//             });
+            
+//             totalAmount += itemTotal;
+//           }
+//         }
+        
+//         // Apply tax and discount
+//         const taxAmount = (totalAmount * parseFloat(orderTax)) / 100;
+//         const discountAmount = parseFloat(discount);
+//         const finalTotal = totalAmount + taxAmount - discountAmount;
+        
+//         // Create purchase
+//         const purchase = new Purchase({
+//           supplier,
+//           date: new Date(date),
+//           warehouse,
+//           items: processedItems,
+//           totalAmount: finalTotal,
+//           tax: taxAmount,
+//           discount: discountAmount,
+//           status,
+//           paymentStatus: 'pending', // Default or can be made configurable
+//           notes,
+//           createdBy: req.user._id
+//         });
+        
+//         await purchase.save();
+        
+//         // Clean up file
+//         if (fs.existsSync(filePath)) {
+//           fs.unlinkSync(filePath);
+//         }
+        
+//         res.status(201).json({
+//           success: true,
+//           message: 'Purchase imported successfully',
+//           data: purchase
+//         });
+        
+//       } catch (error) {
+//         // Clean up file on error
+//         if (fs.existsSync(filePath)) {
+//           fs.unlinkSync(filePath);
+//         }
+        
+//         console.error('Error creating purchase from import:', error);
+//         res.status(500).json({
+//           success: false,
+//           message: 'Server Error creating purchase from import',
+//           error: error.message
+//         });
+//       }
+//     });
+//   } catch (error) {
+//     console.error('Error importing purchase:', error);
+//     res.status(500).json({
+//       success: false,
+//       message: 'Server Error during purchase import',
+//       error: error.message
+//     });
+//   }
+// };
+
+// // Download sample import template
+// exports.downloadSampleTemplate = (req, res) => {
+//   try {
+//     const sampleItems = [
+//       {
+//         productName: 'Sample Product 1',
+//         barcode: 'BC12345',
+//         productCode: 'PC001',
+//         quantity: 10,
+//         price: 25.50,
+//         sellingPrice: 45.00
+//       },
+//       {
+//         productName: 'Sample Product 2',
+//         barcode: 'BC67890',
+//         productCode: 'PC002',
+//         quantity: 5,
+//         price: 15.75,
+//         sellingPrice: 29.99
+//       }
+//     ];
+    
+//     // Create Excel file
+//     const workbook = xlsx.utils.book_new();
+//     const worksheet = xlsx.utils.json_to_sheet(sampleItems);
+//     xlsx.utils.book_append_sheet(workbook, worksheet, 'Sample');
+    
+//     // Save to temp directory
+//     const tempDir = path.join(__dirname, '../../uploads/temp');
+//     if (!fs.existsSync(tempDir)) {
+//       fs.mkdirSync(tempDir, { recursive: true });
+//     }
+    
+//     const tempFilePath = path.join(tempDir, 'purchase_import_sample.xlsx');
+//     xlsx.writeFile(workbook, tempFilePath);
+    
+//     // Send file to client
+//     res.download(tempFilePath, 'purchase_import_sample.xlsx', (err) => {
+//       if (err) {
+//         console.error('Error downloading template:', err);
+//         res.status(500).json({
+//           success: false,
+//           message: 'Could not download the file'
+//         });
+//       }
+      
+//       // Delete the file after sending
+//       if (fs.existsSync(tempFilePath)) {
+//         fs.unlinkSync(tempFilePath);
+//       }
+//     });
+//   } catch (error) {
+//     console.error('Error generating sample file:', error);
+//     res.status(500).json({ 
+//       success: false, 
+//       message: 'Error generating sample file', 
+//       error: error.message 
+//     });
+//   }
+// };
+
+// // Helper functions for file processing
+// async function processCSV(filePath) {
+//   return new Promise((resolve, reject) => {
+//     const results = [];
+    
+//     fs.createReadStream(filePath)
+//       .pipe(csv())
+//       .on('data', (data) => results.push(data))
+//       .on('end', () => {
+//         resolve(results);
+//       })
+//       .on('error', (error) => {
+//         reject(error);
+//       });
+//   });
+// }
+
+// function processExcel(filePath) {
+//   const workbook = xlsx.readFile(filePath);
+//   const sheetName = workbook.SheetNames[0];
+//   const worksheet = workbook.Sheets[sheetName];
+//   return xlsx.utils.sheet_to_json(worksheet);
+// }

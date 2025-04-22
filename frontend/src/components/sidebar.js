@@ -310,8 +310,8 @@ function ToolsSidebar() {
                     </Link>
                 </SideBarDropdown>
 
-                <SideBarDropdown
-                    isActive={isGroupActive(['/purchases', '/supplier'])}
+                {/* <SideBarDropdown
+                    isActive={isGroupActive(['/purchases',/'all_purchases','/create_purchases','/import_purchases', '/supplier'])}
                     title={
                         <div className="sidebar-link" style={{
                             display: 'flex',
@@ -339,7 +339,107 @@ function ToolsSidebar() {
                             onClick={() => handleItemClick("Suppliers")}
                         />
                     </Link>
+                </SideBarDropdown> */}
+
+                <SideBarDropdown
+                    isActive={isGroupActive([
+                        '/purchases',
+                        '/all_purchases',
+                        '/create_purchases',
+                        '/import_purchases',
+                        '/supplier'
+                    ])}
+                    title={
+                        <div className="sidebar-link" style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '12px'
+                        }}>
+                            <BsCartCheck size={16}/> Purchases
+                        </div>
+                    }>
+
+                    {/* Suppliers */}
+                    <Link to="/supplier" className="sidebar-link" style={{
+                        textDecoration: 'none',
+                        color: 'inherit'
+                    }}>
+                        <SideBarItem
+                            isActive={isPathActive('/supplier')}
+                            title={
+                                <div style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '12px'
+                                }}>
+                                    <BsCartCheck size={16} /> Suppliers
+                                </div>
+                            }
+                            onClick={() => handleItemClick("Suppliers")}
+                        />
+                    </Link>
+
+                    {/* All Purchases */}
+                    <Link to="/all_purchases" className="sidebar-link" style={{
+                        textDecoration: 'none',
+                        color: 'inherit'
+                    }}>
+                        <SideBarItem
+                            isActive={isPathActive('/all_purchases')}
+                            title={
+                                <div style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '12px'
+                                }}>
+                                    <BsCartCheck size={16} /> All Purchases
+                                </div>
+                            }
+                            onClick={() => handleItemClick("All Purchases")}
+                        />
+                    </Link>
+
+                    {/* Create Purchase */}
+                    <Link to="/create_purchases" className="sidebar-link" style={{
+                        textDecoration: 'none',
+                        color: 'inherit'
+                    }}>
+                        <SideBarItem
+                            isActive={isPathActive('/create_purchases')}
+                            title={
+                                <div style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '12px'
+                                }}>
+                                    <BsCartCheck size={16} /> Create Purchase
+                                </div>
+                            }
+                            onClick={() => handleItemClick("Create Purchase")}
+                        />
+                    </Link>
+
+                    {/* Import Purchases */}
+                    <Link to="/import_purchases" className="sidebar-link" style={{
+                        textDecoration: 'none',
+                        color: 'inherit'
+                    }}>
+                        <SideBarItem
+                            isActive={isPathActive('/import_purchases')}
+                            title={
+                                <div style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '12px'
+                                }}>
+                                    <BsCartCheck size={16} /> Import Purchases
+                                </div>
+                            }
+                            onClick={() => handleItemClick("Import Purchases")}
+                        />
+                    </Link>
                 </SideBarDropdown>
+
 
                 <Nav.Item className="sidebar-nav-item" style={{
                     padding: '12px 16px',

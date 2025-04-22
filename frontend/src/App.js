@@ -17,6 +17,10 @@ import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { Frame as Sales } from "./pages/sales";
 import SalesReport from "./pages/sales-report";
+import ImportPurchase from "./pages/ImportPurchase";
+
+
+
 
 function App() {
   return (
@@ -90,6 +94,11 @@ function App() {
             <Route path="/sales-report" element={
               <ProtectedRoute>
                 <SalesReport />
+              </ProtectedRoute>
+            } />
+            <Route path="/import_purchases" element={
+              <ProtectedRoute>
+                <ImportPurchase />
               </ProtectedRoute>
             } />
 
