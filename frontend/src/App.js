@@ -17,7 +17,9 @@ import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { Frame as Sales } from "./pages/sales";
 import SalesReport from "./pages/sales-report";
-import Settings from "./pages/settings";
+import UserSettings from "./pages/UserSettings";
+import DisplaySettings from "./pages/DisplaySettings";
+import GeneralSettings from "./pages/GeneralSettings";
 
 function App() {
   return (
@@ -93,11 +95,25 @@ function App() {
                 <SalesReport />
               </ProtectedRoute>
             } />
-            <Route path="/settings" element={
+            {/* Settings routes */}
+            <Route path="/settings/user" element={
               <ProtectedRoute>
-                <Settings />
+                <UserSettings />
               </ProtectedRoute>
             } />
+            <Route path="/settings/display" element={
+              <ProtectedRoute>
+                <DisplaySettings />
+              </ProtectedRoute>
+            } />
+            <Route path="/settings/general" element={
+              <ProtectedRoute>
+                <GeneralSettings />
+              </ProtectedRoute>
+            } />
+
+            {/* Redirect /settings to user settings */}
+            <Route path="/settings" element={<Navigate to="/settings/user" replace />} />
 
             {/* Redirect root to login */}
             <Route path="/" element={<Navigate to="/login" replace />} />

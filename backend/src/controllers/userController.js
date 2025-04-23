@@ -1,4 +1,3 @@
-
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt'); // *** ADDED: Import bcrypt ***
@@ -466,4 +465,162 @@ exports.exportUsers = async (req, res) => {
       error: error.message
     });
   }
+};
+
+// @desc    Get a user's profile by ID (for settings)
+// @route   GET /api/users/:id/profile
+// @access  Private (own profile or admin)
+exports.getUserProfile = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    
+    // Check if user is requesting their own profile or is an admin
+    if (req.user._id.toString() !== userId && req.user.role !== 'admin') {
+      return res.status(403).json({
+        success: false,
+        message: 'Access denied: You can only view your own profile'
+      });
+    }
+    
+    const user = await User.findById(userId).select('-password');
+    
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+    
+    res.status(200).json({
+      success: true,
+      data: user
+    });
+  } catch (error) {
+    console.error('Error fetching user profile:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error fetching user profile',
+      error: error.message
+    });
+  }
+};
+
+// @desc    Update a user's profile
+// @route   PUT /api/users/:id/profile
+// @access  Private (own profile or admin)
+exports.updateUserProfile = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    
+    // Check if user is updating their own profile or is an admin
+    if (req.user._id.toString() !== userId && req.user.role !== 'admin') {
+      return res.status(403).json({
+        success: false,
+        message: 'Access denied: You can only update your own profile'
+      });
+    }
+    
+    const { firstName, lastName, email, phone, jobTitle, preferredLanguage } = req.body;
+    
+    const updateData = {};
+    if (firstName !== undefined) updateData.firstName = firstName;
+    if (lastName !== undefined) updateData.lastName = lastName;
+    if (email !== undefined) updateData.email = email;
+    if (phone !== undefined) updateData.phone = phone;
+    if (jobTitle !== undefined) updateData.jobTitle = jobTitle;
+    if (preferredLanguage !== undefined) updateData.preferredLanguage = preferredLanguage;
+    
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { $set: updateData },
+      { new: true, runValidators: true }
+    ).select('-password');
+    
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+    
+    res.status(200).json({
+      success: true,
+      message: 'Profile updated successfully',
+      data: user
+    });
+  } catch (error) {
+    console.error('Error updating user profile:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error updating user profile',
+      error: error.message
+    });
+  }
+};
+
+// @desc    Update notification preferences
+// @route   PUT /api/users/:id/notifications
+// @access  Private (own preferences only)
+exports.updateNotificationPreferences = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    
+    // Users can only update their own notification preferences
+    if (req.user._id.toString() !== userId) {
+      return res.status(403).json({
+        success: false,
+        message: 'Access denied: You can only update your own notification preferences'
+      });
+    }
+    
+    const { email, browser } = req.body;
+    
+    const updateData = {
+      notificationPreferences: {}
+    };
+    
+    if (email !== undefined) updateData.notificationPreferences.email = email;
+    if (browser !== undefined) updateData.notificationPreferences.browser = browser;
+    
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { $set: updateData },
+      { new: true, runValidators: true }
+    ).select('-password');
+    
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+    
+    res.status(200).json({
+      success: true,
+      message: 'Notification preferences updated successfully',
+      data: user.notificationPreferences
+    });
+  } catch (error) {
+    console.error('Error updating notification preferences:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error updating notification preferences',
+      error: error.message
+    });
+  }
+};
+
+// Update module.exports to include new controller methods
+module.exports = {
+  login: exports.login,
+  adminCreateUser: exports.adminCreateUser,
+  getAllUsers: exports.getAllUsers,
+  getProfile: exports.getProfile,
+  // Add new exports
+  getUserProfile: exports.getUserProfile,
+  updateUserProfile: exports.updateUserProfile,
+  updateNotificationPreferences: exports.updateNotificationPreferences,
+  exportUsers: exports.exportUsers,
+  updateUser: exports.updateUser,
+  deleteUser: exports.deleteUser
 };

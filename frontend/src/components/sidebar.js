@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Nav } from 'react-bootstrap';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -10,6 +10,10 @@ import { FiUsers } from "react-icons/fi";
 import { BsCartCheck } from "react-icons/bs";
 import { TbReportMoney } from "react-icons/tb";
 import { FiSettings } from 'react-icons/fi';
+import { FiUser } from 'react-icons/fi';
+import { MdOutlineDisplaySettings } from 'react-icons/md';
+import { FiSliders } from 'react-icons/fi';
+import { settingsAPI } from '../services/api';
 
 
 // sidebar layout:
@@ -95,9 +99,34 @@ SideBar.Item = SideBarItem;
 
 // main default sidebar function
 function ToolsSidebar() {
-    const { logout } = useAuth();
+    const { logout, user } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
+    const [companyLogo, setCompanyLogo] = useState(null);
+    const [companyName, setCompanyName] = useState('FinTrack');
+
+    useEffect(() => {
+        // Fetch company settings when component mounts
+        const fetchSettings = async () => {
+            try {
+                const response = await settingsAPI.getAll();
+                const settings = response.data;
+                
+                if (settings.logoUrl) {
+                    const baseUrl = process.env.REACT_APP_API_URL || 'http://localhost:5002';
+                    setCompanyLogo(baseUrl + settings.logoUrl);
+                }
+                
+                if (settings.companyName) {
+                    setCompanyName(settings.companyName);
+                }
+            } catch (error) {
+                console.error('Error fetching company settings:', error);
+            }
+        };
+        
+        fetchSettings();
+    }, []);
 
     const isPathActive = (path) => location.pathname === path;
     const isGroupActive = (paths) => paths.some(path => location.pathname.includes(path));
@@ -120,20 +149,21 @@ function ToolsSidebar() {
                 borderBottom: '1px solid #e6e6ff'
             }}>
                 <img
-                    src={logoImage}
+                    src={companyLogo || logoImage}
                     alt="Logo"
                     className="sidebar-logo"
                     style={{
                         width: '32px',
                         height: '32px',
-                        marginRight: '10px'
+                        marginRight: '10px',
+                        objectFit: 'contain'
                     }}
                 />
                 <span className="sidebar-title" style={{
                     fontWeight: '600',
                     fontSize: '22px',
                     color: '#333'
-                }}>FinTrack</span>
+                }}>{companyName}</span>
             </div>
 
             <div style={{ padding: '10px 0' }}>
@@ -433,26 +463,81 @@ function ToolsSidebar() {
                     </Link>
                 </Nav.Item>
 
-                <Nav.Item className="sidebar-nav-item" style={{
-                    padding: '12px 16px',
-                    textAlign: 'left',
-                    fontSize: '14px',
-                    fontWeight: '500',
-                    color: isPathActive('/settings') ? '#357EC7' : '#505050',
-                    backgroundColor: isPathActive('/settings') ? '#f0f7ff' : 'transparent',
-                    margin: '2px 8px',
-                    borderRadius: '4px'
-                }}>
-                    <Link to="/settings" className="sidebar-link" style={{
+                <SideBarDropdown
+                    title={
+                        <div style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '12px'
+                        }}>
+                            <FiSettings size={16}/> Settings
+                        </div>
+                    }
+                    isActive={isGroupActive(['/settings/user', '/settings/display', '/settings/general'])}
+                >
+                    <Link to="/settings/user" className="sidebar-link" style={{
                         textDecoration: 'none',
-                        color: 'inherit',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '12px'
+                        color: 'inherit'
                     }}>
-                        <FiSettings size={16} /> Settings
+                        <SideBarItem
+                            isActive={isPathActive('/settings/user')}
+                            title={
+                                <div style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '12px'
+                                }}>
+                                    <FiUser size={16} /> User Settings
+                                </div>
+                            }
+                            onClick={() => handleItemClick("User Settings")}
+                        />
                     </Link>
-                </Nav.Item>
+                    
+                    {/* Display Settings - only for managers and admins */}
+                    {user && (user.role === 'manager' || user.role === 'admin') && (
+                        <Link to="/settings/display" className="sidebar-link" style={{
+                            textDecoration: 'none',
+                            color: 'inherit'
+                        }}>
+                            <SideBarItem
+                                isActive={isPathActive('/settings/display')}
+                                title={
+                                    <div style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '12px'
+                                    }}>
+                                        <MdOutlineDisplaySettings size={16} /> Display Settings
+                                    </div>
+                                }
+                                onClick={() => handleItemClick("Display Settings")}
+                            />
+                        </Link>
+                    )}
+                    
+                    {/* General Settings - only for admins */}
+                    {user && user.role === 'admin' && (
+                        <Link to="/settings/general" className="sidebar-link" style={{
+                            textDecoration: 'none',
+                            color: 'inherit'
+                        }}>
+                            <SideBarItem
+                                isActive={isPathActive('/settings/general')}
+                                title={
+                                    <div style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '12px'
+                                    }}>
+                                        <FiSliders size={16} /> General Settings
+                                    </div>
+                                }
+                                onClick={() => handleItemClick("General Settings")}
+                            />
+                        </Link>
+                    )}
+                </SideBarDropdown>
 
                 <Nav.Item
                     onClick={handleLogout}

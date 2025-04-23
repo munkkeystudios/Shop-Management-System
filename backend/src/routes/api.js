@@ -9,13 +9,17 @@ const saleController = require('../controllers/saleController');
 const importController = require('../controllers/importController');
 const purchaseController = require('../controllers/purchaseController');
 const brandController = require('../controllers/brandController');
-const auth = require('../middleware/auth');
+const { auth } = require('../middleware/auth');
+const settingsRoutes = require('./settingsRoutes');
 
 router.post('/login', userController.login);
 // router.post('/signup', userController.register);
 
 router.post('/products', productController.createProduct);
 router.use(auth);
+
+// Settings routes
+router.use('/settings', settingsRoutes);
 
 router.get('/users', userController.getAllUsers);
 router.get('/users/profile', userController.getProfile);
@@ -24,6 +28,11 @@ router.put('/users/:userId', userController.updateUser);
 
 router.post('/users', userController.adminCreateUser);
 router.delete('/users/:userId', userController.deleteUser);
+
+// User profile settings routes
+router.get('/users/:id/profile', userController.getUserProfile);
+router.put('/users/:id/profile', userController.updateUserProfile);
+router.put('/users/:id/notifications', userController.updateNotificationPreferences);
 
 router.get('/categories', categoryController.getAllCategories);
 router.get('/categories/:id', categoryController.getCategoryById);

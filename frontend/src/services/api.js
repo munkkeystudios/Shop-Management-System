@@ -136,4 +136,29 @@ export const dashboardAPI = {
   // getSummary: () => api.get('/dashboard/summary'),
 };
 
+// Settings API
+export const settingsAPI = {
+  getAll: () => api.get('/settings'),
+  update: (settingsData) => api.put('/settings', settingsData),
+  uploadLogo: (formData) => api.post('/settings/logo', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  }),
+  changePassword: (passwordData) => api.post('/settings/change-password', passwordData),
+  
+  // Methods for our specific settings pages that map to the backend endpoints
+  getDisplaySettings: () => api.get('/settings'), // Maps to the same endpoint but will be filtered in component
+  updateDisplaySettings: (displaySettings) => api.put('/settings', displaySettings),
+  getGeneralSettings: () => api.get('/settings'), // Maps to the same endpoint but will be filtered in component
+  updateGeneralSettings: (generalSettings) => api.put('/settings', generalSettings)
+};
+
+// User Profile API - Adding methods for user profile settings
+export const userAPI = {
+  getUserProfile: (userId) => api.get(`/users/${userId}/profile`),
+  updateUserProfile: (userId, profileData) => api.put(`/users/${userId}/profile`, profileData),
+  updateNotificationPreferences: (userId, preferences) => api.put(`/users/${userId}/notifications`, preferences)
+};
+
 export default api; // Export the configured instance
