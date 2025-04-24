@@ -1,0 +1,153 @@
+.topbar-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 80px;
+  padding: 0 16px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.topbar-menu-button,
+.topbar-back-button {
+  background: none;
+  border: none;
+  color: #333;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+}
+
+.topbar-title {
+  font-size: 18px;
+  font-weight: 500;
+  color: #333;
+}
+
+.topbar-center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+/* Search container removed */
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.topbar-language-selector {
+  position: relative;
+}
+
+.topbar-language-select {
+  appearance: none;
+  background: none;
+  border: none;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  padding: 4px 8px;
+  outline: none;
+}
+
+.topbar-language-select:after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid #333;
+}
+
+.topbar-pos-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #0d6efd;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 16px;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  height: 40px;
+  gap: 8px; /* Add space between text and icon */
+}
+
+.topbar-pos-button .pos-icon {
+  font-size: 16px;
+}
+
+.topbar-pos-button:hover {
+  background-color: #0b5ed7;
+}
+
+.topbar-user-profile {
+  display: flex;
+  align-items: center;
+}
+
+.topbar-user-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 500;
+  color: #333;
+  cursor: pointer;
+  border: 1px solid #e0e0e0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .topbar-language-selector {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .topbar-breadcrumb {
+    font-size: 14px;
+  }
+
+  .topbar-breadcrumb-separator {
+    margin: 0 4px;
+  }
+
+  .topbar-pos-button {
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+
+  .topbar-user-avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+}

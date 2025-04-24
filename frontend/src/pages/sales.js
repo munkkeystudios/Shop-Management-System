@@ -1,56 +1,124 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaSearch, FaFilter, FaFileExcel, FaFilePdf } from 'react-icons/fa';
-import Sidebar from '../components/sidebar';
+import Layout from '../components/Layout';
+import { salesAPI } from '../services/api';
 import './sales.css';
 
 export const Frame = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [sales, setSales] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  // Sample data - replace with your actual data source
-  const [sales] = useState([
-    {
-      date: '2024-01-27',
-      reference: 'SL_2119',
-      addedBy: 'William Castillo',
-      customer: 'Thomas',
-      status: 'Received',
-      grandTotal: '322.00',
-      paid: '322.00',
-      due: '322.00',
-      paymentStatus: 'Paid'
-    },
-    {
-      date: '2024-01-26',
-      reference: 'SL_2118',
-      addedBy: 'William Castillo',
-      customer: 'Jack',
-      status: 'Ordered',
-      grandTotal: '680.00',
-      paid: '680.00',
-      due: '680.00',
-      paymentStatus: 'Unpaid'
-    },
-    {
-      date: '2024-01-25',
-      reference: 'SL_2117',
-      addedBy: 'William Castillo',
-      customer: 'Will',
-      status: 'Pending',
-      grandTotal: '1500.00',
-      paid: '1500.00',
-      due: '1500.00',
-      paymentStatus: 'Paid'
+  // Fetch sales data
+  useEffect(() => {
+    const fetchSales = async () => {
+      try {
+        setLoading(true);
+        const token = localStorage.getItem('token');
+        if (!token) {
+          window.location.href = '/login';
+          return;
+        }
+
+        const response = await salesAPI.getAll();
+        console.log('sales payload:', response.data);
+
+        if (response.data.success && Array.isArray(response.data.data)) {
+          setSales(response.data.data);
+        } else if (response.data.success && Array.isArray(response.data.sales)) {
+          // if your server calls it "sales" instead of "data"
+          setSales(response.data.sales);
+        } else {
+          // fallback to empty array
+          console.warn('Unexpected sales shape, defaulting to []');
+          setSales([]);
+        }
+        setError(null);
+      } catch (error) {
+        console.error('Error fetching sales:', error);
+        setSales([]);      // ensure state stays an array
+        setError('Failed to load sales data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSales();
+  }, []);
+
+  // Handle PDF export
+  const handlePdfExport = async () => {
+    try {
+      setLoading(true);
+      const response = await salesAPI.exportSales('pdf');
+
+      // Create a blob URL and open it in a new tab
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+
+      // Open in a new tab
+      window.open(url, '_blank');
+
+      // Clean up the URL object after opening
+      setTimeout(() => window.URL.revokeObjectURL(url), 1000);
+
+      setError(null);
+    } catch (error) {
+      console.error('Error exporting PDF:', error);
+      setError('Failed to export PDF');
+    } finally {
+      setLoading(false);
     }
-  ]);
+  };
+
+  // Handle Excel export
+  const handleExcelExport = async () => {
+    try {
+      setLoading(true);
+      const response = await salesAPI.exportSales('csv');
+
+      // Create a blob URL and trigger download
+      const blob = new Blob([response.data], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+
+      // Create a temporary link and trigger download
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'sales.csv');
+      document.body.appendChild(link);
+      link.click();
+
+      // Clean up
+      document.body.removeChild(link);
+      setTimeout(() => window.URL.revokeObjectURL(url), 1000);
+
+      setError(null);
+    } catch (error) {
+      console.error('Error exporting CSV:', error);
+      setError('Failed to export CSV');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Filter sales based on reference number
   const filteredSales = sales.filter(sale =>
-    sale.reference.toLowerCase().includes(searchTerm.toLowerCase())
+    sale._id?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
-    <div className="sales-main-container">
-      <Sidebar />
+    <Layout title="All Sales">
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+          <span className="block sm:inline">{error}</span>
+        </div>
+      )}
+      {loading && (
+        <div className="flex justify-center items-center p-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+        </div>
+      )}
       <div className="sales-frame">
         <div className="sales-div-2">
           <div className="sales-div-3">
@@ -71,10 +139,18 @@ export const Frame = () => {
                   <button className="sales-filter-button">
                     <FaFilter /> Filter
                   </button>
-                  <button className="sales-export-button pdf-button">
+                  <button
+                    className="sales-export-button pdf-button"
+                    onClick={handlePdfExport}
+                    disabled={loading}
+                  >
                     <FaFilePdf /> PDF
                   </button>
-                  <button className="sales-export-button excel-button">
+                  <button
+                    className="sales-export-button excel-button"
+                    onClick={handleExcelExport}
+                    disabled={loading}
+                  >
                     <FaFileExcel /> Excel
                   </button>
                   <button className="sales-create-button">
@@ -93,7 +169,6 @@ export const Frame = () => {
                       <th>Reference</th>
                       <th>Added by</th>
                       <th>Customer</th>
-                      <th>Status</th>
                       <th>Grand Total</th>
                       <th>Paid</th>
                       <th>Due</th>
@@ -103,14 +178,13 @@ export const Frame = () => {
                   <tbody>
                     {filteredSales.map((sale, index) => (
                       <tr key={index}>
-                        <td>{sale.date}</td>
-                        <td>{sale.reference}</td>
-                        <td>{sale.addedBy}</td>
-                        <td>{sale.customer}</td>
-                        <td><span className={`sales-status-badge ${sale.status.toLowerCase()}`}>{sale.status}</span></td>
-                        <td>{sale.grandTotal}</td>
-                        <td>{sale.paid}</td>
-                        <td>{sale.due}</td>
+                        <td>{sale.createdAt}</td>
+                        <td>{sale._id}</td>
+                        <td>{sale.createdBy?.name}</td>
+                        <td>{sale.customer.name}</td>
+                        <td>{sale.total}</td>
+                        <td>{sale.amountPaid}</td>
+                        <td>{sale.change}</td>
                         <td><span className={`sales-status-badge ${sale.paymentStatus.toLowerCase()}`}>{sale.paymentStatus}</span></td>
                       </tr>
                     ))}
@@ -129,6 +203,6 @@ export const Frame = () => {
           </div>
         </div>
       </div>
-    </div>
+    </Layout>
   );
 };

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Sidebar from '../components/sidebar';
+import Layout from '../components/Layout';
 import { FiSearch, FiFilter, FiPlus } from 'react-icons/fi';
 import { FaFileExcel, FaFilePdf, FaEdit, FaTrash, FaTimes } from 'react-icons/fa';
 import { usersAPI } from '../services/api';
@@ -17,7 +17,7 @@ const DeleteConfirmationModal = ({ isOpen, onClose, onConfirm, userName }) => {
           <button className="close-button" onClick={onClose}>
             <FaTimes />
           </button>
-        </div>  
+        </div>
         <div className="modal-body">
           <p>Are you sure you want to delete user <strong>{userName}</strong>?</p>
           <p className="warning-text">This action cannot be undone.</p>
@@ -70,7 +70,7 @@ const AllUsers = () => {
     user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.role?.toLowerCase().includes(searchTerm.toLowerCase())
   );
-  
+
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentUsers = filteredUsers.slice(indexOfFirstItem, indexOfLastItem);
@@ -121,12 +121,12 @@ const AllUsers = () => {
 
   const confirmDelete = async () => {
     if (!userToDelete) return;
-    
+
     try {
       await usersAPI.delete(userToDelete._id);
       setUsers(users.filter(user => user._id !== userToDelete._id));
       setDeleteSuccess(`User ${userToDelete.name} was deleted successfully`);
-      
+
       //will remove the success message after 3s
       setTimeout(() => {
         setDeleteSuccess('');
@@ -140,8 +140,7 @@ const AllUsers = () => {
   };
 
   return (
-    <div className="users-page">
-      <Sidebar />
+    <Layout title="All Users">
       <div className="content-container">
         <div className="header-section">
           <h1>All Users</h1>
@@ -219,9 +218,9 @@ const AllUsers = () => {
                       <td>
                         <div className="action-icons">
                           <FaEdit className="edit-icon" title="Edit" />
-                          <FaTrash 
-                            className="delete-icon" 
-                            title="Delete" 
+                          <FaTrash
+                            className="delete-icon"
+                            title="Delete"
                             onClick={() => openDeleteModal(user)}
                           />
                         </div>
@@ -240,16 +239,16 @@ const AllUsers = () => {
 
         {totalPages > 0 && (
           <div className="pagination">
-            <button 
-              onClick={handlePreviousPage} 
+            <button
+              onClick={handlePreviousPage}
               disabled={currentPage === 1}
               className={currentPage === 1 ? 'disabled' : ''}
             >
               Previous
             </button>
             <span className="page-info">Page {currentPage} of {totalPages}</span>
-            <button 
-              onClick={handleNextPage} 
+            <button
+              onClick={handleNextPage}
               disabled={currentPage === totalPages}
               className={currentPage === totalPages ? 'disabled' : ''}
             >
@@ -258,14 +257,14 @@ const AllUsers = () => {
           </div>
         )}
 
-        <DeleteConfirmationModal 
+        <DeleteConfirmationModal
           isOpen={isDeleteModalOpen}
           onClose={closeDeleteModal}
           onConfirm={confirmDelete}
           userName={userToDelete?.name || ''}
         />
       </div>
-    </div>
+    </Layout>
   );
 };
 

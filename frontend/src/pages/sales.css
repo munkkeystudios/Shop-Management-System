@@ -37,7 +37,7 @@
 
 .sales-controls-container {
   display: flex;
-  align-items: center;
+  align-items: flex-end; /* Align items at the bottom */
   gap: 16px;
   flex-wrap: wrap;
   width: 100%;
@@ -50,6 +50,7 @@
   background-color: #f8f9fa;
   border: 1px solid #dee2e6;
   border-radius: 4px;
+  height: 38px; /* Match date input height */
 }
 
 .sales-search-input {
@@ -101,6 +102,22 @@
 .sales-export-button:hover {
   background-color: #f8f9fa;
   border-color: #ced4da;
+}
+
+.sales-filter-button:disabled,
+.sales-export-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.sales-export-button.excel-button:disabled {
+  background-color: #15803d;
+  border-color: #15803d;
+}
+
+.sales-export-button.pdf-button:disabled {
+  background-color: #dc3545;
+  border-color: #dc3545;
 }
 
 .sales-export-button.excel-button {
@@ -292,16 +309,16 @@
   .sales-frame {
     margin-left: 0;
   }
-  
+
   .sales-div-4 {
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .sales-search-container {
     width: 100%;
   }
-  
+
   .sales-controls-container {
     justify-content: space-between;
   }
@@ -311,15 +328,192 @@
   .sales-action-buttons {
     flex-wrap: wrap;
   }
-  
+
   .sales-table {
     display: block;
     overflow-x: auto;
   }
-  
+
   .sales-pagination-container {
     flex-direction: column;
     gap: 16px;
     align-items: center;
   }
-} 
+
+  .sales-stats-container,
+  .payment-method-cards {
+    flex-direction: column;
+  }
+}
+
+/* Sales Report Specific Styles */
+.sales-date-filter {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end; /* Align items at the bottom */
+  flex-wrap: wrap;
+  flex: 2; /* Take more space than search bar */
+}
+
+.sales-date-input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sales-date-input-container label {
+  font-size: 14px;
+  color: #495057;
+}
+
+.sales-date-input-wrapper {
+  position: relative;
+}
+
+.sales-date-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6c757d;
+}
+
+.sales-date-input {
+  padding: 8px 16px 8px 40px;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #212529;
+  background-color: #f8f9fa;
+  outline: none;
+  height: 38px; /* Match search input height */
+  box-sizing: border-box;
+}
+
+.sales-date-input:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.25);
+}
+
+.sales-stats-container {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  width: 100%;
+  margin-top: 16px;
+}
+
+.sales-stats-card {
+  flex: 1;
+  min-width: 200px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.sales-stats-card h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 8px;
+}
+
+.sales-stats-card p {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0d6efd;
+  margin: 0;
+}
+
+.payment-method-stats {
+  width: 100%;
+  margin-top: 16px;
+}
+
+.payment-method-stats h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #212529;
+  margin-bottom: 16px;
+}
+
+.payment-method-cards {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.payment-method-card {
+  flex: 1;
+  min-width: 150px;
+  background-color: #ffffff;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.payment-method-card h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #212529;
+  margin-bottom: 8px;
+}
+
+.payment-method-card p {
+  font-size: 14px;
+  color: #495057;
+  margin: 4px 0;
+}
+
+/* Chart Styles */
+.sales-charts-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.chart-card {
+  flex: 1;
+  min-width: 300px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.chart-container {
+  height: 300px;
+  position: relative;
+}
+
+.chart-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #212529;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.no-data-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: #6c757d;
+  font-size: 16px;
+  text-align: center;
+  padding: 20px;
+}
+
+@media (max-width: 768px) {
+  .sales-charts-container {
+    flex-direction: column;
+  }
+
+  .chart-card {
+    width: 100%;
+  }
+}

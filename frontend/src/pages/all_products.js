@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { FaSearch, FaFilter, FaFileExcel, FaFilePdf, FaPlus, FaEdit, FaTrash, FaEye } from 'react-icons/fa';
+import React, { useState, useEffect, useCallback } from 'react';
+import { FaSearch, FaPlus, FaEdit, FaTrash, FaEye, FaPrint } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import Sidebar from '../components/sidebar';
+import Layout from '../components/Layout';
+import { productsAPI } from '../services/api';
+import ProductLabel from '../components/ProductLabel';
 import './all_products.css';
 
 // Import images
@@ -22,10 +23,45 @@ const Inventory = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedItems, setSelectedItems] = useState([]);
-  
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editFormData, setEditFormData] = useState({});
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const [productToDelete, setProductToDelete] = useState(null);
+  const [showProductLabel, setShowProductLabel] = useState(false);
+
+  // Handle escape key press to close modals
+  const handleEscapeKey = useCallback((event) => {
+    if (event.key === 'Escape') {
+      if (selectedProduct) {
+        setSelectedProduct(null);
+        document.body.style.overflow = 'auto';
+      }
+      if (isEditModalOpen) {
+        setIsEditModalOpen(false);
+        document.body.style.overflow = 'auto';
+      }
+      if (isDeleteConfirmOpen) {
+        setIsDeleteConfirmOpen(false);
+        document.body.style.overflow = 'auto';
+      }
+      if (showProductLabel) {
+        setShowProductLabel(false);
+        document.body.style.overflow = 'auto';
+      }
+    }
+  }, [selectedProduct, isEditModalOpen, isDeleteConfirmOpen, showProductLabel]);
+
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+
+  // Add event listener for escape key
+  useEffect(() => {
+    document.addEventListener('keydown', handleEscapeKey);
+    return () => {
+      document.removeEventListener('keydown', handleEscapeKey);
+    };
+  }, [handleEscapeKey]);
 
   // Fetch products on component mount or page change
   useEffect(() => {
@@ -34,19 +70,15 @@ const Inventory = () => {
         setLoading(true);
         // Get token from localStorage
         const token = localStorage.getItem('token');
-        
+
         if (!token) {
           // Redirect to login if not authenticated
           window.location.href = '/login';
           return;
         }
-        
-        const response = await axios.get(`/api/products?page=${currentPage}`, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
-        
+
+        const response = await productsAPI.getAll({ page: currentPage });
+
         setProducts(response.data.data);
         setTotalPages(response.data.totalPages || 1);
         setLoading(false);
@@ -56,7 +88,7 @@ const Inventory = () => {
         setLoading(false);
       }
     };
-    
+
     fetchProducts();
   }, [currentPage]);
 
@@ -103,9 +135,97 @@ const Inventory = () => {
     }
   };
 
+  // Handle edit button click
+  const handleEditClick = (product) => {
+    setEditFormData({
+      _id: product._id,
+      name: product.name,
+      barcode: product.barcode,
+      description: product.description || '',
+      price: product.price,
+      quantity: product.quantity,
+      category: product.category?._id,
+      supplier: product.supplier?._id,
+      costPrice: product.costPrice || 0,
+      minStockLevel: product.minStockLevel || 0,
+      status: product.status || 'active'
+    });
+    setIsEditModalOpen(true);
+    // Add overflow hidden to body to prevent background scrolling
+    document.body.style.overflow = 'hidden';
+  };
+
+  // Handle delete button click
+  const handleDeleteClick = (product) => {
+    setProductToDelete(product);
+    setIsDeleteConfirmOpen(true);
+    // Add overflow hidden to body to prevent background scrolling
+    document.body.style.overflow = 'hidden';
+  };
+
+  // Handle form input changes for edit modal
+  const handleEditFormChange = (e) => {
+    const { name, value } = e.target;
+    setEditFormData({
+      ...editFormData,
+      [name]: value
+    });
+  };
+
+  // Handle edit form submission
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await productsAPI.update(editFormData._id, editFormData);
+      // Refresh product list
+      const response = await productsAPI.getAll({ page: currentPage });
+      setProducts(response.data.data);
+      setIsEditModalOpen(false);
+      // Restore body overflow
+      document.body.style.overflow = 'auto';
+      // Show success message
+      setError(null);
+      alert('Product updated successfully');
+    } catch (err) {
+      console.error('Error updating product:', err);
+      setError('Failed to update product. Please try again.');
+    }
+  };
+
+  // Handle product deletion
+  const handleDeleteConfirm = async () => {
+    if (!productToDelete) return;
+
+    try {
+      await productsAPI.delete(productToDelete._id);
+      // Refresh product list
+      const response = await productsAPI.getAll({ page: currentPage });
+      setProducts(response.data.data);
+      setIsDeleteConfirmOpen(false);
+      setProductToDelete(null);
+      // Restore body overflow
+      document.body.style.overflow = 'auto';
+      // Show success message
+      setError(null);
+      alert('Product deleted successfully');
+    } catch (err) {
+      console.error('Error deleting product:', err);
+      setError('Failed to delete product. Please try again.');
+    }
+  };
+
   return (
-    <div className="products-main-container">
-      <Sidebar />
+    <Layout title="All Products">
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+          <span className="block sm:inline">{error}</span>
+        </div>
+      )}
+      {loading && (
+        <div className="flex justify-center items-center p-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+        </div>
+      )}
       <div className="products-frame">
         <div className="products-div-2">
           <div className="products-div-3">
@@ -123,7 +243,7 @@ const Inventory = () => {
                   />
                 </div>
                 <div className="products-action-buttons">
-                  <button 
+                  <button
                     className="products-create-button"
                     onClick={handleCreateProduct}
                   >
@@ -139,8 +259,8 @@ const Inventory = () => {
                   <thead>
                     <tr>
                       <th>
-                        <input 
-                          type="checkbox" 
+                        <input
+                          type="checkbox"
                           className="products-checkbox"
                           onChange={toggleSelectAll}
                           checked={selectedItems.length === filteredProducts.length}
@@ -160,8 +280,8 @@ const Inventory = () => {
                     {filteredProducts.map((product) => (
                       <tr key={product._id}>
                         <td>
-                          <input 
-                            type="checkbox" 
+                          <input
+                            type="checkbox"
                             className="products-checkbox"
                             checked={selectedItems.includes(product._id)}
                             onChange={() => toggleSelect(product._id)}
@@ -170,8 +290,8 @@ const Inventory = () => {
                         <td>{product.barcode}</td>
                         <td>
                           <div className="products-image-container">
-                            <img 
-                              src={getProductImage(product)} 
+                            <img
+                              src={getProductImage(product)}
                               alt={product.name}
                               className="products-image"
                             />
@@ -184,16 +304,26 @@ const Inventory = () => {
                         <td>{product.quantity}</td>
                         <td>
                           <div className="products-action-buttons">
-                            <button 
+                            <button
                               className="products-action-button"
-                              onClick={() => setSelectedProduct(product)}
+                              onClick={() => {
+                                setSelectedProduct(product);
+                                // Add overflow hidden to body to prevent background scrolling
+                                document.body.style.overflow = 'hidden';
+                              }}
                             >
                               <FaEye />
                             </button>
-                            <button className="products-action-button">
+                            <button
+                              className="products-action-button"
+                              onClick={() => handleEditClick(product)}
+                            >
                               <FaEdit />
                             </button>
-                            <button className="products-action-button">
+                            <button
+                              className="products-action-button"
+                              onClick={() => handleDeleteClick(product)}
+                            >
                               <FaTrash />
                             </button>
                           </div>
@@ -230,96 +360,337 @@ const Inventory = () => {
 
       {/* Product Details Modal */}
       {selectedProduct && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white rounded-lg w-[671px] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+        <div
+          className="products-modal-overlay"
+          onClick={() => {
+            setSelectedProduct(null);
+            document.body.style.overflow = 'auto';
+          }}
+        >
+          <div
+            className="products-modal-container details"
+            onClick={(e) => e.stopPropagation()}
+          >
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-2 border-b">
-              <div className="flex items-center gap-2">
-                <span className="bg-black text-white text-xs px-2 py-0.5 rounded">Print Label</span>
-                <span className="text-base">Product Details</span>
+            <div className="products-modal-header">
+              <button
+                className="products-print-label-btn"
+                onClick={() => setShowProductLabel(true)}
+              >
+                <FaPrint size={12} /> Print Label
+              </button>
+              <div className="products-modal-title">
+                Product Details
               </div>
               <button
-                className="text-gray-400 hover:text-gray-600"
-                onClick={() => setSelectedProduct(null)}
+                className="products-modal-close"
+                onClick={() => {
+                  setSelectedProduct(null);
+                  // Restore body overflow
+                  document.body.style.overflow = 'auto';
+                }}
               >
                 ×
               </button>
             </div>
 
             {/* Image Section */}
-            <div className="bg-gray-50 flex justify-center items-center" style={{ height: '183px' }}>
+            <div className="products-modal-image">
               <img
                 src={getProductImage(selectedProduct)}
                 alt={selectedProduct.name}
-                style={{ width: '204px', height: '183px', objectFit: 'contain' }}
               />
             </div>
 
             {/* Details Section */}
-            <div className="p-4">
-              <div className="space-y-3">
-                <div className="grid grid-cols-2 text-sm">
-                  <span className="text-gray-500">Type</span>
-                  <span>Single</span>
-                </div>
-                <div className="grid grid-cols-2 text-sm">
-                  <span className="text-gray-500">Code Product</span>
-                  <span>{selectedProduct._id.substring(0, 8)}</span>
-                </div>
-                <div className="grid grid-cols-2 text-sm">
-                  <span className="text-gray-500">Product</span>
-                  <span>{selectedProduct.name}</span>
-                </div>
-                <div className="grid grid-cols-2 text-sm">
-                  <span className="text-gray-500">Brand</span>
-                  <span>{selectedProduct.brand || 'N/A'}</span>
-                </div>
-                <div className="grid grid-cols-2 text-sm">
-                  <span className="text-gray-500">Category</span>
-                  <span>{selectedProduct.category ? selectedProduct.category.name : 'Uncategorized'}</span>
-                </div>
-                <div className="grid grid-cols-2 text-sm">
-                  <span className="text-gray-500">Cost</span>
-                  <span>${selectedProduct.costPrice?.toFixed(2) || '0.00'}</span>
-                </div>
-                <div className="grid grid-cols-2 text-sm">
-                  <span className="text-gray-500">Warehouse</span>
-                  <span>Warehouse 1</span>
-                </div>
-                <div className="grid grid-cols-2 text-sm">
-                  <span className="text-gray-500">Price</span>
-                  <span>${selectedProduct.price?.toFixed(2) || '0.00'}</span>
-                </div>
-                <div className="grid grid-cols-2 text-sm">
-                  <span className="text-gray-500">Unit</span>
-                  <span>Pc</span>
-                </div>
-                <div className="grid grid-cols-2 text-sm">
-                  <span className="text-gray-500">Tax</span>
-                  <span>0.00%</span>
-                </div>
-                <div className="grid grid-cols-2 text-sm">
-                  <span className="text-gray-500">Stock</span>
-                  <span>{selectedProduct.quantity || '0'}</span>
-                </div>
+            <div className="products-modal-details">
+              <div className="products-modal-detail-row">
+                <div className="products-modal-detail-label">Type</div>
+                <div className="products-modal-detail-value">Single</div>
+              </div>
+              <div className="products-modal-detail-row">
+                <div className="products-modal-detail-label">Code Product</div>
+                <div className="products-modal-detail-value">{selectedProduct._id.substring(0, 8)}</div>
+              </div>
+              <div className="products-modal-detail-row">
+                <div className="products-modal-detail-label">Product</div>
+                <div className="products-modal-detail-value">{selectedProduct.name}</div>
+              </div>
+              <div className="products-modal-detail-row">
+                <div className="products-modal-detail-label">Brand</div>
+                <div className="products-modal-detail-value">{selectedProduct.brand || 'N/A'}</div>
+              </div>
+              <div className="products-modal-detail-row">
+                <div className="products-modal-detail-label">Category</div>
+                <div className="products-modal-detail-value">{selectedProduct.category ? selectedProduct.category.name : 'Uncategorized'}</div>
+              </div>
+              <div className="products-modal-detail-row">
+                <div className="products-modal-detail-label">Cost</div>
+                <div className="products-modal-detail-value">${selectedProduct.costPrice?.toFixed(2) || '0.00'}</div>
+              </div>
+              <div className="products-modal-detail-row">
+                <div className="products-modal-detail-label">Warehouse</div>
+                <div className="products-modal-detail-value">Warehouse 1</div>
+              </div>
+              <div className="products-modal-detail-row">
+                <div className="products-modal-detail-label">Price</div>
+                <div className="products-modal-detail-value">${selectedProduct.price?.toFixed(2) || '0.00'}</div>
+              </div>
+              <div className="products-modal-detail-row">
+                <div className="products-modal-detail-label">Unit</div>
+                <div className="products-modal-detail-value">Pc</div>
+              </div>
+              <div className="products-modal-detail-row">
+                <div className="products-modal-detail-label">Tax</div>
+                <div className="products-modal-detail-value">0.00%</div>
+              </div>
+              <div className="products-modal-detail-row">
+                <div className="products-modal-detail-label">Stock</div>
+                <div className="products-modal-detail-value">{selectedProduct.quantity || '0'}</div>
               </div>
 
               {/* Barcode Section */}
-              <div className="mt-4 pt-4 border-t flex justify-center">
+              <div className="products-modal-barcode">
                 <div className="text-center">
-                  <svg className="w-32 h-12" viewBox="0 0 100 30">
-                    <rect x="10" y="5" width="80" height="20" fill="#fff" stroke="#ddd" />
-                    <text x="50" y="28" textAnchor="middle" fontSize="8">
-                      {selectedProduct.barcode || '000000000000'}
-                    </text>
-                  </svg>
+                  <img
+                    src={`https://barcodeapi.org/api/code128/${selectedProduct.barcode || '000000000000'}`}
+                    alt="Barcode"
+                    style={{ width: '140px', height: '35px' }}
+                  />
+                  <div style={{ fontSize: '11px', marginTop: '2px' }}>
+                    {selectedProduct.barcode || '000000000000'}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
       )}
-    </div>
+
+      {/* Edit Product Modal */}
+      {isEditModalOpen && (
+        <div
+          className="products-modal-overlay"
+          onClick={() => {
+            setIsEditModalOpen(false);
+            document.body.style.overflow = 'auto';
+          }}
+        >
+          <div
+            className="products-modal-container edit"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="products-modal-header">
+              <div className="products-modal-title">Edit Product</div>
+              <button
+                className="products-modal-close"
+                onClick={() => {
+                  setIsEditModalOpen(false);
+                  // Restore body overflow
+                  document.body.style.overflow = 'auto';
+                }}
+              >
+                ×
+              </button>
+            </div>
+
+            <form onSubmit={handleEditSubmit} className="p-4">
+              <div className="grid grid-cols-2 gap-6 mb-4">
+                <div>
+                  <label className="block text-sm text-gray-600 mb-1">Product Name</label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={editFormData.name || ''}
+                    onChange={handleEditFormChange}
+                    className="block w-full border border-gray-300 rounded-md p-2 text-sm"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-600 mb-1">Barcode</label>
+                  <input
+                    type="text"
+                    name="barcode"
+                    value={editFormData.barcode || ''}
+                    onChange={handleEditFormChange}
+                    className="block w-full border border-gray-300 rounded-md p-2 text-sm"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-sm text-gray-600 mb-1">Description</label>
+                <textarea
+                  name="description"
+                  value={editFormData.description || ''}
+                  onChange={handleEditFormChange}
+                  className="block w-full border border-gray-300 rounded-md p-2 text-sm"
+                  rows="3"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-6 mb-4">
+                <div>
+                  <label className="block text-sm text-gray-600 mb-1">Sale Price</label>
+                  <input
+                    type="number"
+                    name="price"
+                    value={editFormData.price || 0}
+                    onChange={handleEditFormChange}
+                    className="block w-full border border-gray-300 rounded-md p-2 text-sm"
+                    min="0"
+                    step="0.01"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-600 mb-1">Cost Price</label>
+                  <input
+                    type="number"
+                    name="costPrice"
+                    value={editFormData.costPrice || 0}
+                    onChange={handleEditFormChange}
+                    className="block w-full border border-gray-300 rounded-md p-2 text-sm"
+                    min="0"
+                    step="0.01"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-6 mb-4">
+                <div>
+                  <label className="block text-sm text-gray-600 mb-1">Quantity</label>
+                  <input
+                    type="number"
+                    name="quantity"
+                    value={editFormData.quantity || 0}
+                    onChange={handleEditFormChange}
+                    className="block w-full border border-gray-300 rounded-md p-2 text-sm"
+                    min="0"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-600 mb-1">Min Stock Level</label>
+                  <input
+                    type="number"
+                    name="minStockLevel"
+                    value={editFormData.minStockLevel || 0}
+                    onChange={handleEditFormChange}
+                    className="block w-full border border-gray-300 rounded-md p-2 text-sm"
+                    min="0"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-6 mb-6">
+                <div>
+                  <label className="block text-sm text-gray-600 mb-1">Status</label>
+                  <select
+                    name="status"
+                    value={editFormData.status || 'active'}
+                    onChange={handleEditFormChange}
+                    className="block w-full border border-gray-300 rounded-md p-2 text-sm"
+                  >
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                    <option value="out_of_stock">Out of Stock</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="flex justify-end space-x-3 pt-4 border-t">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsEditModalOpen(false);
+                    // Restore body overflow
+                    document.body.style.overflow = 'auto';
+                  }}
+                  className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+                >
+                  Save Changes
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Product Label Modal */}
+      {showProductLabel && selectedProduct && (
+        <ProductLabel
+          product={selectedProduct}
+          onClose={() => {
+            setShowProductLabel(false);
+            document.body.style.overflow = 'auto';
+          }}
+        />
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {isDeleteConfirmOpen && (
+        <div
+          className="products-modal-overlay"
+          onClick={() => {
+            setIsDeleteConfirmOpen(false);
+            document.body.style.overflow = 'auto';
+          }}
+        >
+          <div
+            className="products-modal-container delete"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="products-modal-header">
+              <div className="products-modal-title">Confirm Delete</div>
+              <button
+                className="products-modal-close"
+                onClick={() => {
+                  setIsDeleteConfirmOpen(false);
+                  // Restore body overflow
+                  document.body.style.overflow = 'auto';
+                }}
+              >
+                ×
+              </button>
+            </div>
+            <div className="p-6 text-center">
+              <p className="text-sm text-gray-500 mb-6">
+                Are you sure you want to delete the product "{productToDelete?.name}"? This action cannot be undone.
+              </p>
+              <div className="flex justify-center space-x-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsDeleteConfirmOpen(false);
+                    // Restore body overflow
+                    document.body.style.overflow = 'auto';
+                  }}
+                  className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleDeleteConfirm}
+                  className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </Layout>
   );
 };
 
