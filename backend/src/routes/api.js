@@ -72,7 +72,6 @@ router.get('/purchases/export', purchaseController.exportPurchases);
 router.get('/purchases/:id', purchaseController.getPurchaseById);
 router.get('/:id', purchaseController.getPurchaseById);
 router.get('/export', purchaseController.exportPurchases);
-router.put('/purchases/:id', purchaseController.updatePurchase);
 router.delete('/purchases/:id', purchaseController.deletePurchase);
 router.patch('/:id/status', purchaseController.updatePurchaseStatus);
 
