@@ -1,12 +1,7 @@
 // the reciept genertaion function
 
-// receiptGenerator.js
-/**
- * Generates a receipt text and triggers download as a .txt file
- * @param {Object} transactionData - Data for the receipt
- */
+
 export const generateReceipt = (transactionData) => {
-  // Destructure transaction data with defaults
   const {
     billNumber = 0,
     tokenType = 'Credit',
@@ -15,7 +10,7 @@ export const generateReceipt = (transactionData) => {
     items = [],
     subtotal = 0,
     discount = 0,
-    tax = 0, // Replaced gst with tax
+    tax = 0, 
     total = 0,
     paymentMethod = 'Cash Payment',
     received = 0,

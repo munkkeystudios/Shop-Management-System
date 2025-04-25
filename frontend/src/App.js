@@ -18,7 +18,8 @@ import { NotificationProvider } from "./context/NotificationContext";
 import ImportPurchase from "./pages/ImportPurchase";
 import EmployeeManagement from "./pages/EmployeeManagement";
 import CreateSale from "./pages/CreateSale";       
-import ImportSale from "./pages/ImportSale";       
+import ImportSale from "./pages/ImportSale";  
+import Loans from "./pages/Loans";            
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -88,6 +89,14 @@ function App() {
               element={
                 <ProtectedRoute requiredRole="manager">
                   <CreateProducts />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/loans"
+              element={
+                <ProtectedRoute requiredRole="manager">
+                  <Loans />
                 </ProtectedRoute>
               }
             />
