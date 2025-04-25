@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Search, Filter, FileText, FileExcel, Plus, AlertCircle } from 'lucide-react';
+import { Search, Filter, FileText, FileSpreadsheet, Plus, AlertCircle } from 'lucide-react';
 import axios from 'axios';
 import './all_purchases.css';
-import PurchaseFilter from './PurchaseFilter';
+import PurchaseFilter from './purchase_filter';
 
 const AllPurchases = () => {
   const [purchases, setPurchases] = useState([]);
@@ -191,7 +191,7 @@ const AllPurchases = () => {
               <span>PDF</span>
             </button>
             <button className="excel-btn" onClick={() => handleExport('csv')}>
-              <FileExcel size={16} />
+              <FileSpreadsheet size={16} />
               <span>Excel</span>
             </button>
             <button className="create-btn" onClick={() => window.location.href = '/create-purchase'}>
