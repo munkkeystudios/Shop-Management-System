@@ -9,6 +9,7 @@ const saleController = require('../controllers/saleController');
 const importController = require('../controllers/importController');
 const purchaseController = require('../controllers/purchaseController');
 const brandController = require('../controllers/brandController');
+const settingsRoutes = require('./settingsRoutes');
 const notificationRoutes = require('./notificationRoutes');
 const loanController = require('../controllers/loanController'); // Add loanController
 const auth = require('../middleware/auth');
@@ -19,6 +20,9 @@ router.post('/login', userController.login);
 router.post('/products', productController.createProduct);
 router.use(auth);
 
+// Settings routes
+router.use('/settings', settingsRoutes);
+
 router.get('/users', userController.getAllUsers);
 router.get('/users/profile', userController.getProfile);
 router.get('/users/export', userController.exportUsers);
@@ -26,6 +30,11 @@ router.put('/users/:userId', userController.updateUser);
 
 router.post('/users', userController.adminCreateUser);
 router.delete('/users/:userId', userController.deleteUser);
+
+// User profile settings routes
+router.get('/users/:id/profile', userController.getUserProfile);
+router.put('/users/:id/profile', userController.updateUserProfile);
+router.put('/users/:id/notifications', userController.updateNotificationPreferences);
 
 router.get('/categories', categoryController.getAllCategories);
 router.get('/categories/:id', categoryController.getCategoryById);

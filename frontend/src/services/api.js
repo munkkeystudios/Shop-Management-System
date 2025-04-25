@@ -1,8 +1,10 @@
 import axios from 'axios';
 
+import axios from 'axios';
+
 // Create an Axios instance with default config
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5002/api',
+  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5002/api', // Updated port to 5002
   headers: {
     'Content-Type': 'application/json',
   },
@@ -50,8 +52,6 @@ api.interceptors.response.use(
   }
 );
 
-// --- API Definitions ---
-
 // Auth API
 export const authAPI = {
   login: (credentials) => api.post('/login', credentials),
@@ -60,21 +60,21 @@ export const authAPI = {
   adminCreateUser: (userData) => api.post('/users', userData), // *** Added: Admin create user ***
 };
 
-// Users API Group *** ADDED/MODIFIED ***
+// Users API 
 export const usersAPI = {
   getAll: () => api.get('/users'),
   update: (id, userData) => api.put(`/users/${id}`, userData),
-  create: (userData) => api.post('/users', userData), // Call adminCreateUser endpoint
-  delete: (id) => api.delete(`/users/${id}`), // Add delete method
+  create: (userData) => api.post('/users', userData),
+  delete: (id) => api.delete(`/users/${id}`), 
   exportUsers: (format = 'csv') =>
     api.get(`/users/export?format=${format}`, {
-      responseType: 'blob', // Important for handling file download
+      responseType: 'blob', 
     }),
 };
 
 // Products API
 export const productsAPI = {
-  getAll: (params = {}) => api.get('/products', { params }), // Allow passing query params
+  getAll: (params = {}) => api.get('/products', { params }),
   getById: (id) => api.get(`/products/${id}`),
   create: (productData) => api.post('/products', productData),
   update: (id, productData) => api.put(`/products/${id}`, productData),
@@ -84,7 +84,7 @@ export const productsAPI = {
   updateStock: (id, stockData) => api.patch(`/products/${id}/stock`, stockData),
 };
 
-// Categories API *** ADDED ***
+// Categories API 
 export const categoriesAPI = {
   getAll: () => api.get('/categories'),
   getById: (id) => api.get(`/categories/${id}`),
@@ -93,7 +93,7 @@ export const categoriesAPI = {
   delete: (id) => api.delete(`/categories/${id}`),
 };
 
-// Suppliers API *** ADDED ***
+// Suppliers API 
 export const suppliersAPI = {
   getAll: () => api.get('/suppliers'),
   getById: (id) => api.get(`/suppliers/${id}`),
@@ -113,7 +113,7 @@ export const loansAPI = {
   validateLoan: (loanNumber) => api.post('/loans/validate-loan', { loanNumber }),
 };
 
-// Brands API (Assuming you might need this later)
+// Brands API 
 export const brandsAPI = {
   getAll: () => api.get('/brands'),
   getById: (id) => api.get(`/brands/${id}`),
@@ -124,36 +124,36 @@ export const brandsAPI = {
 
 // Sales API
 export const salesAPI = {
-  getAll: (params = {}) => api.get('/sales', { params }), // Allow passing query params
+  getAll: (params = {}) => api.get('/sales', { params }), 
   create: (saleData) => api.post('/sales', saleData),
   getById: (id) => api.get(`/sales/${id}`),
   updatePayment: (id, paymentData) => api.put(`/sales/${id}/payment`, paymentData),
-  getStats: (params = {}) => api.get('/sales/stats', { params }), // Allow date range params
+  getStats: (params = {}) => api.get('/sales/stats', { params }),
   getLastBillNumber: () => api.get('/sales/last-bill-number'),
-  getLastTenSales: () => api.get('/sales/last-ten'), // Fetch the last 10 sales
+  getLastTenSales: () => api.get('/sales/last-ten'),
   // Export sales to CSV or PDF
   exportSales: (format = 'csv', params = {}) =>
     api.get(`/sales/export`, {
       params: { format, ...params },
-      responseType: 'blob', // Important for handling file download
+      responseType: 'blob',
     }),
   // Import sales from a file
   importSales: (formData) =>
     api.post('/import/sales', formData, {
       headers: {
-        'Content-Type': 'multipart/form-data', // Important for file uploads
+        'Content-Type': 'multipart/form-data', 
       },
     }),
 };
 
-// Purchases API *** ADDED ***
+// Purchases API 
 export const purchasesAPI = {
   getAll: (params = {}) => api.get('/purchases', { params }),
   create: (purchaseData) => api.post('/purchases', purchaseData),
   getById: (id) => api.get(`/purchases/${id}`),
   exportPurchases: (format = 'csv') =>
     api.get(`/purchases/export?format=${format}`, {
-      responseType: 'blob', // Important for file download
+      responseType: 'blob',
     }),
   // Add update/delete if needed
   // update: (id, purchaseData) => api.put(`/purchases/${id}`, purchaseData),
@@ -165,4 +165,30 @@ export const dashboardAPI = {
   // getSummary: () => api.get('/dashboard/summary'),
 };
 
-export default api;
+// Settings API
+export const settingsAPI = {
+  getAll: () => api.get('/settings'),
+  update: (settingsData) => api.put('/settings', settingsData),
+  uploadLogo: (formData) => api.post('/settings/logo', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  }),
+  changePassword: (passwordData) => api.post('/settings/change-password', passwordData),
+  
+  // Methods for our specific settings pages that map to the backend endpoints
+  getDisplaySettings: () => api.get('/settings'), 
+  updateDisplaySettings: (displaySettings) => api.put('/settings', displaySettings),
+  getGeneralSettings: () => api.get('/settings'), 
+  updateGeneralSettings: (generalSettings) => api.put('/settings', generalSettings)
+};
+
+// User Profile API - Adding methods for user profile settings
+export const userAPI = {
+  getUserProfile: (userId) => api.get(`/users/${userId}/profile`),
+  updateUserProfile: (userId, profileData) => api.put(`/users/${userId}/profile`, profileData),
+  updateNotificationPreferences: (userId, preferences) => api.put(`/users/${userId}/notifications`, preferences)
+};
+
+export default api; // Export the configured instance
+
