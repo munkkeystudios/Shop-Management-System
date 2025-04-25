@@ -1,17 +1,24 @@
-import React, { useState, useEffect } from "react";
-import { FaEdit, FaTrash, FaSearch, FaPlus, FaTimes } from 'react-icons/fa';
+import React, { useState, useEffect, useRef } from "react";
+import { FaEdit, FaTrash, FaSearch, FaPlus, FaTimes, FaUpload } from 'react-icons/fa';
 import Layout from '../components/Layout';
+import api from '../services/api';
+import { useNotifications } from '../context/NotificationContext';
+import defaultBrandImage from '../images/default-product-image.jpg';
 import './brands.css';
 
 const Brands = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [brandName, setBrandName] = useState('');
   const [brandDescription, setBrandDescription] = useState('');
+  const [brandImage, setBrandImage] = useState('');
+  const [imagePreview, setImagePreview] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [brands, setBrands] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [editingBrand, setEditingBrand] = useState(null);
+  const fileInputRef = useRef(null);
+  const { addNotification } = useNotifications();
 
   // Fetch brands on component mount
   useEffect(() => {
@@ -26,18 +33,13 @@ const Brands = () => {
         window.location.href = '/login';
         return;
       }
-      const response = await fetch('http://localhost:5002/api/brands', {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      const data = await response.json();
-      if (data.success) {
-        setBrands(data.data);
+
+      const response = await api.get('/brands');
+      if (response.data.success) {
+        setBrands(response.data.data);
       } else {
-        setError('Failed to fetch brands: ' + (data.message || 'Unknown error'));
-        console.warn('Brands fetch failed:', data.message);
+        setError('Failed to fetch brands: ' + (response.data.message || 'Unknown error'));
+        console.warn('Brands fetch failed:', response.data.message);
       }
     } catch (err) {
       setError('Failed to fetch brands');
@@ -56,35 +58,40 @@ const Brands = () => {
         return;
       }
 
-      const method = editingBrand ? 'PUT' : 'POST';
-      const url = editingBrand
-        ? `http://localhost:5002/api/brands/${editingBrand._id}`
-        : 'http://localhost:5002/api/brands';
+      const brandData = {
+        name: brandName,
+        description: brandDescription,
+        image: brandImage
+      };
 
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          name: brandName,
-          description: brandDescription
-        }),
-      });
+      let response;
+      if (editingBrand) {
+        response = await api.put(`/brands/${editingBrand._id}`, brandData);
+      } else {
+        response = await api.post('/brands', brandData);
+      }
 
-      const data = await response.json();
-      if (data.success) {
+      if (response.data.success) {
         // Refresh brands list
         await fetchBrands();
+
+        // Add notification
+        if (editingBrand) {
+          addNotification('brand', `Brand "${brandName}" has been updated`, editingBrand._id);
+        } else {
+          const brandId = response.data.data?._id;
+          addNotification('brand', `New brand "${brandName}" has been created`, brandId);
+        }
 
         // Reset form
         setIsModalOpen(false);
         setBrandName('');
         setBrandDescription('');
+        setBrandImage('');
+        setImagePreview('');
         setEditingBrand(null);
       } else {
-        setError(data.message || 'Failed to save brand');
+        setError(response.data.message || 'Failed to save brand');
       }
     } catch (err) {
       setError('Failed to save brand');
@@ -95,8 +102,26 @@ const Brands = () => {
   const handleEdit = (brand) => {
     setEditingBrand(brand);
     setBrandName(brand.name);
-    setBrandDescription(brand.description);
+    setBrandDescription(brand.description || '');
+    setBrandImage(brand.image || '');
+    setImagePreview(brand.image || '');
     setIsModalOpen(true);
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+        setBrandImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleImageClick = () => {
+    fileInputRef.current.click();
   };
 
   const handleDelete = async (brandId) => {
@@ -108,19 +133,13 @@ const Brands = () => {
           return;
         }
 
-        const response = await fetch(`http://localhost:5002/api/brands/${brandId}`, {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          }
-        });
-
-        const data = await response.json();
-        if (data.success) {
+        const response = await api.delete(`/brands/${brandId}`);
+        if (response.data.success) {
+          // Add notification
+          addNotification('brand', `Brand "${brands.find(b => b._id === brandId)?.name || 'Unknown'}" has been deleted`);
           await fetchBrands();
         } else {
-          setError(data.message || 'Failed to delete brand');
+          setError(response.data.message || 'Failed to delete brand');
         }
       } catch (err) {
         setError('Failed to delete brand');
@@ -166,6 +185,7 @@ const Brands = () => {
                 <table className="categories-table">
                   <thead>
                     <tr>
+                      <th>Image</th>
                       <th>Brand Name</th>
                       <th>Brand Description</th>
                       <th>Actions</th>
@@ -174,10 +194,19 @@ const Brands = () => {
                   <tbody>
                     {loading ? (
                       <tr>
-                        <td colSpan="3">Loading...</td>
+                        <td colSpan="4">Loading...</td>
                       </tr>
                     ) : filteredBrands.map((brand) => (
                       <tr key={brand._id}>
+                        <td>
+                          <div className="brand-image-container">
+                            <img
+                              src={brand.image || defaultBrandImage}
+                              alt={brand.name}
+                              className="brand-image"
+                            />
+                          </div>
+                        </td>
                         <td>{brand.name}</td>
                         <td>{brand.description}</td>
                         <td>
@@ -230,6 +259,8 @@ const Brands = () => {
                 setEditingBrand(null);
                 setBrandName('');
                 setBrandDescription('');
+                setBrandImage('');
+                setImagePreview('');
               }}
             >
               <FaTimes />
@@ -238,6 +269,28 @@ const Brands = () => {
               {editingBrand ? 'Edit Brand' : 'Create Brand'}
             </h2>
             <form className="categories-modal-form" onSubmit={handleSubmit}>
+              <div className="brand-image-upload-container">
+                <div
+                  className="brand-image-preview"
+                  onClick={handleImageClick}
+                >
+                  {imagePreview ? (
+                    <img src={imagePreview} alt="Brand Preview" />
+                  ) : (
+                    <div className="upload-placeholder">
+                      <FaUpload />
+                      <span>Upload Image</span>
+                    </div>
+                  )}
+                </div>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleImageChange}
+                  accept="image/*"
+                  style={{ display: 'none' }}
+                />
+              </div>
               <input
                 type="text"
                 placeholder="Enter brand name"

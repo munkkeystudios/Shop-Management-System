@@ -1,11 +1,10 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { FaBars, FaUser } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 import { RiShoppingBag4Line } from 'react-icons/ri';
+import NotificationIcon from './NotificationIcon';
 import './TopBar.css';
 
-const TopBar = ({ title, showBackButton = false }) => {
-  const location = useLocation();
+const TopBar = ({ title }) => {
 
   // Get user info from localStorage
   const userInfo = JSON.parse(localStorage.getItem('user')) || { username: 'User' };
@@ -25,13 +24,7 @@ const TopBar = ({ title, showBackButton = false }) => {
           POS <RiShoppingBag4Line className="pos-icon" />
         </Link>
 
-        <div className="topbar-language-selector">
-          <select className="topbar-language-select">
-            <option value="en">En</option>
-            <option value="es">Es</option>
-            <option value="fr">Fr</option>
-          </select>
-        </div>
+        <NotificationIcon />
 
         <div className="topbar-user-profile">
           <div className="topbar-user-avatar">

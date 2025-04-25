@@ -7,6 +7,7 @@ const User = require('./user');
 const Sale = require('./sale');
 const Purchase = require('./purchase');
 const Brand = require('./brand');
+const Notification = require('./notification');
 
 // This file just exports all models
 // MongoDB connection is now handled in server.js
@@ -18,5 +19,6 @@ module.exports = {
   User,
   Sale,
   Purchase,
-  Brand
+  Brand,
+  Notification
 };

@@ -6,18 +6,16 @@ import logoImage from '../images/logo-small.png';
 import { RiShoppingBag4Line } from "react-icons/ri";
 import { LuPackage, LuPackagePlus, LuPackageSearch } from "react-icons/lu";
 import { HiOutlineDocumentReport } from "react-icons/hi";
-import { FiUsers } from "react-icons/fi";
+import { FiUsers, FiUserPlus, FiSettings, FiUser, FiSliders } from "react-icons/fi";
 import { BsCartCheck } from "react-icons/bs";
 import { TbReportMoney } from "react-icons/tb";
-import { FiSettings } from 'react-icons/fi';
-import { FiUser } from 'react-icons/fi';
 import { MdOutlineDisplaySettings } from 'react-icons/md';
-import { FiSliders } from 'react-icons/fi';
+import { FaPlus, FaUpload } from "react-icons/fa";
+import { jwtDecode } from 'jwt-decode';
 import { settingsAPI } from '../services/api';
 import ModernDropdown, { ModernDropdownItem } from './ModernDropdown';
 
-
-// sidebar layout:
+// sidebar layout
 const SideBar = ({ children }) => {
     return (
         <Nav className="flex-column" style={{
@@ -36,7 +34,13 @@ const SideBar = ({ children }) => {
 // dropdown component that allows collapsing
 // takes in title and children
 const SideBarDropdown = ({ title, children, isActive }) => {
-    const [isOpen, setIsOpen] = useState(false);
+    const [isOpen, setIsOpen] = useState(isActive); // Initialize based on isActive
+
+    // Update isOpen state if isActive prop changes
+    useEffect(() => {
+        setIsOpen(isActive);
+    }, [isActive]);
+
     return (
         <ModernDropdown
             isActive={isActive}
@@ -81,9 +85,10 @@ function ToolsSidebar() {
     const location = useLocation();
     const [companyLogo, setCompanyLogo] = useState(null);
     const [companyName, setCompanyName] = useState('FinTrack');
+    const [userRole, setUserRole] = useState(null);
 
+    // Fetch company settings
     useEffect(() => {
-        // Fetch company settings when component mounts
         const fetchSettings = async () => {
             try {
                 const response = await settingsAPI.getAll();
@@ -105,6 +110,28 @@ function ToolsSidebar() {
         fetchSettings();
     }, []);
 
+    // Get user role from token
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            try {
+                const decodedToken = jwtDecode(token);
+                setUserRole(decodedToken.role);
+            } catch (error) {
+                console.error("Failed to decode token:", error);
+                logout();
+                navigate('/login');
+            }
+        } else {
+            logout();
+        }
+    }, [location, logout, navigate]);
+
+    // Role Check Helpers
+    const isCashierOrHigher = userRole === 'cashier' || userRole === 'manager' || userRole === 'admin';
+    const isManagerOrHigher = userRole === 'manager' || userRole === 'admin';
+    const isAdmin = userRole === 'admin';
+
     const isPathActive = (path) => location.pathname === path;
     const isGroupActive = (paths) => paths.some(path => location.pathname.includes(path));
 
@@ -119,6 +146,7 @@ function ToolsSidebar() {
 
     return (
         <SideBar>
+            {/* Logo Section */}
             <div className="sidebar-logo-container" style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -144,202 +172,339 @@ function ToolsSidebar() {
             </div>
 
             <div style={{ padding: '10px 0' }}>
-                <Nav.Item className="sidebar-nav-item" style={{
-                    padding: '12px 16px',
-                    textAlign: 'left',
-                    fontSize: '14px',
-                    fontWeight: '500',
-                    color: isPathActive('/dashboard') ? '#357EC7' : '#505050',
-                    backgroundColor: isPathActive('/dashboard') ? '#f0f7ff' : 'transparent',
-                    margin: '2px 8px',
-                    borderRadius: '4px'
-                }}>
-                    <Link to="/dashboard" className="sidebar-link" style={{
-                        textDecoration: 'none',
-                        color: 'inherit',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '12px'
+                {/* Dashboard (Cashier+) */}
+                {isCashierOrHigher && (
+                    <Nav.Item className="sidebar-nav-item" style={{
+                        padding: '12px 16px',
+                        textAlign: 'left',
+                        fontSize: '14px',
+                        fontWeight: '500',
+                        color: isPathActive('/dashboard') ? '#357EC7' : '#505050',
+                        backgroundColor: isPathActive('/dashboard') ? '#f0f7ff' : 'transparent',
+                        margin: '2px 8px',
+                        borderRadius: '4px'
                     }}>
-                        <RiShoppingBag4Line size={16} /> Dashboard
-                    </Link>
-                </Nav.Item>
+                        <Link to="/dashboard" className="sidebar-link" style={{
+                            textDecoration: 'none',
+                            color: 'inherit',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '12px'
+                        }}>
+                            <RiShoppingBag4Line size={16} /> Dashboard
+                        </Link>
+                    </Nav.Item>
+                )}
 
-                <ModernDropdown 
-                    isActive={isGroupActive(['/products', '/all_products', '/create_products', '/categories', '/brands'])}
-                    title={
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                            <LuPackage size={16}/> Products
-                        </div>
-                    }
-                >
-                    <Link to="/all_products" style={{ textDecoration: 'none', color: 'inherit' }}>
-                        <ModernDropdownItem 
-                            isActive={isPathActive('/all_products')}
-                            onClick={() => handleItemClick("All Products")}
-                        >
+                {/* Products Dropdown (Cashier+) */}
+                {isCashierOrHigher && (
+                    <ModernDropdown 
+                        isActive={isGroupActive(['/products', '/all_products', '/create_products', '/inventory', '/categories', '/brands'])}
+                        title={
                             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                <LuPackage size={16} /> All Products
+                                <LuPackage size={16}/> Products
                             </div>
-                        </ModernDropdownItem>
-                    </Link>
-                    
-                    <Link to="/create_products" style={{ textDecoration: 'none', color: 'inherit' }}>
-                        <ModernDropdownItem
-                            isActive={isPathActive('/create_products')}
-                            onClick={() => handleItemClick("Create Product")}
-                        >
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                <LuPackagePlus size={16} /> Create Product
-                            </div>
-                        </ModernDropdownItem>
-                    </Link>
-                    
-                    <Link to="/categories" style={{ textDecoration: 'none', color: 'inherit' }}>
-                        <ModernDropdownItem
-                            isActive={isPathActive('/categories')}
-                            onClick={() => handleItemClick("Categories")}
-                        >
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                <LuPackageSearch size={16} /> Categories
-                            </div>
-                        </ModernDropdownItem>
-                    </Link>
-                    
-                    <Link to="/brands" style={{ textDecoration: 'none', color: 'inherit' }}>
-                        <ModernDropdownItem
-                            isActive={isPathActive('/brands')}
-                            onClick={() => handleItemClick("Brands")}
-                        >
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                <LuPackageSearch size={16} /> Brands
-                            </div>
-                        </ModernDropdownItem>
-                    </Link>
-                </ModernDropdown>
+                        }
+                    >
+                        <Link to="/all_products" style={{ textDecoration: 'none', color: 'inherit' }}>
+                            <ModernDropdownItem 
+                                isActive={isPathActive('/all_products')}
+                                onClick={() => handleItemClick("All Products")}
+                            >
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                    <LuPackage size={16} /> All Products
+                                </div>
+                            </ModernDropdownItem>
+                        </Link>
+                        
+                        {isManagerOrHigher && (
+                            <Link to="/create_products" style={{ textDecoration: 'none', color: 'inherit' }}>
+                                <ModernDropdownItem
+                                    isActive={isPathActive('/create_products')}
+                                    onClick={() => handleItemClick("Create Product")}
+                                >
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                        <LuPackagePlus size={16} /> Create Product
+                                    </div>
+                                </ModernDropdownItem>
+                            </Link>
+                        )}
+                        
+                        <Link to="/inventory" style={{ textDecoration: 'none', color: 'inherit' }}>
+                            <ModernDropdownItem
+                                isActive={isPathActive('/inventory')}
+                                onClick={() => handleItemClick("Inventory")}
+                            >
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                    <LuPackageSearch size={16} /> Inventory
+                                </div>
+                            </ModernDropdownItem>
+                        </Link>
+                        
+                        {isManagerOrHigher && (
+                            <Link to="/categories" style={{ textDecoration: 'none', color: 'inherit' }}>
+                                <ModernDropdownItem
+                                    isActive={isPathActive('/categories')}
+                                    onClick={() => handleItemClick("Categories")}
+                                >
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                        <LuPackageSearch size={16} /> Categories
+                                    </div>
+                                </ModernDropdownItem>
+                            </Link>
+                        )}
+                        
+                        {isManagerOrHigher && (
+                            <Link to="/brands" style={{ textDecoration: 'none', color: 'inherit' }}>
+                                <ModernDropdownItem
+                                    isActive={isPathActive('/brands')}
+                                    onClick={() => handleItemClick("Brands")}
+                                >
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                        <LuPackageSearch size={16} /> Brands
+                                    </div>
+                                </ModernDropdownItem>
+                            </Link>
+                        )}
+                    </ModernDropdown>
+                )}
 
-                <ModernDropdown
-                    isActive={isGroupActive(['/users', '/all_users', '/create_user'])}
-                    title={
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                            <FiUsers size={16} /> Users
-                        </div>
-                    }
-                >
-                    <Link to="/all_users" style={{ textDecoration: 'none', color: 'inherit' }}>
-                        <ModernDropdownItem
-                            isActive={isPathActive('/all_users')}
-                            onClick={() => handleItemClick("All Users")}
-                        >
+                {/* Employee Management (Admin only) */}
+                {isAdmin && (
+                    <ModernDropdown
+                        isActive={isGroupActive(['/employee-management', '/create-user'])}
+                        title={
                             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                <FiUsers size={16} /> All Users
+                                <FiUsers size={16} /> Employee Management
                             </div>
-                        </ModernDropdownItem>
-                    </Link>
-                    <Link to="/create-user" style={{ textDecoration: 'none', color: 'inherit' }}>
-                        <ModernDropdownItem
-                            isActive={isPathActive('/create-user')}
-                            onClick={() => handleItemClick("Create User")}
-                        >
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                <FiUsers size={16} /> Create User
-                            </div>
-                        </ModernDropdownItem>
-                    </Link>
-                </ModernDropdown>
+                        }
+                    >
+                        <Link to="/employee-management" style={{ textDecoration: 'none', color: 'inherit' }}>
+                            <ModernDropdownItem
+                                isActive={isPathActive('/employee-management')}
+                                onClick={() => handleItemClick("Manage Employees")}
+                            >
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                    <FiUsers size={16} /> Manage Employees
+                                </div>
+                            </ModernDropdownItem>
+                        </Link>
+                        <Link to="/create-user" style={{ textDecoration: 'none', color: 'inherit' }}>
+                            <ModernDropdownItem
+                                isActive={isPathActive('/create-user')}
+                                onClick={() => handleItemClick("Create Employee")}
+                            >
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                    <FiUserPlus size={16} /> Create Employee
+                                </div>
+                            </ModernDropdownItem>
+                        </Link>
+                    </ModernDropdown>
+                )}
 
-                <ModernDropdown
-                    isActive={isGroupActive(['/purchases', '/supplier'])}
-                    title={
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                            <BsCartCheck size={16}/> Purchases
-                        </div>
-                    }
-                >
-                    <Link to="/supplier" style={{ textDecoration: 'none', color: 'inherit' }}>
-                        <ModernDropdownItem
-                            isActive={isPathActive('/supplier')}
-                            onClick={() => handleItemClick("Suppliers")}
-                        >
+                {/* Purchases Dropdown (Manager+) */}
+                {isManagerOrHigher && (
+                    <ModernDropdown
+                        isActive={isGroupActive([
+                            '/supplier',
+                            '/all_purchases',
+                            '/create_purchases',
+                            '/import_purchases'
+                        ])}
+                        title={
                             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                <BsCartCheck size={16} /> Suppliers
+                                <BsCartCheck size={16}/> Purchases
                             </div>
-                        </ModernDropdownItem>
-                    </Link>
-                </ModernDropdown>
+                        }
+                    >
+                        <Link to="/supplier" style={{ textDecoration: 'none', color: 'inherit' }}>
+                            <ModernDropdownItem
+                                isActive={isPathActive('/supplier')}
+                                onClick={() => handleItemClick("Suppliers")}
+                            >
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                    <BsCartCheck size={16} /> Suppliers
+                                </div>
+                            </ModernDropdownItem>
+                        </Link>
+                        
+                        <Link to="/all_purchases" style={{ textDecoration: 'none', color: 'inherit' }}>
+                            <ModernDropdownItem
+                                isActive={isPathActive('/all_purchases')}
+                                onClick={() => handleItemClick("All Purchases")}
+                            >
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                    <BsCartCheck size={16} /> All Purchases
+                                </div>
+                            </ModernDropdownItem>
+                        </Link>
+                        
+                        <Link to="/create_purchases" style={{ textDecoration: 'none', color: 'inherit' }}>
+                            <ModernDropdownItem
+                                isActive={isPathActive('/create_purchases')}
+                                onClick={() => handleItemClick("Create Purchase")}
+                            >
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                    <BsCartCheck size={16} /> Create Purchase
+                                </div>
+                            </ModernDropdownItem>
+                        </Link>
+                        
+                        <Link to="/import_purchases" style={{ textDecoration: 'none', color: 'inherit' }}>
+                            <ModernDropdownItem
+                                isActive={isPathActive('/import_purchases')}
+                                onClick={() => handleItemClick("Import Purchases")}
+                            >
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                    <BsCartCheck size={16} /> Import Purchases
+                                </div>
+                            </ModernDropdownItem>
+                        </Link>
+                    </ModernDropdown>
+                )}
 
-                <Nav.Item className="sidebar-nav-item" style={{
-                    padding: '12px 16px',
-                    textAlign: 'left',
-                    fontSize: '14px',
-                    fontWeight: '500',
-                    color: isPathActive('/sales') ? '#357EC7' : '#505050',
-                    backgroundColor: isPathActive('/sales') ? '#f0f7ff' : 'transparent',
-                    margin: '2px 8px',
-                    borderRadius: '4px'
-                }}>
-                    <Link to="/sales" className="sidebar-link" style={{
-                        textDecoration: 'none',
-                        color: 'inherit',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '12px'
+                {/* Sales Dropdown */}
+                {isManagerOrHigher && (
+                    <ModernDropdown
+                        isActive={isGroupActive(['/sales', '/sales-report', '/create-sale', '/import-sales'])}
+                        title={
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                <TbReportMoney size={16}/> Sales
+                            </div>
+                        }
+                    >
+                        <Link to="/sales" style={{ textDecoration: 'none', color: 'inherit' }}>
+                            <ModernDropdownItem
+                                isActive={isPathActive('/sales')}
+                                onClick={() => handleItemClick("All Sales")}
+                            >
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                    <TbReportMoney size={16} /> All Sales
+                                </div>
+                            </ModernDropdownItem>
+                        </Link>
+                        
+                        <Link to="/sales-report" style={{ textDecoration: 'none', color: 'inherit' }}>
+                            <ModernDropdownItem
+                                isActive={isPathActive('/sales-report')}
+                                onClick={() => handleItemClick("Sales Report")}
+                            >
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                    <TbReportMoney size={16} /> Sales Report
+                                </div>
+                            </ModernDropdownItem>
+                        </Link>
+                        
+                        {isCashierOrHigher && (
+                            <Link to="/create-sale" style={{ textDecoration: 'none', color: 'inherit' }}>
+                                <ModernDropdownItem
+                                    isActive={isPathActive('/create-sale')}
+                                    onClick={() => handleItemClick("Create Sale")}
+                                >
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                        <FaPlus size={14} /> Create Sale
+                                    </div>
+                                </ModernDropdownItem>
+                            </Link>
+                        )}
+                        
+                        {isManagerOrHigher && (
+                            <Link to="/import-sales" style={{ textDecoration: 'none', color: 'inherit' }}>
+                                <ModernDropdownItem
+                                    isActive={isPathActive('/import-sales')}
+                                    onClick={() => handleItemClick("Import Sales")}
+                                >
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                        <FaUpload size={14} /> Import Sales
+                                    </div>
+                                </ModernDropdownItem>
+                            </Link>
+                        )}
+                    </ModernDropdown>
+                )}
+
+                {/* Loans Link (Manager+) */}
+                {isManagerOrHigher && (
+                    <Nav.Item className="sidebar-nav-item" style={{
+                        padding: '12px 16px',
+                        textAlign: 'left',
+                        fontSize: '14px',
+                        fontWeight: '500',
+                        color: isPathActive('/loans') ? '#357EC7' : '#505050',
+                        backgroundColor: isPathActive('/loans') ? '#f0f7ff' : 'transparent',
+                        margin: '2px 8px',
+                        borderRadius: '4px'
                     }}>
-                        <TbReportMoney size={16} /> Sales
-                    </Link>
-                </Nav.Item>
+                        <Link to="/loans" className="sidebar-link" style={{
+                            textDecoration: 'none',
+                            color: 'inherit',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '12px'
+                        }}>
+                            <TbReportMoney size={16} /> Loans
+                        </Link>
+                    </Nav.Item>
+                )}
 
-                <ModernDropdown
-                    isActive={isGroupActive(['/reports', '/sales-report'])}
-                    title={
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                            <HiOutlineDocumentReport size={16}/> Reports
-                        </div>
-                    }
-                >
-                    <Link to="/reports" style={{ textDecoration: 'none', color: 'inherit' }}>
-                        <ModernDropdownItem
-                            isActive={isPathActive('/reports')}
-                            onClick={() => handleItemClick("General Reports")}
-                        >
+                {/* Reports Dropdown (Manager+) */}
+                {isManagerOrHigher && (
+                    <ModernDropdown
+                        isActive={isGroupActive(['/reports', '/sales-report'])}
+                        title={
                             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                <HiOutlineDocumentReport size={16} /> General Reports
+                                <HiOutlineDocumentReport size={16}/> Reports
                             </div>
-                        </ModernDropdownItem>
-                    </Link>
-                    <Link to="/sales-report" style={{ textDecoration: 'none', color: 'inherit' }}>
-                        <ModernDropdownItem
-                            isActive={isPathActive('/sales-report')}
-                            onClick={() => handleItemClick("Sales Report")}
-                        >
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                <TbReportMoney size={16} /> Sales Report
-                            </div>
-                        </ModernDropdownItem>
-                    </Link>
-                </ModernDropdown>
+                        }
+                    >
+                        <Link to="/reports" style={{ textDecoration: 'none', color: 'inherit' }}>
+                            <ModernDropdownItem
+                                isActive={isPathActive('/reports')}
+                                onClick={() => handleItemClick("General Reports")}
+                            >
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                    <HiOutlineDocumentReport size={16} /> General Reports
+                                </div>
+                            </ModernDropdownItem>
+                        </Link>
+                        <Link to="/sales-report" style={{ textDecoration: 'none', color: 'inherit' }}>
+                            <ModernDropdownItem
+                                isActive={isPathActive('/sales-report')}
+                                onClick={() => handleItemClick("Sales Report")}
+                            >
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                    <TbReportMoney size={16} /> Sales Report
+                                </div>
+                            </ModernDropdownItem>
+                        </Link>
+                    </ModernDropdown>
+                )}
 
-                <Nav.Item className="sidebar-nav-item" style={{
-                    padding: '12px 16px',
-                    textAlign: 'left',
-                    fontSize: '14px',
-                    fontWeight: '500',
-                    color: isPathActive('/pos') ? '#357EC7' : '#505050',
-                    backgroundColor: isPathActive('/pos') ? '#f0f7ff' : 'transparent',
-                    margin: '2px 8px',
-                    borderRadius: '4px'
-                }}>
-                    <Link to="/pos" className="sidebar-link" style={{
-                        textDecoration: 'none',
-                        color: 'inherit',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '12px'
+                {/* POS Link (Cashier+) */}
+                {isCashierOrHigher && (
+                    <Nav.Item className="sidebar-nav-item" style={{
+                        padding: '12px 16px',
+                        textAlign: 'left',
+                        fontSize: '14px',
+                        fontWeight: '500',
+                        color: isPathActive('/pos') ? '#357EC7' : '#505050',
+                        backgroundColor: isPathActive('/pos') ? '#f0f7ff' : 'transparent',
+                        margin: '2px 8px',
+                        borderRadius: '4px'
                     }}>
-                        POS
-                    </Link>
-                </Nav.Item>
+                        <Link to="/pos" className="sidebar-link" style={{
+                            textDecoration: 'none',
+                            color: 'inherit',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '12px'
+                        }}>
+                            POS
+                        </Link>
+                    </Nav.Item>
+                )}
 
+                {/* Settings Dropdown */}
                 <ModernDropdown
                     title={
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -360,7 +525,7 @@ function ToolsSidebar() {
                     </Link>
                     
                     {/* Display Settings - only for managers and admins */}
-                    {user && (user.role === 'manager' || user.role === 'admin') && (
+                    {isManagerOrHigher && (
                         <Link to="/settings/display" style={{ textDecoration: 'none', color: 'inherit' }}>
                             <ModernDropdownItem
                                 isActive={isPathActive('/settings/display')}
@@ -374,7 +539,7 @@ function ToolsSidebar() {
                     )}
                     
                     {/* General Settings - only for admins */}
-                    {user && user.role === 'admin' && (
+                    {isAdmin && (
                         <Link to="/settings/general" style={{ textDecoration: 'none', color: 'inherit' }}>
                             <ModernDropdownItem
                                 isActive={isPathActive('/settings/general')}
@@ -388,6 +553,7 @@ function ToolsSidebar() {
                     )}
                 </ModernDropdown>
 
+                {/* Logout Link */}
                 <Nav.Item
                     onClick={handleLogout}
                     className="sidebar-nav-item sidebar-logout"

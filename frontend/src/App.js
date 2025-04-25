@@ -11,110 +11,215 @@ import CategoryPage from "./pages/categories";
 import CreateProducts from "./pages/create_products";
 import AllUsers from "./pages/all_users";
 import Brands from "./pages/brands";
-import { Frame } from "./pages/supplier";
-import { AuthProvider } from "./context/AuthContext";
-import ProtectedRoute from "./components/ProtectedRoute";
-import { Frame as Sales } from "./pages/sales";
+import { Frame as SupplierPage } from "./pages/supplier";
+import { Frame as SalesPage } from "./pages/sales";
 import SalesReport from "./pages/sales-report";
+import { NotificationProvider } from "./context/NotificationContext";
+import ImportPurchase from "./pages/ImportPurchase";
+import EmployeeManagement from "./pages/EmployeeManagement";
+import CreateSale from "./pages/CreateSale";       
+import ImportSale from "./pages/ImportSale";  
+import Loans from "./pages/Loans";  
 import UserSettings from "./pages/UserSettings";
 import DisplaySettings from "./pages/DisplaySettings";
 import GeneralSettings from "./pages/GeneralSettings";
+import { AuthProvider } from "./context/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <div className="App">
-          <Routes>
-            {/* Public routes */}
-            <Route path="/login" element={<Login />} />
+      <NotificationProvider>
+        <BrowserRouter>
+          <div className="App">
+            <Routes>
+              {/* Public routes */}
+              <Route path="/login" element={<Login />} />
 
-            <Route path="/dashboard" element={
-              <ProtectedRoute>
-                <MainDashboard />
-              </ProtectedRoute>
-            } />
-            <Route path="/all_products" element={
-              <ProtectedRoute>
-                <AllProducts />
-              </ProtectedRoute>
-            } />
-            <Route path="/categories" element={
-              <ProtectedRoute>
-                <CategoryPage />
-              </ProtectedRoute>
-            } />
-            <Route path="/reports" element={
-              <ProtectedRoute>
-                <Reports />
-              </ProtectedRoute>
-            } />
-            <Route path="/create_products" element={
-              <ProtectedRoute>
-                <CreateProducts />
-              </ProtectedRoute>
-            } />
-            <Route path="/pos" element={
-              <ProtectedRoute>
-                <Pos />
-              </ProtectedRoute>
-            } />
-            <Route path="/all_users" element={
-              <ProtectedRoute>
-                <AllUsers />
-              </ProtectedRoute>
-            } />
-            <Route path="/brands" element={
-              <ProtectedRoute>
-                <Brands />
-              </ProtectedRoute>
-            } />
-            <Route path="/supplier" element={
-              <ProtectedRoute>
-                <Frame />
-              </ProtectedRoute>
-            } />
-            <Route path="/create-user" element={
-              <ProtectedRoute>
-                <CreateUser />
-              </ProtectedRoute>
-            } />
-            <Route path="/sales" element={
-              <ProtectedRoute>
-                <Sales />
-              </ProtectedRoute>
-            } />
-            <Route path="/sales-report" element={
-              <ProtectedRoute>
-                <SalesReport />
-              </ProtectedRoute>
-            } />
-            {/* Settings routes */}
-            <Route path="/settings/user" element={
-              <ProtectedRoute>
-                <UserSettings />
-              </ProtectedRoute>
-            } />
-            <Route path="/settings/display" element={
-              <ProtectedRoute>
-                <DisplaySettings />
-              </ProtectedRoute>
-            } />
-            <Route path="/settings/general" element={
-              <ProtectedRoute>
-                <GeneralSettings />
-              </ProtectedRoute>
-            } />
+              {/* Protected routes (authenticated) */}
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <MainDashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/all_products"
+                element={
+                  <ProtectedRoute>
+                    <AllProducts />
+                  </ProtectedRoute>
+                }
+              />
 
-            {/* Redirect /settings to user settings */}
-            <Route path="/settings" element={<Navigate to="/settings/user" replace />} />
+              {/* Manager-level routes */}
+              <Route
+                path="/categories"
+                element={
+                  <ProtectedRoute requiredRole="manager">
+                    <CategoryPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/brands"
+                element={
+                  <ProtectedRoute requiredRole="manager">
+                    <Brands />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/supplier"
+                element={
+                  <ProtectedRoute requiredRole="manager">
+                    <SupplierPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/reports"
+                element={
+                  <ProtectedRoute requiredRole="manager">
+                    <Reports />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/create_products"
+                element={
+                  <ProtectedRoute requiredRole="manager">
+                    <CreateProducts />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/loans"
+                element={
+                  <ProtectedRoute requiredRole="manager">
+                    <Loans />
+                  </ProtectedRoute>
+                }
+              />
 
-            {/* Redirect root to login */}
-            <Route path="/" element={<Navigate to="/login" replace />} />
-            <Route path="*" element={<Navigate to="/login" replace />} />
-          </Routes>
-        </div>
-      </BrowserRouter>
+              {/* Cashier-level routes */}
+              <Route
+                path="/pos"
+                element={
+                  <ProtectedRoute requiredRole="cashier">
+                    <Pos />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Sales routes */}
+              <Route
+                path="/sales"
+                element={
+                  <ProtectedRoute requiredRole="manager">
+                    <SalesPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/sales-report"
+                element={
+                  <ProtectedRoute requiredRole="manager">
+                    <SalesReport />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/create-sale"
+                element={
+                  <ProtectedRoute requiredRole="cashier">
+                    <CreateSale />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/import-sales"
+                element={
+                  <ProtectedRoute requiredRole="manager">
+                    <ImportSale />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Purchase routes */}
+              <Route
+                path="/import_purchases"
+                element={
+                  <ProtectedRoute requiredRole="manager">
+                    <ImportPurchase />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Admin-only routes */}
+              <Route
+                path="/all_users"
+                element={
+                  <ProtectedRoute requiredRole="admin">
+                    <AllUsers />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/create-user"
+                element={
+                  <ProtectedRoute requiredRole="admin">
+                    <CreateUser />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/employee-management"
+                element={
+                  <ProtectedRoute requiredRole="admin">
+                    <EmployeeManagement />
+                  </ProtectedRoute>
+                }
+              />
+              
+              {/* Settings routes */}
+              <Route
+                path="/settings/user"
+                element={
+                  <ProtectedRoute>
+                    <UserSettings />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/settings/display"
+                element={
+                  <ProtectedRoute requiredRole="manager">
+                    <DisplaySettings />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/settings/general"
+                element={
+                  <ProtectedRoute requiredRole="admin">
+                    <GeneralSettings />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Redirect /settings to user settings */}
+              <Route path="/settings" element={<Navigate to="/settings/user" replace />} />
+
+              {/* Redirect root and unmatched */}
+              <Route path="/" element={<Navigate to="/login" replace />} />
+              <Route path="*" element={<Navigate to="/login" replace />} />
+            </Routes>
+          </div>
+        </BrowserRouter>
+      </NotificationProvider>
     </AuthProvider>
   );
 }

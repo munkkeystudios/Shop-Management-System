@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import { Card, Alert } from 'react-bootstrap';
+import { useNotifications } from '../context/NotificationContext';
 import "../styles/topbar.css";
 import "../styles/product_page.css";
 import ModernDropdown, { ModernDropdownItem } from '../components/ModernDropdown';
@@ -40,6 +41,7 @@ const CreateProducts = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const { addNotification } = useNotifications();
 
 
   const handleChange = (e) => {
@@ -176,7 +178,10 @@ const CreateProducts = () => {
       const responseData = await response.json();
 
       if (response.ok) {
-        setSuccess(`Product "${responseData.data?.name || productData.name}" created successfully!`);
+        const productName = responseData.data?.name || productData.name;
+        setSuccess(`Product "${productName}" created successfully!`);
+        const productId = responseData.data?._id;
+        addNotification('product', `New product "${productName}" has been created`, productId);
         console.log('Product created:', responseData.data);
         setFormData(getInitialState());
       } else {

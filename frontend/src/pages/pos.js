@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Button, Card } from 'react-bootstrap';
-import Layout from '../components/Layout';
+import POSLayout from '../components/POSLayout';
 import SearchBar from '../components/pos/searchbarpos.jsx';
 import CartTable from '../components/pos/CartTable.js';
 import BillTab from '../components/pos/BillTab.js';
@@ -13,6 +13,9 @@ import useCart from '../hooks/useCart';
 const Pos = () => {
   const [searchedProduct, setSearchedProduct] = useState(null); // item found from SearchBar
   const [billNumber, setBillNumber] = useState('Loading...'); // Default placeholder value
+  const [sales, setSales] = useState([]); // State to store sales data
+  const [loadingSales, setLoadingSales] = useState(true); // Loading state for sales
+  const [salesError, setSalesError] = useState(null); // Error state for sales
 
   const {
     cartItems,
@@ -24,6 +27,7 @@ const Pos = () => {
     resetCart,
   } = useCart();
 
+  // Fetch the last bill number
   useEffect(() => {
     const fetchLastBillNumber = async () => {
       try {
@@ -42,6 +46,26 @@ const Pos = () => {
     };
 
     fetchLastBillNumber();
+  }, []);
+
+  // Function to fetch the last 10 sales
+  const fetchLastTenSales = async () => {
+    try {
+      setLoadingSales(true); // Set loading state
+      const response = await salesAPI.getLastTenSales();
+      setSales(response.data.data); // Update the sales data
+      setSalesError(null);
+    } catch (error) {
+      console.error('Error fetching last 10 sales:', error);
+      setSalesError('Failed to fetch sales. Please try again later.');
+    } finally {
+      setLoadingSales(false); // Reset loading state
+    }
+  };
+
+  // Fetch the last 10 sales on component mount
+  useEffect(() => {
+    fetchLastTenSales();
   }, []);
 
   const handleProductSearch = (product) => {
@@ -69,8 +93,13 @@ const Pos = () => {
     window.history.back();
   };
 
+  const handleSaleCreated = () => {
+    fetchLastTenSales(); 
+    resetCart(); 
+  };
+
   return (
-    <Layout title="Point of Sale">
+    <POSLayout title="Point of Sale">
       <div className="app-container" style={{ display: 'flex', height: 'calc(100vh - 80px)' }}>
         {/* left section */}
         <div className="main-content" style={{ flex: '1', padding: '0', display: 'flex', flexDirection: 'column' }}>
@@ -106,7 +135,6 @@ const Pos = () => {
             >
               Recent Bills:
             </span>
-            {/* Conditionally render BillTab only when billNumber is ready */}
             {billNumber !== 'Loading...' && billNumber !== 'Error' ? (
               <BillTab billNumber={billNumber} />
             ) : (
@@ -155,6 +183,7 @@ const Pos = () => {
                 totalQuantity={totalQuantity}
                 billNumber={billNumber}
                 updateBillNumber={setBillNumber}
+                onSaleCreated={handleSaleCreated} 
               />
             </Card.Footer>
           </Card>
@@ -171,12 +200,18 @@ const Pos = () => {
         <Card>
           <Card.Header style={{ backgroundColor: '#f8f9fa', padding: '10px 15px' }}>Last Sales</Card.Header>
           <Card.Body style={{ padding: '0' }}>
-            <SalesTable />
+            {loadingSales ? (
+              <div>Loading sales...</div>
+            ) : salesError ? (
+              <div className="error-message">{salesError}</div>
+            ) : (
+              <SalesTable sales={sales} /> 
+            )}
           </Card.Body>
         </Card>
       </div>
     </div>
-    </Layout>
+    </POSLayout>
   );
 };
 

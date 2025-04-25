@@ -1,13 +1,12 @@
 import { useState } from 'react';
 import { Button, Modal, Form, Row, Col } from 'react-bootstrap';
 import { generateReceipt } from './generateReceipt';
-import { salesAPI } from '../../services/api'; // Use the salesAPI for creating a sale
+import { salesAPI, loansAPI } from '../../services/api'; // Use the salesAPI for creating a sale and loansAPI for loan-related API calls
 
-// the content of the Modal is mostly bootstrap because i plan on changing it in the future.
-
-const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateBillNumber }) => {
+const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateBillNumber, onSaleCreated }) => {
   const [show, setShow] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('cash'); // default is always cash
+  const [loanNumber, setLoanNumber] = useState(''); // state for loan number
 
   // global sales tax
   const GST = 0.10;
@@ -20,7 +19,7 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateB
     try {
       // Prepare the sale data
       const saleData = {
-        billNumber: billNumber, 
+        billNumber: billNumber,
         customerName: 'Walk in Customer',
         customerPhone: 'N/A',
         items: cartItems.map((item) => {
@@ -52,6 +51,11 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateB
       // Update the billNumber for the next transaction
       updateBillNumber(billNumber + 1); // Increment the billNumber
 
+      // Call the onSaleCreated callback to refresh the sales table
+      if (onSaleCreated) {
+        onSaleCreated(); 
+      }
+
       // Generate the receipt
       generateReceipt({
         ...saleData,
@@ -68,6 +72,48 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateB
     } catch (error) {
       console.error('Error during checkout:', error.response?.data?.message || error.message);
     }
+  };
+
+  const handlePayment = async () => {
+    if (paymentMethod === 'loan') {
+      if (!loanNumber) {
+        alert('Please enter a loan number.');
+        return;
+      }
+  
+      try {
+        // Validate loan number with the backend
+        const loanResponse = await loansAPI.validateLoan(loanNumber);
+        if (!loanResponse.data.valid) {
+          alert('Invalid loan number. Please try again.');
+          return;
+        }
+      } catch (error) {
+        console.error('Error validating loan:', error);
+        alert('An error occurred while validating the loan. Please try again.');
+        return;
+      }
+    }
+  
+    // Proceed to generate the receipt
+    const transactionData = {
+      billNumber,
+      tokenType: 'Credit',
+      customerName: 'Walk in Customer',
+      warehouse: 'WH Multan',
+      items: cartItems,
+      subtotal: totalPayable,
+      discount: 0,
+      tax: 0,
+      total: totalPayable,
+      paymentMethod,
+      received: totalPayable,
+      returned: 0,
+      date: new Date(),
+      loanNumber,
+    };
+  
+    generateReceipt(transactionData);
   };
 
   return (
@@ -103,6 +149,15 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateB
                   checked={paymentMethod === 'card'}
                   onChange={(e) => setPaymentMethod(e.target.value)}
                 />
+                <Form.Check
+                  type="radio"
+                  name="paymentMethod"
+                  id="loanPayment"
+                  label="Loan Payment"
+                  value="loan"
+                  checked={paymentMethod === 'loan'}
+                  onChange={(e) => setPaymentMethod(e.target.value)}
+                />
               </Form.Group>
             </Form>
           </div>
@@ -111,6 +166,18 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateB
             <div className="mb-4">
               <h5>Invoice Number</h5>
               <Form.Control type="text" placeholder="Enter Invoice Number" />
+            </div>
+          )}
+
+          {paymentMethod === 'loan' && (
+            <div className="mb-4">
+              <h5>Loan Number</h5>
+              <Form.Control
+                type="text"
+                placeholder="Enter Loan Number - test with 1, 2, 3"
+                value={loanNumber}
+                onChange={(e) => setLoanNumber(e.target.value)}
+              />
             </div>
           )}
 
