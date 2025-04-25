@@ -68,7 +68,8 @@ router.get('/loans/loan-number/:loanNumber', loanController.getLoanByLoanNumber)
 router.get('/loans/:id', loanController.getLoanById); // Get loan by ID
 router.put('/loans/:id/repayment', loanController.updateLoanRepayment); // Update loan repayment
 router.put('/loans/:loanId/add-items', loanController.addLoanItems); // Add items to an existing loan
-router.post('/validate-loan', loanController.validateLoan); // Validate loan
+router.post('/loans/validate-loan', loanController.validateLoan);
+
 
 // TODO:: delete this: Test route
 router.get('/test', (req, res) => {

@@ -9,7 +9,7 @@ exports.createLoan = async (req, res) => {
     const remainingBalance = loanAmount;
 
     // Find the last loan in the database and get its loanNumber
-    const lastLoan = await Loan.findOne().sort({ loanNumber: -1 }); // Sort by loanNumber in descending order
+    const lastLoan = await Loan.findOne().sort({ loanNumber: -1 }); 
     const loanNumber = lastLoan ? lastLoan.loanNumber + 1 : 1; // Increment last loanNumber or set to 1 if none exist
 
     const loan = new Loan({
@@ -20,7 +20,7 @@ exports.createLoan = async (req, res) => {
       remainingBalance,
       paymentMethod,
       notes,
-      createdBy: req.user._id // Assuming `req.user` contains the logged-in user's ID
+      createdBy: req.user._id 
     });
 
     await loan.save();
@@ -131,12 +131,31 @@ exports.addLoanItems = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Loan not found' });
     }
 
-    // Add new items to the loan
+    // Check if the remaining balance is 0
+    if (loan.remainingBalance === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Cannot add items to this loan. The remaining balance is already 0.',
+      });
+    }
+
+    // Subtract the subtotal of each item from the remaining balance
     items.forEach((item) => {
       loan.items.push(item);
-      loan.loanAmount += item.subtotal; // Update loan amount
-      loan.remainingBalance += item.subtotal; // Update remaining balance
+      loan.remainingBalance -= item.subtotal; // Subtract from remaining balance
     });
+
+    // Ensure the remaining balance does not go below 0
+    if (loan.remainingBalance < 0) {
+      loan.remainingBalance = 0;
+    }
+
+    // Update payment status
+    if (loan.remainingBalance === 0) {
+      loan.paymentStatus = 'paid';
+    } else {
+      loan.paymentStatus = 'partial';
+    }
 
     await loan.save();
     res.status(200).json({ success: true, data: loan });
