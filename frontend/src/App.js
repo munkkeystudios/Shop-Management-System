@@ -16,6 +16,8 @@ import { Frame as SalesPage } from "./pages/sales";
 import SalesReport from "./pages/sales-report";
 import { NotificationProvider } from "./context/NotificationContext";
 import ImportPurchase from "./pages/ImportPurchase";
+import CreatePurchase from "./pages/CreatePurchase";
+import AllPurchases from "./pages/all_purchases";
 import EmployeeManagement from "./pages/EmployeeManagement";
 import CreateSale from "./pages/CreateSale";       
 import ImportSale from "./pages/ImportSale";  
@@ -154,6 +156,22 @@ function App() {
                 element={
                   <ProtectedRoute requiredRole="manager">
                     <ImportPurchase />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/create_purchases"
+                element={
+                  <ProtectedRoute requiredRole="manager">
+                    <CreatePurchase />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/all_purchases"
+                element={
+                  <ProtectedRoute requiredRole="manager">
+                    <AllPurchases />
                   </ProtectedRoute>
                 }
               />
