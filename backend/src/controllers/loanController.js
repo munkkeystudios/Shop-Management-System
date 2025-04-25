@@ -1,4 +1,5 @@
 const Loan = require('../models/loan');
+const mongoose = require('mongoose');
 
 // Create a new loan
 exports.createLoan = async (req, res) => {
