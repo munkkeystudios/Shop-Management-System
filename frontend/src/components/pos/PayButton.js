@@ -24,36 +24,6 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateB
       // Determine the payment status based on the payment method
       const paymentStatus = paymentMethod === 'loan' ? 'pending' : 'paid';
 
-      // If payment method is loan, validate and update the loan
-      if (paymentMethod === 'loan') {
-        if (!loanNumber) {
-          setErrorMessage('Please enter a loan number.');
-          return;
-        }
-
-        // Validate loan number with the backend
-        const loanResponse = await loansAPI.validateLoan(loanNumber);
-        if (!loanResponse.data.valid) {
-          setErrorMessage('Invalid loan number. Please try again.');
-          return;
-        }
-
-        // Extract the loan ID from the response
-        const loanId = loanResponse.data.loan._id; // Correctly access the loan ID
-        console.log('Loan ID:', loanId);
-
-        // Add loan items and update loan repayment
-        const loanItems = cartItems.map((item) => ({
-          product: item.id, // Use the product ID
-          quantity: item.quantity,
-          price: item.price,
-          subtotal: item.subtotal,
-        }));
-
-        const loanUpdateResponse = await loansAPI.addItems(loanId, loanItems);
-        console.log('Loan updated successfully:', loanUpdateResponse.data);
-      }
-
       // Prepare the sale data
       const saleData = {
         billNumber: billNumber,
@@ -80,6 +50,7 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateB
         change: paymentMethod === 'loan' ? 0 : endPayment - totalPayable, // No change for loan payments
         paymentStatus, // Set payment status based on payment method
         notes: 'Thank you for your purchase!',
+        loanNumber: paymentMethod === 'loan' ? loanNumber : null, // Include loanNumber if payment method is loan
       };
 
       // Create the sale via the API

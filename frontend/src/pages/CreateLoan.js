@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Button, Container, Row, Col } from 'react-bootstrap';
+import { Form, Button, Container, Row, Col, Alert } from 'react-bootstrap';
 import { loansAPI } from '../services/api';
 import Layout from '../components/Layout'; // Import the Layout component
 
@@ -10,6 +10,8 @@ const CreateLoan = () => {
   const [customerAddress, setCustomerAddress] = useState('');
   const [loanAmount, setLoanAmount] = useState('');
   const [notes, setNotes] = useState('');
+  const [errorMessage, setErrorMessage] = useState(''); // State for error messages
+  const [successMessage, setSuccessMessage] = useState(''); // State for success messages
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,8 +29,9 @@ const CreateLoan = () => {
 
     try {
       const response = await loansAPI.create(loanData);
-      alert('Loan created successfully!');
+      setSuccessMessage('Loan created successfully!'); // Set success message
       console.log('Loan created:', response.data);
+
       // Reset form fields
       setCustomerName('');
       setCustomerEmail('');
@@ -36,9 +39,11 @@ const CreateLoan = () => {
       setCustomerAddress('');
       setLoanAmount('');
       setNotes('');
+      setErrorMessage(''); // Clear any previous error messages
     } catch (error) {
       console.error('Error creating loan:', error);
-      alert('Failed to create loan. Please try again.');
+      setErrorMessage('Failed to create loan. Please try again.'); // Set error message
+      setSuccessMessage(''); // Clear any previous success messages
     }
   };
 
@@ -46,6 +51,21 @@ const CreateLoan = () => {
     <Layout title="Create Loan">
       <Container>
         <h1 className="my-4">Create Loan</h1>
+
+        {/* Display error message */}
+        {errorMessage && (
+          <Alert variant="danger" onClose={() => setErrorMessage('')} dismissible>
+            {errorMessage}
+          </Alert>
+        )}
+
+        {/* Display success message */}
+        {successMessage && (
+          <Alert variant="success" onClose={() => setSuccessMessage('')} dismissible>
+            {successMessage}
+          </Alert>
+        )}
+
         <Form onSubmit={handleSubmit}>
           <Row className="mb-3">
             <Col md={6}>
@@ -57,6 +77,7 @@ const CreateLoan = () => {
                   value={loanAmount}
                   onChange={(e) => setLoanAmount(e.target.value)}
                   required
+                  autoComplete="off" // Disable browser autofill
                 />
               </Form.Group>
             </Col>
@@ -73,6 +94,7 @@ const CreateLoan = () => {
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
                   required
+                  autoComplete="off" // Disable browser autofill
                 />
               </Form.Group>
             </Col>
@@ -85,6 +107,7 @@ const CreateLoan = () => {
                   value={customerEmail}
                   onChange={(e) => setCustomerEmail(e.target.value)}
                   required
+                  autoComplete="off" // Disable browser autofill
                 />
               </Form.Group>
             </Col>
@@ -99,6 +122,7 @@ const CreateLoan = () => {
                   value={customerPhone}
                   onChange={(e) => setCustomerPhone(e.target.value)}
                   required
+                  autoComplete="off" // Disable browser autofill
                 />
               </Form.Group>
             </Col>
@@ -111,6 +135,7 @@ const CreateLoan = () => {
                   value={customerAddress}
                   onChange={(e) => setCustomerAddress(e.target.value)}
                   required
+                  autoComplete="off" // Disable browser autofill
                 />
               </Form.Group>
             </Col>
@@ -124,6 +149,7 @@ const CreateLoan = () => {
               placeholder="Enter any additional notes"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
+              autoComplete="off" // Disable browser autofill
             />
           </Form.Group>
 

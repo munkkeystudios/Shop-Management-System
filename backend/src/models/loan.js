@@ -91,4 +91,12 @@ LoanSchema.index({ loanNumber: 1 });
 LoanSchema.index({ createdAt: -1 });
 LoanSchema.index({ 'customer.name': 'text' });
 
-module.exports = mongoose.model('Loan', LoanSchema);
+let Loan;
+try {
+  Loan = mongoose.models.Loan || mongoose.model('Loan', LoanSchema);
+} catch (error) {
+  console.error(`Model Creation Error: ${error.message}`);
+  Loan = mongoose.model('Loan', LoanSchema);
+}
+
+module.exports = Loan;

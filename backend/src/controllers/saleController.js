@@ -1,4 +1,5 @@
-const { Sale, Product } = require('../models');
+const { Sale, Product } = require('../models'); 
+const Loan = require('../models/loan');
 
 //new sale
 exports.createSale = async (req, res) => {
@@ -15,7 +16,8 @@ exports.createSale = async (req, res) => {
             paymentMethod,
             amountPaid,
             change,
-            notes
+            notes,
+            loanNumber // Add loanNumber to the request body
         } = req.body;
 
         // *** MODIFIED: Enhanced Validation ***
@@ -48,6 +50,54 @@ exports.createSale = async (req, res) => {
             productUpdates.push({ id: item.product, quantityChange: -item.quantity });
         }
 
+        // *** MODIFIED: Handle loan updates if payment method is "loan" ***
+        let loan = null;
+        if (paymentMethod === 'loan') {
+            if (!loanNumber) {
+                return res.status(400).json({ success: false, message: 'Loan number is required for loan payments.' });
+            }
+
+            // Find the loan by loanNumber
+            loan = await Loan.findOne({ loanNumber: parseInt(loanNumber) }); // Parse loanNumber to integer to match schema
+            if (!loan) {
+                return res.status(404).json({ success: false, message: 'Loan not found.' });
+            }
+
+            // Update loan with items if any
+            if (items && items.length > 0) {
+                // Format items to match LoanItemSchema
+                const loanItems = items.map(item => ({
+                    product: item.product,
+                    quantity: item.quantity,
+                    price: item.price,
+                    subtotal: item.subtotal
+                }));
+                
+                // Add new items to the loan
+                loan.items = [...loan.items, ...loanItems];
+                
+                // Update loan amount and remaining balance
+                const itemsTotal = loanItems.reduce((sum, item) => sum + item.subtotal, 0);
+                loan.loanAmount += itemsTotal;
+                loan.remainingBalance += itemsTotal;
+            }
+
+            // If there's any payment against the loan
+            if (amountPaid > 0) {
+                loan.amountPaid += amountPaid;
+                loan.remainingBalance -= amountPaid;
+                if (loan.remainingBalance < 0) {
+                    loan.remainingBalance = 0; // Ensure no negative balance
+                }
+            }
+            
+            // Update payment status based on remaining balance
+            loan.paymentStatus = loan.remainingBalance === 0 ? 'paid' : (loan.amountPaid > 0 ? 'partial' : 'pending');
+
+            // Save the updated loan
+            await loan.save();
+        }
+
         // 2. If all checks pass, create the Sale document
         const sale = new Sale({
             billNumber,
@@ -66,7 +116,8 @@ exports.createSale = async (req, res) => {
             amountPaid,
             change: amountPaid > total ? amountPaid - total : 0, // Change shouldn't be negative
             notes,
-            createdBy: req.user._id // Use authenticated user ID
+            createdBy: req.user._id, // Use authenticated user ID
+            loan: loan ? loan._id : null // Link the loan to the sale if applicable
         });
 
         await sale.save();
