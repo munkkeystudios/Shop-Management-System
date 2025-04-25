@@ -205,7 +205,7 @@ function ToolsSidebar() {
                 {/* Products Dropdown (Cashier+) */}
                 {isCashierOrHigher && (
                     <ModernDropdown
-                        isActive={isGroupActive(['/products', '/all_products', '/create_products', '/inventory', '/categories', '/brands'])}
+                        isActive={isGroupActive(['/products', '/all_products', '/create_products', '/categories', '/brands'])}
                         title={
                             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                                 <LuPackage size={16}/> Products
@@ -235,17 +235,6 @@ function ToolsSidebar() {
                                 </ModernDropdownItem>
                             </Link>
                         )}
-
-                        <Link to="/inventory" style={{ textDecoration: 'none', color: 'inherit' }}>
-                            <ModernDropdownItem
-                                isActive={isPathActive('/inventory')}
-                                onClick={() => handleItemClick("Inventory")}
-                            >
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                    <LuPackageSearch size={16} /> Inventory
-                                </div>
-                            </ModernDropdownItem>
-                        </Link>
 
                         {isManagerOrHigher && (
                             <Link to="/categories" style={{ textDecoration: 'none', color: 'inherit' }}>
