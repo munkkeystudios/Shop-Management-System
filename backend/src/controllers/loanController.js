@@ -1,22 +1,27 @@
 const Loan = require('../models/loan');
+const mongoose = require('mongoose');
 
 // Create a new loan
 exports.createLoan = async (req, res) => {
   try {
-    const { loanNumber, customer, items, loanAmount, paymentMethod, notes } = req.body;
+    const { customer, loanAmount, paymentMethod, notes } = req.body;
 
-    // Calculate remaining balance (initially equal to loanAmount)
-    const remainingBalance = loanAmount;
+    // Calculate remaining balance (initially equal to 0)
+    const remainingBalance = 0;
+
+    // Find the last loan in the database and get its loanNumber
+    const lastLoan = await Loan.findOne().sort({ loanNumber: -1 }); 
+    const loanNumber = lastLoan ? lastLoan.loanNumber + 1 : 1; // Increment last loanNumber or set to 1 if none exist
 
     const loan = new Loan({
       loanNumber,
-      customer,
-      items,
+      customer, // Customer details (name, email, phone, address)
+      items: [], // Initialize with an empty array
       loanAmount,
       remainingBalance,
       paymentMethod,
       notes,
-      createdBy: req.user._id // Assuming `req.user` contains the logged-in user's ID
+      createdBy: req.user._id 
     });
 
     await loan.save();
@@ -113,5 +118,81 @@ exports.validateLoan = async (req, res) => {
   } catch (error) {
     console.error('Error validating loan:', error);
     return res.status(500).json({ valid: false, message: 'Server error' });
+  }
+};
+
+// Add loan items
+exports.addLoanItems = async (req, res) => {
+  try {
+    const { loanId } = req.params; // Loan ID from the request parameters
+    const { items } = req.body; // Items to add (array of LoanItemSchema objects)
+
+    const loan = await Loan.findById(loanId);
+    if (!loan) {
+      return res.status(404).json({ success: false, message: 'Loan not found' });
+    }
+
+    // Check if the remaining balance is 0
+    if (loan.remainingBalance === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Cannot add items to this loan. The remaining balance is already 0.',
+      });
+    }
+
+    // Subtract the subtotal of each item from the remaining balance
+    items.forEach((item) => {
+      loan.items.push(item);
+      loan.remainingBalance -= item.subtotal; // Subtract from remaining balance
+    });
+
+    // Ensure the remaining balance does not go below 0
+    if (loan.remainingBalance < 0) {
+      loan.remainingBalance = 0;
+    }
+
+    // Update payment status
+    if (loan.remainingBalance === 0) {
+      loan.paymentStatus = 'paid';
+    } else {
+      loan.paymentStatus = 'partial';
+    }
+
+    await loan.save();
+    res.status(200).json({ success: true, data: loan });
+  } catch (error) {
+    console.error('Error adding loan items:', error);
+    res.status(500).json({ success: false, message: 'Error adding loan items', error: error.message });
+  }
+};
+
+// Pay off a loan
+exports.payLoan = async (req, res) => {
+  try {
+    const { id } = req.params; // Loan ID from the request parameters
+
+    // Find the loan by ID
+    const loan = await Loan.findById(id);
+    if (!loan) {
+      return res.status(404).json({ success: false, message: 'Loan not found' });
+    }
+
+    // Check if the loan is already paid
+    if (loan.paymentStatus === 'paid') {
+      return res.status(400).json({ success: false, message: 'Loan is already fully paid' });
+    }
+
+    // Mark the loan as paid
+    loan.remainingBalance = 0; // Set remaining balance to 0
+    loan.paymentStatus = 'paid'; // Update payment status
+    loan.amountPaid = loan.loanAmount; // Set amountPaid to the total loan amount
+
+    // Save the updated loan
+    await loan.save();
+
+    res.status(200).json({ success: true, message: 'Loan paid off successfully', data: loan });
+  } catch (error) {
+    console.error('Error paying off loan:', error);
+    res.status(500).json({ success: false, message: 'Error paying off loan', error: error.message });
   }
 };

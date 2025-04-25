@@ -19,9 +19,10 @@ import ImportPurchase from "./pages/ImportPurchase";
 import CreatePurchase from "./pages/CreatePurchase";
 import AllPurchases from "./pages/all_purchases";
 import EmployeeManagement from "./pages/EmployeeManagement";
-import CreateSale from "./pages/CreateSale";       
-import ImportSale from "./pages/ImportSale";  
-import Loans from "./pages/Loans";  
+import CreateSale from "./pages/CreateSale";
+import ImportSale from "./pages/ImportSale";
+import Loans from "./pages/Loans";
+import CreateLoan from "./pages/CreateLoan";
 import UserSettings from "./pages/UserSettings";
 import DisplaySettings from "./pages/DisplaySettings";
 import GeneralSettings from "./pages/GeneralSettings";
@@ -102,6 +103,14 @@ function App() {
                 element={
                   <ProtectedRoute requiredRole="manager">
                     <Loans />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/create-loans"
+                element={
+                  <ProtectedRoute requiredRole="manager">
+                    <CreateLoan />
                   </ProtectedRoute>
                 }
               />
@@ -201,7 +210,7 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-              
+
               {/* Settings routes */}
               <Route
                 path="/settings/user"

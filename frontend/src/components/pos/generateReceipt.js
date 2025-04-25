@@ -1,6 +1,5 @@
 // the reciept genertaion function
 
-
 export const generateReceipt = (transactionData) => {
   const {
     billNumber = 0,
@@ -10,12 +9,13 @@ export const generateReceipt = (transactionData) => {
     items = [],
     subtotal = 0,
     discount = 0,
-    tax = 0, 
+    tax = 0,
     total = 0,
     paymentMethod = 'Cash Payment',
     received = 0,
     returned = 0,
-    date = new Date()
+    paymentStatus = 'paid', // Default to 'paid'
+    date = new Date(),
   } = transactionData;
 
   // Format date
@@ -27,7 +27,7 @@ export const generateReceipt = (transactionData) => {
     hour: '2-digit',
     minute: '2-digit',
     second: '2-digit',
-    hour12: true
+    hour12: true,
   });
 
   // Create the receipt header
@@ -47,7 +47,7 @@ export const generateReceipt = (transactionData) => {
   `;
 
   // Add items
-  items.forEach(item => {
+  items.forEach((item) => {
     // Pad strings to create alignment
     const itemName = item.name.padEnd(20, ' ').substring(0, 20);
     const price = item.price.toString().padStart(5, ' ');
@@ -67,6 +67,7 @@ export const generateReceipt = (transactionData) => {
     Total                            ${total.toString().padStart(7, ' ')}
     
     ${paymentMethod}
+    Payment Status                  ${paymentStatus.toUpperCase()}
     
     Received                         ${received.toString().padStart(7, ' ')}
     Total Payable                    ${total.toString().padStart(7, ' ')}
@@ -82,8 +83,7 @@ export const generateReceipt = (transactionData) => {
   // Create a Blob with the text content
   const blob = new Blob([receiptText], { type: 'text/plain' });
 
-  // Create a temporary download link, for browser security reasons, i can only directly download to downloads section.
-  // TODO: explore some libraries that you let you overlook this, or store a path in browser.
+  // Create a temporary download link
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;

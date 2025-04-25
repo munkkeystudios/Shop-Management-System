@@ -1,54 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { FaSearch, FaEye } from 'react-icons/fa';
+import { FaSearch, FaEye, FaMoneyBillWave } from 'react-icons/fa';
 import Layout from '../components/Layout';
 import '../styles/Loans.css';
-import { loansAPI } from '../services/api'; 
-
-const mockLoans = [
-    {
-        _id: '1',
-        loanNumber: 1001,
-        customer: { name: 'John Doe' },
-        loanAmount: 5000,
-        remainingBalance: 2000,
-        paymentStatus: 'partial',
-    },
-    {
-        _id: '2',
-        loanNumber: 1002,
-        customer: { name: 'Jane Smith' },
-        loanAmount: 10000,
-        remainingBalance: 0,
-        paymentStatus: 'paid',
-    },
-    {
-        _id: '3',
-        loanNumber: 1003,
-        customer: { name: 'Robert Johnson' },
-        loanAmount: 7500,
-        remainingBalance: 7500,
-        paymentStatus: 'pending',
-    },
-    {
-        _id: '4',
-        loanNumber: 1004,
-        customer: { name: 'Alice Williams' },
-        loanAmount: 12000,
-        remainingBalance: 6000,
-        paymentStatus: 'partial',
-    },
-    {
-        _id: '5',
-        loanNumber: 1005,
-        customer: { name: 'Michael Brown' },
-        loanAmount: 15000,
-        remainingBalance: 15000,
-        paymentStatus: 'pending',
-    },
-];
+import { loansAPI } from '../services/api'; // Use the actual API
 
 const Loans = () => {
-    const [loans, setLoans] = useState([]);
+    const [loans, setLoans] = useState([]); // Ensure loans is initialized as an array
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
@@ -59,14 +16,16 @@ const Loans = () => {
         const fetchLoans = async () => {
             try {
                 setLoading(true);
-                // // const response = await loansAPI.getAll(); // Fetch all loans
-                // setLoans(response.data.data); // Assuming the API returns data in `data.data`
-                // setFilteredLoans(response.data.data); // Initialize filtered loans
-                // Simulate API call with mock data
-                const response = { data: { data: mockLoans } }; // Mock API response
-                setLoans(response.data.data);
-                setFilteredLoans(response.data.data);
-
+                const response = await loansAPI.getAll();
+                console.log('API Response:', response.data);
+    
+                // Extract the loans array from the response
+                const loansData = response.data && response.data.data && Array.isArray(response.data.data) 
+                    ? response.data.data 
+                    : [];
+                setLoans(loansData);
+                setFilteredLoans(loansData);
+                console.log('Loans State:', loansData);
             } catch (err) {
                 console.error('Error fetching loans:', err);
                 setError('Failed to load loans. Please try again later.');
@@ -74,7 +33,7 @@ const Loans = () => {
                 setLoading(false);
             }
         };
-
+    
         fetchLoans();
     }, []);
 
@@ -86,6 +45,35 @@ const Loans = () => {
         );
         setFilteredLoans(filtered);
     }, [searchTerm, loans]);
+
+    // Handle loan payment
+    const handlePayLoan = async (loanId) => {
+        try {
+            setLoading(true);
+            const response = await loansAPI.payLoan(loanId); // Call the API to pay the loan
+            console.log('Loan payment response:', response.data);
+
+            // Update the loan in the state
+            const updatedLoans = loans.map((loan) =>
+                loan._id === loanId
+                    ? {
+                          ...loan,
+                          loanAmount: 0, 
+                          amountPaid: 0, 
+                          remainingBalance: 0, 
+                          paymentStatus: 'paid', 
+                      }
+                    : loan
+            );
+            setLoans(updatedLoans);
+            setFilteredLoans(updatedLoans);
+        } catch (err) {
+            console.error('Error paying loan:', err);
+            setError('Failed to complete loan payment. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <Layout title="Loans">
@@ -120,7 +108,7 @@ const Loans = () => {
                                     <th>Loan Number</th>
                                     <th>Customer</th>
                                     <th>Loan Amount</th>
-                                    <th>Remaining Balance</th>
+                                    <th>Remaining Loan</th>
                                     <th>Status</th>
                                     <th>Actions</th>
                                 </tr>
@@ -128,7 +116,7 @@ const Loans = () => {
                             <tbody>
                                 {filteredLoans.length > 0 ? (
                                     filteredLoans.map((loan) => (
-                                        <tr key={loan._id}>
+                                        <tr key={loan.loanNumber}>
                                             <td>{loan.loanNumber}</td>
                                             <td>{loan.customer.name}</td>
                                             <td>${loan.loanAmount.toLocaleString()}</td>
@@ -140,8 +128,16 @@ const Loans = () => {
                                             </td>
                                             <td>
                                                 <button className="loans-action-button">
-                                                    <FaEye /> 
+                                                    <FaEye />
                                                 </button>
+                                                {loan.paymentStatus !== 'paid' && (
+                                                    <button
+                                                        className="loans-action-button pay-button"
+                                                        onClick={() => handlePayLoan(loan._id)}
+                                                    >
+                                                        <FaMoneyBillWave />
+                                                    </button>
+                                                )}
                                             </td>
                                         </tr>
                                     ))
