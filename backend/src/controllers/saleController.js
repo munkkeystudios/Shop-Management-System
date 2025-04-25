@@ -1,13 +1,14 @@
-const { Sale, Product } = require('../models');
+const { Sale, Product } = require('../models'); 
+const Loan = require('../models/loan');
 
 //new sale
 exports.createSale = async (req, res) => {
     try {
         const {
             billNumber,
-            customerName, // Consider structure, maybe customer: { name, phone }? SDS differs.
+            customerName,
             customerPhone,
-            items, // Expected: [{ product: productId, quantity: number, price: number, subtotal: number }]
+            items,
             subtotal,
             discount,
             tax,
@@ -15,7 +16,8 @@ exports.createSale = async (req, res) => {
             paymentMethod,
             amountPaid,
             change,
-            notes
+            notes,
+            loanNumber
         } = req.body;
 
         // *** MODIFIED: Enhanced Validation ***
@@ -30,13 +32,10 @@ exports.createSale = async (req, res) => {
         }
 
         // *** MODIFIED: Robust Stock Check and Update ***
-        // 1. Validate all items and check stock BEFORE making changes
         const productUpdates = [];
         for (const item of items) {
-            const product = await Product.findById(item.product).select('name quantity'); // Select only needed fields
+            const product = await Product.findById(item.product).select('name quantity');
             if (!product) {
-                // Rollback potential previous updates is complex without transactions.
-                // Best to check all first.
                 return res.status(400).json({ success: false, message: `Product with ID ${item.product} not found` });
             }
             if (product.quantity < item.quantity) {
@@ -48,45 +47,89 @@ exports.createSale = async (req, res) => {
             productUpdates.push({ id: item.product, quantityChange: -item.quantity });
         }
 
+        // *** MODIFIED: Handle loan updates if payment method is "loan" ***
+        let loan = null;
+        if (paymentMethod === 'loan') {
+            if (!loanNumber) {
+                return res.status(400).json({ success: false, message: 'Loan number is required for loan payments.' });
+            }
+
+            // Find the loan by loanNumber
+            loan = await Loan.findOne({ loanNumber: parseInt(loanNumber) });
+            if (!loan) {
+                return res.status(404).json({ success: false, message: 'Loan not found.' });
+            }
+
+            // Check if loanAmount is 0
+            if (loan.loanAmount === 0) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Loan amount is 0. No loan is allowed for this customer.'
+                });
+            }
+
+            // Ensure remainingBalance does not exceed loanAmount
+            if (loan.remainingBalance + total > loan.loanAmount) {
+                return res.status(400).json({
+                    success: false,
+                    message: `Exceeding loan limit. Loan amount is ${loan.loanAmount}, but the remaining balance would exceed this limit.`
+                });
+            }
+
+            // Update remainingBalance based on the total
+            loan.remainingBalance += total; // Increase the remaining balance by the total sale amount
+
+            // If there's any payment against the loan
+            if (amountPaid > 0) {
+                loan.amountPaid += amountPaid;
+                loan.remainingBalance -= amountPaid;
+                if (loan.remainingBalance < 0) {
+                    loan.remainingBalance = 0; // Ensure no negative balance
+                }
+            }
+
+            // Update payment status based on remaining balance
+            loan.paymentStatus = loan.remainingBalance === 0 ? 'paid' : (loan.amountPaid > 0 ? 'partial' : 'pending');
+
+            await loan.save();
+        }
+
         // 2. If all checks pass, create the Sale document
         const sale = new Sale({
             billNumber,
-            // SDS shows customer nested, adapting slightly from original code
             customer: {
                 name: customerName || 'Walk-in Customer',
                 phone: customerPhone
             },
-            items, // Assuming frontend sends calculated price/subtotal per item
+            items,
             subtotal,
             discount,
             tax,
             total,
             paymentMethod,
-            paymentStatus: amountPaid >= total ? 'paid' : (amountPaid > 0 ? 'partial' : 'pending'), // Refined status
+            paymentStatus: amountPaid >= total ? 'paid' : (amountPaid > 0 ? 'partial' : 'pending'),
             amountPaid,
-            change: amountPaid > total ? amountPaid - total : 0, // Change shouldn't be negative
+            change: amountPaid > total ? amountPaid - total : 0,
             notes,
-            createdBy: req.user._id // Use authenticated user ID
+            createdBy: req.user._id,
+            loan: loan ? loan._id : null
         });
 
         await sale.save();
 
         // 3. After sale is successfully saved, update product quantities
-        // Consider using a transaction here if your MongoDB setup supports it for atomicity
         for (const update of productUpdates) {
             await Product.findByIdAndUpdate(update.id, { $inc: { quantity: update.quantityChange } });
-            // TODO: Add more sophisticated stock status updates if needed (e.g., based on minStockLevel, status='out_of_stock')
             const updatedProduct = await Product.findById(update.id).select('quantity status');
             if (updatedProduct && updatedProduct.quantity <= 0 && updatedProduct.status !== 'out_of_stock') {
                 await Product.findByIdAndUpdate(update.id, { status: 'out_of_stock' });
             }
         }
 
-        res.status(201).json({ success: true, message: "Sale created successfully", data: sale }); // Return success and the created sale
+        res.status(201).json({ success: true, message: "Sale created successfully", data: sale });
 
     } catch (error) {
         console.error('Create sale error:', error);
-        // Handle potential duplicate billNumber error
         if (error.code === 11000 && error.keyPattern && error.keyPattern.billNumber) {
             return res.status(409).json({ success: false, message: 'Bill number already exists.', error: 'Duplicate bill number' });
         }

@@ -71,7 +71,7 @@ const SaleSchema = new mongoose.Schema({
   },
   paymentMethod: {
     type: String,
-    enum: ['cash', 'card', 'mobile_payment', 'credit', 'loan'],
+    enum: ['cash', 'card', 'mobile_payment', 'credit', 'loan'], // Merged both changes
     default: 'cash'
   },
   paymentStatus: {
@@ -99,7 +99,7 @@ const SaleSchema = new mongoose.Schema({
   timestamps: true
 });
 
-//indexing to speed up queries
+// Indexing to speed up queries
 SaleSchema.index({ billNumber: 1 });
 SaleSchema.index({ createdAt: -1 });
 SaleSchema.index({ createdBy: 1 });
@@ -113,4 +113,4 @@ try {
   Sale = mongoose.model('Sale', SaleSchema);
 }
 
-module.exports = Sale; 
+module.exports = Sale;

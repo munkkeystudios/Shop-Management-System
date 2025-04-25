@@ -59,12 +59,12 @@ router.patch('/products/:id/stock', productController.updateStock);
 
 router.post('/sales', saleController.createSale);
 router.get('/sales', saleController.getSales);
-router.get('/sales/last-bill-number', saleController.getLastBillNumber); // Specific route first
-router.get('/sales/last-ten', saleController.getLastTenSales); // Add this route for last 10 sales
-router.get('/sales/stats', saleController.getSalesStats); // Another specific route
-router.get('/sales/export', saleController.exportSales); // Export route
-router.put('/sales/:id/payment', saleController.updatePaymentStatus); // More specific than :id
-router.get('/sales/:id', saleController.getSaleById); // Generic route last
+router.get('/sales/last-bill-number', saleController.getLastBillNumber); 
+router.get('/sales/last-ten', saleController.getLastTenSales); 
+router.get('/sales/stats', saleController.getSalesStats); 
+router.get('/sales/export', saleController.exportSales); 
+router.put('/sales/:id/payment', saleController.updatePaymentStatus); 
+router.get('/sales/:id', saleController.getSaleById); 
 
 router.post('/purchases', purchaseController.createPurchase);
 router.get('/purchases', purchaseController.getAllPurchases);
@@ -75,12 +75,15 @@ router.patch('/purchases/:id/status', purchaseController.updatePurchaseStatus);
 
 
 
-router.post('/loans', loanController.createLoan); // Create a new loan
-router.get('/loans', loanController.getAllLoans); // Get all loans
-router.get('/loans/loan-number/:loanNumber', loanController.getLoanByLoanNumber); // Get loan by loan number
-router.get('/loans/:id', loanController.getLoanById); // Get loan by ID
-router.put('/loans/:id/repayment', loanController.updateLoanRepayment); // Update loan repayment
-router.post('/validate-loan', loanController.validateLoan); // Validate loan
+// Loan routes
+router.post('/loans', loanController.createLoan); 
+router.get('/loans', loanController.getAllLoans); 
+router.get('/loans/loan-number/:loanNumber', loanController.getLoanByLoanNumber); 
+router.get('/loans/:id', loanController.getLoanById); 
+router.put('/loans/:id/repayment', loanController.updateLoanRepayment); 
+router.put('/loans/:loanId/add-items', loanController.addLoanItems); 
+router.put('/loans/:id/pay', loanController.payLoan); 
+router.post('/loans/validate-loan', loanController.validateLoan); 
 
 // TODO:: delete this: Test route
 router.get('/test', (req, res) => {

@@ -1,22 +1,29 @@
 import { useState } from 'react';
-import { Button, Modal, Form, Row, Col } from 'react-bootstrap';
+import { Button, Modal, Form, Row, Col, Alert } from 'react-bootstrap';
 import { generateReceipt } from './generateReceipt';
-import { salesAPI, loansAPI } from '../../services/api'; // Use the salesAPI for creating a sale and loansAPI for loan-related API calls
+import { salesAPI, loansAPI } from '../../services/api';
 
 const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateBillNumber, onSaleCreated }) => {
   const [show, setShow] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('cash'); // default is always cash
   const [loanNumber, setLoanNumber] = useState(''); // state for loan number
+  const [errorMessage, setErrorMessage] = useState(''); // state for error messages
 
   // global sales tax
   const GST = 0.10;
   const endPayment = Number((totalPayable + GST * totalPayable).toFixed(2));
 
-  const handleClose = () => setShow(false);
+  const handleClose = () => {
+    setShow(false);
+    setErrorMessage(''); // Clear error messages when modal is closed
+  };
   const handleShow = () => setShow(true);
 
-  const handlePrintReceipt = async () => {
+  const handleTransaction = async () => {
     try {
+      // Determine the payment status based on the payment method
+      const paymentStatus = paymentMethod === 'loan' ? 'pending' : 'paid';
+
       // Prepare the sale data
       const saleData = {
         billNumber: billNumber,
@@ -39,9 +46,11 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateB
         tax: Number((GST * totalPayable).toFixed(2)),
         total: endPayment,
         paymentMethod,
-        amountPaid: endPayment,
-        change: 0,
+        amountPaid: paymentMethod === 'loan' ? 0 : endPayment, // If loan, no payment is made upfront
+        change: paymentMethod === 'loan' ? 0 : endPayment - totalPayable, // No change for loan payments
+        paymentStatus, // Set payment status based on payment method
         notes: 'Thank you for your purchase!',
+        loanNumber: paymentMethod === 'loan' ? loanNumber : null, // Include loanNumber if payment method is loan
       };
 
       // Create the sale via the API
@@ -53,7 +62,7 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateB
 
       // Call the onSaleCreated callback to refresh the sales table
       if (onSaleCreated) {
-        onSaleCreated(); 
+        onSaleCreated();
       }
 
       // Generate the receipt
@@ -70,50 +79,9 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateB
 
       handleClose();
     } catch (error) {
-      console.error('Error during checkout:', error.response?.data?.message || error.message);
+      console.error('Error during transaction:', error.response?.data?.message || error.message);
+      setErrorMessage('An error occurred during the transaction. Please try again.');
     }
-  };
-
-  const handlePayment = async () => {
-    if (paymentMethod === 'loan') {
-      if (!loanNumber) {
-        alert('Please enter a loan number.');
-        return;
-      }
-  
-      try {
-        // Validate loan number with the backend
-        const loanResponse = await loansAPI.validateLoan(loanNumber);
-        if (!loanResponse.data.valid) {
-          alert('Invalid loan number. Please try again.');
-          return;
-        }
-      } catch (error) {
-        console.error('Error validating loan:', error);
-        alert('An error occurred while validating the loan. Please try again.');
-        return;
-      }
-    }
-  
-    // Proceed to generate the receipt
-    const transactionData = {
-      billNumber,
-      tokenType: 'Credit',
-      customerName: 'Walk in Customer',
-      warehouse: 'WH Multan',
-      items: cartItems,
-      subtotal: totalPayable,
-      discount: 0,
-      tax: 0,
-      total: totalPayable,
-      paymentMethod,
-      received: totalPayable,
-      returned: 0,
-      date: new Date(),
-      loanNumber,
-    };
-  
-    generateReceipt(transactionData);
   };
 
   return (
@@ -127,6 +95,11 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateB
           <Modal.Title>Complete Transaction</Modal.Title>
         </Modal.Header>
         <Modal.Body>
+          {errorMessage && (
+            <Alert variant="danger" onClose={() => setErrorMessage('')} dismissible>
+              {errorMessage}
+            </Alert>
+          )}
           <div className="mb-4">
             <h5>Choose Payment Method</h5>
             <Form>
@@ -203,8 +176,8 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateB
 
           <div className="bg-light p-3 rounded d-flex justify-content-between align-items-center">
             <h5 className="m-0 text-success">Total Payable: ${endPayment}</h5>
-            <Button variant="success" onClick={handlePrintReceipt}>
-              Print Receipt
+            <Button variant="success" onClick={handleTransaction}>
+              Complete Transaction
             </Button>
           </div>
         </Modal.Body>
