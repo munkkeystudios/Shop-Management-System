@@ -438,7 +438,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { API_URL } from '../config';
-import TransactionNotification from '../components/TransactionNotification';
+import TransactionNotification from './TransactionNotification';
 import './CreateSale.css';
 
 const CreateSale = () => {
