@@ -1,5 +1,4 @@
 
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
@@ -15,7 +14,6 @@ const CreatePurchase = () => {
         items: [{ product: '', quantity: 1, price: 0 }],
         subtotal: 0,
         discount: 0,
-        tax: 0,
         totalAmount: 0,
         status: 'pending',
         paymentStatus: 'pending',
@@ -34,9 +32,9 @@ const CreatePurchase = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [productsResponse, suppliersResponse] = await Promise.all([
-                    productsAPI.getAll({ limit: 1000 }),
-                    suppliersAPI.getAll()
+                const [productsResponse, suppliersResponse] = await Promise.all([ 
+                    productsAPI.getAll({ limit: 1000 }), 
+                    suppliersAPI.getAll() 
                 ]);
                 
                 if (productsResponse.data.success) {
@@ -55,9 +53,9 @@ const CreatePurchase = () => {
         fetchData();
     }, []);
 
-    const calculateTotals = (items, discount = formData.discount, tax = formData.tax) => {
+    const calculateTotals = (items, discount = formData.discount) => {
         const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        const total = subtotal - discount + tax;
+        const total = subtotal - discount;
         
         return {
             subtotal: parseFloat(subtotal.toFixed(2)),
@@ -69,11 +67,10 @@ const CreatePurchase = () => {
         const { name, value } = e.target;
         let newFormData = { ...formData, [name]: value };
 
-        if (name === 'discount' || name === 'tax') {
+        if (name === 'discount') {
             const { subtotal, totalAmount } = calculateTotals(
                 formData.items, 
-                name === 'discount' ? parseFloat(value || 0) : formData.discount,
-                name === 'tax' ? parseFloat(value || 0) : formData.tax
+                parseFloat(value || 0)
             );
             newFormData = { ...newFormData, subtotal, totalAmount };
         }
@@ -152,7 +149,6 @@ const CreatePurchase = () => {
                 price: parseFloat(item.price)
             })),
             totalAmount: formData.totalAmount,
-            tax: parseFloat(formData.tax || 0),
             discount: parseFloat(formData.discount || 0),
             status: formData.status,
             paymentStatus: formData.paymentStatus,
@@ -189,7 +185,6 @@ const CreatePurchase = () => {
                     items: [{ product: '', quantity: 1, price: 0 }],
                     subtotal: 0,
                     discount: 0,
-                    tax: 0,
                     totalAmount: 0,
                     status: 'pending',
                     paymentStatus: 'pending',
@@ -298,15 +293,16 @@ const CreatePurchase = () => {
                                         required
                                     >
                                         <option value="">Select Product</option>
-                                        {products.map(p => (
-                                            <option key={p._id} value={p._id}>
-                                                {p.name} {p.barcode ? `(${p.barcode})` : ''} - ${p.price?.toFixed(2) || '0.00'}
+                                        {products.map(product => (
+                                            <option key={product._id} value={product._id}>
+                                                {product.name}
                                             </option>
                                         ))}
                                     </select>
                                 </div>
-                                <div className="form-group item-qty">
-                                    <label>Qty*</label>
+
+                                <div className="form-group">
+                                    <label>Quantity*</label>
                                     <input
                                         type="number"
                                         name="quantity"
@@ -316,7 +312,8 @@ const CreatePurchase = () => {
                                         required
                                     />
                                 </div>
-                                <div className="form-group item-price">
+
+                                <div className="form-group">
                                     <label>Price*</label>
                                     <input
                                         type="number"
@@ -328,88 +325,75 @@ const CreatePurchase = () => {
                                         required
                                     />
                                 </div>
-                                <div className="form-group item-subtotal">
-                                    <label>Subtotal</label>
-                                    <span>${(item.price * item.quantity).toFixed(2)}</span>
-                                </div>
 
                                 <button
                                     type="button"
+                                    className="remove-item-btn"
                                     onClick={() => removeItem(index)}
-                                    className="remove-item-button"
-                                    disabled={formData.items.length <= 1}
                                 >
                                     <FaTrash />
                                 </button>
                             </div>
                         ))}
-                        <button type="button" onClick={addItem} className="add-item-button">
+
+                        <button type="button" onClick={addItem} className="add-item-btn">
                             <FaPlus /> Add Item
                         </button>
                     </div>
 
                     {/* Totals Section */}
-                    <div className="totals-payment-section">
-                        <div className="totals-summary">
-                            <h3>Summary</h3>
-                            <div className="summary-row">
-                                <span>Subtotal:</span>
-                                <span>${formData.subtotal.toFixed(2)}</span>
-                            </div>
-                            <div className="summary-row">
-                                <span>Discount:</span>
+                    <div className="totals-section">
+                        <div className="form-row">
+                            <div className="form-group">
+                                <label>Subtotal</label>
                                 <input
                                     type="number"
-                                    id="discount"
+                                    name="subtotal"
+                                    value={formData.subtotal}
+                                    disabled
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>Discount</label>
+                                <input
+                                    type="number"
                                     name="discount"
-                                    min="0"
-                                    step="0.01"
                                     value={formData.discount}
                                     onChange={handleInputChange}
-                                    placeholder="0.00"
                                 />
                             </div>
-                            <div className="summary-row">
-                                <span>Tax:</span>
+
+                            <div className="form-group">
+                                <label>Total Amount</label>
                                 <input
                                     type="number"
-                                    id="tax"
-                                    name="tax"
-                                    min="0"
-                                    step="0.01"
-                                    value={formData.tax}
-                                    onChange={handleInputChange}
-                                    placeholder="0.00"
+                                    name="totalAmount"
+                                    value={formData.totalAmount}
+                                    disabled
                                 />
-                            </div>
-                            <div className="summary-row total">
-                                <span>Total:</span>
-                                <span>${formData.totalAmount.toFixed(2)}</span>
                             </div>
                         </div>
                     </div>
 
-                    {/* Notes Section */}
-                    <div className="form-group form-group-full">
+                    {/* Notes */}
+                    <div className="form-group">
                         <label htmlFor="notes">Notes</label>
                         <textarea
-                            id="notes"
                             name="notes"
                             value={formData.notes}
                             onChange={handleInputChange}
                             rows="3"
-                        ></textarea>
+                        />
                     </div>
 
-                    {/* Submit Button */}
-                    <div className="form-actions">
-                        <button type="submit" disabled={loading} className="submit-button">
-                            {loading ? 'Creating Purchase...' : 'Create Purchase'}
-                        </button>
-                        <button type="button" onClick={() => navigate('/dashboard')} className="cancel-button">
-                            Cancel
-                        </button>
-                    </div>
+                    <button
+                        type="submit"
+                        className="submit-btn"
+                        disabled={loading}
+                    >
+                        {loading ? "Submitting..." : "Create Purchase"}
+                    </button>
                 </form>
             </div>
         </Layout>
