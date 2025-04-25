@@ -1,7 +1,4 @@
 import axios from 'axios';
-
-import axios from 'axios';
-
 // Create an Axios instance with default config
 const api = axios.create({
   baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5002/api', // Updated port to 5002

@@ -12,7 +12,7 @@ const brandController = require('../controllers/brandController');
 const settingsRoutes = require('./settingsRoutes');
 const notificationRoutes = require('./notificationRoutes');
 const loanController = require('../controllers/loanController'); // Add loanController
-const auth = require('../middleware/auth');
+const { auth } = require('../middleware/auth');
 
 router.post('/login', userController.login);
 // router.post('/signup', userController.register);
