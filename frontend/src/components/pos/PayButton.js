@@ -3,9 +3,7 @@ import { Button, Modal, Form, Row, Col } from 'react-bootstrap';
 import { generateReceipt } from './generateReceipt';
 import { salesAPI } from '../../services/api'; // Use the salesAPI for creating a sale
 
-// the content of the Modal is mostly bootstrap because i plan on changing it in the future.
-
-const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateBillNumber }) => {
+const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateBillNumber, onSaleCreated }) => {
   const [show, setShow] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('cash'); // default is always cash
 
@@ -20,7 +18,7 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateB
     try {
       // Prepare the sale data
       const saleData = {
-        billNumber: billNumber, 
+        billNumber: billNumber,
         customerName: 'Walk in Customer',
         customerPhone: 'N/A',
         items: cartItems.map((item) => {
@@ -51,6 +49,11 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateB
 
       // Update the billNumber for the next transaction
       updateBillNumber(billNumber + 1); // Increment the billNumber
+
+      // Call the onSaleCreated callback to refresh the sales table
+      if (onSaleCreated) {
+        onSaleCreated(); 
+      }
 
       // Generate the receipt
       generateReceipt({

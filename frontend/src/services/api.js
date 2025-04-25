@@ -1,4 +1,3 @@
-
 import axios from 'axios';
 
 // Create an Axios instance with default config
@@ -133,15 +132,15 @@ export const salesAPI = {
   getById: (id) => api.get(`/sales/${id}`),
   updatePayment: (id, paymentData) => api.put(`/sales/${id}/payment`, paymentData),
   getStats: (params = {}) => api.get('/sales/stats', { params }), // Allow date range params
-  // *** ADDED BACK from user's version, required by pos.js ***
   getLastBillNumber: () => api.get('/sales/last-bill-number'),
+  getLastTenSales: () => api.get('/sales/last-ten'), // Fetch the last 10 sales
   // Export sales to CSV or PDF
   exportSales: (format = 'csv', params = {}) =>
     api.get(`/sales/export`, {
       params: { format, ...params },
       responseType: 'blob', // Important for handling file download
     }),
-  // <-- NEW IMPORT FUNCTION -->
+  // Import sales from a file
   importSales: (formData) =>
     api.post('/import/sales', formData, {
       headers: {
