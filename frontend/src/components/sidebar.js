@@ -10,7 +10,7 @@ import { FiUsers, FiUserPlus } from "react-icons/fi"; // Kept FiUserPlus from Fi
 import { BsCartCheck } from "react-icons/bs";
 import { TbReportMoney } from "react-icons/tb";
 import { jwtDecode } from 'jwt-decode'; // Kept jwtDecode from File 1
-import { FaPlus, FaUpload } from "react-icons/fa"; 
+import { FaPlus, FaUpload } from "react-icons/fa";
 
 // sidebar layout: (Identical in both)
 const SideBar = ({ children }) => {
@@ -121,8 +121,8 @@ function ToolsSidebar() {
                 navigate('/login');
             }
         } else {
-             logout(); // Ensure logout state if no token
-             // No navigation needed here, ProtectedRoute handles it
+            logout(); // Ensure logout state if no token
+            // No navigation needed here, ProtectedRoute handles it
         }
     }, [location, logout, navigate]); // Re-check on location change
 
@@ -197,7 +197,7 @@ function ToolsSidebar() {
                 )}
 
                 {/* Products Dropdown (Cashier+) - Merged */}
-                 {isCashierOrHigher && (
+                {isCashierOrHigher && (
                     <SideBarDropdown
                         // Updated paths for isActive check based on merged content
                         isActive={isGroupActive(['/all_products', '/create_products', '/inventory', '/categories', '/brands'])}
@@ -207,7 +207,7 @@ function ToolsSidebar() {
                                 alignItems: 'center',
                                 gap: '12px'
                             }}>
-                                <LuPackage size={16}/> Products
+                                <LuPackage size={16} /> Products
                             </div>
                         }>
                         {/* All Products (Cashier+) - From File 1 */}
@@ -250,7 +250,7 @@ function ToolsSidebar() {
                                 />
                             </Link>
                         )}
-                         {/* Inventory (Cashier+) - From File 1 */}
+                        {/* Inventory (Cashier+) - From File 1 */}
                         <Link to="/inventory" className="sidebar-link" style={{
                             textDecoration: 'none',
                             color: 'inherit'
@@ -291,7 +291,7 @@ function ToolsSidebar() {
                             </Link>
                         )}
                         {/* Brands (Manager+) - Added from File 2, assumed Manager+ role */}
-                         {isManagerOrHigher && (
+                        {isManagerOrHigher && (
                             <Link to="/brands" className="sidebar-link" style={{
                                 textDecoration: 'none',
                                 color: 'inherit'
@@ -311,11 +311,11 @@ function ToolsSidebar() {
                                     onClick={() => handleItemClick("Brands")}
                                 />
                             </Link>
-                         )}
+                        )}
                     </SideBarDropdown>
-                 )}
+                )}
 
-                {}
+                { }
                 {isAdmin && (
                     <SideBarDropdown
                         isActive={isGroupActive(['/employee-management', '/create-user'])}
@@ -358,10 +358,10 @@ function ToolsSidebar() {
                                 alignItems: 'center',
                                 gap: '12px'
                             }}>
-                                <BsCartCheck size={16}/> Purchases
+                                <BsCartCheck size={16} /> Purchases
                             </div>
                         }>
-                         {/* Suppliers (Manager+) */}
+                        {/* Suppliers (Manager+) */}
                         <Link to="/supplier" className="sidebar-link" style={{
                             textDecoration: 'none',
                             color: 'inherit'
@@ -381,125 +381,149 @@ function ToolsSidebar() {
                             />
                         </Link>
                         {/* All Purchases (Manager+) - From File 2 */}
-                         <Link to="/all_purchases" className="sidebar-link" style={{
-                             textDecoration: 'none',
-                             color: 'inherit'
-                         }}>
-                             <SideBarItem
-                                 isActive={isPathActive('/all_purchases')}
-                                 title={
-                                     <div style={{
-                                         display: 'flex',
-                                         alignItems: 'center',
-                                         gap: '12px'
-                                     }}>
-                                         <BsCartCheck size={16} /> All Purchases
-                                     </div>
-                                 }
-                                 onClick={() => handleItemClick("All Purchases")}
-                             />
-                         </Link>
+                        <Link to="/all_purchases" className="sidebar-link" style={{
+                            textDecoration: 'none',
+                            color: 'inherit'
+                        }}>
+                            <SideBarItem
+                                isActive={isPathActive('/all_purchases')}
+                                title={
+                                    <div style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '12px'
+                                    }}>
+                                        <BsCartCheck size={16} /> All Purchases
+                                    </div>
+                                }
+                                onClick={() => handleItemClick("All Purchases")}
+                            />
+                        </Link>
                         {/* Create Purchase (Manager+) - From File 2 */}
-                         <Link to="/create_purchases" className="sidebar-link" style={{
-                             textDecoration: 'none',
-                             color: 'inherit'
-                         }}>
-                             <SideBarItem
-                                 isActive={isPathActive('/create_purchases')}
-                                 title={
-                                     <div style={{
-                                         display: 'flex',
-                                         alignItems: 'center',
-                                         gap: '12px'
-                                     }}>
-                                         <BsCartCheck size={16} /> Create Purchase
-                                     </div>
-                                 }
-                                 onClick={() => handleItemClick("Create Purchase")}
-                             />
-                         </Link>
+                        <Link to="/create_purchases" className="sidebar-link" style={{
+                            textDecoration: 'none',
+                            color: 'inherit'
+                        }}>
+                            <SideBarItem
+                                isActive={isPathActive('/create_purchases')}
+                                title={
+                                    <div style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '12px'
+                                    }}>
+                                        <BsCartCheck size={16} /> Create Purchase
+                                    </div>
+                                }
+                                onClick={() => handleItemClick("Create Purchase")}
+                            />
+                        </Link>
                         {/* Import Purchases (Manager+) - From File 2 */}
-                         <Link to="/import_purchases" className="sidebar-link" style={{
-                             textDecoration: 'none',
-                             color: 'inherit'
-                         }}>
-                             <SideBarItem
-                                 isActive={isPathActive('/import_purchases')}
-                                 title={
-                                     <div style={{
-                                         display: 'flex',
-                                         alignItems: 'center',
-                                         gap: '12px'
-                                     }}>
-                                         <BsCartCheck size={16} /> Import Purchases
-                                     </div>
-                                 }
-                                 onClick={() => handleItemClick("Import Purchases")}
-                             />
-                         </Link>
+                        <Link to="/import_purchases" className="sidebar-link" style={{
+                            textDecoration: 'none',
+                            color: 'inherit'
+                        }}>
+                            <SideBarItem
+                                isActive={isPathActive('/import_purchases')}
+                                title={
+                                    <div style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '12px'
+                                    }}>
+                                        <BsCartCheck size={16} /> Import Purchases
+                                    </div>
+                                }
+                                onClick={() => handleItemClick("Import Purchases")}
+                            />
+                        </Link>
                     </SideBarDropdown>
                 )}
 
                 {/* Sales Link/Dropdown (Manager+ for list/reports, Cashier+ for create) */}
-{isManagerOrHigher && ( // Or create a dropdown like Products/Purchases
-     <SideBarDropdown
-         isActive={isGroupActive(['/sales', '/sales-report', '/create-sale', '/import-sales'])} // Add new paths
-         title={
-             <div className="sidebar-link" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                 <TbReportMoney size={16} /> Sales
-             </div>
-         }>
+                {isManagerOrHigher && ( // Or create a dropdown like Products/Purchases
+                    <SideBarDropdown
+                        isActive={isGroupActive(['/sales', '/sales-report', '/create-sale', '/import-sales'])} // Add new paths
+                        title={
+                            <div className="sidebar-link" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                <TbReportMoney size={16} /> Sales
+                            </div>
+                        }>
 
-         {/* Sales List (Manager+) */}
-         <Link to="/sales" className="sidebar-link" style={{ textDecoration: 'none', color: 'inherit' }}>
-             <SideBarItem
-                 isActive={isPathActive('/sales')}
-                 title={<div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><TbReportMoney size={16} /> All Sales</div>}
-                 onClick={() => handleItemClick("All Sales")}
-             />
-         </Link>
+                        {/* Sales List (Manager+) */}
+                        <Link to="/sales" className="sidebar-link" style={{ textDecoration: 'none', color: 'inherit' }}>
+                            <SideBarItem
+                                isActive={isPathActive('/sales')}
+                                title={<div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><TbReportMoney size={16} /> All Sales</div>}
+                                onClick={() => handleItemClick("All Sales")}
+                            />
+                        </Link>
 
-         {/* Sales Report (Manager+) */}
-         <Link to="/sales-report" className="sidebar-link" style={{ textDecoration: 'none', color: 'inherit' }}>
-              <SideBarItem
-                   isActive={isPathActive('/sales-report')}
-                   title={
-                        <div style={{
-                             display: 'flex',
-                             alignItems: 'center',
-                             gap: '12px'
+                        {/* Sales Report (Manager+) */}
+                        <Link to="/sales-report" className="sidebar-link" style={{ textDecoration: 'none', color: 'inherit' }}>
+                            <SideBarItem
+                                isActive={isPathActive('/sales-report')}
+                                title={
+                                    <div style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '12px'
+                                    }}>
+                                        <TbReportMoney size={16} /> Sales Report {/* Use appropriate icon */}
+                                    </div>
+                                }
+                                onClick={() => handleItemClick("Sales Report")}
+                            />
+                        </Link>
+
+                        {/* Create Sale (Cashier+) <-- NEW LINK */}
+                        {isCashierOrHigher && (
+                            <Link to="/create-sale" className="sidebar-link" style={{ textDecoration: 'none', color: 'inherit' }}>
+                                <SideBarItem
+                                    isActive={isPathActive('/create-sale')}
+                                    title={<div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><FaPlus size={14} /> Create Sale</div>}
+                                    onClick={() => handleItemClick("Create Sale")}
+                                />
+                            </Link>
+                        )}
+
+                        {/* Import Sales (Manager+) <-- NEW LINK */}
+                        {isManagerOrHigher && (
+                            <Link to="/import-sales" className="sidebar-link" style={{ textDecoration: 'none', color: 'inherit' }}>
+                                <SideBarItem
+                                    isActive={isPathActive('/import-sales')}
+                                    title={<div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><FaUpload size={14} /> Import Sales</div>}
+                                    onClick={() => handleItemClick("Import Sales")}
+                                />
+                            </Link>
+                        )}
+
+                    </SideBarDropdown>
+                )}
+
+                {/* Loans Link (Manager+) */}
+                {isManagerOrHigher && (
+                    <Nav.Item className="sidebar-nav-item" style={{
+                        padding: '12px 16px',
+                        textAlign: 'left',
+                        fontSize: '14px',
+                        fontWeight: '500',
+                        color: isPathActive('/loans') ? '#357EC7' : '#505050',
+                        backgroundColor: isPathActive('/loans') ? '#f0f7ff' : 'transparent',
+                        margin: '2px 8px',
+                        borderRadius: '4px'
+                    }}>
+                        <Link to="/loans" className="sidebar-link" style={{
+                            textDecoration: 'none',
+                            color: 'inherit',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '12px'
                         }}>
-                             <TbReportMoney size={16} /> Sales Report {/* Use appropriate icon */}
-                        </div>
-                   }
-                   onClick={() => handleItemClick("Sales Report")}
-              />
-         </Link>
-
-          {/* Create Sale (Cashier+) <-- NEW LINK */}
-          {isCashierOrHigher && (
-              <Link to="/create-sale" className="sidebar-link" style={{ textDecoration: 'none', color: 'inherit' }}>
-                   <SideBarItem
-                        isActive={isPathActive('/create-sale')}
-                        title={<div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><FaPlus size={14} /> Create Sale</div>}
-                        onClick={() => handleItemClick("Create Sale")}
-                   />
-              </Link>
-          )}
-
-          {/* Import Sales (Manager+) <-- NEW LINK */}
-          {isManagerOrHigher && (
-              <Link to="/import-sales" className="sidebar-link" style={{ textDecoration: 'none', color: 'inherit' }}>
-                   <SideBarItem
-                        isActive={isPathActive('/import-sales')}
-                        title={<div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><FaUpload size={14} /> Import Sales</div>}
-                        onClick={() => handleItemClick("Import Sales")}
-                   />
-              </Link>
-          )}
-
-     </SideBarDropdown>
- )}
+                            <TbReportMoney size={16} /> Loans
+                        </Link>
+                    </Nav.Item>
+                )}
 
                 {/* Sales Link (Manager+) - From File 1 */}
                 {isManagerOrHigher && (
@@ -527,7 +551,7 @@ function ToolsSidebar() {
 
                 {/* Reports Dropdown (Manager+) - Merged (using File 2's structure and File 1's role check) */}
                 {isManagerOrHigher && (
-                     <SideBarDropdown
+                    <SideBarDropdown
                         isActive={isGroupActive(['/reports', '/sales-report'])}
                         title={
                             <div className="sidebar-link" style={{
@@ -535,7 +559,7 @@ function ToolsSidebar() {
                                 alignItems: 'center',
                                 gap: '12px'
                             }}>
-                                <HiOutlineDocumentReport size={16}/> Reports
+                                <HiOutlineDocumentReport size={16} /> Reports
                             </div>
                         }>
                         {/* General Reports (Manager+) - From File 2 */}
@@ -581,7 +605,7 @@ function ToolsSidebar() {
 
 
                 {/* POS Link (Cashier+) - From File 1 */}
-                 {isCashierOrHigher && (
+                {isCashierOrHigher && (
                     <Nav.Item className="sidebar-nav-item" style={{
                         padding: '12px 16px',
                         textAlign: 'left',
@@ -603,7 +627,7 @@ function ToolsSidebar() {
                             POS
                         </Link>
                     </Nav.Item>
-                 )}
+                )}
 
                 {/* Logout Link (Always visible) - Identical */}
                 <Nav.Item
