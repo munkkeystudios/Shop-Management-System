@@ -8,7 +8,7 @@ import '../components/AISalesInsights.css';
 import './sales.css'; // Reusing sales.css for styling
 import './collapsible-sales-report.css'; // New styles for collapsible report
 
-const SalesReport = () => {
+const Reports = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sales, setSales] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -153,7 +153,7 @@ const SalesReport = () => {
   };
 
   return (
-    <Layout title="Sales Report">
+    <Layout title="Reports">
       {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
           <span className="block sm:inline">{error}</span>
@@ -171,7 +171,7 @@ const SalesReport = () => {
             className="collapsible-report-header"
             onClick={() => setIsReportOpen(!isReportOpen)}
           >
-            <div className="collapsible-report-title">Sales Report</div>
+            <div className="collapsible-report-title">Reports</div>
             <FaChevronDown className={`collapsible-report-icon ${isReportOpen ? 'open' : ''}`} />
           </div>
 
@@ -340,4 +340,4 @@ const SalesReport = () => {
   );
 };
 
-export default SalesReport;
+export default Reports;

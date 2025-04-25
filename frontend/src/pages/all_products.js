@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { FaSearch, FaPlus, FaEdit, FaTrash, FaEye, FaPrint } from 'react-icons/fa';
+import { FaSearch, FaPlus, FaPrint } from 'react-icons/fa';
+import { FiEdit, FiTrash, FiEye } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useNotifications } from '../context/NotificationContext';
@@ -308,29 +309,26 @@ const AllProducts = () => {
                         <td>${product.price?.toFixed(2)}</td>
                         <td>{product.quantity}</td>
                         <td>
-                          <div className="products-action-buttons">
-                            <button
-                              className="products-action-button"
+                          <div className="action-icons">
+                            <FiEye
+                              className="edit-icon"
+                              title="View"
                               onClick={() => {
                                 setSelectedProduct(product);
                                 // Add overflow hidden to body to prevent background scrolling
                                 document.body.style.overflow = 'hidden';
                               }}
-                            >
-                              <FaEye />
-                            </button>
-                            <button
-                              className="products-action-button"
+                            />
+                            <FiEdit
+                              className="edit-icon"
+                              title="Edit"
                               onClick={() => handleEditClick(product)}
-                            >
-                              <FaEdit />
-                            </button>
-                            <button
-                              className="products-action-button"
+                            />
+                            <FiTrash
+                              className="delete-icon"
+                              title="Delete"
                               onClick={() => handleDeleteClick(product)}
-                            >
-                              <FaTrash />
-                            </button>
+                            />
                           </div>
                         </td>
                       </tr>

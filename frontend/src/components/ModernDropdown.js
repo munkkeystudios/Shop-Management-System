@@ -6,7 +6,7 @@ import '../styles/dropdown.css';
  */
 export const ModernDropdownItem = ({ children, isActive, onClick, className = '' }) => {
   return (
-    <div 
+    <div
       className={`sidebar-dropdown-item ${isActive ? 'active' : ''} ${className}`}
       onClick={onClick}
     >
@@ -20,10 +20,10 @@ export const ModernDropdownItem = ({ children, isActive, onClick, className = ''
  */
 const ModernDropdown = ({ title, children, isActive, headerColor = '#ffffff', className = '', style = {} }) => {
   const [isOpen, setIsOpen] = useState(false);
-  
+
   return (
     <div className={`sidebar-dropdown ${className}`} style={style}>
-      <div 
+      <div
         className="sidebar-dropdown-header"
         onClick={() => setIsOpen(!isOpen)}
         style={{ backgroundColor: headerColor }}
@@ -35,14 +35,16 @@ const ModernDropdown = ({ title, children, isActive, headerColor = '#ffffff', cl
           {isOpen ? '▲' : '▼'}
         </span>
       </div>
-      
+
       {isOpen && (
         <div className="sidebar-dropdown-content">
-          {children}
+          <div className="sidebar-dropdown-content-inner">
+            {children}
+          </div>
         </div>
       )}
     </div>
   );
 };
 
-export default ModernDropdown; 
+export default ModernDropdown;

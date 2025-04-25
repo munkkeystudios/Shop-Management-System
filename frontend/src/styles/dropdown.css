@@ -56,17 +56,18 @@
   flex-direction: column;
   padding-left: 0;
   margin-top: 4px;
-  overflow: hidden;
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  z-index: 10;
+  width: 100%;
   background-color: #ffffff;
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  max-height: 300px; /* Limit maximum height */
-  overflow-y: auto; /* Add scrolling for long lists */
+  position: relative;
+}
+
+.sidebar-dropdown-content-inner {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-height: 300px;
+  overflow-y: auto;
 }
 
 .sidebar-dropdown-item {
@@ -87,8 +88,8 @@
 }
 
 .sidebar-dropdown-item.active {
-  background-color: #f0f7ff;
-  color: #357EC7;
+  background-color: #00a838;
+  color: #ffffff;
 }
 
 .sidebar-dropdown-item-icon {
@@ -101,7 +102,7 @@
     height: 40px; /* Slightly smaller for mobile */
     padding: 10px 12px;
   }
-  
+
   .sidebar-dropdown-item {
     padding: 8px 12px 8px 20px;
   }
@@ -110,4 +111,42 @@
 /* Apply consistent width to the dropdown container if inside a form-group */
 .form-group .sidebar-dropdown {
   width: 100%;
-} 
+}
+
+/* Sidebar container styles */
+.sidebar-container {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-menu-container {
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db transparent;
+}
+
+.sidebar-menu-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-menu-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-menu-container::-webkit-scrollbar-thumb {
+  background-color: #d1d5db;
+  border-radius: 6px;
+}
+
+/* Ensure dropdowns don't cause layout issues */
+.sidebar-dropdown {
+  position: relative;
+  width: 100%;
+}
+
+/* Responsive adjustments */
+@media (max-height: 700px) {
+  .sidebar-dropdown-content-inner {
+    max-height: 200px;
+  }
+}

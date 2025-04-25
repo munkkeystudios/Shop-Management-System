@@ -18,13 +18,15 @@ import ModernDropdown, { ModernDropdownItem } from './ModernDropdown';
 // sidebar layout
 const SideBar = ({ children }) => {
     return (
-        <Nav className="flex-column" style={{
+        <Nav className="flex-column sidebar-container" style={{
             width: '270px',
             height: '100vh',
             backgroundColor: '#ffffff',
             boxShadow: '0 0 10px rgba(0, 0, 0, 0.05)',
             borderRight: '1px solid #e6e6ff',
-            overflow: 'auto'
+            display: 'flex',
+            flexDirection: 'column',
+            position: 'relative'
         }}>
             {children}
         </Nav>
@@ -34,12 +36,10 @@ const SideBar = ({ children }) => {
 // dropdown component that allows collapsing
 // takes in title and children
 const SideBarDropdown = ({ title, children, isActive }) => {
-    const [isOpen, setIsOpen] = useState(isActive); // Initialize based on isActive
+    // We don't need to track isOpen separately since we're using isActive
+    // to control the dropdown state through ModernDropdown
 
-    // Update isOpen state if isActive prop changes
-    useEffect(() => {
-        setIsOpen(isActive);
-    }, [isActive]);
+    // Update effect removed as it's no longer needed
 
     return (
         <ModernDropdown
@@ -63,8 +63,8 @@ const SideBarItem = ({ title, onClick, isActive }) => {
                 padding: '10px 12px',
                 textAlign: 'left',
                 fontSize: '14px',
-                color: isActive ? '#357EC7' : '#505050',
-                backgroundColor: isActive ? '#f0f7ff' : 'transparent',
+                color: isActive ? '#ffffff' : '#505050',
+                backgroundColor: isActive ? '#00a838' : 'transparent',
                 borderRadius: '4px',
                 margin: '2px 8px'
             }}
@@ -80,7 +80,7 @@ SideBar.Item = SideBarItem;
 
 // main default sidebar function
 function ToolsSidebar() {
-    const { logout, user } = useAuth();
+    const { logout, } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
     const [companyLogo, setCompanyLogo] = useState(null);
@@ -93,12 +93,12 @@ function ToolsSidebar() {
             try {
                 const response = await settingsAPI.getAll();
                 const settings = response.data;
-                
+
                 if (settings.logoUrl) {
                     const baseUrl = process.env.REACT_APP_API_URL || 'http://localhost:5002';
                     setCompanyLogo(baseUrl + settings.logoUrl);
                 }
-                
+
                 if (settings.companyName) {
                     setCompanyName(settings.companyName);
                 }
@@ -106,7 +106,7 @@ function ToolsSidebar() {
                 console.error('Error fetching company settings:', error);
             }
         };
-        
+
         fetchSettings();
     }, []);
 
@@ -151,7 +151,8 @@ function ToolsSidebar() {
                 display: 'flex',
                 alignItems: 'center',
                 padding: '20px 20px',
-                borderBottom: '1px solid #e6e6ff'
+                borderBottom: '1px solid #e6e6ff',
+                flex: '0 0 auto'
             }}>
                 <img
                     src={companyLogo || logoImage}
@@ -171,7 +172,12 @@ function ToolsSidebar() {
                 }}>{companyName}</span>
             </div>
 
-            <div style={{ padding: '10px 0' }}>
+            <div className="sidebar-menu-container" style={{
+                padding: '10px 0',
+                flex: '1 1 auto',
+                overflowY: 'auto',
+                overflowX: 'hidden'
+            }}>
                 {/* Dashboard (Cashier+) */}
                 {isCashierOrHigher && (
                     <Nav.Item className="sidebar-nav-item" style={{
@@ -179,8 +185,8 @@ function ToolsSidebar() {
                         textAlign: 'left',
                         fontSize: '14px',
                         fontWeight: '500',
-                        color: isPathActive('/dashboard') ? '#357EC7' : '#505050',
-                        backgroundColor: isPathActive('/dashboard') ? '#f0f7ff' : 'transparent',
+                        color: isPathActive('/dashboard') ? '#ffffff' : '#505050',
+                        backgroundColor: isPathActive('/dashboard') ? '#00a838' : 'transparent',
                         margin: '2px 8px',
                         borderRadius: '4px'
                     }}>
@@ -198,7 +204,7 @@ function ToolsSidebar() {
 
                 {/* Products Dropdown (Cashier+) */}
                 {isCashierOrHigher && (
-                    <ModernDropdown 
+                    <ModernDropdown
                         isActive={isGroupActive(['/products', '/all_products', '/create_products', '/inventory', '/categories', '/brands'])}
                         title={
                             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -207,7 +213,7 @@ function ToolsSidebar() {
                         }
                     >
                         <Link to="/all_products" style={{ textDecoration: 'none', color: 'inherit' }}>
-                            <ModernDropdownItem 
+                            <ModernDropdownItem
                                 isActive={isPathActive('/all_products')}
                                 onClick={() => handleItemClick("All Products")}
                             >
@@ -216,7 +222,7 @@ function ToolsSidebar() {
                                 </div>
                             </ModernDropdownItem>
                         </Link>
-                        
+
                         {isManagerOrHigher && (
                             <Link to="/create_products" style={{ textDecoration: 'none', color: 'inherit' }}>
                                 <ModernDropdownItem
@@ -229,7 +235,7 @@ function ToolsSidebar() {
                                 </ModernDropdownItem>
                             </Link>
                         )}
-                        
+
                         <Link to="/inventory" style={{ textDecoration: 'none', color: 'inherit' }}>
                             <ModernDropdownItem
                                 isActive={isPathActive('/inventory')}
@@ -240,7 +246,7 @@ function ToolsSidebar() {
                                 </div>
                             </ModernDropdownItem>
                         </Link>
-                        
+
                         {isManagerOrHigher && (
                             <Link to="/categories" style={{ textDecoration: 'none', color: 'inherit' }}>
                                 <ModernDropdownItem
@@ -253,7 +259,7 @@ function ToolsSidebar() {
                                 </ModernDropdownItem>
                             </Link>
                         )}
-                        
+
                         {isManagerOrHigher && (
                             <Link to="/brands" style={{ textDecoration: 'none', color: 'inherit' }}>
                                 <ModernDropdownItem
@@ -327,7 +333,7 @@ function ToolsSidebar() {
                                 </div>
                             </ModernDropdownItem>
                         </Link>
-                        
+
                         <Link to="/all_purchases" style={{ textDecoration: 'none', color: 'inherit' }}>
                             <ModernDropdownItem
                                 isActive={isPathActive('/all_purchases')}
@@ -338,7 +344,7 @@ function ToolsSidebar() {
                                 </div>
                             </ModernDropdownItem>
                         </Link>
-                        
+
                         <Link to="/create_purchases" style={{ textDecoration: 'none', color: 'inherit' }}>
                             <ModernDropdownItem
                                 isActive={isPathActive('/create_purchases')}
@@ -349,7 +355,7 @@ function ToolsSidebar() {
                                 </div>
                             </ModernDropdownItem>
                         </Link>
-                        
+
                         <Link to="/import_purchases" style={{ textDecoration: 'none', color: 'inherit' }}>
                             <ModernDropdownItem
                                 isActive={isPathActive('/import_purchases')}
@@ -383,7 +389,7 @@ function ToolsSidebar() {
                                 </div>
                             </ModernDropdownItem>
                         </Link>
-                        
+
                         <Link to="/sales-report" style={{ textDecoration: 'none', color: 'inherit' }}>
                             <ModernDropdownItem
                                 isActive={isPathActive('/sales-report')}
@@ -394,7 +400,7 @@ function ToolsSidebar() {
                                 </div>
                             </ModernDropdownItem>
                         </Link>
-                        
+
                         {isCashierOrHigher && (
                             <Link to="/create-sale" style={{ textDecoration: 'none', color: 'inherit' }}>
                                 <ModernDropdownItem
@@ -407,7 +413,7 @@ function ToolsSidebar() {
                                 </ModernDropdownItem>
                             </Link>
                         )}
-                        
+
                         {isManagerOrHigher && (
                             <Link to="/import-sales" style={{ textDecoration: 'none', color: 'inherit' }}>
                                 <ModernDropdownItem
@@ -430,8 +436,8 @@ function ToolsSidebar() {
                         textAlign: 'left',
                         fontSize: '14px',
                         fontWeight: '500',
-                        color: isPathActive('/loans') ? '#357EC7' : '#505050',
-                        backgroundColor: isPathActive('/loans') ? '#f0f7ff' : 'transparent',
+                        color: isPathActive('/loans') ? '#ffffff' : '#505050',
+                        backgroundColor: isPathActive('/loans') ? '#00a838' : 'transparent',
                         margin: '2px 8px',
                         borderRadius: '4px'
                     }}>
@@ -447,37 +453,28 @@ function ToolsSidebar() {
                     </Nav.Item>
                 )}
 
-                {/* Reports Dropdown (Manager+) */}
+                {/* Reports Link (Manager+) */}
                 {isManagerOrHigher && (
-                    <ModernDropdown
-                        isActive={isGroupActive(['/reports', '/sales-report'])}
-                        title={
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                <HiOutlineDocumentReport size={16}/> Reports
-                            </div>
-                        }
-                    >
-                        <Link to="/reports" style={{ textDecoration: 'none', color: 'inherit' }}>
-                            <ModernDropdownItem
-                                isActive={isPathActive('/reports')}
-                                onClick={() => handleItemClick("General Reports")}
-                            >
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                    <HiOutlineDocumentReport size={16} /> General Reports
-                                </div>
-                            </ModernDropdownItem>
+                    <Nav.Item className="sidebar-nav-item" style={{
+                        padding: '12px 16px',
+                        textAlign: 'left',
+                        fontSize: '14px',
+                        fontWeight: '500',
+                        color: isPathActive('/sales-report') ? '#ffffff' : '#505050',
+                        backgroundColor: isPathActive('/sales-report') ? '#00a838' : 'transparent',
+                        margin: '2px 8px',
+                        borderRadius: '4px'
+                    }}>
+                        <Link to="/sales-report" className="sidebar-link" style={{
+                            textDecoration: 'none',
+                            color: 'inherit',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '12px'
+                        }}>
+                            <HiOutlineDocumentReport size={16} /> Reports
                         </Link>
-                        <Link to="/sales-report" style={{ textDecoration: 'none', color: 'inherit' }}>
-                            <ModernDropdownItem
-                                isActive={isPathActive('/sales-report')}
-                                onClick={() => handleItemClick("Sales Report")}
-                            >
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                    <TbReportMoney size={16} /> Sales Report
-                                </div>
-                            </ModernDropdownItem>
-                        </Link>
-                    </ModernDropdown>
+                    </Nav.Item>
                 )}
 
                 {/* POS Link (Cashier+) */}
@@ -487,8 +484,8 @@ function ToolsSidebar() {
                         textAlign: 'left',
                         fontSize: '14px',
                         fontWeight: '500',
-                        color: isPathActive('/pos') ? '#357EC7' : '#505050',
-                        backgroundColor: isPathActive('/pos') ? '#f0f7ff' : 'transparent',
+                        color: isPathActive('/pos') ? '#ffffff' : '#505050',
+                        backgroundColor: isPathActive('/pos') ? '#00a838' : 'transparent',
                         margin: '2px 8px',
                         borderRadius: '4px'
                     }}>
@@ -523,7 +520,7 @@ function ToolsSidebar() {
                             </div>
                         </ModernDropdownItem>
                     </Link>
-                    
+
                     {/* Display Settings - only for managers and admins */}
                     {isManagerOrHigher && (
                         <Link to="/settings/display" style={{ textDecoration: 'none', color: 'inherit' }}>
@@ -537,7 +534,7 @@ function ToolsSidebar() {
                             </ModernDropdownItem>
                         </Link>
                     )}
-                    
+
                     {/* General Settings - only for admins */}
                     {isAdmin && (
                         <Link to="/settings/general" style={{ textDecoration: 'none', color: 'inherit' }}>
@@ -563,7 +560,8 @@ function ToolsSidebar() {
                         textAlign: 'left',
                         fontSize: '14px',
                         fontWeight: '500',
-                        color: '#ff5252',
+                        color: '#ffffff',
+                        backgroundColor: '#ff5252',
                         margin: '2px 8px',
                         borderRadius: '4px',
                         marginTop: '20px'
@@ -572,6 +570,9 @@ function ToolsSidebar() {
                     Logout
                 </Nav.Item>
             </div>
+
+            {/* Bottom padding to ensure scrollable content doesn't get cut off */}
+            <div style={{ padding: '10px', flex: '0 0 auto' }}></div>
         </SideBar>
     );
 }

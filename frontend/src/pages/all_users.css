@@ -6,6 +6,10 @@
   overflow: hidden;
 }
 
+.users-page-content {
+  width: 100%;
+}
+
 .content-container {
   flex-grow: 1;
   padding: 20px;
@@ -17,13 +21,6 @@
 .header-section {
   margin-bottom: 20px;
   width: 100%;
-}
-
-.header-section h1 {
-  font-size: 24px;
-  font-weight: 600;
-  margin-bottom: 20px;
-  color: #333;
 }
 
 .search-filter-container {
@@ -56,7 +53,7 @@
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   font-size: 14px;
-  
+
 }
 
 .search-input::placeholder {
@@ -132,7 +129,7 @@ button:active {
 .users-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 800px; 
+  min-width: 800px;
   table-layout: fixed;
 }
 
@@ -156,32 +153,32 @@ button:active {
   text-overflow: ellipsis;
 }
 
-.users-table th:nth-child(1), 
+.users-table th:nth-child(1),
 .users-table td:nth-child(1) {
   width: 20%;
 }
 
-.users-table th:nth-child(2), 
+.users-table th:nth-child(2),
 .users-table td:nth-child(2) {
   width: 25%;
 }
 
-.users-table th:nth-child(3), 
+.users-table th:nth-child(3),
 .users-table td:nth-child(3) {
   width: 15%;
 }
 
-.users-table th:nth-child(4), 
+.users-table th:nth-child(4),
 .users-table td:nth-child(4) {
   width: 15%;
 }
 
-.users-table th:nth-child(5), 
+.users-table th:nth-child(5),
 .users-table td:nth-child(5) {
   width: 15%;
 }
 
-.users-table th:nth-child(6), 
+.users-table th:nth-child(6),
 .users-table td:nth-child(6) {
   width: 10%;
 }
@@ -290,11 +287,11 @@ button:active {
     flex-direction: column;
     align-items: flex-start;
   }
-  
+
   .search-container {
     width: 100%;
   }
-  
+
   .action-buttons {
     width: 100%;
     justify-content: flex-start;
@@ -303,21 +300,21 @@ button:active {
 }
 
 @media (max-width: 768px) {
-  .users-table th, 
+  .users-table th,
   .users-table td {
     padding: 10px;
   }
-  
+
   .action-buttons {
     flex-wrap: wrap;
     gap: 8px;
   }
-  
+
   button {
     padding: 6px 12px;
     font-size: 13px;
   }
-  
+
   .users-table th:nth-child(3),
   .users-table td:nth-child(3) {
     display: none;
@@ -328,11 +325,11 @@ button:active {
   .content-container {
     padding: 10px;
   }
-  
+
   .header-section h1 {
     font-size: 20px;
   }
-  
+
   .users-table th:nth-child(4),
   .users-table td:nth-child(4) {
     display: none;

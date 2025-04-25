@@ -1,5 +1,6 @@
 import React, { useState, useEffect} from "react";
-import { FaEdit, FaTrash, FaSearch, FaPlus, FaTimes } from 'react-icons/fa';
+import { FaSearch, FaPlus, FaTimes } from 'react-icons/fa';
+import { FiEdit, FiTrash } from 'react-icons/fi';
 import Layout from '../components/Layout';
 import { useNotifications } from '../context/NotificationContext';
 import './supplier.css';
@@ -182,16 +183,18 @@ const handleSubmit = async (e) => {
                         <td>{supplier.phone}</td>
                         <td>{supplier.address}</td>
                         <td>
-                          <div className="supplier-action-buttons">
-                            <button className="supplier-action-button"
-                            onClick={() => handleEdit(supplier)}>
-                              <FaEdit />
-                            </button>
-                            <button className="supplier-action-button"
-                            onClick={() => handleDelete(supplier._id)}>
-                              <FaTrash />
-                            </button>
-                    </div>
+                          <div className="action-icons">
+                            <FiEdit
+                              className="edit-icon"
+                              title="Edit"
+                              onClick={() => handleEdit(supplier)}
+                            />
+                            <FiTrash
+                              className="delete-icon"
+                              title="Delete"
+                              onClick={() => handleDelete(supplier._id)}
+                            />
+                          </div>
                         </td>
                       </tr>
                     ))}

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import { FaEdit, FaTrash, FaSearch, FaPlus, FaTimes, FaUpload } from 'react-icons/fa';
+import { FaSearch, FaPlus, FaTimes, FaUpload } from 'react-icons/fa';
+import { FiEdit, FiTrash } from 'react-icons/fi';
 import Layout from '../components/Layout';
 import api from '../services/api';
 import { useNotifications } from '../context/NotificationContext';
@@ -210,19 +211,17 @@ const Brands = () => {
                         <td>{brand.name}</td>
                         <td>{brand.description}</td>
                         <td>
-                          <div className="categories-action-buttons">
-                            <button
-                              className="categories-action-button"
+                          <div className="action-icons">
+                            <FiEdit
+                              className="edit-icon"
+                              title="Edit"
                               onClick={() => handleEdit(brand)}
-                            >
-                              <FaEdit />
-                            </button>
-                            <button
-                              className="categories-action-button"
+                            />
+                            <FiTrash
+                              className="delete-icon"
+                              title="Delete"
                               onClick={() => handleDelete(brand._id)}
-                            >
-                              <FaTrash />
-                            </button>
+                            />
                           </div>
                         </td>
                       </tr>

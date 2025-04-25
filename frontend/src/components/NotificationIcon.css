@@ -24,11 +24,11 @@
 }
 
 .notification-button.has-notifications {
-  color: #0d6efd;
+  color: #00a838;
 }
 
 .notification-button.has-notifications:hover {
-  background-color: #e6f2ff;
+  background-color: #e6ffe6;
 }
 
 .notification-badge {
@@ -86,7 +86,7 @@
 .clear-all-button {
   background: none;
   border: none;
-  color: #0d6efd;
+  color: #00a838;
   font-size: 12px;
   cursor: pointer;
   padding: 4px;
@@ -116,11 +116,11 @@
 }
 
 .notification-item.unread {
-  background-color: #f0f7ff;
+  background-color: #f0fff0;
 }
 
 .notification-item.unread:hover {
-  background-color: #e6f2ff;
+  background-color: #e6ffe6;
 }
 
 .notification-icon {
@@ -131,9 +131,9 @@
   justify-content: center;
   width: 40px;
   height: 40px;
-  background-color: #f0f7ff;
+  background-color: #e6ffe6;
   border-radius: 50%;
-  color: #0d6efd;
+  color: #00a838;
 }
 
 .notification-content {
@@ -183,7 +183,7 @@
 }
 
 .notification-loading {
-  color: #0d6efd;
+  color: #00a838;
 }
 
 .notification-actions {
@@ -202,7 +202,7 @@
 .mark-all-read-button {
   background: none;
   border: none;
-  color: #0d6efd;
+  color: #00a838;
   font-size: 13px;
   cursor: pointer;
   padding: 4px;
@@ -210,14 +210,14 @@
 }
 
 .mark-all-read-button:hover {
-  color: #0a58ca;
+  color: #008a2e;
   text-decoration: underline;
 }
 
 .notification-header .clear-all-button {
   background: none;
   border: none;
-  color: #0d6efd;
+  color: #00a838;
   font-size: 13px;
   cursor: pointer;
   padding: 4px;
@@ -225,15 +225,15 @@
 }
 
 .notification-header .clear-all-button:hover {
-  color: #0a58ca;
+  color: #008a2e;
   text-decoration: underline;
 }
 
 .notification-footer .clear-all-button {
   background: none;
-  border: 1px solid #dee2e6;
+  border: 1px solid #00a838;
   border-radius: 4px;
-  color: #6c757d;
+  color: #00a838;
   font-size: 13px;
   cursor: pointer;
   padding: 8px 16px;
@@ -241,8 +241,8 @@
 }
 
 .notification-footer .clear-all-button:hover {
-  background-color: #e9ecef;
-  color: #495057;
+  background-color: #e6ffe6;
+  color: #008a2e;
 }
 
 @media (max-width: 576px) {

@@ -277,14 +277,14 @@ const preparePaymentMethodData = (paymentMethodStats) => {
 
   const data = paymentMethodStats.map(method => method.totalValue);
 
-  // Generate blue-themed colors
+  // Generate green-themed colors
   const backgroundColors = [
-    'rgba(13, 110, 253, 0.8)',   // Primary blue (POS button color)
-    'rgba(25, 91, 183, 0.7)',    // Dark blue
-    'rgba(66, 135, 245, 0.8)',   // Medium blue
-    'rgba(173, 216, 230, 0.8)',  // Light blue
-    'rgba(0, 123, 255, 0.7)',    // Bootstrap blue
-    'rgba(209, 229, 255, 0.8)',  // Pale blue
+    'rgba(0, 168, 56, 0.8)',     // Primary green (#00a838)
+    'rgba(0, 138, 46, 0.7)',     // Dark green
+    'rgba(46, 184, 92, 0.8)',    // Medium green
+    'rgba(152, 229, 173, 0.8)',  // Light green
+    'rgba(34, 197, 94, 0.7)',    // Bootstrap green
+    'rgba(220, 252, 231, 0.8)',  // Pale green
   ];
 
   return {
@@ -344,8 +344,8 @@ export const SalesBarChart = ({ sales }) => {
   // Create background colors array with the highest month highlighted
   const backgroundColors = salesByMonth.labels.map(month => {
     return month === highestMonth ?
-      '#0d6efd' : // Blue for highest month (matching POS button)
-      'rgba(209, 229, 255, 0.8)'; // Light blue for other months
+      '#00a838' : // Green for highest month
+      'rgba(220, 252, 231, 0.8)'; // Light green for other months
   });
 
   const data = {
@@ -416,17 +416,17 @@ export const SalesTrendLineChart = ({ sales }) => {
       {
         label: 'Monthly Sales',
         data: salesData,
-        borderColor: 'rgba(13, 110, 253, 1)',
-        backgroundColor: 'rgba(209, 229, 255, 0.4)',
+        borderColor: 'rgba(0, 168, 56, 1)',
+        backgroundColor: 'rgba(220, 252, 231, 0.4)',
         pointRadius: 4,
-        pointBackgroundColor: 'rgba(13, 110, 253, 1)',
+        pointBackgroundColor: 'rgba(0, 168, 56, 1)',
         tension: 0.3, // Smoother curve
       },
       {
         label: 'Trend (3-month avg)',
         data: trendData,
-        borderColor: 'rgba(25, 91, 183, 0.7)',
-        backgroundColor: 'rgba(25, 91, 183, 0.1)',
+        borderColor: 'rgba(0, 138, 46, 0.7)',
+        backgroundColor: 'rgba(0, 138, 46, 0.1)',
         borderDash: [5, 5],
         pointRadius: 0,
         tension: 0.4,

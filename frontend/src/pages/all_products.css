@@ -109,7 +109,7 @@
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
-  background-color: #0d6efd;
+  background-color: #00a838;
   border: none;
   color: white;
 }
@@ -120,7 +120,7 @@
 }
 
 .products-create-button:hover {
-  background-color: #0b5ed7;
+  background-color: #00a838;
 }
 
 .products-table {
@@ -174,22 +174,30 @@
   object-fit: cover;
 }
 
-.products-action-buttons {
+.action-icons {
   display: flex;
-  gap: 8px;
+  gap: 10px;
 }
 
-.products-action-button {
-  background: none;
-  border: none;
-  padding: 6px;
+.edit-icon, .delete-icon {
   cursor: pointer;
-  color: #6c757d;
-  transition: color 0.2s;
+  font-size: 16px;
 }
 
-.products-action-button:hover {
-  color: #0d6efd;
+.edit-icon {
+  color: #6b7280;
+}
+
+.edit-icon:hover {
+  color: #00a838;
+}
+
+.delete-icon {
+  color: #ef4444;
+}
+
+.delete-icon:hover {
+  color: #dc2626;
 }
 
 .products-pagination-container {
@@ -217,7 +225,7 @@
 }
 
 .products-pagination-button:hover {
-  color: #0d6efd;
+  color: #00a838;
 }
 
 .products-page-info {
@@ -374,7 +382,7 @@
 }
 
 .products-print-label-btn {
-  background-color: #0d6efd;
+  background-color: #00a838;
   color: white;
   font-size: 12px;
   padding: 5px 10px;
@@ -389,7 +397,7 @@
 }
 
 .products-print-label-btn:hover {
-  background-color: #0b5ed7;
+  background-color: #008a2e;
 }
 
 @media (max-width: 768px) {
