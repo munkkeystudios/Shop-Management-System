@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Search, Filter, FileText, FileSpreadsheet, Plus, AlertCircle } from 'lucide-react';
 import axios from 'axios';
 import './all_purchases.css';
+import Layout from '../components/Layout';
 import PurchaseFilter from './purchase_filter';
 
 const AllPurchases = () => {
@@ -167,6 +168,7 @@ const AllPurchases = () => {
   const activeFilterCount = Object.values(filters).filter(value => value !== '').length;
 
   return (
+    <Layout title="All Purchases">
     <div className="all-purchases-container">
       <div className="header">
         <h2>All Purchases</h2>
@@ -295,6 +297,7 @@ const AllPurchases = () => {
         </button>
       </div>
     </div>
+    </Layout>
   );
 };
 
