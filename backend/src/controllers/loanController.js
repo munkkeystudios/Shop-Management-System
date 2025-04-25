@@ -98,3 +98,20 @@ exports.updateLoanRepayment = async (req, res) => {
     res.status(500).json({ success: false, message: 'Error updating loan repayment', error: error.message });
   }
 };
+
+// Validate Loan Number
+exports.validateLoan = async (req, res) => {
+  try {
+    const { loanNumber } = req.body;
+    const loan = await Loan.findOne({ loanNumber });
+
+    if (!loan) {
+      return res.status(404).json({ valid: false, message: 'Loan not found' });
+    }
+
+    return res.status(200).json({ valid: true, loan });
+  } catch (error) {
+    console.error('Error validating loan:', error);
+    return res.status(500).json({ valid: false, message: 'Server error' });
+  }
+};

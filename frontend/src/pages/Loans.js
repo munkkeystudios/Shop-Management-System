@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { FaSearch, FaEye } from 'react-icons/fa';
 import Layout from '../components/Layout';
-import loansAPI from '../services/loanService';
 import '../styles/Loans.css';
+import { loansAPI } from '../services/api'; 
 
 const mockLoans = [
     {

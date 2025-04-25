@@ -1,6 +1,5 @@
 import api from './api';
 
-// Loans API service
 export const loansAPI = {
     getAll: () => api.get('/loans'), 
     getById: (id) => api.get(`/loans/${id}`), 
@@ -8,6 +7,7 @@ export const loansAPI = {
     create: (loanData) => api.post('/loans', loanData), 
     updateRepayment: (id, repaymentData) => api.put(`/loans/${id}/repayment`, repaymentData), 
     delete: (id) => api.delete(`/loans/${id}`), 
+    validateLoan: (loanNumber) => api.post('/loans/validate-loan', { loanNumber }),
 };
 
 export default loansAPI;

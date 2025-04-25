@@ -9,7 +9,6 @@ const api = axios.create({
 });
 
 // Request interceptor to add auth token to requests
-// and log outgoing requests for debugging
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token'); // Assuming token is stored in localStorage
@@ -26,7 +25,6 @@ api.interceptors.request.use(
 );
 
 // Response interceptor to handle token expiration or unauthorized access
-// and log incoming responses/errors
 api.interceptors.response.use(
   (response) => {
     console.log(
@@ -42,10 +40,8 @@ api.interceptors.response.use(
       error.response?.data || error.message
     );
     if (error.response && (error.response.status === 401 || error.response.status === 403)) {
-      // Token expired or invalid, or insufficient permissions
       console.warn(`Auth Error (${error.response.status}): Redirecting to login.`);
       localStorage.removeItem('token'); // Clear invalid token
-      // Prevent redirect loops if already on login page
       if (window.location.pathname !== '/login') {
         window.location.href = '/login';
       }
@@ -106,15 +102,16 @@ export const suppliersAPI = {
   delete: (id) => api.delete(`/suppliers/${id}`),
 };
 
-// Inventory API (Note: May overlap with product stock updates, clarify usage)
-// export const inventoryAPI = {
-//   // Assuming '/inventory' might provide a summary or specific inventory view
-//   // If it's just product stock, use productsAPI.updateStock
-//   // getAll: () => api.get('/inventory'),
-//   // updateStock: (id, quantity) => api.put(`/inventory/${id}`, { quantity }), // Likely handled by product patch
-//
-//   // i think this is just more just product stock, i dont think we are doing another inventory schema - Walid
-// };
+// Loans API
+export const loansAPI = {
+  getAll: () => api.get('/loans'),
+  getById: (id) => api.get(`/loans/${id}`),
+  getByLoanNumber: (loanNumber) => api.get(`/loans/loan-number/${loanNumber}`),
+  create: (loanData) => api.post('/loans', loanData),
+  updateRepayment: (id, repaymentData) => api.put(`/loans/${id}/repayment`, repaymentData),
+  delete: (id) => api.delete(`/loans/${id}`),
+  validateLoan: (loanNumber) => api.post('/loans/validate-loan', { loanNumber }),
+};
 
 // Brands API (Assuming you might need this later)
 export const brandsAPI = {
