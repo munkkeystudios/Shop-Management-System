@@ -1,11 +1,17 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback,useRef } from 'react';
 import { Search, Filter, FileText, FileSpreadsheet, Plus, AlertCircle } from 'lucide-react';
 import axios from 'axios';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+import { Link } from 'react-router-dom';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 import './all_purchases.css';
 import Layout from '../components/Layout';
 import PurchaseFilter from './purchase_filter';
 
 const AllPurchases = () => {
+  const exportRef = useRef();
   const [purchases, setPurchases] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -103,25 +109,32 @@ const AllPurchases = () => {
     setCurrentPage(1); // Reset to page 1 when filters change
   };
   
-  // Handle export
-  const handleExport = (format) => {
-    // Build query parameters for export including current filters
-    const params = new URLSearchParams({
-      format,
-      ...filters
-    });
-    
-    if (searchQuery.trim()) {
-      params.append('search', searchQuery);
+ 
+  const handleExport = async (format) => {
+    const exportElement = exportRef.current;
+
+    if (!exportElement) return;
+
+    if (format === 'pdf') {
+      const canvas = await html2canvas(exportElement);
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save('purchases.pdf');
     }
-    
-    // Generate full URL for export
-    const exportUrl = `/api/purchases/export?${params.toString()}`;
-    
-    // Open export URL in new tab/window
-    window.open(exportUrl, '_blank');
+
+    if (format === 'csv') {
+      const table = exportElement.querySelector('table');
+      if (!table) return;
+      const ws = XLSX.utils.table_to_sheet(table);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Purchases');
+      const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+      saveAs(new Blob([wbout], { type: 'application/octet-stream' }), 'purchases.xlsx');
+    }
   };
-  
   // Format date string
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -196,10 +209,6 @@ const AllPurchases = () => {
               <FileSpreadsheet size={16} />
               <span>Excel</span>
             </button>
-            <button className="create-btn" onClick={() => window.location.href = '/create-purchase'}>
-              <Plus size={16} />
-              <span>Create New Purchase</span>
-            </button>
           </div>
         </div>
         
@@ -218,7 +227,7 @@ const AllPurchases = () => {
         </div>
       )}
 
-      <div className="table-container">
+      <div className="table-container" ref={exportRef}>
         {loading ? (
           <div className="loading">Loading purchases...</div>
         ) : purchases.length === 0 ? (
