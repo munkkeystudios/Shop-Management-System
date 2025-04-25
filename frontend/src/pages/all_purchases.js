@@ -1,33 +1,39 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback,useRef } from 'react';
 import { Search, Filter, FileText, FileSpreadsheet, Plus, AlertCircle } from 'lucide-react';
 import axios from 'axios';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+import { Link } from 'react-router-dom';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 import './all_purchases.css';
-import Layout from '../components/Layout';
 import PurchaseFilter from './purchase_filter';
+import Layout from '../components/Layout';
 
 const AllPurchases = () => {
+  const exportRef = useRef();
   const [purchases, setPurchases] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [limit, setLimit] = useState(10);
-  
+
   // Filter state
   const [filters, setFilters] = useState({});
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  
+
   // Search state
   const [searchQuery, setSearchQuery] = useState('');
-  
+
   // Fetch purchases with current filters and pagination
   const fetchPurchases = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-      
+
       // Build query params
       const params = {
         page: currentPage,
@@ -35,14 +41,14 @@ const AllPurchases = () => {
         sort: '-date',
         ...filters
       };
-      
+
       // Only add search query if it exists
       if (searchQuery.trim()) {
         params.search = searchQuery;
       }
-      
+
       const response = await axios.get('/api/purchases', { params });
-      
+
       if (response.data.success) {
         setPurchases(response.data.data);
         setTotalPages(response.data.totalPages);
@@ -58,12 +64,12 @@ const AllPurchases = () => {
       setLoading(false);
     }
   }, [currentPage, limit, filters, searchQuery]);
-  
+
   // Initial fetch
   useEffect(() => {
     fetchPurchases();
   }, [fetchPurchases]);
-  
+
   // Handle pagination
   const handlePrevious = () => {
     if (currentPage > 1) {
@@ -76,12 +82,12 @@ const AllPurchases = () => {
       setCurrentPage(currentPage + 1);
     }
   };
-  
+
   // Handle search input
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
   };
-  
+
   // Submit search with delay to prevent too many requests
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -89,15 +95,15 @@ const AllPurchases = () => {
       setCurrentPage(1);
       fetchPurchases();
     }, 500);
-    
+
     return () => clearTimeout(timeoutId);
   }, [searchQuery, fetchPurchases]);
-  
+
   // Handle filters
   const toggleFilter = () => {
     setIsFilterOpen(!isFilterOpen);
   };
-  
+
   const handleApplyFilters = (newFilters) => {
     setFilters(newFilters);
     setCurrentPage(1); // Reset to page 1 when filters change
@@ -211,12 +217,12 @@ const AllPurchases = () => {
         />
       </div>
 
-      {error && (
-        <div className="error-message">
-          <AlertCircle size={16} />
-          <span>{error}</span>
-        </div>
-      )}
+        {error && (
+          <div className="error-message">
+            <AlertCircle size={16} />
+            <span>{error}</span>
+          </div>
+        )}
 
       <div className="table-container">
         {loading ? (
@@ -279,24 +285,24 @@ const AllPurchases = () => {
         )}
       </div>
 
-      <div className="pagination">
-        <button 
-          className={`pagination-btn ${currentPage === 1 ? 'disabled' : ''}`}
-          onClick={handlePrevious}
-          disabled={currentPage === 1}
-        >
-          Previous
-        </button>
-        <span className="page-info">Page {currentPage} of {totalPages}</span>
-        <button 
-          className={`pagination-btn ${currentPage === totalPages ? 'disabled' : ''}`}
-          onClick={handleNext}
-          disabled={currentPage === totalPages}
-        >
-          Next
-        </button>
+        <div className="pagination">
+          <button
+            className={`pagination-btn ${currentPage === 1 ? 'disabled' : ''}`}
+            onClick={handlePrevious}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </button>
+          <span className="page-info">Page {currentPage} of {totalPages}</span>
+          <button
+            className={`pagination-btn ${currentPage === totalPages ? 'disabled' : ''}`}
+            onClick={handleNext}
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </button>
+        </div>
       </div>
-    </div>
     </Layout>
   );
 };
