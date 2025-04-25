@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { FaSearch, FaPlus, FaEdit, FaTrash, FaEye, FaPrint } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useNotifications } from '../context/NotificationContext';
 import Layout from '../components/Layout';
 import { productsAPI } from '../services/api';
 import ProductLabel from '../components/ProductLabel';
@@ -13,7 +14,7 @@ import chocolateImage from '../images/chocolate.jpeg';
 import milkImage from '../images/milk.jpg';
 import defaultProductImage from '../images/default-product-image.jpg';
 
-const Inventory = () => {
+const AllProducts = () => {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
   // State management
@@ -28,6 +29,7 @@ const Inventory = () => {
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
   const [showProductLabel, setShowProductLabel] = useState(false);
+  const { addNotification } = useNotifications();
 
   // Handle escape key press to close modals
   const handleEscapeKey = useCallback((event) => {
@@ -185,7 +187,8 @@ const Inventory = () => {
       document.body.style.overflow = 'auto';
       // Show success message
       setError(null);
-      alert('Product updated successfully');
+      addNotification('product', `Product "${editFormData.name}" has been updated`, editFormData._id);
+      // alert('Product updated successfully');
     } catch (err) {
       console.error('Error updating product:', err);
       setError('Failed to update product. Please try again.');
@@ -207,7 +210,9 @@ const Inventory = () => {
       document.body.style.overflow = 'auto';
       // Show success message
       setError(null);
-      alert('Product deleted successfully');
+      const productName = productToDelete?.name || 'Unknown';
+      addNotification('product', `Product "${productName}" has been deleted`);
+      // alert('Product deleted successfully');
     } catch (err) {
       console.error('Error deleting product:', err);
       setError('Failed to delete product. Please try again.');
@@ -494,7 +499,7 @@ const Inventory = () => {
               </button>
             </div>
 
-            <form onSubmit={handleEditSubmit} className="p-4">
+            <form onSubmit={handleEditSubmit} className="p-6">
               <div className="grid grid-cols-2 gap-6 mb-4">
                 <div>
                   <label className="block text-sm text-gray-600 mb-1">Product Name</label>
@@ -694,4 +699,4 @@ const Inventory = () => {
   );
 };
 
-export default Inventory;
+export default AllProducts;

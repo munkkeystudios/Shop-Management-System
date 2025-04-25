@@ -52,32 +52,6 @@
   gap: 16px;
 }
 
-.topbar-language-selector {
-  position: relative;
-}
-
-.topbar-language-select {
-  appearance: none;
-  background: none;
-  border: none;
-  font-size: 14px;
-  color: #333;
-  cursor: pointer;
-  padding: 4px 8px;
-  outline: none;
-}
-
-.topbar-language-select:after {
-  content: '';
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-top: 4px solid #333;
-}
-
 .topbar-pos-button {
   display: flex;
   align-items: center;
@@ -125,12 +99,6 @@
 }
 
 /* Responsive adjustments */
-@media (max-width: 768px) {
-  .topbar-language-selector {
-    display: none;
-  }
-}
-
 @media (max-width: 480px) {
   .topbar-breadcrumb {
     font-size: 14px;

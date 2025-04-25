@@ -88,7 +88,7 @@ exports.getBrandById = async (req, res) => {
 // Create new brand
 exports.createBrand = async (req, res) => {
   try {
-    const { name, description, active } = req.body;
+    const { name, description, active, image } = req.body;
 
     if (!name) {
       return res.status(400).json({
@@ -110,6 +110,7 @@ exports.createBrand = async (req, res) => {
     const brand = await Brand.create({
       name,
       description,
+      image,
       active
     });
 
@@ -131,7 +132,7 @@ exports.createBrand = async (req, res) => {
 // Update brand
 exports.updateBrand = async (req, res) => {
   try {
-    const { name, description, active } = req.body;
+    const { name, description, active, image } = req.body;
 
     let brand = await Brand.findById(req.params.id);
 
@@ -160,6 +161,7 @@ exports.updateBrand = async (req, res) => {
       {
         name: name || brand.name,
         description: description !== undefined ? description : brand.description,
+        image: image !== undefined ? image : brand.image,
         active: active !== undefined ? active : brand.active
       },
       { new: true, runValidators: true }

@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import MainDashboard from "./pages/main_dashboard";
 import AllProducts from "./pages/all_products";
-import Inventory from "./pages/inventory";
+
 import Reports from "./pages/reports";
 import Pos from "./pages/pos";
 import Login from "./pages/Login";
@@ -14,6 +14,7 @@ import Brands from "./pages/brands";
 import { Frame as SupplierPage } from "./pages/supplier";
 import { Frame as SalesPage } from "./pages/sales";
 import SalesReport from "./pages/sales-report";
+import { NotificationProvider } from "./context/NotificationContext";
 import ImportPurchase from "./pages/ImportPurchase";
 import EmployeeManagement from "./pages/EmployeeManagement";
 import CreateSale from "./pages/CreateSale";       
@@ -25,9 +26,10 @@ import ProtectedRoute from "./components/ProtectedRoute";
 function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <div className="App">
-          <Routes>
+      <NotificationProvider>
+        <BrowserRouter>
+          <div className="App">
+            <Routes>
             {/* Public routes */}
             <Route path="/login" element={<Login />} />
 
@@ -45,14 +47,6 @@ function App() {
               element={
                 <ProtectedRoute>
                   <AllProducts />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/inventory"
-              element={
-                <ProtectedRoute>
-                  <Inventory />
                 </ProtectedRoute>
               }
             />
@@ -190,9 +184,10 @@ function App() {
             {/* Redirect root and unmatched */}
             <Route path="/" element={<Navigate to="/login" replace />} />
             <Route path="*" element={<Navigate to="/login" replace />} />
-          </Routes>
-        </div>
-      </BrowserRouter>
+            </Routes>
+          </div>
+        </BrowserRouter>
+      </NotificationProvider>
     </AuthProvider>
   );
 }

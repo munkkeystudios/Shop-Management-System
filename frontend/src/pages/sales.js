@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { FaSearch, FaFilter, FaFileExcel, FaFilePdf } from 'react-icons/fa';
+import { FaSearch, FaFileExcel, FaFilePdf } from 'react-icons/fa';
 import Layout from '../components/Layout';
 import { salesAPI } from '../services/api';
+import SalesFilter from '../components/SalesFilter';
 import './sales.css';
 
 export const Frame = () => {
@@ -9,6 +10,12 @@ export const Frame = () => {
   const [sales, setSales] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [filters, setFilters] = useState({
+    startDate: '',
+    endDate: '',
+    paymentStatus: '',
+    paymentMethod: ''
+  });
 
   // Fetch sales data
   useEffect(() => {
@@ -21,7 +28,14 @@ export const Frame = () => {
           return;
         }
 
-        const response = await salesAPI.getAll();
+        // Add filters to API call
+        const params = {};
+        if (filters.startDate) params.startDate = filters.startDate;
+        if (filters.endDate) params.endDate = filters.endDate;
+        if (filters.paymentStatus) params.paymentStatus = filters.paymentStatus;
+        if (filters.paymentMethod) params.paymentMethod = filters.paymentMethod;
+
+        const response = await salesAPI.getAll(params);
         console.log('sales payload:', response.data);
 
         if (response.data.success && Array.isArray(response.data.data)) {
@@ -45,13 +59,20 @@ export const Frame = () => {
     };
 
     fetchSales();
-  }, []);
+  }, [filters]); // Re-fetch when filters change
 
   // Handle PDF export
   const handlePdfExport = async () => {
     try {
       setLoading(true);
-      const response = await salesAPI.exportSales('pdf');
+
+      // Add current filters to export
+      const params = {
+        format: 'pdf',
+        ...filters
+      };
+
+      const response = await salesAPI.exportSales('pdf', params);
 
       // Create a blob URL and open it in a new tab
       const blob = new Blob([response.data], { type: 'application/pdf' });
@@ -76,7 +97,14 @@ export const Frame = () => {
   const handleExcelExport = async () => {
     try {
       setLoading(true);
-      const response = await salesAPI.exportSales('csv');
+
+      // Add current filters to export
+      const params = {
+        format: 'csv',
+        ...filters
+      };
+
+      const response = await salesAPI.exportSales('csv', params);
 
       // Create a blob URL and trigger download
       const blob = new Blob([response.data], { type: 'text/csv' });
@@ -102,9 +130,15 @@ export const Frame = () => {
     }
   };
 
-  // Filter sales based on reference number
+  // Handle filter changes
+  const handleApplyFilters = (newFilters) => {
+    setFilters(newFilters);
+  };
+
+  // Filter sales based on reference number or customer name
   const filteredSales = sales.filter(sale =>
-    sale._id?.toLowerCase().includes(searchTerm.toLowerCase())
+    sale._id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    sale.customer?.name?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -136,9 +170,7 @@ export const Frame = () => {
                   />
                 </div>
                 <div className="sales-action-buttons">
-                  <button className="sales-filter-button">
-                    <FaFilter /> Filter
-                  </button>
+                  <SalesFilter onApplyFilters={handleApplyFilters} />
                   <button
                     className="sales-export-button pdf-button"
                     onClick={handlePdfExport}
@@ -178,7 +210,7 @@ export const Frame = () => {
                   <tbody>
                     {filteredSales.map((sale, index) => (
                       <tr key={index}>
-                        <td>{sale.createdAt}</td>
+                        <td>{new Date(sale.createdAt).toLocaleDateString()}</td>
                         <td>{sale._id}</td>
                         <td>{sale.createdBy?.name}</td>
                         <td>{sale.customer.name}</td>
