@@ -11,6 +11,10 @@ const BrandSchema = new mongoose.Schema({
     type: String,
     trim: true
   },
+  image: {
+    type: String,
+    default: ''
+  },
   active: {
     type: Boolean,
     default: true

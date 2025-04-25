@@ -9,6 +9,7 @@ const saleController = require('../controllers/saleController');
 const importController = require('../controllers/importController');
 const purchaseController = require('../controllers/purchaseController');
 const brandController = require('../controllers/brandController');
+const notificationRoutes = require('./notificationRoutes');
 const auth = require('../middleware/auth');
 
 router.post('/login', userController.login);
@@ -73,5 +74,8 @@ router.get('/brands/:id', brandController.getBrandById);
 router.post('/brands', brandController.createBrand);
 router.put('/brands/:id', brandController.updateBrand);
 router.delete('/brands/:id', brandController.deleteBrand);
+
+// Notification routes
+router.use('/notifications', notificationRoutes);
 
 module.exports = router;

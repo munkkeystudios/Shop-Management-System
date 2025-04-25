@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 // eventually make it so all this import components/pages comes in 1 line
 import MainDashboard from "./pages/main_dashboard";
 import AllProducts from "./pages/all_products";
-import Inventory from "./pages/inventory";
+
 import Reports from "./pages/reports";
 import Pos from "./pages/pos";
 import Login from "./pages/Login";
@@ -14,6 +14,7 @@ import AllUsers from "./pages/all_users";
 import  Brands  from "./pages/brands";
 import { Frame } from "./pages/supplier";
 import { AuthProvider } from "./context/AuthContext";
+import { NotificationProvider } from "./context/NotificationContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { Frame as Sales } from "./pages/sales";
 import SalesReport from "./pages/sales-report";
@@ -25,9 +26,10 @@ import ImportPurchase from "./pages/ImportPurchase";
 function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <div className="App">
-          <Routes>
+      <NotificationProvider>
+        <BrowserRouter>
+          <div className="App">
+            <Routes>
             {/* Public routes */}
             <Route path="/login" element={<Login />} />
 
@@ -41,11 +43,7 @@ function App() {
                 <AllProducts />
               </ProtectedRoute>
             } />
-            <Route path="/inventory" element={
-              <ProtectedRoute>
-                <Inventory />
-              </ProtectedRoute>
-            } />
+
             <Route path="/categories" element={
               <ProtectedRoute>
                 <CategoryPage />
@@ -105,9 +103,10 @@ function App() {
             {/* Redirect root to login */}
             <Route path="/" element={<Navigate to="/login" replace />} />
             <Route path="*" element={<Navigate to="/login" replace />} />
-          </Routes>
-        </div>
-      </BrowserRouter>
+            </Routes>
+          </div>
+        </BrowserRouter>
+      </NotificationProvider>
     </AuthProvider>
   );
 }

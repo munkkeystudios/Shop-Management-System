@@ -158,7 +158,7 @@ function ToolsSidebar() {
                 </Nav.Item>
 
                 <SideBarDropdown
-                    isActive={isGroupActive(['/products', '/all_products', '/create_products', '/inventory', '/categories', '/brands'])} // Updated to include brands
+                    isActive={isGroupActive(['/products', '/all_products', '/create_products', '/categories', '/brands'])} // Removed inventory
                     title={
                         <div className="sidebar-link" style={{
                             display: 'flex',
@@ -204,24 +204,7 @@ function ToolsSidebar() {
                             onClick={() => handleItemClick("Create Product")}
                         />
                     </Link>
-                    <Link to="/inventory" className="sidebar-link" style={{
-                        textDecoration: 'none',
-                        color: 'inherit'
-                    }}>
-                        <SideBarItem
-                            isActive={isPathActive('/inventory')}
-                            title={
-                                <div style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '12px'
-                                }}>
-                                    <LuPackageSearch size={16} /> Inventory
-                                </div>
-                            }
-                            onClick={() => handleItemClick("Inventory")}
-                        />
-                    </Link>
+
                     <Link to="/categories" className="sidebar-link" style={{
                         textDecoration: 'none',
                         color: 'inherit'
@@ -462,54 +445,26 @@ function ToolsSidebar() {
                     </Link>
                 </Nav.Item>
 
-                <SideBarDropdown
-                    isActive={isGroupActive(['/reports', '/sales-report'])}
-                    title={
-                        <div className="sidebar-link" style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '12px'
-                        }}>
-                            <HiOutlineDocumentReport size={16}/> Reports
-                        </div>
-                    }>
-                    <Link to="/reports" className="sidebar-link" style={{
-                        textDecoration: 'none',
-                        color: 'inherit'
-                    }}>
-                        <SideBarItem
-                            isActive={isPathActive('/reports')}
-                            title={
-                                <div style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '12px'
-                                }}>
-                                    <HiOutlineDocumentReport size={16} /> General Reports
-                                </div>
-                            }
-                            onClick={() => handleItemClick("General Reports")}
-                        />
-                    </Link>
+                <Nav.Item className="sidebar-nav-item" style={{
+                    padding: '12px 16px',
+                    textAlign: 'left',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    color: isPathActive('/sales-report') ? '#357EC7' : '#505050',
+                    backgroundColor: isPathActive('/sales-report') ? '#f0f7ff' : 'transparent',
+                    margin: '2px 8px',
+                    borderRadius: '4px'
+                }}>
                     <Link to="/sales-report" className="sidebar-link" style={{
                         textDecoration: 'none',
-                        color: 'inherit'
+                        color: 'inherit',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px'
                     }}>
-                        <SideBarItem
-                            isActive={isPathActive('/sales-report')}
-                            title={
-                                <div style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '12px'
-                                }}>
-                                    <TbReportMoney size={16} /> Sales Report
-                                </div>
-                            }
-                            onClick={() => handleItemClick("Sales Report")}
-                        />
+                        <HiOutlineDocumentReport size={16} /> Reports
                     </Link>
-                </SideBarDropdown>
+                </Nav.Item>
 
                 <Nav.Item className="sidebar-nav-item" style={{
                     padding: '12px 16px',
