@@ -202,10 +202,7 @@ const AllPurchases = () => {
               <FileSpreadsheet size={16} />
               <span>Excel</span>
             </button>
-            <button className="create-btn" onClick={() => window.location.href = '/create-purchase'}>
-              <Plus size={16} />
-              <span>Create New Purchase</span>
-            </button>
+            
           </div>
         </div>
         
