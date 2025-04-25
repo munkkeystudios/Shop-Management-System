@@ -3,15 +3,19 @@ const Loan = require('../models/loan');
 // Create a new loan
 exports.createLoan = async (req, res) => {
   try {
-    const { loanNumber, customer, items, loanAmount, paymentMethod, notes } = req.body;
+    const { customer, loanAmount, paymentMethod, notes } = req.body;
 
     // Calculate remaining balance (initially equal to loanAmount)
     const remainingBalance = loanAmount;
 
+    // Find the last loan in the database and get its loanNumber
+    const lastLoan = await Loan.findOne().sort({ loanNumber: -1 }); // Sort by loanNumber in descending order
+    const loanNumber = lastLoan ? lastLoan.loanNumber + 1 : 1; // Increment last loanNumber or set to 1 if none exist
+
     const loan = new Loan({
       loanNumber,
-      customer,
-      items,
+      customer, // Customer details (name, email, phone, address)
+      items: [], // Initialize with an empty array
       loanAmount,
       remainingBalance,
       paymentMethod,
@@ -113,5 +117,31 @@ exports.validateLoan = async (req, res) => {
   } catch (error) {
     console.error('Error validating loan:', error);
     return res.status(500).json({ valid: false, message: 'Server error' });
+  }
+};
+
+// Add loan items
+exports.addLoanItems = async (req, res) => {
+  try {
+    const { loanId } = req.params; // Loan ID from the request parameters
+    const { items } = req.body; // Items to add (array of LoanItemSchema objects)
+
+    const loan = await Loan.findById(loanId);
+    if (!loan) {
+      return res.status(404).json({ success: false, message: 'Loan not found' });
+    }
+
+    // Add new items to the loan
+    items.forEach((item) => {
+      loan.items.push(item);
+      loan.loanAmount += item.subtotal; // Update loan amount
+      loan.remainingBalance += item.subtotal; // Update remaining balance
+    });
+
+    await loan.save();
+    res.status(200).json({ success: true, data: loan });
+  } catch (error) {
+    console.error('Error adding loan items:', error);
+    res.status(500).json({ success: false, message: 'Error adding loan items', error: error.message });
   }
 };

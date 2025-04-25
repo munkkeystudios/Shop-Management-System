@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+// Loan Item Schema
 const LoanItemSchema = new mongoose.Schema({
   product: {
     type: mongoose.Schema.Types.ObjectId,
@@ -23,6 +24,7 @@ const LoanItemSchema = new mongoose.Schema({
   }
 });
 
+// Loan Schema
 const LoanSchema = new mongoose.Schema({
   loanNumber: {
     type: Number,
@@ -34,8 +36,19 @@ const LoanSchema = new mongoose.Schema({
       type: String,
       required: true
     },
-    phone: String,
-    email: String
+    email: {
+      type: String,
+      required: true,
+      match: /.+\@.+\..+/ // Basic email validation
+    },
+    phone: {
+      type: String,
+      required: true
+    },
+    address: {
+      type: String,
+      required: true
+    }
   },
   items: [LoanItemSchema], // Items associated with the loan
   loanAmount: {
@@ -60,13 +73,13 @@ const LoanSchema = new mongoose.Schema({
   },
   paymentMethod: {
     type: String,
-    enum: ['cash', 'card'],
-    default: 'cash'
+    enum: ['cash', 'card', 'loan'], 
+    default: 'loan'
   },
   notes: String, // Optional notes about the loan
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'users',
+    ref: 'User', // Reference to the User model
     required: true
   }
 }, {
@@ -76,6 +89,6 @@ const LoanSchema = new mongoose.Schema({
 // Indexing for faster queries
 LoanSchema.index({ loanNumber: 1 });
 LoanSchema.index({ createdAt: -1 });
-LoanSchema.index({ 'customer.name': 'text', 'customer.phone': 'text' });
+LoanSchema.index({ 'customer.name': 'text' });
 
 module.exports = mongoose.model('Loan', LoanSchema);

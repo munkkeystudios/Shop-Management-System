@@ -18,7 +18,8 @@ import ImportPurchase from "./pages/ImportPurchase";
 import EmployeeManagement from "./pages/EmployeeManagement";
 import CreateSale from "./pages/CreateSale";       
 import ImportSale from "./pages/ImportSale";  
-import Loans from "./pages/Loans";            
+import Loans from "./pages/Loans";    
+import CreateLoan from "./pages/CreateLoan";        
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -103,6 +104,14 @@ function App() {
               element={
                 <ProtectedRoute requiredRole="manager">
                   <Loans />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/create-loans"
+              element={
+                <ProtectedRoute requiredRole="manager">
+                  <CreateLoan />
                 </ProtectedRoute>
               }
             />

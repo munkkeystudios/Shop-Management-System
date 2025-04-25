@@ -61,11 +61,13 @@ router.get('/purchases', purchaseController.getAllPurchases);
 router.get('/purchases/export', purchaseController.exportPurchases);
 router.get('/purchases/:id', purchaseController.getPurchaseById);
 
+// Loan routes
 router.post('/loans', loanController.createLoan); // Create a new loan
 router.get('/loans', loanController.getAllLoans); // Get all loans
 router.get('/loans/loan-number/:loanNumber', loanController.getLoanByLoanNumber); // Get loan by loan number
 router.get('/loans/:id', loanController.getLoanById); // Get loan by ID
 router.put('/loans/:id/repayment', loanController.updateLoanRepayment); // Update loan repayment
+router.put('/loans/:loanId/add-items', loanController.addLoanItems); // Add items to an existing loan
 router.post('/validate-loan', loanController.validateLoan); // Validate loan
 
 // TODO:: delete this: Test route
