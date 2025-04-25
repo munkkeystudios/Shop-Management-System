@@ -3,7 +3,6 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 // eventually make it so all this import components/pages comes in 1 line
 import MainDashboard from "./pages/main_dashboard";
 import AllProducts from "./pages/all_products";
-import Inventory from "./pages/inventory";
 import Reports from "./pages/reports";
 import Pos from "./pages/pos";
 import Login from "./pages/Login";
@@ -38,11 +37,6 @@ function App() {
             <Route path="/all_products" element={
               <ProtectedRoute>
                 <AllProducts />
-              </ProtectedRoute>
-            } />
-            <Route path="/inventory" element={
-              <ProtectedRoute>
-                <Inventory />
               </ProtectedRoute>
             } />
             <Route path="/categories" element={

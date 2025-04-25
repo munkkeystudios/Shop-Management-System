@@ -1,15 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Layout from '../components/Layout';
 import { settingsAPI } from '../services/api';
 import { toast } from 'react-toastify';
 import { useAuth } from '../context/AuthContext';
 import { Navigate } from 'react-router-dom';
+import { FiUpload, FiX, FiEdit, FiLink } from 'react-icons/fi';
 import './settings.css';
+import ModernDropdown, { ModernDropdownItem } from '../components/ModernDropdown';
+import '../styles/dropdown.css';
 
 const GeneralSettings = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [showUrlInput, setShowUrlInput] = useState(false);
+  const fileInputRef = useRef(null);
   
   // Check if user is admin
   const isAdmin = user && user.role === 'admin';
@@ -149,6 +155,87 @@ const GeneralSettings = () => {
     });
   };
 
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Check file type
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/svg+xml'];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error('Please upload an image file (JPEG, PNG, GIF, SVG)');
+      return;
+    }
+
+    // Check file size (5MB max)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('File size must be less than 5MB');
+      return;
+    }
+
+    try {
+      setUploading(true);
+      const formData = new FormData();
+      formData.append('logo', file);
+
+      const response = await settingsAPI.uploadLogo(formData);
+      if (response.data && response.data.logoUrl) {
+        setSettings({
+          ...settings,
+          companyLogo: response.data.logoUrl
+        });
+        toast.success('Logo uploaded successfully');
+      }
+    } catch (error) {
+      console.error('Error uploading logo:', error);
+      toast.error('Failed to upload logo');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleFileDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      // Simulate file input change
+      const fileInput = fileInputRef.current;
+      if (fileInput) {
+        // Create a new file list with the dropped file
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(e.dataTransfer.files[0]);
+        fileInput.files = dataTransfer.files;
+        
+        // Trigger the change event manually
+        const changeEvent = new Event('change', { bubbles: true });
+        fileInput.dispatchEvent(changeEvent);
+      }
+    }
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    e.currentTarget.classList.add('drag-active');
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    e.currentTarget.classList.remove('drag-active');
+  };
+
+  const removeLogo = () => {
+    setSettings({
+      ...settings,
+      companyLogo: ''
+    });
+  };
+
+  const toggleUrlInput = () => {
+    setShowUrlInput(!showUrlInput);
+  };
+
   const handlePaymentMethodChange = (method) => {
     const updatedMethods = [...settings.paymentMethods];
     
@@ -219,7 +306,7 @@ const GeneralSettings = () => {
         <div className="settings-header">
           <h1>General Settings</h1>
           <p className="settings-description">
-            Configure global application settings. Only administrators can access this page.
+            Configure global application settings such as company information, financial settings, and inventory options
           </p>
         </div>
 
@@ -244,18 +331,111 @@ const GeneralSettings = () => {
                 </div>
                 
                 <div className="form-group">
-                  <label>Company Logo URL</label>
-                  <input
-                    type="text"
-                    name="companyLogo"
-                    value={settings.companyLogo}
-                    onChange={handleInputChange}
-                    className="form-input"
-                    placeholder="https://example.com/logo.png"
-                  />
-                  {settings.companyLogo && (
-                    <div className="logo-preview">
-                      <img src={settings.companyLogo} alt="Company Logo Preview" />
+                  <label>Company Logo</label>
+                  {!settings.companyLogo ? (
+                    <>
+                      <input 
+                        type="file" 
+                        ref={fileInputRef}
+                        onChange={handleFileChange} 
+                        accept="image/jpeg,image/png,image/gif,image/svg+xml"
+                        style={{ display: 'none' }}
+                      />
+                      <div 
+                        className="file-upload-container"
+                        onClick={() => fileInputRef.current && fileInputRef.current.click()}
+                        onDrop={handleFileDrop}
+                        onDragOver={handleDragOver}
+                        onDragLeave={handleDragLeave}
+                      >
+                        <div className="upload-icon">
+                          <FiUpload />
+                        </div>
+                        <div className="file-upload-text">
+                          {uploading ? (
+                            <>
+                              <span className="upload-spinner"></span> Uploading...
+                            </>
+                          ) : (
+                            <>
+                              <strong>Click to upload</strong> or drag and drop
+                            </>
+                          )}
+                        </div>
+                        <div className="file-upload-hint">
+                          SVG, PNG, JPG or GIF (max. 5MB)
+                        </div>
+                      </div>
+                      <div className="url-input-container">
+                        {showUrlInput ? (
+                          <input
+                            type="text"
+                            name="companyLogo"
+                            value={settings.companyLogo}
+                            onChange={handleInputChange}
+                            className="form-input"
+                            placeholder="https://example.com/logo.png"
+                          />
+                        ) : (
+                          <button
+                            type="button"
+                            className="logo-url-button"
+                            onClick={toggleUrlInput}
+                          >
+                            <FiLink /> Use logo URL instead
+                          </button>
+                        )}
+                      </div>
+                    </>
+                  ) : (
+                    <div className="company-logo-preview">
+                      <img 
+                        src={settings.companyLogo} 
+                        alt="Company Logo" 
+                        className="logo-image"
+                      />
+                      <div className="logo-controls">
+                        <button
+                          type="button"
+                          className="logo-control-button logo-change-button"
+                          onClick={() => fileInputRef.current && fileInputRef.current.click()}
+                        >
+                          <FiEdit /> Change Logo
+                        </button>
+                        <button
+                          type="button"
+                          className="logo-control-button logo-url-button"
+                          onClick={toggleUrlInput}
+                        >
+                          <FiLink /> Edit URL
+                        </button>
+                        <button
+                          type="button"
+                          className="logo-control-button logo-remove-button"
+                          onClick={removeLogo}
+                        >
+                          <FiX /> Remove
+                        </button>
+                      </div>
+                      <input 
+                        type="file" 
+                        ref={fileInputRef}
+                        onChange={handleFileChange} 
+                        accept="image/jpeg,image/png,image/gif,image/svg+xml"
+                        style={{ display: 'none' }}
+                      />
+                      {showUrlInput && (
+                        <div className="url-input-container">
+                          <input
+                            type="text"
+                            name="companyLogo"
+                            value={settings.companyLogo}
+                            onChange={handleInputChange}
+                            className="form-input"
+                            placeholder="https://example.com/logo.png"
+                          />
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -289,9 +469,9 @@ const GeneralSettings = () => {
                   <button
                     type="submit"
                     className="save-button"
-                    disabled={saving}
+                    disabled={saving || uploading}
                   >
-                    {saving ? 'Saving...' : 'Save Company Information'}
+                    {saving ? 'Saving...' : 'Save Settings'}
                   </button>
                 </div>
               </form>
@@ -318,18 +498,25 @@ const GeneralSettings = () => {
                   
                   <div className="form-group">
                     <label>Currency</label>
-                    <select
-                      name="currencyCode"
-                      value={settings.currencyCode}
-                      onChange={handleInputChange}
-                      className="form-select"
-                    >
-                      {currencyOptions.map(option => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
+                    <div style={{ width: '100%', position: 'relative' }}>
+                      <ModernDropdown
+                        title={
+                          <div style={{ width: '100%', justifyContent: 'space-between' }}>
+                            {currencyOptions.find(opt => opt.value === settings.currencyCode)?.label || 'Select Currency'}
+                          </div>
+                        }
+                      >
+                        {currencyOptions.map(option => (
+                          <ModernDropdownItem
+                            key={option.value}
+                            isActive={settings.currencyCode === option.value}
+                            onClick={() => handleInputChange({ target: { name: 'currencyCode', value: option.value } })}
+                          >
+                            {option.label}
+                          </ModernDropdownItem>
+                        ))}
+                      </ModernDropdown>
+                    </div>
                   </div>
                 </div>
                 
@@ -347,18 +534,25 @@ const GeneralSettings = () => {
                   
                   <div className="form-group">
                     <label>Pricing Strategy</label>
-                    <select
-                      name="pricingStrategy"
-                      value={settings.pricingStrategy}
-                      onChange={handleInputChange}
-                      className="form-select"
-                    >
-                      {pricingStrategyOptions.map(option => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
+                    <div style={{ width: '100%', position: 'relative' }}>
+                      <ModernDropdown
+                        title={
+                          <div style={{ width: '100%', justifyContent: 'space-between' }}>
+                            {pricingStrategyOptions.find(opt => opt.value === settings.pricingStrategy)?.label || 'Select Strategy'}
+                          </div>
+                        }
+                      >
+                        {pricingStrategyOptions.map(option => (
+                          <ModernDropdownItem
+                            key={option.value}
+                            isActive={settings.pricingStrategy === option.value}
+                            onClick={() => handleInputChange({ target: { name: 'pricingStrategy', value: option.value } })}
+                          >
+                            {option.label}
+                          </ModernDropdownItem>
+                        ))}
+                      </ModernDropdown>
+                    </div>
                   </div>
                 </div>
                 
@@ -411,7 +605,7 @@ const GeneralSettings = () => {
                     className="save-button"
                     disabled={saving}
                   >
-                    {saving ? 'Saving...' : 'Save Financial Settings'}
+                    {saving ? 'Saving...' : 'Save Settings'}
                   </button>
                 </div>
               </form>
@@ -442,7 +636,7 @@ const GeneralSettings = () => {
                     className="save-button"
                     disabled={saving}
                   >
-                    {saving ? 'Saving...' : 'Save Inventory Settings'}
+                    {saving ? 'Saving...' : 'Save Settings'}
                   </button>
                 </div>
               </form>
@@ -452,17 +646,18 @@ const GeneralSettings = () => {
             <div className="settings-section-card">
               <h2>Payment & Discount Settings</h2>
               <form className="settings-form" onSubmit={handleSubmit}>
-                <div className="form-group checkbox-group">
-                  <label>
+                <div className="form-group">
+                  <div className="checkbox-group">
                     <input
                       type="checkbox"
+                      id="enable-online-payments"
                       name="enableOnlinePayments"
                       checked={settings.enableOnlinePayments}
                       onChange={handleInputChange}
                       className="form-checkbox"
                     />
-                    Enable Online Payments
-                  </label>
+                    <label htmlFor="enable-online-payments">Enable Online Payments</label>
+                  </div>
                 </div>
                 
                 <div className="form-group">
@@ -470,31 +665,31 @@ const GeneralSettings = () => {
                   <div className="checkbox-group-container">
                     {availablePaymentMethods.map(method => (
                       <div key={method.value} className="checkbox-group">
-                        <label>
-                          <input
-                            type="checkbox"
-                            checked={settings.paymentMethods.includes(method.value)}
-                            onChange={() => handlePaymentMethodChange(method.value)}
-                            className="form-checkbox"
-                          />
-                          {method.label}
-                        </label>
+                        <input
+                          type="checkbox"
+                          id={`payment-${method.value}`}
+                          checked={settings.paymentMethods.includes(method.value)}
+                          onChange={() => handlePaymentMethodChange(method.value)}
+                          className="form-checkbox"
+                        />
+                        <label htmlFor={`payment-${method.value}`}>{method.label}</label>
                       </div>
                     ))}
                   </div>
                 </div>
                 
-                <div className="form-group checkbox-group">
-                  <label>
+                <div className="form-group">
+                  <div className="checkbox-group">
                     <input
                       type="checkbox"
+                      id="enable-discounts"
                       name="enableDiscounts"
                       checked={settings.enableDiscounts}
                       onChange={handleInputChange}
                       className="form-checkbox"
                     />
-                    Enable Discounts
-                  </label>
+                    <label htmlFor="enable-discounts">Enable Discounts</label>
+                  </div>
                 </div>
                 
                 <div className="form-actions">
@@ -503,7 +698,7 @@ const GeneralSettings = () => {
                     className="save-button"
                     disabled={saving}
                   >
-                    {saving ? 'Saving...' : 'Save Payment & Discount Settings'}
+                    {saving ? 'Saving...' : 'Save Settings'}
                   </button>
                 </div>
               </form>

@@ -317,7 +317,7 @@ const UserSettings = () => {
         <div className="settings-header">
           <h1>User Settings</h1>
           <p className="settings-description">
-            Manage your personal information and preferences
+            Manage your personal information, password, and notification preferences
           </p>
         </div>
         
@@ -367,28 +367,30 @@ const UserSettings = () => {
                   {errors.email && <div className="error-message">{errors.email}</div>}
                 </div>
                 
-                <div className="form-group">
-                  <label>Phone Number</label>
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={profile.phone}
-                    onChange={handleInputChange}
-                    className={`form-input ${errors.phone ? 'input-error' : ''}`}
-                    placeholder="+1 (123) 456-7890"
-                  />
-                  {errors.phone && <div className="error-message">{errors.phone}</div>}
-                </div>
-                
-                <div className="form-group">
-                  <label>Job Title</label>
-                  <input
-                    type="text"
-                    name="jobTitle"
-                    value={profile.jobTitle}
-                    onChange={handleInputChange}
-                    className="form-input"
-                  />
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Phone Number</label>
+                    <input
+                      type="tel"
+                      name="phone"
+                      value={profile.phone}
+                      onChange={handleInputChange}
+                      className={`form-input ${errors.phone ? 'input-error' : ''}`}
+                      placeholder="+1 (123) 456-7890"
+                    />
+                    {errors.phone && <div className="error-message">{errors.phone}</div>}
+                  </div>
+                  
+                  <div className="form-group">
+                    <label>Job Title</label>
+                    <input
+                      type="text"
+                      name="jobTitle"
+                      value={profile.jobTitle}
+                      onChange={handleInputChange}
+                      className="form-input"
+                    />
+                  </div>
                 </div>
                 
                 <div className="form-group">
@@ -444,49 +446,52 @@ const UserSettings = () => {
                   {errors.currentPassword && <div className="error-message">{errors.currentPassword}</div>}
                 </div>
                 
-                <div className="form-group">
-                  <label>New Password</label>
-                  <div className="password-input-container">
-                    <input
-                      type={passwordVisible.new ? 'text' : 'password'}
-                      name="newPassword"
-                      value={passwordData.newPassword}
-                      onChange={handlePasswordChange}
-                      className={`form-input ${errors.newPassword ? 'input-error' : ''}`}
-                    />
-                    <button
-                      type="button"
-                      className="password-toggle-button"
-                      onClick={() => togglePasswordVisibility('new')}
-                    >
-                      {passwordVisible.new ? 'Hide' : 'Show'}
-                    </button>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>New Password</label>
+                    <div className="password-input-container">
+                      <input
+                        type={passwordVisible.new ? 'text' : 'password'}
+                        name="newPassword"
+                        value={passwordData.newPassword}
+                        onChange={handlePasswordChange}
+                        className={`form-input ${errors.newPassword ? 'input-error' : ''}`}
+                      />
+                      <button
+                        type="button"
+                        className="password-toggle-button"
+                        onClick={() => togglePasswordVisibility('new')}
+                      >
+                        {passwordVisible.new ? 'Hide' : 'Show'}
+                      </button>
+                    </div>
+                    {errors.newPassword && <div className="error-message">{errors.newPassword}</div>}
                   </div>
-                  {errors.newPassword && <div className="error-message">{errors.newPassword}</div>}
-                  <div className="input-hint">
-                    Password must be at least 8 characters and include uppercase, lowercase, and numbers
+                  
+                  <div className="form-group">
+                    <label>Confirm New Password</label>
+                    <div className="password-input-container">
+                      <input
+                        type={passwordVisible.confirm ? 'text' : 'password'}
+                        name="confirmPassword"
+                        value={passwordData.confirmPassword}
+                        onChange={handlePasswordChange}
+                        className={`form-input ${errors.confirmPassword ? 'input-error' : ''}`}
+                      />
+                      <button
+                        type="button"
+                        className="password-toggle-button"
+                        onClick={() => togglePasswordVisibility('confirm')}
+                      >
+                        {passwordVisible.confirm ? 'Hide' : 'Show'}
+                      </button>
+                    </div>
+                    {errors.confirmPassword && <div className="error-message">{errors.confirmPassword}</div>}
                   </div>
                 </div>
                 
-                <div className="form-group">
-                  <label>Confirm New Password</label>
-                  <div className="password-input-container">
-                    <input
-                      type={passwordVisible.confirm ? 'text' : 'password'}
-                      name="confirmPassword"
-                      value={passwordData.confirmPassword}
-                      onChange={handlePasswordChange}
-                      className={`form-input ${errors.confirmPassword ? 'input-error' : ''}`}
-                    />
-                    <button
-                      type="button"
-                      className="password-toggle-button"
-                      onClick={() => togglePasswordVisibility('confirm')}
-                    >
-                      {passwordVisible.confirm ? 'Hide' : 'Show'}
-                    </button>
-                  </div>
-                  {errors.confirmPassword && <div className="error-message">{errors.confirmPassword}</div>}
+                <div className="input-hint">
+                  Password must be at least 8 characters and include uppercase, lowercase, and numbers
                 </div>
                 
                 <div className="form-actions">
@@ -504,47 +509,39 @@ const UserSettings = () => {
             {/* Notification Preferences */}
             <div className="settings-section-card">
               <h2>Notification Preferences</h2>
-              <form className="settings-form" onSubmit={handleProfileSubmit}>
-                <div className="form-group checkbox-group">
-                  <label>
+              <form className="settings-form">
+                <div className="form-group">
+                  <div className="checkbox-group">
                     <input
                       type="checkbox"
                       name="notifications.email"
+                      id="email-notifications"
                       checked={profile.notificationPreferences.email}
                       onChange={handleNotificationChange}
                       className="form-checkbox"
                     />
-                    Email Notifications
-                  </label>
-                  <div className="input-hint">
-                    Receive notifications about important updates via email
+                    <label htmlFor="email-notifications">Email Notifications</label>
+                    <div className="input-hint">
+                      Receive notifications about important updates via email
+                    </div>
                   </div>
                 </div>
                 
-                <div className="form-group checkbox-group">
-                  <label>
+                <div className="form-group">
+                  <div className="checkbox-group">
                     <input
                       type="checkbox"
                       name="notifications.browser"
+                      id="browser-notifications"
                       checked={profile.notificationPreferences.browser}
                       onChange={handleNotificationChange}
                       className="form-checkbox"
                     />
-                    Browser Notifications
-                  </label>
-                  <div className="input-hint">
-                    Receive notifications in your browser while using the application
+                    <label htmlFor="browser-notifications">Browser Notifications</label>
+                    <div className="input-hint">
+                      Receive notifications in your browser while using the application
+                    </div>
                   </div>
-                </div>
-                
-                <div className="form-actions">
-                  <button
-                    type="submit"
-                    className="save-button"
-                    disabled={saving}
-                  >
-                    {saving ? 'Saving...' : 'Save Notification Preferences'}
-                  </button>
                 </div>
               </form>
             </div>

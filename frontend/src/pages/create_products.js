@@ -3,6 +3,8 @@ import Layout from '../components/Layout';
 import { Card, Alert } from 'react-bootstrap';
 import "../styles/topbar.css";
 import "../styles/product_page.css";
+import ModernDropdown, { ModernDropdownItem } from '../components/ModernDropdown';
+import '../styles/dropdown.css';
 
 
 const getInitialState = () => ({
@@ -215,22 +217,86 @@ const CreateProducts = () => {
 
                  <div className="form-group">
                   <label htmlFor="category">Category {requiredStar}</label>
-                  <select id="category" name="category" value={formData.category} onChange={handleChange} required>
-                    <option value="">Select Category</option>
-                    <option value="67f65d2951c326c002d6f0ac">Casual Wear</option>
-                    <option value="67f65d2951c326c002d6f0ad">Formal Wear</option>
-                    <option value="67f65d2951c326c002d6f0ae">Sportswear</option>
-                  </select>
+                  <div style={{ width: '100%', position: 'relative' }}>
+                    <ModernDropdown
+                      title={
+                        <div style={{ width: '100%', justifyContent: 'space-between' }}>
+                          {formData.category ? 
+                            (formData.category === "67f65d2951c326c002d6f0ac" ? "Casual Wear" : 
+                             formData.category === "67f65d2951c326c002d6f0ad" ? "Formal Wear" : 
+                             formData.category === "67f65d2951c326c002d6f0ae" ? "Sportswear" : "Select Category")
+                            : "Select Category"}
+                        </div>
+                      }
+                    >
+                      <ModernDropdownItem
+                        isActive={formData.category === ""}
+                        onClick={() => handleChange({ target: { name: 'category', value: '' } })}
+                      >
+                        Select Category
+                      </ModernDropdownItem>
+                      <ModernDropdownItem
+                        isActive={formData.category === "67f65d2951c326c002d6f0ac"}
+                        onClick={() => handleChange({ target: { name: 'category', value: '67f65d2951c326c002d6f0ac' } })}
+                      >
+                        Casual Wear
+                      </ModernDropdownItem>
+                      <ModernDropdownItem
+                        isActive={formData.category === "67f65d2951c326c002d6f0ad"}
+                        onClick={() => handleChange({ target: { name: 'category', value: '67f65d2951c326c002d6f0ad' } })}
+                      >
+                        Formal Wear
+                      </ModernDropdownItem>
+                      <ModernDropdownItem
+                        isActive={formData.category === "67f65d2951c326c002d6f0ae"}
+                        onClick={() => handleChange({ target: { name: 'category', value: '67f65d2951c326c002d6f0ae' } })}
+                      >
+                        Sportswear
+                      </ModernDropdownItem>
+                    </ModernDropdown>
+                  </div>
                 </div>
 
                  <div className="form-group">
                   <label htmlFor="supplier">Supplier {requiredStar}</label>
-                  <select id="supplier" name="supplier" value={formData.supplier} onChange={handleChange} required>
-                    <option value="">Select Supplier</option>
-                    <option value="67f662e851c326c002d6f0b3">Best Supplies Co.</option>
-                    <option value="67f662e851c326c002d6f0b4">Urban Styles Apparel</option>
-                    <option value="67f662e851c326c002d6f0b5">Classic Tailors Ltd.</option>
-                  </select>
+                  <div style={{ width: '100%', position: 'relative' }}>
+                    <ModernDropdown
+                      title={
+                        <div style={{ width: '100%', justifyContent: 'space-between' }}>
+                          {formData.supplier ? 
+                            (formData.supplier === "67f662e851c326c002d6f0b3" ? "Best Supplies Co." : 
+                             formData.supplier === "67f662e851c326c002d6f0b4" ? "Urban Styles Apparel" : 
+                             formData.supplier === "67f662e851c326c002d6f0b5" ? "Classic Tailors Ltd." : "Select Supplier")
+                            : "Select Supplier"}
+                        </div>
+                      }
+                    >
+                      <ModernDropdownItem
+                        isActive={formData.supplier === ""}
+                        onClick={() => handleChange({ target: { name: 'supplier', value: '' } })}
+                      >
+                        Select Supplier
+                      </ModernDropdownItem>
+                      <ModernDropdownItem
+                        isActive={formData.supplier === "67f662e851c326c002d6f0b3"}
+                        onClick={() => handleChange({ target: { name: 'supplier', value: '67f662e851c326c002d6f0b3' } })}
+                      >
+                        Best Supplies Co.
+                      </ModernDropdownItem>
+                      <ModernDropdownItem
+                        isActive={formData.supplier === "67f662e851c326c002d6f0b4"}
+                        onClick={() => handleChange({ target: { name: 'supplier', value: '67f662e851c326c002d6f0b4' } })}
+                      >
+                        Urban Styles Apparel
+                      </ModernDropdownItem>
+                      <ModernDropdownItem
+                        isActive={formData.supplier === "67f662e851c326c002d6f0b5"}
+                        onClick={() => handleChange({ target: { name: 'supplier', value: '67f662e851c326c002d6f0b5' } })}
+                      >
+                        Classic Tailors Ltd.
+                      </ModernDropdownItem>
+                    </ModernDropdown>
+                  </div>
                 </div>
 
                 <div className="form-group form-group-span-2">

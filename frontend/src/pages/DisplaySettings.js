@@ -5,12 +5,15 @@ import { toast } from 'react-toastify';
 import { useAuth } from '../context/AuthContext';
 import { Navigate } from 'react-router-dom';
 import './settings.css';
+import ModernDropdown, { ModernDropdownItem } from '../components/ModernDropdown';
+import '../styles/dropdown.css';
 
 const DisplaySettings = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [hasAccess, setHasAccess] = useState(false);
+  const [selectedDateFormat, setSelectedDateFormat] = useState(null);
   
   // Display settings state
   const [settings, setSettings] = useState({
@@ -250,6 +253,14 @@ const DisplaySettings = () => {
     }
   };
 
+  const handleDateFormatChange = (value, label) => {
+    setSelectedDateFormat(label);
+    setSettings({
+      ...settings,
+      dateFormat: value
+    });
+  };
+
   if (!hasAccess && !loading) {
     return <Navigate to="/dashboard" />;
   }
@@ -272,64 +283,87 @@ const DisplaySettings = () => {
             <div className="settings-section-card">
               <h2>Date and Time</h2>
               <form className="settings-form" onSubmit={handleSubmit}>
-                <div className="form-group">
-                  <label>Date Format</label>
-                  <select
-                    name="dateFormat"
-                    value={settings.dateFormat}
-                    onChange={handleInputChange}
-                    className="form-select"
-                  >
-                    {dateFormatOptions.map(option => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                  <div className="input-hint">
-                    Example: {new Date().toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: '2-digit',
-                      day: '2-digit'
-                    })}
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Date Format</label>
+                    <div style={{ width: '100%', position: 'relative' }}>
+                      <ModernDropdown
+                        title={
+                          <div style={{ width: '100%', justifyContent: 'space-between' }}>
+                            {selectedDateFormat || dateFormatOptions.find(opt => opt.value === settings.dateFormat)?.label || 'Select Date Format'}
+                          </div>
+                        }
+                      >
+                        {dateFormatOptions.map(option => (
+                          <ModernDropdownItem
+                            key={option.value}
+                            isActive={settings.dateFormat === option.value}
+                            onClick={() => handleDateFormatChange(option.value, option.label)}
+                          >
+                            {option.label}
+                          </ModernDropdownItem>
+                        ))}
+                      </ModernDropdown>
+                    </div>
+                    <div className="input-hint">
+                      Example: {new Date().toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit'
+                      })}
+                    </div>
                   </div>
-                </div>
-                
-                <div className="form-group">
-                  <label>Time Format</label>
-                  <select
-                    name="timeFormat"
-                    value={settings.timeFormat}
-                    onChange={handleInputChange}
-                    className="form-select"
-                  >
-                    {timeFormatOptions.map(option => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                  <div className="input-hint">
-                    Example: {settings.timeFormat === '12hour' 
-                      ? new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
-                      : new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}
+                  
+                  <div className="form-group">
+                    <label>Time Format</label>
+                    <div style={{ width: '100%', position: 'relative' }}>
+                      <ModernDropdown
+                        title={
+                          <div style={{ width: '100%', justifyContent: 'space-between' }}>
+                            {timeFormatOptions.find(opt => opt.value === settings.timeFormat)?.label || 'Select Time Format'}
+                          </div>
+                        }
+                      >
+                        {timeFormatOptions.map(option => (
+                          <ModernDropdownItem
+                            key={option.value}
+                            isActive={settings.timeFormat === option.value}
+                            onClick={() => handleInputChange({ target: { name: 'timeFormat', value: option.value } })}
+                          >
+                            {option.label}
+                          </ModernDropdownItem>
+                        ))}
+                      </ModernDropdown>
+                    </div>
+                    <div className="input-hint">
+                      Example: {settings.timeFormat === '12hour' 
+                        ? new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
+                        : new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}
+                    </div>
                   </div>
                 </div>
                 
                 <div className="form-group">
                   <label>Timezone</label>
-                  <select
-                    name="timezone"
-                    value={settings.timezone}
-                    onChange={handleInputChange}
-                    className="form-select"
-                  >
-                    {timezoneOptions.map(option => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
+                  <div style={{ width: '100%', position: 'relative' }}>
+                    <ModernDropdown
+                      title={
+                        <div style={{ width: '100%', justifyContent: 'space-between' }}>
+                          {timezoneOptions.find(opt => opt.value === settings.timezone)?.label || 'Select Timezone'}
+                        </div>
+                      }
+                    >
+                      {timezoneOptions.map(option => (
+                        <ModernDropdownItem
+                          key={option.value}
+                          isActive={settings.timezone === option.value}
+                          onClick={() => handleInputChange({ target: { name: 'timezone', value: option.value } })}
+                        >
+                          {option.label}
+                        </ModernDropdownItem>
+                      ))}
+                    </ModernDropdown>
+                  </div>
                 </div>
                 
                 <div className="form-actions">
@@ -338,7 +372,7 @@ const DisplaySettings = () => {
                     className="save-button"
                     disabled={saving}
                   >
-                    {saving ? 'Saving...' : 'Save Date & Time Settings'}
+                    {saving ? 'Saving...' : 'Save Settings'}
                   </button>
                 </div>
               </form>
@@ -348,69 +382,99 @@ const DisplaySettings = () => {
             <div className="settings-section-card">
               <h2>Currency and Number Formatting</h2>
               <form className="settings-form" onSubmit={handleSubmit}>
-                <div className="form-group">
-                  <label>Currency</label>
-                  <select
-                    name="currency"
-                    value={settings.currency}
-                    onChange={handleInputChange}
-                    className="form-select"
-                  >
-                    {currencyOptions.map(option => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                
-                <div className="form-group">
-                  <label>Currency Position</label>
-                  <select
-                    name="currencyPosition"
-                    value={settings.currencyPosition}
-                    onChange={handleInputChange}
-                    className="form-select"
-                  >
-                    {currencyPositionOptions.map(option => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Currency</label>
+                    <div style={{ width: '100%', position: 'relative' }}>
+                      <ModernDropdown
+                        title={
+                          <div style={{ width: '100%', justifyContent: 'space-between' }}>
+                            {currencyOptions.find(opt => opt.value === settings.currency)?.label || 'Select Currency'}
+                          </div>
+                        }
+                      >
+                        {currencyOptions.map(option => (
+                          <ModernDropdownItem
+                            key={option.value}
+                            isActive={settings.currency === option.value}
+                            onClick={() => handleInputChange({ target: { name: 'currency', value: option.value } })}
+                          >
+                            {option.label}
+                          </ModernDropdownItem>
+                        ))}
+                      </ModernDropdown>
+                    </div>
+                  </div>
+                  
+                  <div className="form-group">
+                    <label>Currency Position</label>
+                    <div style={{ width: '100%', position: 'relative' }}>
+                      <ModernDropdown
+                        title={
+                          <div style={{ width: '100%', justifyContent: 'space-between' }}>
+                            {currencyPositionOptions.find(opt => opt.value === settings.currencyPosition)?.label || 'Select Position'}
+                          </div>
+                        }
+                      >
+                        {currencyPositionOptions.map(option => (
+                          <ModernDropdownItem
+                            key={option.value}
+                            isActive={settings.currencyPosition === option.value}
+                            onClick={() => handleInputChange({ target: { name: 'currencyPosition', value: option.value } })}
+                          >
+                            {option.label}
+                          </ModernDropdownItem>
+                        ))}
+                      </ModernDropdown>
+                    </div>
+                  </div>
                 </div>
                 
                 <div className="form-row">
                   <div className="form-group">
                     <label>Decimal Separator</label>
-                    <select
-                      name="decimalSeparator"
-                      value={settings.decimalSeparator}
-                      onChange={handleInputChange}
-                      className="form-select"
-                    >
-                      {decimalSeparatorOptions.map(option => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
+                    <div style={{ width: '100%', position: 'relative' }}>
+                      <ModernDropdown
+                        title={
+                          <div style={{ width: '100%', justifyContent: 'space-between' }}>
+                            {decimalSeparatorOptions.find(opt => opt.value === settings.decimalSeparator)?.label || 'Select Separator'}
+                          </div>
+                        }
+                      >
+                        {decimalSeparatorOptions.map(option => (
+                          <ModernDropdownItem
+                            key={option.value}
+                            isActive={settings.decimalSeparator === option.value}
+                            onClick={() => handleInputChange({ target: { name: 'decimalSeparator', value: option.value } })}
+                          >
+                            {option.label}
+                          </ModernDropdownItem>
+                        ))}
+                      </ModernDropdown>
+                    </div>
                   </div>
                   
                   <div className="form-group">
                     <label>Thousands Separator</label>
-                    <select
-                      name="thousandsSeparator"
-                      value={settings.thousandsSeparator}
-                      onChange={handleInputChange}
-                      className="form-select"
-                    >
-                      {thousandsSeparatorOptions.map(option => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
+                    <div style={{ width: '100%', position: 'relative' }}>
+                      <ModernDropdown
+                        title={
+                          <div style={{ width: '100%', justifyContent: 'space-between' }}>
+                            {thousandsSeparatorOptions.find(opt => opt.value === settings.thousandsSeparator)?.label || 'Select Separator'}
+                          </div>
+                        }
+                      >
+                        {thousandsSeparatorOptions.map(option => (
+                          <ModernDropdownItem
+                            key={option.value}
+                            isActive={settings.thousandsSeparator === option.value}
+                            onClick={() => handleInputChange({ target: { name: 'thousandsSeparator', value: option.value } })}
+                          >
+                            {option.label}
+                          </ModernDropdownItem>
+                        ))}
+                      </ModernDropdown>
+                    </div>
                   </div>
                 </div>
                 
@@ -436,7 +500,7 @@ const DisplaySettings = () => {
                     className="save-button"
                     disabled={saving}
                   >
-                    {saving ? 'Saving...' : 'Save Currency & Number Settings'}
+                    {saving ? 'Saving...' : 'Save Settings'}
                   </button>
                 </div>
               </form>
@@ -446,94 +510,128 @@ const DisplaySettings = () => {
             <div className="settings-section-card">
               <h2>Interface Display Options</h2>
               <form className="settings-form" onSubmit={handleSubmit}>
-                <div className="form-group">
-                  <label>Language</label>
-                  <select
-                    name="language"
-                    value={settings.language}
-                    onChange={handleInputChange}
-                    className="form-select"
-                  >
-                    {languageOptions.map(option => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Language</label>
+                    <div style={{ width: '100%', position: 'relative' }}>
+                      <ModernDropdown
+                        title={
+                          <div style={{ width: '100%', justifyContent: 'space-between' }}>
+                            {languageOptions.find(opt => opt.value === settings.language)?.label || 'Select Language'}
+                          </div>
+                        }
+                      >
+                        {languageOptions.map(option => (
+                          <ModernDropdownItem
+                            key={option.value}
+                            isActive={settings.language === option.value}
+                            onClick={() => handleInputChange({ target: { name: 'language', value: option.value } })}
+                          >
+                            {option.label}
+                          </ModernDropdownItem>
+                        ))}
+                      </ModernDropdown>
+                    </div>
+                  </div>
+                  
+                  <div className="form-group">
+                    <label>Default Rows Per Page</label>
+                    <div style={{ width: '100%', position: 'relative' }}>
+                      <ModernDropdown
+                        title={
+                          <div style={{ width: '100%', justifyContent: 'space-between' }}>
+                            {rowsPerPageOptions.find(opt => opt.value === settings.tableRowsPerPage)?.label || 'Select Rows Per Page'}
+                          </div>
+                        }
+                      >
+                        {rowsPerPageOptions.map(option => (
+                          <ModernDropdownItem
+                            key={option.value}
+                            isActive={settings.tableRowsPerPage === option.value}
+                            onClick={() => handleInputChange({ target: { name: 'tableRowsPerPage', value: option.value } })}
+                          >
+                            {option.label}
+                          </ModernDropdownItem>
+                        ))}
+                      </ModernDropdown>
+                    </div>
+                  </div>
                 </div>
                 
                 <div className="form-group">
-                  <label>Default Rows Per Page</label>
-                  <select
-                    name="tableRowsPerPage"
-                    value={settings.tableRowsPerPage}
-                    onChange={handleInputChange}
-                    className="form-select"
-                  >
-                    {rowsPerPageOptions.map(option => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                
-                <div className="form-group checkbox-group">
-                  <label>
+                  <div className="checkbox-group">
                     <input
                       type="checkbox"
+                      id="enable-dark-mode"
                       name="enableDarkMode"
                       checked={settings.enableDarkMode}
                       onChange={handleInputChange}
                       className="form-checkbox"
                     />
-                    Enable Dark Mode
-                  </label>
+                    <label htmlFor="enable-dark-mode">Enable Dark Mode</label>
+                  </div>
+                </div>
+                
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Color Scheme</label>
+                    <div style={{ width: '100%', position: 'relative' }}>
+                      <ModernDropdown
+                        title={
+                          <div style={{ width: '100%', justifyContent: 'space-between' }}>
+                            {colorSchemeOptions.find(opt => opt.value === settings.colorScheme)?.label || 'Select Color Scheme'}
+                          </div>
+                        }
+                      >
+                        {colorSchemeOptions.map(option => (
+                          <ModernDropdownItem
+                            key={option.value}
+                            isActive={settings.colorScheme === option.value}
+                            onClick={() => handleInputChange({ target: { name: 'colorScheme', value: option.value } })}
+                          >
+                            {option.label}
+                          </ModernDropdownItem>
+                        ))}
+                      </ModernDropdown>
+                    </div>
+                  </div>
+                  
+                  <div className="form-group">
+                    <label>Font Size</label>
+                    <div style={{ width: '100%', position: 'relative' }}>
+                      <ModernDropdown
+                        title={
+                          <div style={{ width: '100%', justifyContent: 'space-between' }}>
+                            {fontScaleOptions.find(opt => opt.value === settings.fontScale)?.label || 'Select Font Size'}
+                          </div>
+                        }
+                      >
+                        {fontScaleOptions.map(option => (
+                          <ModernDropdownItem
+                            key={option.value}
+                            isActive={settings.fontScale === option.value}
+                            onClick={() => handleInputChange({ target: { name: 'fontScale', value: option.value } })}
+                          >
+                            {option.label}
+                          </ModernDropdownItem>
+                        ))}
+                      </ModernDropdown>
+                    </div>
+                  </div>
                 </div>
                 
                 <div className="form-group">
-                  <label>Color Scheme</label>
-                  <select
-                    name="colorScheme"
-                    value={settings.colorScheme}
-                    onChange={handleInputChange}
-                    className="form-select"
-                  >
-                    {colorSchemeOptions.map(option => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                
-                <div className="form-group checkbox-group">
-                  <label>
+                  <div className="checkbox-group">
                     <input
                       type="checkbox"
+                      id="show-grid-lines"
                       name="showGridLines"
                       checked={settings.showGridLines}
                       onChange={handleInputChange}
                       className="form-checkbox"
                     />
-                    Show Grid Lines in Tables
-                  </label>
-                </div>
-                
-                <div className="form-group">
-                  <label>Font Size</label>
-                  <select
-                    name="fontScale"
-                    value={settings.fontScale}
-                    onChange={handleInputChange}
-                    className="form-select"
-                  >
-                    {fontScaleOptions.map(option => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
+                    <label htmlFor="show-grid-lines">Show Grid Lines in Tables</label>
+                  </div>
                 </div>
                 
                 <div className="form-actions">
@@ -542,7 +640,7 @@ const DisplaySettings = () => {
                     className="save-button"
                     disabled={saving}
                   >
-                    {saving ? 'Saving...' : 'Save Interface Settings'}
+                    {saving ? 'Saving...' : 'Save Settings'}
                   </button>
                 </div>
               </form>
@@ -588,7 +686,7 @@ const DisplaySettings = () => {
                     className="save-button"
                     disabled={saving}
                   >
-                    {saving ? 'Saving...' : 'Save Document Settings'}
+                    {saving ? 'Saving...' : 'Save Settings'}
                   </button>
                 </div>
               </form>

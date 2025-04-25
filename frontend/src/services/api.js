@@ -90,17 +90,6 @@ export const suppliersAPI = {
     delete: (id) => api.delete(`/suppliers/${id}`),
 };
 
-
-// Inventory API (Note: May overlap with product stock updates, clarify usage)
-export const inventoryAPI = {
-  // Assuming '/inventory' might provide a summary or specific inventory view
-  // If it's just product stock, use productsAPI.updateStock
-  // getAll: () => api.get('/inventory'),
-  // updateStock: (id, quantity) => api.put(`/inventory/${id}`, { quantity }), // Likely handled by product patch
-
-  // i think this is just more just product stock, i dont think we are doing another inventory schema - Walid
-};
-
 // Sales API
 export const salesAPI = {
   getAll: (params = {}) => api.get('/sales', { params }), // Allow passing query params

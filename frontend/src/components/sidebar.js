@@ -14,6 +14,7 @@ import { FiUser } from 'react-icons/fi';
 import { MdOutlineDisplaySettings } from 'react-icons/md';
 import { FiSliders } from 'react-icons/fi';
 import { settingsAPI } from '../services/api';
+import ModernDropdown, { ModernDropdownItem } from './ModernDropdown';
 
 
 // sidebar layout:
@@ -37,37 +38,13 @@ const SideBar = ({ children }) => {
 const SideBarDropdown = ({ title, children, isActive }) => {
     const [isOpen, setIsOpen] = useState(false);
     return (
-        <div className="text">
-            <Nav.Item
-                onClick={() => setIsOpen(!isOpen)}
-                className="sidebar-dropdown-title"
-                style={{
-                    cursor: 'pointer',
-                    padding: '12px 16px',
-                    textAlign: 'left',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    fontSize: '14px',
-                    fontWeight: '500',
-                    color: isActive ? '#357EC7' : '#505050',
-                    backgroundColor: isActive ? '#f0f7ff' : 'transparent',
-                    margin: '2px 8px',
-                    borderRadius: '4px'
-                }}
-            >
-                {title}
-                <span style={{ fontSize: '10px' }}>{isOpen ? '▲' : '▼'}</span>
-            </Nav.Item>
-
-            {isOpen && (
-                <div className="sidebar-dropdown-content" style={{
-                    paddingLeft: '12px'
-                }}>
-                    {children}
-                </div>
-            )}
-        </div>
+        <ModernDropdown
+            isActive={isActive}
+            title={title}
+            className="text"
+        >
+            {children}
+        </ModernDropdown>
     );
 };
 
@@ -188,189 +165,108 @@ function ToolsSidebar() {
                     </Link>
                 </Nav.Item>
 
-                <SideBarDropdown
-                    isActive={isGroupActive(['/products', '/all_products', '/create_products', '/inventory', '/categories', '/brands'])} // Updated to include brands
+                <ModernDropdown 
+                    isActive={isGroupActive(['/products', '/all_products', '/create_products', '/categories', '/brands'])}
                     title={
-                        <div className="sidebar-link" style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '12px'
-                        }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                             <LuPackage size={16}/> Products
                         </div>
-                    }>
-                    <Link to="/all_products" className="sidebar-link" style={{
-                        textDecoration: 'none',
-                        color: 'inherit'
-                    }}>
-                        <SideBarItem
+                    }
+                >
+                    <Link to="/all_products" style={{ textDecoration: 'none', color: 'inherit' }}>
+                        <ModernDropdownItem 
                             isActive={isPathActive('/all_products')}
-                            title={
-                                <div style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '12px'
-                                }}>
-                                    <LuPackage size={16} /> All Products
-                                </div>
-                            }
                             onClick={() => handleItemClick("All Products")}
-                        />
+                        >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                <LuPackage size={16} /> All Products
+                            </div>
+                        </ModernDropdownItem>
                     </Link>
-                    <Link to="/create_products" className="sidebar-link" style={{
-                        textDecoration: 'none',
-                        color: 'inherit'
-                    }}>
-                        <SideBarItem
+                    
+                    <Link to="/create_products" style={{ textDecoration: 'none', color: 'inherit' }}>
+                        <ModernDropdownItem
                             isActive={isPathActive('/create_products')}
-                            title={
-                                <div style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '12px'
-                                }}>
-                                    <LuPackagePlus size={16} /> Create Product
-                                </div>
-                            }
                             onClick={() => handleItemClick("Create Product")}
-                        />
+                        >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                <LuPackagePlus size={16} /> Create Product
+                            </div>
+                        </ModernDropdownItem>
                     </Link>
-                    <Link to="/inventory" className="sidebar-link" style={{
-                        textDecoration: 'none',
-                        color: 'inherit'
-                    }}>
-                        <SideBarItem
-                            isActive={isPathActive('/inventory')}
-                            title={
-                                <div style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '12px'
-                                }}>
-                                    <LuPackageSearch size={16} /> Inventory
-                                </div>
-                            }
-                            onClick={() => handleItemClick("Inventory")}
-                        />
-                    </Link>
-                    <Link to="/categories" className="sidebar-link" style={{
-                        textDecoration: 'none',
-                        color: 'inherit'
-                    }}>
-                        <SideBarItem
+                    
+                    <Link to="/categories" style={{ textDecoration: 'none', color: 'inherit' }}>
+                        <ModernDropdownItem
                             isActive={isPathActive('/categories')}
-                            title={
-                                <div style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '12px'
-                                }}>
-                                    <LuPackageSearch size={16} /> Categories
-                                </div>
-                            }
                             onClick={() => handleItemClick("Categories")}
-                        />
+                        >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                <LuPackageSearch size={16} /> Categories
+                            </div>
+                        </ModernDropdownItem>
                     </Link>
-                    {/* New Brands Link */}
-                    <Link to="/brands" className="sidebar-link" style={{
-                        textDecoration: 'none',
-                        color: 'inherit'
-                    }}>
-                        <SideBarItem
+                    
+                    <Link to="/brands" style={{ textDecoration: 'none', color: 'inherit' }}>
+                        <ModernDropdownItem
                             isActive={isPathActive('/brands')}
-                            title={
-                                <div style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '12px'
-                                }}>
-                                    <LuPackageSearch size={16} /> Brands
-                                </div>
-                            }
                             onClick={() => handleItemClick("Brands")}
-                        />
+                        >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                <LuPackageSearch size={16} /> Brands
+                            </div>
+                        </ModernDropdownItem>
                     </Link>
-                </SideBarDropdown>
+                </ModernDropdown>
 
-                <SideBarDropdown
+                <ModernDropdown
                     isActive={isGroupActive(['/users', '/all_users', '/create_user'])}
                     title={
-                        <div className="sidebar-link" style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '12px'
-                        }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                             <FiUsers size={16} /> Users
                         </div>
-                    }>
-                    <Link to="/all_users" className="sidebar-link" style={{
-                        textDecoration: 'none',
-                        color: 'inherit'
-                    }}>
-                        <SideBarItem
+                    }
+                >
+                    <Link to="/all_users" style={{ textDecoration: 'none', color: 'inherit' }}>
+                        <ModernDropdownItem
                             isActive={isPathActive('/all_users')}
-                            title={
-                                <div style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '12px'
-                                }}>
-                                    <FiUsers size={16} /> All Users
-                                </div>
-                            }
                             onClick={() => handleItemClick("All Users")}
-                        />
+                        >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                <FiUsers size={16} /> All Users
+                            </div>
+                        </ModernDropdownItem>
                     </Link>
-                    <Link to="/create-user" className="sidebar-link" style={{
-                        textDecoration: 'none',
-                        color: 'inherit'
-                    }}>
-                        <SideBarItem
+                    <Link to="/create-user" style={{ textDecoration: 'none', color: 'inherit' }}>
+                        <ModernDropdownItem
                             isActive={isPathActive('/create-user')}
-                            title={
-                                <div style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '12px'
-                                }}>
-                                    <FiUsers size={16} /> Create User
-                                </div>
-                            }
                             onClick={() => handleItemClick("Create User")}
-                        />
+                        >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                <FiUsers size={16} /> Create User
+                            </div>
+                        </ModernDropdownItem>
                     </Link>
-                </SideBarDropdown>
+                </ModernDropdown>
 
-                <SideBarDropdown
+                <ModernDropdown
                     isActive={isGroupActive(['/purchases', '/supplier'])}
                     title={
-                        <div className="sidebar-link" style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '12px'
-                        }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                             <BsCartCheck size={16}/> Purchases
                         </div>
-                    }>
-                    <Link to="/supplier" className="sidebar-link" style={{
-                        textDecoration: 'none',
-                        color: 'inherit'
-                    }}>
-                        <SideBarItem
+                    }
+                >
+                    <Link to="/supplier" style={{ textDecoration: 'none', color: 'inherit' }}>
+                        <ModernDropdownItem
                             isActive={isPathActive('/supplier')}
-                            title={
-                                <div style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '12px'
-                                }}>
-                                    <BsCartCheck size={16} /> Suppliers
-                                </div>
-                            }
                             onClick={() => handleItemClick("Suppliers")}
-                        />
+                        >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                <BsCartCheck size={16} /> Suppliers
+                            </div>
+                        </ModernDropdownItem>
                     </Link>
-                </SideBarDropdown>
+                </ModernDropdown>
 
                 <Nav.Item className="sidebar-nav-item" style={{
                     padding: '12px 16px',
@@ -393,54 +289,35 @@ function ToolsSidebar() {
                     </Link>
                 </Nav.Item>
 
-                <SideBarDropdown
+                <ModernDropdown
                     isActive={isGroupActive(['/reports', '/sales-report'])}
                     title={
-                        <div className="sidebar-link" style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '12px'
-                        }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                             <HiOutlineDocumentReport size={16}/> Reports
                         </div>
-                    }>
-                    <Link to="/reports" className="sidebar-link" style={{
-                        textDecoration: 'none',
-                        color: 'inherit'
-                    }}>
-                        <SideBarItem
+                    }
+                >
+                    <Link to="/reports" style={{ textDecoration: 'none', color: 'inherit' }}>
+                        <ModernDropdownItem
                             isActive={isPathActive('/reports')}
-                            title={
-                                <div style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '12px'
-                                }}>
-                                    <HiOutlineDocumentReport size={16} /> General Reports
-                                </div>
-                            }
                             onClick={() => handleItemClick("General Reports")}
-                        />
+                        >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                <HiOutlineDocumentReport size={16} /> General Reports
+                            </div>
+                        </ModernDropdownItem>
                     </Link>
-                    <Link to="/sales-report" className="sidebar-link" style={{
-                        textDecoration: 'none',
-                        color: 'inherit'
-                    }}>
-                        <SideBarItem
+                    <Link to="/sales-report" style={{ textDecoration: 'none', color: 'inherit' }}>
+                        <ModernDropdownItem
                             isActive={isPathActive('/sales-report')}
-                            title={
-                                <div style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '12px'
-                                }}>
-                                    <TbReportMoney size={16} /> Sales Report
-                                </div>
-                            }
                             onClick={() => handleItemClick("Sales Report")}
-                        />
+                        >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                <TbReportMoney size={16} /> Sales Report
+                            </div>
+                        </ModernDropdownItem>
                     </Link>
-                </SideBarDropdown>
+                </ModernDropdown>
 
                 <Nav.Item className="sidebar-nav-item" style={{
                     padding: '12px 16px',
@@ -463,81 +340,53 @@ function ToolsSidebar() {
                     </Link>
                 </Nav.Item>
 
-                <SideBarDropdown
+                <ModernDropdown
                     title={
-                        <div style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '12px'
-                        }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                             <FiSettings size={16}/> Settings
                         </div>
                     }
                     isActive={isGroupActive(['/settings/user', '/settings/display', '/settings/general'])}
                 >
-                    <Link to="/settings/user" className="sidebar-link" style={{
-                        textDecoration: 'none',
-                        color: 'inherit'
-                    }}>
-                        <SideBarItem
+                    <Link to="/settings/user" style={{ textDecoration: 'none', color: 'inherit' }}>
+                        <ModernDropdownItem
                             isActive={isPathActive('/settings/user')}
-                            title={
-                                <div style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '12px'
-                                }}>
-                                    <FiUser size={16} /> User Settings
-                                </div>
-                            }
                             onClick={() => handleItemClick("User Settings")}
-                        />
+                        >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                <FiUser size={16} /> User Settings
+                            </div>
+                        </ModernDropdownItem>
                     </Link>
                     
                     {/* Display Settings - only for managers and admins */}
                     {user && (user.role === 'manager' || user.role === 'admin') && (
-                        <Link to="/settings/display" className="sidebar-link" style={{
-                            textDecoration: 'none',
-                            color: 'inherit'
-                        }}>
-                            <SideBarItem
+                        <Link to="/settings/display" style={{ textDecoration: 'none', color: 'inherit' }}>
+                            <ModernDropdownItem
                                 isActive={isPathActive('/settings/display')}
-                                title={
-                                    <div style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '12px'
-                                    }}>
-                                        <MdOutlineDisplaySettings size={16} /> Display Settings
-                                    </div>
-                                }
                                 onClick={() => handleItemClick("Display Settings")}
-                            />
+                            >
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                    <MdOutlineDisplaySettings size={16} /> Display Settings
+                                </div>
+                            </ModernDropdownItem>
                         </Link>
                     )}
                     
                     {/* General Settings - only for admins */}
                     {user && user.role === 'admin' && (
-                        <Link to="/settings/general" className="sidebar-link" style={{
-                            textDecoration: 'none',
-                            color: 'inherit'
-                        }}>
-                            <SideBarItem
+                        <Link to="/settings/general" style={{ textDecoration: 'none', color: 'inherit' }}>
+                            <ModernDropdownItem
                                 isActive={isPathActive('/settings/general')}
-                                title={
-                                    <div style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '12px'
-                                    }}>
-                                        <FiSliders size={16} /> General Settings
-                                    </div>
-                                }
                                 onClick={() => handleItemClick("General Settings")}
-                            />
+                            >
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                    <FiSliders size={16} /> General Settings
+                                </div>
+                            </ModernDropdownItem>
                         </Link>
                     )}
-                </SideBarDropdown>
+                </ModernDropdown>
 
                 <Nav.Item
                     onClick={handleLogout}
