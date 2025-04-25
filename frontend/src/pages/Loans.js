@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaSearch, FaEye } from 'react-icons/fa';
+import { FaSearch, FaEye, FaMoneyBillWave } from 'react-icons/fa';
 import Layout from '../components/Layout';
 import '../styles/Loans.css';
 import { loansAPI } from '../services/api'; // Use the actual API
@@ -46,6 +46,35 @@ const Loans = () => {
         setFilteredLoans(filtered);
     }, [searchTerm, loans]);
 
+    // Handle loan payment
+    const handlePayLoan = async (loanId) => {
+        try {
+            setLoading(true);
+            const response = await loansAPI.payLoan(loanId); // Call the API to pay the loan
+            console.log('Loan payment response:', response.data);
+
+            // Update the loan in the state
+            const updatedLoans = loans.map((loan) =>
+                loan._id === loanId
+                    ? {
+                          ...loan,
+                          loanAmount: 0, 
+                          amountPaid: 0, 
+                          remainingBalance: 0, 
+                          paymentStatus: 'paid', 
+                      }
+                    : loan
+            );
+            setLoans(updatedLoans);
+            setFilteredLoans(updatedLoans);
+        } catch (err) {
+            console.error('Error paying loan:', err);
+            setError('Failed to complete loan payment. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <Layout title="Loans">
             {loading ? (
@@ -79,7 +108,7 @@ const Loans = () => {
                                     <th>Loan Number</th>
                                     <th>Customer</th>
                                     <th>Loan Amount</th>
-                                    <th>Remaining Balance</th>
+                                    <th>Remaining Loan</th>
                                     <th>Status</th>
                                     <th>Actions</th>
                                 </tr>
@@ -101,6 +130,14 @@ const Loans = () => {
                                                 <button className="loans-action-button">
                                                     <FaEye />
                                                 </button>
+                                                {loan.paymentStatus !== 'paid' && (
+                                                    <button
+                                                        className="loans-action-button pay-button"
+                                                        onClick={() => handlePayLoan(loan._id)}
+                                                    >
+                                                        <FaMoneyBillWave />
+                                                    </button>
+                                                )}
                                             </td>
                                         </tr>
                                     ))

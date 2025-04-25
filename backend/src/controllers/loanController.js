@@ -5,8 +5,8 @@ exports.createLoan = async (req, res) => {
   try {
     const { customer, loanAmount, paymentMethod, notes } = req.body;
 
-    // Calculate remaining balance (initially equal to loanAmount)
-    const remainingBalance = loanAmount;
+    // Calculate remaining balance (initially equal to 0)
+    const remainingBalance = 0;
 
     // Find the last loan in the database and get its loanNumber
     const lastLoan = await Loan.findOne().sort({ loanNumber: -1 }); 
@@ -162,5 +162,36 @@ exports.addLoanItems = async (req, res) => {
   } catch (error) {
     console.error('Error adding loan items:', error);
     res.status(500).json({ success: false, message: 'Error adding loan items', error: error.message });
+  }
+};
+
+// Pay off a loan
+exports.payLoan = async (req, res) => {
+  try {
+    const { id } = req.params; // Loan ID from the request parameters
+
+    // Find the loan by ID
+    const loan = await Loan.findById(id);
+    if (!loan) {
+      return res.status(404).json({ success: false, message: 'Loan not found' });
+    }
+
+    // Check if the loan is already paid
+    if (loan.paymentStatus === 'paid') {
+      return res.status(400).json({ success: false, message: 'Loan is already fully paid' });
+    }
+
+    // Mark the loan as paid
+    loan.remainingBalance = 0; // Set remaining balance to 0
+    loan.paymentStatus = 'paid'; // Update payment status
+    loan.amountPaid = loan.loanAmount; // Set amountPaid to the total loan amount
+
+    // Save the updated loan
+    await loan.save();
+
+    res.status(200).json({ success: true, message: 'Loan paid off successfully', data: loan });
+  } catch (error) {
+    console.error('Error paying off loan:', error);
+    res.status(500).json({ success: false, message: 'Error paying off loan', error: error.message });
   }
 };
