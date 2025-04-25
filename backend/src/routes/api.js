@@ -9,6 +9,7 @@ const saleController = require('../controllers/saleController');
 const importController = require('../controllers/importController');
 const purchaseController = require('../controllers/purchaseController');
 const brandController = require('../controllers/brandController');
+const loanController = require('../controllers/loanController'); // Add loanController
 const auth = require('../middleware/auth');
 
 router.post('/login', userController.login);
@@ -46,7 +47,6 @@ router.put('/products/:id', productController.updateProduct);
 router.delete('/products/:id', productController.deleteProduct);
 router.patch('/products/:id/stock', productController.updateStock);
 
-
 router.post('/sales', saleController.createSale);
 router.get('/sales', saleController.getSales);
 router.get('/sales/last-bill-number', saleController.getLastBillNumber); // Specific route first
@@ -56,14 +56,18 @@ router.get('/sales/export', saleController.exportSales); // Export route
 router.put('/sales/:id/payment', saleController.updatePaymentStatus); // More specific than :id
 router.get('/sales/:id', saleController.getSaleById); // Generic route last
 
-
-
 router.post('/purchases', purchaseController.createPurchase);
 router.get('/purchases', purchaseController.getAllPurchases);
 router.get('/purchases/export', purchaseController.exportPurchases);
 router.get('/purchases/:id', purchaseController.getPurchaseById);
 
-// Test route
+router.post('/loans', loanController.createLoan); // Create a new loan
+router.get('/loans', loanController.getAllLoans); // Get all loans
+router.get('/loans/loan-number/:loanNumber', loanController.getLoanByLoanNumber); // Get loan by loan number
+router.get('/loans/:id', loanController.getLoanById); // Get loan by ID
+router.put('/loans/:id/repayment', loanController.updateLoanRepayment); // Update loan repayment
+
+// TODO:: delete this: Test route
 router.get('/test', (req, res) => {
   res.status(200).json({ success: true, message: 'Test route works!' });
 });
