@@ -7,33 +7,33 @@ import { Link } from 'react-router-dom';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import './all_purchases.css';
-import Layout from '../components/Layout';
 import PurchaseFilter from './purchase_filter';
+import Layout from '../components/Layout';
 
 const AllPurchases = () => {
   const exportRef = useRef();
   const [purchases, setPurchases] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [limit, setLimit] = useState(10);
-  
+
   // Filter state
   const [filters, setFilters] = useState({});
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  
+
   // Search state
   const [searchQuery, setSearchQuery] = useState('');
-  
+
   // Fetch purchases with current filters and pagination
   const fetchPurchases = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-      
+
       // Build query params
       const params = {
         page: currentPage,
@@ -41,14 +41,14 @@ const AllPurchases = () => {
         sort: '-date',
         ...filters
       };
-      
+
       // Only add search query if it exists
       if (searchQuery.trim()) {
         params.search = searchQuery;
       }
-      
+
       const response = await axios.get('/api/purchases', { params });
-      
+
       if (response.data.success) {
         setPurchases(response.data.data);
         setTotalPages(response.data.totalPages);
@@ -64,12 +64,12 @@ const AllPurchases = () => {
       setLoading(false);
     }
   }, [currentPage, limit, filters, searchQuery]);
-  
+
   // Initial fetch
   useEffect(() => {
     fetchPurchases();
   }, [fetchPurchases]);
-  
+
   // Handle pagination
   const handlePrevious = () => {
     if (currentPage > 1) {
@@ -82,12 +82,12 @@ const AllPurchases = () => {
       setCurrentPage(currentPage + 1);
     }
   };
-  
+
   // Handle search input
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
   };
-  
+
   // Submit search with delay to prevent too many requests
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -95,46 +95,39 @@ const AllPurchases = () => {
       setCurrentPage(1);
       fetchPurchases();
     }, 500);
-    
+
     return () => clearTimeout(timeoutId);
   }, [searchQuery, fetchPurchases]);
-  
+
   // Handle filters
   const toggleFilter = () => {
     setIsFilterOpen(!isFilterOpen);
   };
-  
+
   const handleApplyFilters = (newFilters) => {
     setFilters(newFilters);
     setCurrentPage(1); // Reset to page 1 when filters change
   };
   
- 
-  const handleExport = async (format) => {
-    const exportElement = exportRef.current;
-
-    if (!exportElement) return;
-
-    if (format === 'pdf') {
-      const canvas = await html2canvas(exportElement);
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-      pdf.save('purchases.pdf');
+  // Handle export
+  const handleExport = (format) => {
+    // Build query parameters for export including current filters
+    const params = new URLSearchParams({
+      format,
+      ...filters
+    });
+    
+    if (searchQuery.trim()) {
+      params.append('search', searchQuery);
     }
-
-    if (format === 'csv') {
-      const table = exportElement.querySelector('table');
-      if (!table) return;
-      const ws = XLSX.utils.table_to_sheet(table);
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, 'Purchases');
-      const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-      saveAs(new Blob([wbout], { type: 'application/octet-stream' }), 'purchases.xlsx');
-    }
+    
+    // Generate full URL for export
+    const exportUrl = `/api/purchases/export?${params.toString()}`;
+    
+    // Open export URL in new tab/window
+    window.open(exportUrl, '_blank');
   };
+  
   // Format date string
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -209,6 +202,10 @@ const AllPurchases = () => {
               <FileSpreadsheet size={16} />
               <span>Excel</span>
             </button>
+            <button className="create-btn" onClick={() => window.location.href = '/create-purchase'}>
+              <Plus size={16} />
+              <span>Create New Purchase</span>
+            </button>
           </div>
         </div>
         
@@ -220,14 +217,14 @@ const AllPurchases = () => {
         />
       </div>
 
-      {error && (
-        <div className="error-message">
-          <AlertCircle size={16} />
-          <span>{error}</span>
-        </div>
-      )}
+        {error && (
+          <div className="error-message">
+            <AlertCircle size={16} />
+            <span>{error}</span>
+          </div>
+        )}
 
-      <div className="table-container" ref={exportRef}>
+      <div className="table-container">
         {loading ? (
           <div className="loading">Loading purchases...</div>
         ) : purchases.length === 0 ? (
@@ -288,24 +285,24 @@ const AllPurchases = () => {
         )}
       </div>
 
-      <div className="pagination">
-        <button 
-          className={`pagination-btn ${currentPage === 1 ? 'disabled' : ''}`}
-          onClick={handlePrevious}
-          disabled={currentPage === 1}
-        >
-          Previous
-        </button>
-        <span className="page-info">Page {currentPage} of {totalPages}</span>
-        <button 
-          className={`pagination-btn ${currentPage === totalPages ? 'disabled' : ''}`}
-          onClick={handleNext}
-          disabled={currentPage === totalPages}
-        >
-          Next
-        </button>
+        <div className="pagination">
+          <button
+            className={`pagination-btn ${currentPage === 1 ? 'disabled' : ''}`}
+            onClick={handlePrevious}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </button>
+          <span className="page-info">Page {currentPage} of {totalPages}</span>
+          <button
+            className={`pagination-btn ${currentPage === totalPages ? 'disabled' : ''}`}
+            onClick={handleNext}
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </button>
+        </div>
       </div>
-    </div>
     </Layout>
   );
 };
