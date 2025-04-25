@@ -1,0 +1,83 @@
+/* TransactionNotification.css */
+.transaction-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 350px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 16px;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    animation: slide-in 0.3s ease-out;
+  }
+  
+  @keyframes slide-in {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  .transaction-notification.success {
+    border-left: 4px solid #2e7d32;
+  }
+  
+  .transaction-notification.error {
+    border-left: 4px solid #d32f2f;
+  }
+  
+  .notification-content {
+    display: flex;
+    align-items: flex-start;
+  }
+  
+  .notification-icon {
+    margin-right: 16px;
+    font-size: 24px;
+  }
+  
+  .notification-icon .fa-check-circle {
+    color: #2e7d32;
+  }
+  
+  .notification-icon .fa-exclamation-circle {
+    color: #d32f2f;
+  }
+  
+  .notification-text h4 {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+  }
+  
+  .notification-text p {
+    margin: 0;
+    font-size: 14px;
+    color: #616161;
+  }
+  
+  .product-summary {
+    margin-top: 8px !important;
+    font-size: 12px !important;
+    color: #757575 !important;
+  }
+  
+  .close-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #9e9e9e;
+    padding: 4px;
+    font-size: 14px;
+  }
+  
+  .close-btn:hover {
+    color: #616161;
+  }

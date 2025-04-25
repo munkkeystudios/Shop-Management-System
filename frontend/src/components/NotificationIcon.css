@@ -1,0 +1,253 @@
+.notification-container {
+  position: relative;
+}
+
+.notification-button {
+  background: none;
+  border: none;
+  color: #505050;
+  font-size: 24px;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+  margin: 0 8px;
+}
+
+.notification-button:hover {
+  background-color: #f0f0f0;
+}
+
+.notification-button.has-notifications {
+  color: #00a838;
+}
+
+.notification-button.has-notifications:hover {
+  background-color: #e6ffe6;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background-color: #ff4757;
+  color: white;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.notification-dropdown {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  width: 350px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  overflow: hidden;
+  border: 1px solid #e6e6e6;
+}
+
+.notification-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #eee;
+  background-color: #f8f9fa;
+}
+
+.notification-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.notification-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.mark-all-read-button,
+.clear-all-button {
+  background: none;
+  border: none;
+  color: #00a838;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.mark-all-read-button:hover,
+.clear-all-button:hover {
+  text-decoration: underline;
+}
+
+.notification-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.notification-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 14px 20px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.notification-item:hover {
+  background-color: #f8f9fa;
+}
+
+.notification-item.unread {
+  background-color: #f0fff0;
+}
+
+.notification-item.unread:hover {
+  background-color: #e6ffe6;
+}
+
+.notification-icon {
+  margin-right: 14px;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: #e6ffe6;
+  border-radius: 50%;
+  color: #00a838;
+}
+
+.notification-content {
+  flex: 1;
+}
+
+.notification-message {
+  margin: 0 0 6px 0;
+  font-size: 14px;
+  color: #333;
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+.notification-time {
+  font-size: 12px;
+  color: #6c757d;
+  display: block;
+}
+
+.notification-delete {
+  background: none;
+  border: none;
+  color: #6c757d;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.notification-item:hover .notification-delete {
+  opacity: 1;
+}
+
+.no-notifications,
+.notification-loading,
+.notification-error {
+  padding: 24px 16px;
+  text-align: center;
+  color: #6c757d;
+  font-size: 14px;
+}
+
+.notification-error {
+  color: #dc3545;
+}
+
+.notification-loading {
+  color: #00a838;
+}
+
+.notification-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.notification-footer {
+  display: flex;
+  justify-content: center;
+  padding: 12px 20px;
+  border-top: 1px solid #eee;
+  background-color: #f8f9fa;
+}
+
+.mark-all-read-button {
+  background: none;
+  border: none;
+  color: #00a838;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 4px;
+  transition: color 0.2s;
+}
+
+.mark-all-read-button:hover {
+  color: #008a2e;
+  text-decoration: underline;
+}
+
+.notification-header .clear-all-button {
+  background: none;
+  border: none;
+  color: #00a838;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 4px;
+  transition: color 0.2s;
+}
+
+.notification-header .clear-all-button:hover {
+  color: #008a2e;
+  text-decoration: underline;
+}
+
+.notification-footer .clear-all-button {
+  background: none;
+  border: 1px solid #00a838;
+  border-radius: 4px;
+  color: #00a838;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 8px 16px;
+  transition: background-color 0.2s;
+}
+
+.notification-footer .clear-all-button:hover {
+  background-color: #e6ffe6;
+  color: #008a2e;
+}
+
+@media (max-width: 576px) {
+  .notification-dropdown {
+    width: 280px;
+    right: -70px;
+  }
+}

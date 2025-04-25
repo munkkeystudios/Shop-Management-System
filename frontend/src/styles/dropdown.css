@@ -1,0 +1,152 @@
+/* Modern Dropdown Styling */
+.sidebar-dropdown {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 8px;
+  position: relative;
+}
+
+.sidebar-dropdown-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background-color: #ffffff;
+  color: #333333;
+  border-radius: 8px;
+  cursor: pointer;
+  margin: 2px 8px;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  min-height: 24px;
+  height: 45px; /* Set consistent height for all dropdowns */
+  box-sizing: border-box;
+}
+
+.sidebar-dropdown-header:hover {
+  background-color: #f8f8f8;
+}
+
+.sidebar-dropdown-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  width: 100%; /* Make sure the title takes up all available space */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidebar-dropdown-icon {
+  font-size: 10px;
+  transition: transform 0.2s ease;
+  color: #666666;
+  flex-shrink: 0; /* Prevent the icon from shrinking */
+}
+
+.sidebar-dropdown-icon.open {
+  transform: rotate(180deg);
+}
+
+.sidebar-dropdown-content {
+  display: flex;
+  flex-direction: column;
+  padding-left: 0;
+  margin-top: 4px;
+  width: 100%;
+  background-color: #ffffff;
+  border-radius: 8px;
+  position: relative;
+}
+
+.sidebar-dropdown-content-inner {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.sidebar-dropdown-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 16px 10px 40px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #010101;
+  cursor: pointer;
+  border-radius: 8px;
+  margin: 2px 8px;
+  transition: background-color 0.2s ease;
+}
+
+.sidebar-dropdown-item:hover {
+  background-color: #f5f5f5;
+}
+
+.sidebar-dropdown-item.active {
+  background-color: #00a838;
+  color: #ffffff;
+}
+
+.sidebar-dropdown-item-icon {
+  margin-right: 12px;
+}
+
+/* Media queries for responsive design */
+@media (max-width: 768px) {
+  .sidebar-dropdown-header {
+    height: 40px; /* Slightly smaller for mobile */
+    padding: 10px 12px;
+  }
+
+  .sidebar-dropdown-item {
+    padding: 8px 12px 8px 20px;
+  }
+}
+
+/* Apply consistent width to the dropdown container if inside a form-group */
+.form-group .sidebar-dropdown {
+  width: 100%;
+}
+
+/* Sidebar container styles */
+.sidebar-container {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-menu-container {
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db transparent;
+}
+
+.sidebar-menu-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-menu-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-menu-container::-webkit-scrollbar-thumb {
+  background-color: #d1d5db;
+  border-radius: 6px;
+}
+
+/* Ensure dropdowns don't cause layout issues */
+.sidebar-dropdown {
+  position: relative;
+  width: 100%;
+}
+
+/* Responsive adjustments */
+@media (max-height: 700px) {
+  .sidebar-dropdown-content-inner {
+    max-height: 200px;
+  }
+}

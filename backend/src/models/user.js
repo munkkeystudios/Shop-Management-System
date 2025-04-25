@@ -2,6 +2,18 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt'); // *** ADDED: Import bcrypt ***
 
+// User notification preferences schema
+const notificationPreferencesSchema = new mongoose.Schema({
+  email: {
+    type: Boolean,
+    default: true
+  },
+  browser: {
+    type: Boolean,
+    default: true
+  }
+}, { _id: false });
+
 const UserSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -27,16 +39,42 @@ const UserSchema = new mongoose.Schema({
     type: Boolean,
     default: true
   },
-  // *** ADDED: Optional new fields based on potential frontend form ***
+  // User profile fields
+  firstName: {
+    type: String,
+    trim: true
+  },
+  lastName: {
+    type: String,
+    trim: true
+  },
+  email: {
+    type: String,
+    trim: true,
+    lowercase: true
+  },
+  phone: {
+    type: String,
+    trim: true
+  },
+  jobTitle: {
+    type: String,
+    trim: true
+  },
+  // User preferences
+  preferredLanguage: {
+    type: String,
+    enum: ['en', 'es', 'fr', 'de', 'zh', 'ar', 'ur'],
+    default: 'en'
+  },
+  notificationPreferences: {
+    type: notificationPreferencesSchema,
+    default: () => ({})
+  },
+  // Legacy fields
   name: {
      type: String,
      trim: true,
-  },
-  phone: {
-     type: String,
-     trim: true,
-     // Optional: Add validation for phone format if needed
-     // match: [/^\+?[0-9]{10,15}$/, 'Please fill a valid phone number']
   }
 }, {
   timestamps: true

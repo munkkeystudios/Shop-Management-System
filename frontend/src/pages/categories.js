@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { FaEdit, FaTrash, FaSearch, FaPlus, FaTimes } from 'react-icons/fa';
+import { FaSearch, FaPlus, FaTimes } from 'react-icons/fa';
+import { FiEdit, FiTrash } from 'react-icons/fi';
 import Layout from '../components/Layout';
+import { useNotifications } from '../context/NotificationContext';
 import './categories.css';
 
 const CategoryPage = () => {
@@ -12,6 +14,7 @@ const CategoryPage = () => {
   const [editingId, setEditingId] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [categories, setCategories] = useState([]);
+  const { addNotification } = useNotifications();
 
   // Fetch categories from the backend
   useEffect(() => {
@@ -63,7 +66,9 @@ const CategoryPage = () => {
       const data = await response.json();
 
       if (data.success) {
+        const categoryName = categories.find(cat => cat._id === id)?.name || 'Unknown';
         setCategories(prev => prev.filter(category => category._id !== id));
+        addNotification('category', `Category "${categoryName}" has been deleted`);
       } else {
         alert(data.message || 'Failed to delete category');
       }
@@ -108,8 +113,11 @@ const CategoryPage = () => {
           setCategories(prev =>
             prev.map(cat => (cat._id === editingId ? data.data : cat))
           );
+          addNotification('category', `Category "${categoryName}" has been updated`, editingId);
         } else {
           setCategories(prev => [...prev, data.data]);
+          const categoryId = data.data?._id;
+          addNotification('category', `New category "${categoryName}" has been created`, categoryId);
         }
 
         setIsModalOpen(false);
@@ -178,16 +186,17 @@ const CategoryPage = () => {
                         <td>{category.name}</td> {/* Displaying the category name */}
                         <td>{category.description}</td> {/* Displaying the category description */}
                         <td>
-                          <div className="categories-action-buttons">
-                            <button className="categories-action-button"
-                            onClick={() => handleEdit(category)}
-                            >
-                              <FaEdit />
-                            </button>
-                            <button className="categories-action-button"
-                            onClick={() => handleDelete(category._id)}>
-                              <FaTrash />
-                            </button>
+                          <div className="action-icons">
+                            <FiEdit
+                              className="edit-icon"
+                              title="Edit"
+                              onClick={() => handleEdit(category)}
+                            />
+                            <FiTrash
+                              className="delete-icon"
+                              title="Delete"
+                              onClick={() => handleDelete(category._id)}
+                            />
                           </div>
                         </td>
                       </tr>

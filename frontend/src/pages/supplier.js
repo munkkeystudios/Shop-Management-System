@@ -1,6 +1,8 @@
 import React, { useState, useEffect} from "react";
-import { FaEdit, FaTrash, FaSearch, FaPlus, FaTimes } from 'react-icons/fa';
+import { FaSearch, FaPlus, FaTimes } from 'react-icons/fa';
+import { FiEdit, FiTrash } from 'react-icons/fi';
 import Layout from '../components/Layout';
+import { useNotifications } from '../context/NotificationContext';
 import './supplier.css';
 
 export const Frame = () => {
@@ -12,6 +14,7 @@ export const Frame = () => {
   const [suppliers, setSuppliers] = useState([]);
   const [isEditMode, setIsEditMode] = useState(false);
   const [editingSupplierId, setEditingSupplierId] = useState(null);
+  const { addNotification } = useNotifications();
 
 
   // Sample data - replace with your actual data source
@@ -74,7 +77,9 @@ const handleDelete = async (id) => {
     const data = await response.json();
 
     if (data.success) {
+      const supplierName = suppliers.find(s => s._id === id)?.name || 'Unknown';
       setSuppliers(prev => prev.filter(s => s._id !== id));
+      addNotification('supplier', `Supplier "${supplierName}" has been deleted`);
     } else {
       alert(data.message || 'Error deleting supplier');
     }
@@ -112,8 +117,11 @@ const handleSubmit = async (e) => {
         setSuppliers(prev =>
           prev.map(s => (s._id === editingSupplierId ? data.data : s))
         );
+        addNotification('supplier', `Supplier "${supplierName}" has been updated`, editingSupplierId);
       } else {
         setSuppliers(prev => [...prev, data.data]);
+        const supplierId = data.data?._id;
+        addNotification('supplier', `New supplier "${supplierName}" has been created`, supplierId);
       }
       setIsModalOpen(false);
       setSupplierName('');
@@ -175,16 +183,18 @@ const handleSubmit = async (e) => {
                         <td>{supplier.phone}</td>
                         <td>{supplier.address}</td>
                         <td>
-                          <div className="supplier-action-buttons">
-                            <button className="supplier-action-button"
-                            onClick={() => handleEdit(supplier)}>
-                              <FaEdit />
-                            </button>
-                            <button className="supplier-action-button"
-                            onClick={() => handleDelete(supplier._id)}>
-                              <FaTrash />
-                            </button>
-                    </div>
+                          <div className="action-icons">
+                            <FiEdit
+                              className="edit-icon"
+                              title="Edit"
+                              onClick={() => handleEdit(supplier)}
+                            />
+                            <FiTrash
+                              className="delete-icon"
+                              title="Delete"
+                              onClick={() => handleDelete(supplier._id)}
+                            />
+                          </div>
                         </td>
                       </tr>
                     ))}

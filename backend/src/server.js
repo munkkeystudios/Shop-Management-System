@@ -11,6 +11,9 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// Serve static files from the 'uploads' directory
+app.use('/uploads', express.static('uploads'));
+
 // Check for MongoDB URI
 const mongoURI = process.env.MONGODB_URI;
 if (!mongoURI) {

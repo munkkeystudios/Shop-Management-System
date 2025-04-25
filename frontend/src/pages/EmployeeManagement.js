@@ -2,10 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Sidebar from '../components/sidebar';
-import { FiSearch, FiPlus, FiEdit, FiTrash, FiFilter, FiX } from 'react-icons/fi'; 
+import { FiSearch, FiPlus, FiEdit, FiTrash, FiFilter, FiX } from 'react-icons/fi';
 import { usersAPI } from '../services/api';
-import './all_users.css'; 
+import Layout from '../components/Layout';
+import './all_users.css';
 
 
 const Modal = ({ isOpen, onClose, title, children }) => {
@@ -39,7 +39,7 @@ const EmployeeManagement = () => {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-    const [currentUser, setCurrentUser] = useState(null); 
+    const [currentUser, setCurrentUser] = useState(null);
 
     // State for Forms
     const [formData, setFormData] = useState({
@@ -60,7 +60,7 @@ const EmployeeManagement = () => {
             setLoading(true);
             setError(null);
             const response = await usersAPI.getAll();
-           
+
             setUsers(response.data.data.filter(user => user.role !== 'admin'));
         } catch (err) {
             console.error('Error fetching employees:', err);
@@ -199,11 +199,9 @@ const EmployeeManagement = () => {
     );
 
     return (
-        <div className="users-page">
-            <Sidebar />
-            <div className="content-container">
+        <Layout title="Employee Management">
+            <div className="users-page-content">
                 <div className="header-section">
-                    <h1>Employee Management</h1>
                     <div className="search-filter-container">
                         <div className="search-container">
                             <FiSearch className="search-icon" />
@@ -216,7 +214,6 @@ const EmployeeManagement = () => {
                             />
                         </div>
                         <div className="action-buttons">
-                           
                             <button className="add-user-button" onClick={openCreateModal}>
                                 <FiPlus /> Add New Employee
                             </button>
@@ -224,7 +221,7 @@ const EmployeeManagement = () => {
                     </div>
                 </div>
 
-                 {successMessage && (
+                {successMessage && (
                     <div className="success-container">
                         <div className="success-message">{successMessage}</div>
                     </div>
@@ -235,9 +232,8 @@ const EmployeeManagement = () => {
                     </div>
                 )}
 
-
                 {loading && !isCreateModalOpen && !isEditModalOpen ? (
-                     <div className="loading-container">
+                    <div className="loading-container">
                         <div className="loading-spinner"></div>
                         <div>Loading employees...</div>
                     </div>
@@ -284,12 +280,8 @@ const EmployeeManagement = () => {
                         </table>
                     </div>
                 )}
-
-                 {/**/}
-
             </div>
 
-            {/* */}
             <Modal isOpen={isCreateModalOpen} onClose={closeCreateModal} title="Create New Employee">
                 <form onSubmit={handleCreateSubmit} className="modal-form">
                      {error && isCreateModalOpen && <div className="error-message" style={{marginBottom: '10px'}}>{error}</div>}
@@ -309,7 +301,7 @@ const EmployeeManagement = () => {
                 </form>
             </Modal>
 
-            
+
             <Modal isOpen={isEditModalOpen} onClose={closeEditModal} title={`Edit Employee: ${currentUser?.username}`}>
                  <form onSubmit={handleEditSubmit} className="modal-form">
                     {error && isEditModalOpen && <div className="error-message" style={{marginBottom: '10px'}}>{error}</div>}
@@ -328,7 +320,7 @@ const EmployeeManagement = () => {
                 </form>
             </Modal>
 
-            
+
             <Modal isOpen={isDeleteModalOpen} onClose={closeDeleteModal} title="Confirm Deletion">
                 <p>Are you sure you want to delete employee <strong>{currentUser?.username}</strong>?</p>
                  {error && isDeleteModalOpen && <div className="error-message" style={{marginBottom: '10px'}}>{error}</div>}
@@ -337,9 +329,7 @@ const EmployeeManagement = () => {
                     <button className="delete-button" onClick={handleDeleteConfirm} disabled={loading}>{loading ? 'Deleting...' : 'Delete'}</button>
                 </div>
             </Modal>
-
-
-        </div>
+        </Layout>
     );
 };
 

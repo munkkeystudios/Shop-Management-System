@@ -9,14 +9,19 @@ const saleController = require('../controllers/saleController');
 const importController = require('../controllers/importController');
 const purchaseController = require('../controllers/purchaseController');
 const brandController = require('../controllers/brandController');
+const settingsRoutes = require('./settingsRoutes');
+const notificationRoutes = require('./notificationRoutes');
 const loanController = require('../controllers/loanController'); // Add loanController
-const auth = require('../middleware/auth');
+const { auth } = require('../middleware/auth');
 
 router.post('/login', userController.login);
 // router.post('/signup', userController.register);
 
 router.post('/products', productController.createProduct);
 router.use(auth);
+
+// Settings routes
+router.use('/settings', settingsRoutes);
 
 router.get('/users', userController.getAllUsers);
 router.get('/users/profile', userController.getProfile);
@@ -25,6 +30,11 @@ router.put('/users/:userId', userController.updateUser);
 
 router.post('/users', userController.adminCreateUser);
 router.delete('/users/:userId', userController.deleteUser);
+
+// User profile settings routes
+router.get('/users/:id/profile', userController.getUserProfile);
+router.put('/users/:id/profile', userController.updateUserProfile);
+router.put('/users/:id/notifications', userController.updateNotificationPreferences);
 
 router.get('/categories', categoryController.getAllCategories);
 router.get('/categories/:id', categoryController.getCategoryById);
@@ -60,6 +70,12 @@ router.post('/purchases', purchaseController.createPurchase);
 router.get('/purchases', purchaseController.getAllPurchases);
 router.get('/purchases/export', purchaseController.exportPurchases);
 router.get('/purchases/:id', purchaseController.getPurchaseById);
+router.get('/:id', purchaseController.getPurchaseById);
+router.get('/export', purchaseController.exportPurchases);
+router.delete('/purchases/:id', purchaseController.deletePurchase);
+router.patch('/:id/status', purchaseController.updatePurchaseStatus);
+
+
 
 // Loan routes
 router.post('/loans', loanController.createLoan); 
@@ -82,5 +98,8 @@ router.get('/brands/:id', brandController.getBrandById);
 router.post('/brands', brandController.createBrand);
 router.put('/brands/:id', brandController.updateBrand);
 router.delete('/brands/:id', brandController.deleteBrand);
+
+// Notification routes
+router.use('/notifications', notificationRoutes);
 
 module.exports = router;

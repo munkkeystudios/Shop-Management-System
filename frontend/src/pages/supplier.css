@@ -109,26 +109,34 @@
   background-color: #f8f9fa;
 }
 
-.supplier-action-buttons {
+.action-icons {
   display: flex;
-  gap: 8px;
+  gap: 10px;
 }
 
-.supplier-action-button {
-  background: none;
-  border: none;
-  padding: 6px;
+.edit-icon, .delete-icon {
   cursor: pointer;
-  color: #6c757d;
-  transition: color 0.2s;
+  font-size: 16px;
 }
 
-.supplier-action-button:hover {
-  color: #0d6efd;
+.edit-icon {
+  color: #6b7280;
+}
+
+.edit-icon:hover {
+  color: #00a838;
+}
+
+.delete-icon {
+  color: #ef4444;
+}
+
+.delete-icon:hover {
+  color: #dc2626;
 }
 
 .supplier-action-button.primary {
-  background-color: #0d6efd;
+  background-color: #00a838;
   color: white;
   padding: 8px 16px;
   border-radius: 4px;
@@ -138,7 +146,7 @@
 }
 
 .supplier-action-button.primary:hover {
-  background-color: #0b5ed7;
+  background-color: #00a838;
   color: white;
 }
 
@@ -167,7 +175,7 @@
 }
 
 .supplier-pagination-button:hover {
-  color: #0d6efd;
+  color: #00a838;
 }
 
 .supplier-page-info {
@@ -244,12 +252,12 @@
 
 .supplier-modal-input:focus {
   outline: none;
-  border-color: #0d6efd;
+  border-color: #00a838;
   box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.25);
 }
 
 .supplier-modal-submit {
-  background-color: #0d6efd;
+  background-color: #00a838;
   color: white;
   border: none;
   border-radius: 8px;
@@ -265,5 +273,5 @@
 }
 
 .supplier-modal-submit:hover {
-  background-color: #0b5ed7;
+  background-color: #00a838;
 }
