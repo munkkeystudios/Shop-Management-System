@@ -70,6 +70,12 @@ router.post('/purchases', purchaseController.createPurchase);
 router.get('/purchases', purchaseController.getAllPurchases);
 router.get('/purchases/export', purchaseController.exportPurchases);
 router.get('/purchases/:id', purchaseController.getPurchaseById);
+router.get('/:id', purchaseController.getPurchaseById);
+router.get('/export', purchaseController.exportPurchases);
+router.delete('/purchases/:id', purchaseController.deletePurchase);
+router.patch('/:id/status', purchaseController.updatePurchaseStatus);
+
+
 
 router.post('/loans', loanController.createLoan); // Create a new loan
 router.get('/loans', loanController.getAllLoans); // Get all loans
