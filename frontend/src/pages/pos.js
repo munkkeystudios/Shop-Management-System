@@ -93,10 +93,9 @@ const Pos = () => {
     window.history.back();
   };
 
-  // Callback to refresh sales after a sale is created
   const handleSaleCreated = () => {
-    fetchLastTenSales(); // Refresh the sales table
-    resetCart(); // Optionally reset the cart after a sale
+    fetchLastTenSales(); 
+    resetCart(); 
   };
 
   return (
@@ -184,7 +183,7 @@ const Pos = () => {
                 totalQuantity={totalQuantity}
                 billNumber={billNumber}
                 updateBillNumber={setBillNumber}
-                onSaleCreated={handleSaleCreated} // Pass callback to PayButton
+                onSaleCreated={handleSaleCreated} 
               />
             </Card.Footer>
           </Card>
