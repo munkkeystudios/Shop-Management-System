@@ -3,8 +3,10 @@ import { FaSearch, FaEye, FaMoneyBillWave } from 'react-icons/fa';
 import Layout from '../components/Layout';
 import '../styles/Loans.css';
 import { loansAPI } from '../services/api'; // Use the actual API
+import { useNotifications } from '../context/NotificationContext';
 
 const Loans = () => {
+    const { addNotification } = useNotifications();
     const [loans, setLoans] = useState([]); // Ensure loans is initialized as an array
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -18,10 +20,10 @@ const Loans = () => {
                 setLoading(true);
                 const response = await loansAPI.getAll();
                 console.log('API Response:', response.data);
-    
+
                 // Extract the loans array from the response
-                const loansData = response.data && response.data.data && Array.isArray(response.data.data) 
-                    ? response.data.data 
+                const loansData = response.data && response.data.data && Array.isArray(response.data.data)
+                    ? response.data.data
                     : [];
                 setLoans(loansData);
                 setFilteredLoans(loansData);
@@ -33,7 +35,7 @@ const Loans = () => {
                 setLoading(false);
             }
         };
-    
+
         fetchLoans();
     }, []);
 
@@ -53,15 +55,32 @@ const Loans = () => {
             const response = await loansAPI.payLoan(loanId); // Call the API to pay the loan
             console.log('Loan payment response:', response.data);
 
+            // Find the loan that was paid
+            const paidLoan = loans.find(loan => loan._id === loanId);
+
+            if (paidLoan) {
+                // Add notification
+                const formattedAmount = new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD'
+                }).format(paidLoan.loanAmount);
+
+                addNotification(
+                    'loan',
+                    `Loan #${paidLoan.loanNumber} for ${paidLoan.customer.name} has been paid in full (${formattedAmount})`,
+                    loanId
+                );
+            }
+
             // Update the loan in the state
             const updatedLoans = loans.map((loan) =>
                 loan._id === loanId
                     ? {
                           ...loan,
-                          loanAmount: 0, 
-                          amountPaid: 0, 
-                          remainingBalance: 0, 
-                          paymentStatus: 'paid', 
+                          loanAmount: 0,
+                          amountPaid: 0,
+                          remainingBalance: 0,
+                          paymentStatus: 'paid',
                       }
                     : loan
             );

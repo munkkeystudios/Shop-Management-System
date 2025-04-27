@@ -3,11 +3,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Layout from '../components/Layout'; 
+import Layout from '../components/Layout';
 import '../styles/importPurchase.css';
-import html2pdf from 'html2pdf.js'; 
+import html2pdf from 'html2pdf.js';
+import { useNotifications } from '../context/NotificationContext';
 
 const ImportPurchase = () => {
+  const { addNotification } = useNotifications();
   const [selectedFile, setSelectedFile] = useState(null);
   const [suppliers, setSuppliers] = useState([]);
   const [warehouses, setWarehouses] = useState([]);
@@ -119,6 +121,15 @@ const ImportPurchase = () => {
       });
 
       if (response.data.success) {
+        // Get supplier name for the notification
+        const supplierName = suppliers.find(s => s._id === formData.supplier)?.name || 'Unknown Supplier';
+
+        // Add notification
+        addNotification(
+          'purchase',
+          `Successfully imported purchase data from ${supplierName}`
+        );
+
         alert('Purchase data imported successfully!');
         navigate('/purchases');
       } else {

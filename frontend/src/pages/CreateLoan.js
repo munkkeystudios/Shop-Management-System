@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { Form, Button, Container, Row, Col, Alert } from 'react-bootstrap';
 import { loansAPI } from '../services/api';
 import Layout from '../components/Layout'; // Import the Layout component
+import { useNotifications } from '../context/NotificationContext';
 
 const CreateLoan = () => {
+  const { addNotification } = useNotifications();
   const [customerName, setCustomerName] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
@@ -29,6 +31,20 @@ const CreateLoan = () => {
 
     try {
       const response = await loansAPI.create(loanData);
+      const loanId = response.data.data._id;
+      const loanNumber = response.data.data.loanNumber;
+      const formattedAmount = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD'
+      }).format(loanAmount);
+
+      // Add notification
+      addNotification(
+        'loan',
+        `New loan #${loanNumber} created for ${customerName} with amount ${formattedAmount}`,
+        loanId
+      );
+
       setSuccessMessage('Loan created successfully!'); // Set success message
       console.log('Loan created:', response.data);
 

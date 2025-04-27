@@ -1,17 +1,11 @@
-import React, { useState, useEffect, useCallback,useRef } from 'react';
-import { Search, Filter, FileText, FileSpreadsheet, Plus, AlertCircle } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Search, Filter, FileText, FileSpreadsheet, AlertCircle } from 'lucide-react';
 import axios from 'axios';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
-import { Link } from 'react-router-dom';
-import * as XLSX from 'xlsx';
-import { saveAs } from 'file-saver';
 import './all_purchases.css';
 import PurchaseFilter from './purchase_filter';
 import Layout from '../components/Layout';
 
 const AllPurchases = () => {
-  const exportRef = useRef();
   const [purchases, setPurchases] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -19,7 +13,7 @@ const AllPurchases = () => {
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [limit, setLimit] = useState(10);
+  const limit = 10; // Fixed limit value
 
   // Filter state
   const [filters, setFilters] = useState({});
@@ -108,7 +102,7 @@ const AllPurchases = () => {
     setFilters(newFilters);
     setCurrentPage(1); // Reset to page 1 when filters change
   };
-  
+
   // Handle export
   const handleExport = (format) => {
     // Build query parameters for export including current filters
@@ -116,18 +110,18 @@ const AllPurchases = () => {
       format,
       ...filters
     });
-    
+
     if (searchQuery.trim()) {
       params.append('search', searchQuery);
     }
-    
+
     // Generate full URL for export
     const exportUrl = `/api/purchases/export?${params.toString()}`;
-    
+
     // Open export URL in new tab/window
     window.open(exportUrl, '_blank');
   };
-  
+
   // Format date string
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -181,10 +175,10 @@ const AllPurchases = () => {
         <div className="header-actions">
           <div className="search-container">
             <Search size={18} className="search-icon" />
-            <input 
-              type="text" 
-              placeholder="Search purchases..." 
-              className="search-input" 
+            <input
+              type="text"
+              placeholder="Search purchases..."
+              className="search-input"
               value={searchQuery}
               onChange={handleSearch}
             />
@@ -202,12 +196,12 @@ const AllPurchases = () => {
               <FileSpreadsheet size={16} />
               <span>Excel</span>
             </button>
-            
+
           </div>
         </div>
-        
+
         {/* Filter dropdown */}
-        <PurchaseFilter 
+        <PurchaseFilter
           isOpen={isFilterOpen}
           onClose={() => setIsFilterOpen(false)}
           onApplyFilters={handleApplyFilters}
@@ -246,7 +240,7 @@ const AllPurchases = () => {
                 // Calculate paid and due amounts based on payment status
                 let paidAmount = 0;
                 let dueAmount = purchase.totalAmount;
-                
+
                 if (purchase.paymentStatus === 'paid') {
                   paidAmount = purchase.totalAmount;
                   dueAmount = 0;
@@ -254,7 +248,7 @@ const AllPurchases = () => {
                   paidAmount = purchase.paidAmount;
                   dueAmount = purchase.totalAmount - paidAmount;
                 }
-                
+
                 return (
                   <tr key={purchase._id} onClick={() => window.location.href = `/purchases/${purchase._id}`}>
                     <td>{formatDate(purchase.date)}</td>

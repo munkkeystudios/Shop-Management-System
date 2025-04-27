@@ -24,7 +24,6 @@ const AllProducts = () => {
   const [error, setError] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedItems, setSelectedItems] = useState([]);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editFormData, setEditFormData] = useState({});
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
@@ -95,23 +94,7 @@ const AllProducts = () => {
     fetchProducts();
   }, [currentPage]);
 
-  // Handle checkbox selection
-  const toggleSelect = (productId) => {
-    if (selectedItems.includes(productId)) {
-      setSelectedItems(selectedItems.filter(id => id !== productId));
-    } else {
-      setSelectedItems([...selectedItems, productId]);
-    }
-  };
 
-  // Handle select all checkbox
-  const toggleSelectAll = () => {
-    if (selectedItems.length === filteredProducts.length) {
-      setSelectedItems([]);
-    } else {
-      setSelectedItems(filteredProducts.map(product => product._id));
-    }
-  };
 
   // Filter products based on search term
   const filteredProducts = products.filter(product =>
@@ -264,14 +247,6 @@ const AllProducts = () => {
                 <table className="products-table">
                   <thead>
                     <tr>
-                      <th>
-                        <input
-                          type="checkbox"
-                          className="products-checkbox"
-                          onChange={toggleSelectAll}
-                          checked={selectedItems.length === filteredProducts.length}
-                        />
-                      </th>
                       <th>P-Code</th>
                       <th>Photo</th>
                       <th>Title</th>
@@ -285,14 +260,6 @@ const AllProducts = () => {
                   <tbody>
                     {filteredProducts.map((product) => (
                       <tr key={product._id}>
-                        <td>
-                          <input
-                            type="checkbox"
-                            className="products-checkbox"
-                            checked={selectedItems.includes(product._id)}
-                            onChange={() => toggleSelect(product._id)}
-                          />
-                        </td>
                         <td>{product.barcode}</td>
                         <td>
                           <div className="products-image-container">

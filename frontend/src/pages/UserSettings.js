@@ -4,12 +4,14 @@ import { userAPI } from '../services/api';
 import { toast } from 'react-toastify';
 import { useAuth } from '../context/AuthContext';
 import './settings.css';
+import { useNotifications } from '../context/NotificationContext';
 
 const UserSettings = () => {
   const { user, updateUserInfo } = useAuth();
+  const { addNotification } = useNotifications();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  
+
   // User profile state
   const [profile, setProfile] = useState({
     firstName: '',
@@ -23,14 +25,14 @@ const UserSettings = () => {
       browser: true
     }
   });
-  
+
   // Password change state
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
     newPassword: '',
     confirmPassword: ''
   });
-  
+
   // Form validation
   const [errors, setErrors] = useState({});
   const [passwordVisible, setPasswordVisible] = useState({
@@ -88,7 +90,7 @@ const UserSettings = () => {
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    
+
     if (type === 'checkbox') {
       // Handle nested notification preferences
       if (name.startsWith('notifications.')) {
@@ -102,7 +104,7 @@ const UserSettings = () => {
         });
         return;
       }
-      
+
       // Handle regular checkboxes
       setProfile({
         ...profile,
@@ -110,13 +112,13 @@ const UserSettings = () => {
       });
       return;
     }
-    
+
     // Handle regular inputs
     setProfile({
       ...profile,
       [name]: value
     });
-    
+
     // Clear any existing error for this field
     if (errors[name]) {
       setErrors({
@@ -132,7 +134,7 @@ const UserSettings = () => {
       ...passwordData,
       [name]: value
     });
-    
+
     // Clear any existing error for this field
     if (errors[name]) {
       setErrors({
@@ -151,36 +153,36 @@ const UserSettings = () => {
 
   const validateProfileForm = () => {
     const newErrors = {};
-    
+
     if (!profile.firstName?.trim()) {
       newErrors.firstName = 'First name is required';
     }
-    
+
     if (!profile.lastName?.trim()) {
       newErrors.lastName = 'Last name is required';
     }
-    
+
     if (!profile.email?.trim()) {
       newErrors.email = 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(profile.email)) {
       newErrors.email = 'Email is invalid';
     }
-    
+
     if (profile.phone && !/^\+?[0-9\s-()]+$/.test(profile.phone)) {
       newErrors.phone = 'Phone number format is invalid';
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const validatePasswordForm = () => {
     const newErrors = {};
-    
+
     if (!passwordData.currentPassword) {
       newErrors.currentPassword = 'Current password is required';
     }
-    
+
     if (!passwordData.newPassword) {
       newErrors.newPassword = 'New password is required';
     } else if (passwordData.newPassword.length < 8) {
@@ -188,25 +190,25 @@ const UserSettings = () => {
     } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(passwordData.newPassword)) {
       newErrors.newPassword = 'Password must contain uppercase, lowercase, and numbers';
     }
-    
+
     if (passwordData.newPassword !== passwordData.confirmPassword) {
       newErrors.confirmPassword = 'Passwords do not match';
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleProfileSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateProfileForm()) {
       return;
     }
-    
+
     try {
       setSaving(true);
-      
+
       const profileData = {
         firstName: profile.firstName,
         lastName: profile.lastName,
@@ -215,9 +217,9 @@ const UserSettings = () => {
         jobTitle: profile.jobTitle,
         preferredLanguage: profile.preferredLanguage
       };
-      
+
       const response = await userAPI.updateUserProfile(user.id, profileData);
-      
+
       if (response.data && response.data.success) {
         // Update the user info in the auth context if needed
         if (typeof updateUserInfo === 'function') {
@@ -227,7 +229,7 @@ const UserSettings = () => {
             lastName: profile.lastName
           });
         }
-        
+
         toast.success('Profile updated successfully');
       }
     } catch (error) {
@@ -240,31 +242,31 @@ const UserSettings = () => {
 
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validatePasswordForm()) {
       toast.error('Please correct the errors in the form');
       return;
     }
-    
+
     try {
       setSaving(true);
-      
+
       await userAPI.changePassword(user.id, {
         currentPassword: passwordData.currentPassword,
         newPassword: passwordData.newPassword
       });
-      
+
       // Clear password fields
       setPasswordData({
         currentPassword: '',
         newPassword: '',
         confirmPassword: ''
       });
-      
+
       toast.success('Password changed successfully');
     } catch (error) {
       console.error('Error changing password:', error);
-      
+
       if (error.response && error.response.status === 401) {
         setErrors({
           ...errors,
@@ -282,7 +284,7 @@ const UserSettings = () => {
   const handleNotificationChange = async (e) => {
     const { name, checked } = e.target;
     const notificationType = name.split('.')[1];
-    
+
     // Update local state
     setProfile({
       ...profile,
@@ -291,16 +293,24 @@ const UserSettings = () => {
         [notificationType]: checked
       }
     });
-    
+
     try {
       // Save to backend
       await userAPI.updateNotificationPreferences(user.id, {
         [notificationType]: checked
       });
+
+      // Add notification
+      addNotification(
+        'settings',
+        `Notification preference updated: ${notificationType} notifications ${checked ? 'enabled' : 'disabled'}`
+      );
+
+      toast.success(`${notificationType.charAt(0).toUpperCase() + notificationType.slice(1)} notifications ${checked ? 'enabled' : 'disabled'}`);
     } catch (error) {
       console.error('Error updating notification preferences:', error);
       toast.error('Failed to update notification preferences');
-      
+
       // Revert the local state change if there was an error
       setProfile(prevProfile => ({
         ...prevProfile,
@@ -314,19 +324,18 @@ const UserSettings = () => {
   return (
     <Layout title="User Settings">
       <div className="settings-container">
-        <div className="settings-header">
-          <h1>User Settings</h1>
-          <p className="settings-description">
-            Manage your personal information, password, and notification preferences
-          </p>
-        </div>
-        
         {loading ? (
           <div className="loading-message">Loading your profile...</div>
         ) : (
           <div className="settings-sections-container">
             {/* Personal Information */}
-            <div className="settings-section-card">
+            <div className="settings-section-card settings-header-card">
+              <div className="settings-header">
+                <h1>User Settings</h1>
+                <p className="settings-description">
+                  Manage your personal information, password, and notification preferences
+                </p>
+              </div>
               <h2>Personal Information</h2>
               <form className="settings-form" onSubmit={handleProfileSubmit}>
                 <div className="form-row">
@@ -341,7 +350,7 @@ const UserSettings = () => {
                     />
                     {errors.firstName && <div className="error-message">{errors.firstName}</div>}
                   </div>
-                  
+
                   <div className="form-group">
                     <label>Last Name</label>
                     <input
@@ -354,7 +363,7 @@ const UserSettings = () => {
                     {errors.lastName && <div className="error-message">{errors.lastName}</div>}
                   </div>
                 </div>
-                
+
                 <div className="form-group">
                   <label>Email Address</label>
                   <input
@@ -366,7 +375,7 @@ const UserSettings = () => {
                   />
                   {errors.email && <div className="error-message">{errors.email}</div>}
                 </div>
-                
+
                 <div className="form-row">
                   <div className="form-group">
                     <label>Phone Number</label>
@@ -380,7 +389,7 @@ const UserSettings = () => {
                     />
                     {errors.phone && <div className="error-message">{errors.phone}</div>}
                   </div>
-                  
+
                   <div className="form-group">
                     <label>Job Title</label>
                     <input
@@ -392,7 +401,7 @@ const UserSettings = () => {
                     />
                   </div>
                 </div>
-                
+
                 <div className="form-group">
                   <label>Preferred Language</label>
                   <select
@@ -408,7 +417,7 @@ const UserSettings = () => {
                     ))}
                   </select>
                 </div>
-                
+
                 <div className="form-actions">
                   <button
                     type="submit"
@@ -420,7 +429,7 @@ const UserSettings = () => {
                 </div>
               </form>
             </div>
-            
+
             {/* Password */}
             <div className="settings-section-card">
               <h2>Change Password</h2>
@@ -445,7 +454,7 @@ const UserSettings = () => {
                   </div>
                   {errors.currentPassword && <div className="error-message">{errors.currentPassword}</div>}
                 </div>
-                
+
                 <div className="form-row">
                   <div className="form-group">
                     <label>New Password</label>
@@ -467,7 +476,7 @@ const UserSettings = () => {
                     </div>
                     {errors.newPassword && <div className="error-message">{errors.newPassword}</div>}
                   </div>
-                  
+
                   <div className="form-group">
                     <label>Confirm New Password</label>
                     <div className="password-input-container">
@@ -489,11 +498,11 @@ const UserSettings = () => {
                     {errors.confirmPassword && <div className="error-message">{errors.confirmPassword}</div>}
                   </div>
                 </div>
-                
+
                 <div className="input-hint">
                   Password must be at least 8 characters and include uppercase, lowercase, and numbers
                 </div>
-                
+
                 <div className="form-actions">
                   <button
                     type="submit"
@@ -505,7 +514,7 @@ const UserSettings = () => {
                 </div>
               </form>
             </div>
-            
+
             {/* Notification Preferences */}
             <div className="settings-section-card">
               <h2>Notification Preferences</h2>
@@ -526,7 +535,7 @@ const UserSettings = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="form-group">
                   <div className="checkbox-group">
                     <input
@@ -552,4 +561,4 @@ const UserSettings = () => {
   );
 };
 
-export default UserSettings; 
+export default UserSettings;

@@ -8,15 +8,17 @@ import { FiUpload, FiX, FiEdit, FiLink } from 'react-icons/fi';
 import './settings.css';
 import ModernDropdown, { ModernDropdownItem } from '../components/ModernDropdown';
 import '../styles/dropdown.css';
+import { useNotifications } from '../context/NotificationContext';
 
 const GeneralSettings = () => {
   const { user } = useAuth();
+  const { addNotification } = useNotifications();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [showUrlInput, setShowUrlInput] = useState(false);
   const fileInputRef = useRef(null);
-  
+
   // Check if user is admin
   const isAdmin = user && user.role === 'admin';
 
@@ -100,7 +102,7 @@ const GeneralSettings = () => {
           paymentMethods: response.data.paymentMethods || ['cash', 'card'],
           enableDiscounts: response.data.enableDiscounts || true
         };
-        
+
         setSettings(prevSettings => ({
           ...prevSettings,
           ...generalSettings
@@ -116,7 +118,7 @@ const GeneralSettings = () => {
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    
+
     // Handle nested fiscal year fields
     if (name.startsWith('fiscalYear.')) {
       const fiscalYearField = name.split('.')[1];
@@ -129,7 +131,7 @@ const GeneralSettings = () => {
       });
       return;
     }
-    
+
     // Handle checkbox inputs
     if (type === 'checkbox') {
       setSettings({
@@ -138,7 +140,7 @@ const GeneralSettings = () => {
       });
       return;
     }
-    
+
     // Handle number inputs
     if (type === 'number') {
       setSettings({
@@ -147,7 +149,7 @@ const GeneralSettings = () => {
       });
       return;
     }
-    
+
     // Handle text inputs
     setSettings({
       ...settings,
@@ -196,7 +198,7 @@ const GeneralSettings = () => {
   const handleFileDrop = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       // Simulate file input change
       const fileInput = fileInputRef.current;
@@ -205,7 +207,7 @@ const GeneralSettings = () => {
         const dataTransfer = new DataTransfer();
         dataTransfer.items.add(e.dataTransfer.files[0]);
         fileInput.files = dataTransfer.files;
-        
+
         // Trigger the change event manually
         const changeEvent = new Event('change', { bubbles: true });
         fileInput.dispatchEvent(changeEvent);
@@ -238,7 +240,7 @@ const GeneralSettings = () => {
 
   const handlePaymentMethodChange = (method) => {
     const updatedMethods = [...settings.paymentMethods];
-    
+
     if (updatedMethods.includes(method)) {
       // Remove method if already selected
       const index = updatedMethods.indexOf(method);
@@ -247,7 +249,7 @@ const GeneralSettings = () => {
       // Add method if not already selected
       updatedMethods.push(method);
     }
-    
+
     setSettings({
       ...settings,
       paymentMethods: updatedMethods
@@ -256,15 +258,15 @@ const GeneralSettings = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!isAdmin) {
       toast.error('Only administrators can update general settings');
       return;
     }
-    
+
     try {
       setSaving(true);
-      
+
       // Map settings to match backend schema
       const generalSettings = {
         companyName: settings.companyName,
@@ -284,8 +286,15 @@ const GeneralSettings = () => {
         paymentMethods: settings.paymentMethods,
         enableDiscounts: settings.enableDiscounts
       };
-      
+
       await settingsAPI.updateGeneralSettings(generalSettings);
+
+      // Add notification
+      addNotification(
+        'settings',
+        'General settings have been updated'
+      );
+
       toast.success('General settings updated successfully');
     } catch (error) {
       console.error('Error updating general settings:', error);
@@ -303,19 +312,18 @@ const GeneralSettings = () => {
   return (
     <Layout title="General Settings">
       <div className="settings-container">
-        <div className="settings-header">
-          <h1>General Settings</h1>
-          <p className="settings-description">
-            Configure global application settings such as company information, financial settings, and inventory options
-          </p>
-        </div>
-
         {loading ? (
           <div className="loading-message">Loading general settings...</div>
         ) : (
           <div className="settings-sections-container">
             {/* Company Information Section */}
-            <div className="settings-section-card">
+            <div className="settings-section-card settings-header-card">
+              <div className="settings-header">
+                <h1>General Settings</h1>
+                <p className="settings-description">
+                  Configure global application settings such as company information, financial settings, and inventory options
+                </p>
+              </div>
               <h2>Company Information</h2>
               <form className="settings-form" onSubmit={handleSubmit}>
                 <div className="form-group">
@@ -329,19 +337,19 @@ const GeneralSettings = () => {
                     required
                   />
                 </div>
-                
+
                 <div className="form-group">
                   <label>Company Logo</label>
                   {!settings.companyLogo ? (
                     <>
-                      <input 
-                        type="file" 
+                      <input
+                        type="file"
                         ref={fileInputRef}
-                        onChange={handleFileChange} 
+                        onChange={handleFileChange}
                         accept="image/jpeg,image/png,image/gif,image/svg+xml"
                         style={{ display: 'none' }}
                       />
-                      <div 
+                      <div
                         className="file-upload-container"
                         onClick={() => fileInputRef.current && fileInputRef.current.click()}
                         onDrop={handleFileDrop}
@@ -389,9 +397,9 @@ const GeneralSettings = () => {
                     </>
                   ) : (
                     <div className="company-logo-preview">
-                      <img 
-                        src={settings.companyLogo} 
-                        alt="Company Logo" 
+                      <img
+                        src={settings.companyLogo}
+                        alt="Company Logo"
                         className="logo-image"
                       />
                       <div className="logo-controls">
@@ -417,10 +425,10 @@ const GeneralSettings = () => {
                           <FiX /> Remove
                         </button>
                       </div>
-                      <input 
-                        type="file" 
+                      <input
+                        type="file"
                         ref={fileInputRef}
-                        onChange={handleFileChange} 
+                        onChange={handleFileChange}
                         accept="image/jpeg,image/png,image/gif,image/svg+xml"
                         style={{ display: 'none' }}
                       />
@@ -439,7 +447,7 @@ const GeneralSettings = () => {
                     </div>
                   )}
                 </div>
-                
+
                 <div className="form-row">
                   <div className="form-group">
                     <label>Contact Email</label>
@@ -452,7 +460,7 @@ const GeneralSettings = () => {
                       required
                     />
                   </div>
-                  
+
                   <div className="form-group">
                     <label>Support Phone</label>
                     <input
@@ -464,7 +472,7 @@ const GeneralSettings = () => {
                     />
                   </div>
                 </div>
-                
+
                 <div className="form-actions">
                   <button
                     type="submit"
@@ -476,7 +484,7 @@ const GeneralSettings = () => {
                 </div>
               </form>
             </div>
-            
+
             {/* Financial Settings Section */}
             <div className="settings-section-card">
               <h2>Financial Settings</h2>
@@ -495,7 +503,7 @@ const GeneralSettings = () => {
                       step="0.01"
                     />
                   </div>
-                  
+
                   <div className="form-group">
                     <label>Currency</label>
                     <div style={{ width: '100%', position: 'relative' }}>
@@ -519,7 +527,7 @@ const GeneralSettings = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="form-row">
                   <div className="form-group">
                     <label>Invoice Prefix</label>
@@ -531,7 +539,7 @@ const GeneralSettings = () => {
                       className="form-input"
                     />
                   </div>
-                  
+
                   <div className="form-group">
                     <label>Pricing Strategy</label>
                     <div style={{ width: '100%', position: 'relative' }}>
@@ -555,7 +563,7 @@ const GeneralSettings = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="form-group">
                   <label>Fiscal Year</label>
                   <div className="form-row">
@@ -571,7 +579,7 @@ const GeneralSettings = () => {
                         pattern="\d{2}-\d{2}"
                       />
                     </div>
-                    
+
                     <div className="form-group">
                       <label>End (MM-DD)</label>
                       <input
@@ -586,7 +594,7 @@ const GeneralSettings = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="form-group">
                   <label>Receipt Footer Text</label>
                   <textarea
@@ -598,7 +606,7 @@ const GeneralSettings = () => {
                     placeholder="Thank you for shopping with us!"
                   />
                 </div>
-                
+
                 <div className="form-actions">
                   <button
                     type="submit"
@@ -610,7 +618,7 @@ const GeneralSettings = () => {
                 </div>
               </form>
             </div>
-            
+
             {/* Inventory Settings Section */}
             <div className="settings-section-card">
               <h2>Inventory Settings</h2>
@@ -629,7 +637,7 @@ const GeneralSettings = () => {
                     Alert will be triggered when stock falls below this quantity
                   </div>
                 </div>
-                
+
                 <div className="form-actions">
                   <button
                     type="submit"
@@ -641,7 +649,7 @@ const GeneralSettings = () => {
                 </div>
               </form>
             </div>
-            
+
             {/* Payment & Discount Settings Section */}
             <div className="settings-section-card">
               <h2>Payment & Discount Settings</h2>
@@ -659,7 +667,7 @@ const GeneralSettings = () => {
                     <label htmlFor="enable-online-payments">Enable Online Payments</label>
                   </div>
                 </div>
-                
+
                 <div className="form-group">
                   <label>Accepted Payment Methods</label>
                   <div className="checkbox-group-container">
@@ -677,7 +685,7 @@ const GeneralSettings = () => {
                     ))}
                   </div>
                 </div>
-                
+
                 <div className="form-group">
                   <div className="checkbox-group">
                     <input
@@ -691,7 +699,7 @@ const GeneralSettings = () => {
                     <label htmlFor="enable-discounts">Enable Discounts</label>
                   </div>
                 </div>
-                
+
                 <div className="form-actions">
                   <button
                     type="submit"
@@ -710,4 +718,4 @@ const GeneralSettings = () => {
   );
 };
 
-export default GeneralSettings; 
+export default GeneralSettings;

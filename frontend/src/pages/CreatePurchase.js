@@ -6,9 +6,11 @@ import { FaPlus, FaTrash } from 'react-icons/fa';
 import { purchasesAPI, productsAPI, suppliersAPI } from '../services/api';
 import './CreatePurchase.css';
 import TransactionNotification from './TransactionNotification';
+import { useNotifications } from '../context/NotificationContext';
 
 const CreatePurchase = () => {
     const navigate = useNavigate();
+    const { addNotification } = useNotifications();
     const [formData, setFormData] = useState({
         supplier: '',
         items: [{ product: '', quantity: 1, price: 0 }],
@@ -32,15 +34,15 @@ const CreatePurchase = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [productsResponse, suppliersResponse] = await Promise.all([ 
-                    productsAPI.getAll({ limit: 1000 }), 
-                    suppliersAPI.getAll() 
+                const [productsResponse, suppliersResponse] = await Promise.all([
+                    productsAPI.getAll({ limit: 1000 }),
+                    suppliersAPI.getAll()
                 ]);
-                
+
                 if (productsResponse.data.success) {
                     setProducts(productsResponse.data.data);
                 }
-                
+
                 if (suppliersResponse.data.success) {
                     setSuppliers(suppliersResponse.data.data);
                 }
@@ -49,14 +51,14 @@ const CreatePurchase = () => {
                 setError("Failed to load products or suppliers. Please refresh the page.");
             }
         };
-        
+
         fetchData();
     }, []);
 
     const calculateTotals = (items, discount = formData.discount) => {
         const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
         const total = subtotal - discount;
-        
+
         return {
             subtotal: parseFloat(subtotal.toFixed(2)),
             totalAmount: parseFloat(total.toFixed(2))
@@ -69,7 +71,7 @@ const CreatePurchase = () => {
 
         if (name === 'discount') {
             const { subtotal, totalAmount } = calculateTotals(
-                formData.items, 
+                formData.items,
                 parseFloat(value || 0)
             );
             newFormData = { ...newFormData, subtotal, totalAmount };
@@ -160,15 +162,30 @@ const CreatePurchase = () => {
         try {
             const response = await purchasesAPI.create(purchaseData);
             console.log("API Response:", response);
-            
+
             if (response.data.success) {
+                const purchaseId = response.data.data._id;
+                const purchaseAmount = response.data.data.totalAmount;
+                const itemCount = formData.items.length;
+                const supplierName = suppliers.find(s => s._id === formData.supplier)?.name || 'Unknown Supplier';
+
+                // Add notification to the system
+                addNotification(
+                    'purchase',
+                    `New purchase created from ${supplierName} for ${new Intl.NumberFormat('en-US', {
+                        style: 'currency',
+                        currency: 'USD'
+                    }).format(purchaseAmount)} with ${itemCount} ${itemCount === 1 ? 'item' : 'items'}`,
+                    purchaseId
+                );
+
                 // Show success notification
                 setNotification({
                     show: true,
                     data: {
                         status: 'success',
-                        id: response.data.data._id,
-                        amount: response.data.data.totalAmount,
+                        id: purchaseId,
+                        amount: purchaseAmount,
                         items: formData.items.map(item => ({
                             id: item.product,
                             name: products.find(p => p._id === item.product)?.name || 'Unknown',
@@ -178,7 +195,7 @@ const CreatePurchase = () => {
                         type: 'purchase'
                     }
                 });
-                
+
                 // Reset form for next purchase
                 setFormData({
                     supplier: '',
@@ -217,13 +234,13 @@ const CreatePurchase = () => {
         <Layout title="Create New Purchase">
             <div className="create-purchase-container">
                 {/* Transaction notification */}
-                <TransactionNotification 
+                <TransactionNotification
                     show={notification.show}
                     type="purchase"
                     data={notification.data}
                     onClose={closeNotification}
                 />
-                
+
                 <h1>Create New Purchase</h1>
 
                 {error && <div className="alert error">{error}</div>}
@@ -248,7 +265,7 @@ const CreatePurchase = () => {
                                 ))}
                             </select>
                         </div>
-                        
+
                         <div className="form-group">
                             <label htmlFor="status">Status</label>
                             <select
@@ -263,7 +280,7 @@ const CreatePurchase = () => {
                                 <option value="cancelled">Cancelled</option>
                             </select>
                         </div>
-                        
+
                         <div className="form-group">
                             <label htmlFor="paymentStatus">Payment Status</label>
                             <select

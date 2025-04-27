@@ -7,14 +7,16 @@ import { Navigate } from 'react-router-dom';
 import './settings.css';
 import ModernDropdown, { ModernDropdownItem } from '../components/ModernDropdown';
 import '../styles/dropdown.css';
+import { useNotifications } from '../context/NotificationContext';
 
 const DisplaySettings = () => {
   const { user } = useAuth();
+  const { addNotification } = useNotifications();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [hasAccess, setHasAccess] = useState(false);
   const [selectedDateFormat, setSelectedDateFormat] = useState(null);
-  
+
   // Display settings state
   const [settings, setSettings] = useState({
     dateFormat: 'MM/DD/YYYY',
@@ -165,7 +167,7 @@ const DisplaySettings = () => {
           receiptFooter: response.data.receiptFooter || '',
           invoiceNotes: response.data.invoiceNotes || ''
         };
-        
+
         setSettings(prevSettings => ({
           ...prevSettings,
           ...displaySettings
@@ -181,7 +183,7 @@ const DisplaySettings = () => {
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    
+
     if (type === 'checkbox') {
       setSettings({
         ...settings,
@@ -189,7 +191,7 @@ const DisplaySettings = () => {
       });
       return;
     }
-    
+
     if (type === 'number') {
       setSettings({
         ...settings,
@@ -197,7 +199,7 @@ const DisplaySettings = () => {
       });
       return;
     }
-    
+
     setSettings({
       ...settings,
       [name]: value
@@ -214,15 +216,15 @@ const DisplaySettings = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!hasAccess) {
       toast.error('You do not have permission to update display settings');
       return;
     }
-    
+
     try {
       setSaving(true);
-      
+
       // Only send display-related settings to avoid overwriting other settings
       const displaySettings = {
         dateFormat: settings.dateFormat,
@@ -242,8 +244,15 @@ const DisplaySettings = () => {
         receiptFooter: settings.receiptFooter,
         invoiceNotes: settings.invoiceNotes
       };
-      
+
       await settingsAPI.updateDisplaySettings(displaySettings);
+
+      // Add notification
+      addNotification(
+        'settings',
+        'Display settings have been updated'
+      );
+
       toast.success('Display settings saved successfully');
     } catch (error) {
       console.error('Error saving display settings:', error);
@@ -268,19 +277,18 @@ const DisplaySettings = () => {
   return (
     <Layout title="Display Settings">
       <div className="settings-container">
-        <div className="settings-header">
-          <h1>Display Settings</h1>
-          <p className="settings-description">
-            Configure date formats, time formats, and other display preferences
-          </p>
-        </div>
-        
         {loading ? (
           <div className="loading-message">Loading display settings...</div>
         ) : (
           <div className="settings-sections-container">
             {/* Date and Time */}
-            <div className="settings-section-card">
+            <div className="settings-section-card settings-header-card">
+              <div className="settings-header">
+                <h1>Display Settings</h1>
+                <p className="settings-description">
+                  Configure date formats, time formats, and other display preferences
+                </p>
+              </div>
               <h2>Date and Time</h2>
               <form className="settings-form" onSubmit={handleSubmit}>
                 <div className="form-row">
@@ -313,7 +321,7 @@ const DisplaySettings = () => {
                       })}
                     </div>
                   </div>
-                  
+
                   <div className="form-group">
                     <label>Time Format</label>
                     <div style={{ width: '100%', position: 'relative' }}>
@@ -336,13 +344,13 @@ const DisplaySettings = () => {
                       </ModernDropdown>
                     </div>
                     <div className="input-hint">
-                      Example: {settings.timeFormat === '12hour' 
+                      Example: {settings.timeFormat === '12hour'
                         ? new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
                         : new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="form-group">
                   <label>Timezone</label>
                   <div style={{ width: '100%', position: 'relative' }}>
@@ -365,7 +373,7 @@ const DisplaySettings = () => {
                     </ModernDropdown>
                   </div>
                 </div>
-                
+
                 <div className="form-actions">
                   <button
                     type="submit"
@@ -377,7 +385,7 @@ const DisplaySettings = () => {
                 </div>
               </form>
             </div>
-            
+
             {/* Currency and Number Formatting */}
             <div className="settings-section-card">
               <h2>Currency and Number Formatting</h2>
@@ -405,7 +413,7 @@ const DisplaySettings = () => {
                       </ModernDropdown>
                     </div>
                   </div>
-                  
+
                   <div className="form-group">
                     <label>Currency Position</label>
                     <div style={{ width: '100%', position: 'relative' }}>
@@ -429,7 +437,7 @@ const DisplaySettings = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="form-row">
                   <div className="form-group">
                     <label>Decimal Separator</label>
@@ -453,7 +461,7 @@ const DisplaySettings = () => {
                       </ModernDropdown>
                     </div>
                   </div>
-                  
+
                   <div className="form-group">
                     <label>Thousands Separator</label>
                     <div style={{ width: '100%', position: 'relative' }}>
@@ -477,7 +485,7 @@ const DisplaySettings = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="form-group">
                   <label>Decimal Places</label>
                   <input
@@ -493,7 +501,7 @@ const DisplaySettings = () => {
                     Example: {(1234.56789).toFixed(settings.decimalPlaces).replace('.', settings.decimalSeparator).replace(/\B(?=(\d{3})+(?!\d))/g, settings.thousandsSeparator)}
                   </div>
                 </div>
-                
+
                 <div className="form-actions">
                   <button
                     type="submit"
@@ -505,7 +513,7 @@ const DisplaySettings = () => {
                 </div>
               </form>
             </div>
-            
+
             {/* Interface Display Options */}
             <div className="settings-section-card">
               <h2>Interface Display Options</h2>
@@ -533,7 +541,7 @@ const DisplaySettings = () => {
                       </ModernDropdown>
                     </div>
                   </div>
-                  
+
                   <div className="form-group">
                     <label>Default Rows Per Page</label>
                     <div style={{ width: '100%', position: 'relative' }}>
@@ -557,7 +565,7 @@ const DisplaySettings = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="form-group">
                   <div className="checkbox-group">
                     <input
@@ -571,7 +579,7 @@ const DisplaySettings = () => {
                     <label htmlFor="enable-dark-mode">Enable Dark Mode</label>
                   </div>
                 </div>
-                
+
                 <div className="form-row">
                   <div className="form-group">
                     <label>Color Scheme</label>
@@ -595,7 +603,7 @@ const DisplaySettings = () => {
                       </ModernDropdown>
                     </div>
                   </div>
-                  
+
                   <div className="form-group">
                     <label>Font Size</label>
                     <div style={{ width: '100%', position: 'relative' }}>
@@ -619,7 +627,7 @@ const DisplaySettings = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="form-group">
                   <div className="checkbox-group">
                     <input
@@ -633,7 +641,7 @@ const DisplaySettings = () => {
                     <label htmlFor="show-grid-lines">Show Grid Lines in Tables</label>
                   </div>
                 </div>
-                
+
                 <div className="form-actions">
                   <button
                     type="submit"
@@ -645,7 +653,7 @@ const DisplaySettings = () => {
                 </div>
               </form>
             </div>
-            
+
             {/* Document Formatting */}
             <div className="settings-section-card">
               <h2>Document Formatting</h2>
@@ -664,7 +672,7 @@ const DisplaySettings = () => {
                     This text will appear at the bottom of all receipts
                   </div>
                 </div>
-                
+
                 <div className="form-group">
                   <label>Default Invoice Notes</label>
                   <textarea
@@ -679,7 +687,7 @@ const DisplaySettings = () => {
                     These notes will be pre-filled on all new invoices
                   </div>
                 </div>
-                
+
                 <div className="form-actions">
                   <button
                     type="submit"
@@ -698,4 +706,4 @@ const DisplaySettings = () => {
   );
 };
 
-export default DisplaySettings; 
+export default DisplaySettings;

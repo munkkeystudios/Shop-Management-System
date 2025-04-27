@@ -5,6 +5,7 @@ import Layout from '../components/Layout';
 import { salesAPI } from '../services/api'; // Assuming salesAPI will have import function
 import '../styles/importPurchase.css'; // Reuse styles from purchase import
 import { FaUpload, FaDownload, FaTimes, FaSpinner, FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
+import { useNotifications } from '../context/NotificationContext';
 
 const ImportSale = () => {
     const [selectedFile, setSelectedFile] = useState(null);
@@ -14,6 +15,7 @@ const ImportSale = () => {
     const [importResults, setImportResults] = useState(null); // To show detailed results
     const fileInputRef = useRef(null);
     const navigate = useNavigate();
+    const { addNotification } = useNotifications();
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
@@ -71,10 +73,18 @@ const ImportSale = () => {
             const response = await salesAPI.importSales(formData);
 
             if (response.data.success) {
+                const successCount = response.data.successCount;
+
+                // Add notification
+                addNotification(
+                    'import',
+                    `Successfully imported ${successCount} ${successCount === 1 ? 'sale' : 'sales'}`
+                );
+
                 setSuccess(response.data.message);
                 setImportResults({
                      totalProcessed: response.data.totalProcessed,
-                     successCount: response.data.successCount,
+                     successCount: successCount,
                      errorCount: response.data.errorCount,
                      errors: response.data.errors || []
                  });

@@ -171,7 +171,7 @@ const Reports = () => {
             className="collapsible-report-header"
             onClick={() => setIsReportOpen(!isReportOpen)}
           >
-            <div className="collapsible-report-title">Reports</div>
+            <div className="collapsible-report-title">Sales Report</div>
             <FaChevronDown className={`collapsible-report-icon ${isReportOpen ? 'open' : ''}`} />
           </div>
 

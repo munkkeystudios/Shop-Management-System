@@ -6,7 +6,7 @@ const POSLayout = ({ children, title }) => {
   return (
     <div className="pos-layout-container">
       <div className="pos-layout-content">
-        <TopBar title={title} />
+        <TopBar />
         <main className="pos-main-content">
           {children}
         </main>

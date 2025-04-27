@@ -233,18 +233,7 @@
   font-size: 14px;
 }
 
-.products-checkbox {
-  width: 16px;
-  height: 16px;
-  cursor: pointer;
-}
 
-.products-table th:first-child,
-.products-table td:first-child {
-  width: 40px;
-  text-align: center;
-  padding: 12px 8px;
-}
 
 /* Modal Styles */
 .products-modal-overlay {

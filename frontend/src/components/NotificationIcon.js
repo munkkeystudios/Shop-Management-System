@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { FaBell, FaRegBell, FaBox, FaTag, FaFolder, FaTruck } from 'react-icons/fa';
+import { FaBell, FaRegBell, FaBox, FaTag, FaFolder, FaTruck, FaUser, FaShoppingCart, FaFileImport, FaMoneyBillWave, FaCog, FaShoppingBasket } from 'react-icons/fa';
 import { useNotifications } from '../context/NotificationContext';
 import './NotificationIcon.css';
 
@@ -53,6 +53,18 @@ const NotificationIcon = () => {
         return <FaFolder />;
       case 'supplier':
         return <FaTruck />;
+      case 'employee':
+        return <FaUser />;
+      case 'sale':
+        return <FaShoppingCart />;
+      case 'import':
+        return <FaFileImport />;
+      case 'loan':
+        return <FaMoneyBillWave />;
+      case 'settings':
+        return <FaCog />;
+      case 'purchase':
+        return <FaShoppingBasket />;
       default:
         return <FaBell />;
     }

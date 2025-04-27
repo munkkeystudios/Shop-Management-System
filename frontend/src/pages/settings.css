@@ -27,6 +27,13 @@
   margin: 0;
 }
 
+/* Header Card - Special styling for the first card that contains the header */
+.settings-header-card .settings-header {
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+}
+
 /* Settings Sections Container */
 .settings-sections-container {
   display: flex;
@@ -336,21 +343,21 @@
   .settings-container {
     padding: 15px;
   }
-  
+
   .settings-section-card {
     padding: 15px;
   }
-  
+
   .settings-header h1 {
     font-size: 20px;
   }
-  
+
   .form-actions {
     flex-direction: column;
     width: 100%;
   }
-  
-  .save-button, 
+
+  .save-button,
   .cancel-button {
     width: 100%;
     justify-content: center;
@@ -361,7 +368,7 @@
   .settings-container {
     padding: 10px;
   }
-  
+
   .settings-section-card {
     padding: 15px;
     margin-bottom: 15px;
@@ -490,4 +497,4 @@
   display: inline-block;
   margin-right: 8px;
   vertical-align: middle;
-} 
+}

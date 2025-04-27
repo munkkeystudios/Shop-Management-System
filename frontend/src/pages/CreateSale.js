@@ -5,9 +5,11 @@ import { salesAPI, productsAPI } from '../services/api';
 import './CreateSale.css';
 import { FaPlus, FaTrash } from 'react-icons/fa';
 import TransactionNotification from './TransactionNotification';
+import { useNotifications } from '../context/NotificationContext';
 
 const CreateSale = () => {
     const navigate = useNavigate();
+    const { addNotification } = useNotifications();
     const [formData, setFormData] = useState({
         billNumber: '',
         customerName: '',
@@ -191,13 +193,27 @@ const CreateSale = () => {
             const response = await salesAPI.create(saleData);
             console.log("API Response:", response);
             if (response.data.success) {
+                const saleId = response.data.data._id;
+                const saleAmount = response.data.data.total;
+                const productCount = formData.items.length;
+
+                // Add notification to the system
+                addNotification(
+                    'sale',
+                    `New sale created for ${new Intl.NumberFormat('en-US', {
+                        style: 'currency',
+                        currency: 'USD'
+                    }).format(saleAmount)} with ${productCount} ${productCount === 1 ? 'product' : 'products'}`,
+                    saleId
+                );
+
                 // Show success notification
                 setNotification({
                     show: true,
                     data: {
                         status: 'success',
-                        id: response.data.data._id,
-                        amount: response.data.data.total,
+                        id: saleId,
+                        amount: saleAmount,
                         products: formData.items.map(item => ({
                             id: item.productId,
                             name: products.find(p => p._id === item.productId)?.name || 'Unknown',
@@ -206,7 +222,7 @@ const CreateSale = () => {
                         }))
                     }
                 });
-                
+
                 // Reset form
                 setFormData({
                       billNumber: formData.billNumber + 1,
@@ -242,13 +258,13 @@ const CreateSale = () => {
         <Layout title="Create New Sale">
             <div className="create-sale-container">
                 {/* Transaction notification */}
-                <TransactionNotification 
+                <TransactionNotification
                     show={notification.show}
                     type="sale"
                     data={notification.data}
                     onClose={closeNotification}
                 />
-                
+
                 <h1>Create New Sale</h1>
 
                 {error && <div className="alert error">{error}</div>}

@@ -361,7 +361,7 @@ function ToolsSidebar() {
                 {/* Sales Dropdown */}
                 {isManagerOrHigher && (
                     <ModernDropdown
-                        isActive={isGroupActive(['/sales', '/sales-report', '/create-sale', '/import-sales'])}
+                        isActive={isGroupActive(['/sales', '/create-sale', '/import-sales'])}
                         title={
                             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                                 <TbReportMoney size={16}/> Sales
@@ -379,16 +379,7 @@ function ToolsSidebar() {
                             </ModernDropdownItem>
                         </Link>
 
-                        <Link to="/sales-report" style={{ textDecoration: 'none', color: 'inherit' }}>
-                            <ModernDropdownItem
-                                isActive={isPathActive('/sales-report')}
-                                onClick={() => handleItemClick("Sales Report")}
-                            >
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                    <TbReportMoney size={16} /> Sales Report
-                                </div>
-                            </ModernDropdownItem>
-                        </Link>
+
 
                         {isCashierOrHigher && (
                             <Link to="/create-sale" style={{ textDecoration: 'none', color: 'inherit' }}>
