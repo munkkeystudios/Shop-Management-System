@@ -1,6 +1,8 @@
 .layout-container {
   display: flex;
   min-height: 100vh;
+  position: relative;
+  overflow: hidden;
 }
 
 .layout-content {

@@ -1,12 +1,15 @@
 .sidebar-container {
     width: 270px;
-    height: 100vh;
+    min-height: 100vh;
+    height: auto;
     background-color: #ffffff;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
     border-right: 1px solid #e6e6ff;
     display: flex;
     flex-direction: column;
     position: relative;
+    z-index: 100;
+    overflow-y: auto;
 }
 
 .sidebar-logo-container {
@@ -41,6 +44,9 @@
     flex: 1 1 auto;
     overflow-y: auto;
     overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
 }
 
 .sidebar-nav-item {
@@ -70,4 +76,40 @@
     color: #ffffff;
     background-color: #ff5252;
     margin-top: 20px;
+}
+
+/* Ensure dropdowns are properly contained */
+.sidebar-container .sidebar-dropdown {
+    width: 100%;
+    position: relative;
+}
+
+.sidebar-container .sidebar-dropdown-content {
+    position: relative;
+    width: 100%;
+    left: 0;
+    top: 0;
+    box-shadow: none;
+}
+
+/* Ensure the sidebar expands to fit its content */
+@media (min-height: 600px) {
+    .sidebar-container {
+        height: auto !important;
+        min-height: 100vh;
+    }
+}
+
+/* Handle multiple open dropdowns */
+.sidebar-container .sidebar-dropdown-content-inner {
+    max-height: none;
+    overflow-y: visible;
+}
+
+/* Add padding at the bottom to ensure all content is visible */
+.sidebar-container::after {
+    content: '';
+    display: block;
+    height: 20px;
+    width: 100%;
 }

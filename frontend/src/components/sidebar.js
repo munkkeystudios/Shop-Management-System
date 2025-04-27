@@ -378,57 +378,38 @@ function ToolsSidebar() {
 
                 {/* Loans Dropdown (Manager+) */}
                 {isManagerOrHigher && (
-                    <SideBarDropdown
-                        isActive={isGroupActive(['/loans', '/create-loans'])} // Add paths for Loans and Create Loans
+                    <ModernDropdown
+                        isActive={isGroupActive(['/loans', '/create-loans'])}
                         title={
-                            <div className="sidebar-link" style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '12px'
-                            }}>
-                                <TbReportMoney size={16} /> Loans
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                <TbReportMoney size={16}/> Loans
                             </div>
-                        }>
+                        }
+                    >
                         {/* All Loans (Manager+) */}
-                        <Link to="/loans" className="sidebar-link" style={{
-                            textDecoration: 'none',
-                            color: 'inherit'
-                        }}>
-                            <SideBarItem
+                        <Link to="/loans" style={{ textDecoration: 'none', color: 'inherit' }}>
+                            <ModernDropdownItem
                                 isActive={isPathActive('/loans')}
-                                title={
-                                    <div style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '12px'
-                                    }}>
-                                        <TbReportMoney size={16} /> All Loans
-                                    </div>
-                                }
                                 onClick={() => handleItemClick("All Loans")}
-                            />
+                            >
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                    <TbReportMoney size={16} /> All Loans
+                                </div>
+                            </ModernDropdownItem>
                         </Link>
 
                         {/* Create Loans (Manager+) */}
-                        <Link to="/create-loans" className="sidebar-link" style={{
-                            textDecoration: 'none',
-                            color: 'inherit'
-                        }}>
-                            <SideBarItem
+                        <Link to="/create-loans" style={{ textDecoration: 'none', color: 'inherit' }}>
+                            <ModernDropdownItem
                                 isActive={isPathActive('/create-loans')}
-                                title={
-                                    <div style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '12px'
-                                    }}>
-                                        <FaPlus size={14} /> Create Loans
-                                    </div>
-                                }
                                 onClick={() => handleItemClick("Create Loans")}
-                            />
+                            >
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                    <FaPlus size={14} /> Create Loans
+                                </div>
+                            </ModernDropdownItem>
                         </Link>
-                    </SideBarDropdown>
+                    </ModernDropdown>
                 )}
 
                 {/* Reports Link (Manager+) */}

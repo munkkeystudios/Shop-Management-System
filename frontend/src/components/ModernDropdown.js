@@ -19,14 +19,22 @@ export const ModernDropdownItem = ({ children, isActive, onClick, className = ''
  * ModernDropdown - A dropdown component with a modern design
  */
 const ModernDropdown = ({ title, children, isActive, headerColor = '#ffffff', className = '', style = {} }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  // Initialize isOpen based on isActive prop
+  const [isOpen, setIsOpen] = useState(isActive);
+
+  // Update isOpen when isActive changes
+  React.useEffect(() => {
+    if (isActive) {
+      setIsOpen(true);
+    }
+  }, [isActive]);
 
   return (
-    <div className={`sidebar-dropdown ${className}`} style={style}>
+    <div className={`sidebar-dropdown ${className} ${isActive ? 'active' : ''}`} style={style}>
       <div
-        className="sidebar-dropdown-header"
+        className={`sidebar-dropdown-header ${isActive ? 'active' : ''}`}
         onClick={() => setIsOpen(!isOpen)}
-        style={{ backgroundColor: headerColor }}
+        style={{ backgroundColor: isActive ? '#f0f8f4' : headerColor }}
       >
         <div className="sidebar-dropdown-title">
           {title}

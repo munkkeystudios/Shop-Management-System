@@ -60,6 +60,7 @@
   background-color: #ffffff;
   border-radius: 8px;
   position: relative;
+  z-index: 10;
 }
 
 .sidebar-dropdown-content-inner {
@@ -68,6 +69,7 @@
   width: 100%;
   max-height: 300px;
   overflow-y: auto;
+  position: relative;
 }
 
 .sidebar-dropdown-item {
@@ -113,12 +115,7 @@
   width: 100%;
 }
 
-/* Sidebar container styles */
-.sidebar-container {
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-}
+/* Sidebar container styles - moved to Sidebar.css */
 
 .sidebar-menu-container {
   scrollbar-width: thin;
@@ -142,6 +139,16 @@
 .sidebar-dropdown {
   position: relative;
   width: 100%;
+}
+
+/* Active dropdown styling */
+.sidebar-dropdown.active .sidebar-dropdown-header {
+  background-color: #f0f8f4;
+  border-left: 3px solid #00a838;
+}
+
+.sidebar-dropdown-header.active {
+  background-color: #f0f8f4 !important;
 }
 
 /* Responsive adjustments */
