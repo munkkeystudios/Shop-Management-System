@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Layout from '../components/Layout';
-import { settingsAPI } from '../services/api';
 import { toast } from 'react-toastify';
 import { useAuth } from '../context/AuthContext';
 import { Navigate } from 'react-router-dom';
@@ -9,10 +8,12 @@ import './settings.css';
 import ModernDropdown, { ModernDropdownItem } from '../components/ModernDropdown';
 import '../styles/dropdown.css';
 import { useNotifications } from '../context/NotificationContext';
+import { useSettings } from '../context/SettingsContext';
 
 const GeneralSettings = () => {
   const { user } = useAuth();
   const { addNotification } = useNotifications();
+  const { settings: globalSettings, updateSettings, updateLogo } = useSettings();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -70,51 +71,34 @@ const GeneralSettings = () => {
   ];
 
   useEffect(() => {
-    if (isAdmin) {
-      fetchSettings();
-    } else {
+    if (isAdmin && globalSettings) {
+      // Map global settings to local state
+      const localSettings = {
+        companyName: globalSettings.companyName || '',
+        companyLogo: globalSettings.companyLogo || globalSettings.logoUrl || '',
+        contactEmail: globalSettings.contactEmail || '',
+        supportPhone: globalSettings.supportPhone || '',
+        taxRate: globalSettings.defaultTaxRate || 0,
+        currencyCode: globalSettings.currencyCode || 'USD',
+        invoicePrefix: globalSettings.invoicePrefix || 'INV-',
+        fiscalYear: {
+          start: globalSettings.fiscalYearStart || '01-01',
+          end: globalSettings.fiscalYearEnd || '12-31'
+        },
+        receiptFooter: globalSettings.receiptFooter || '',
+        inventoryAlertThreshold: globalSettings.inventoryAlertThreshold || 10,
+        pricingStrategy: globalSettings.pricingStrategy || 'fixed',
+        enableOnlinePayments: globalSettings.enableOnlinePayments || false,
+        paymentMethods: globalSettings.paymentMethods || ['cash', 'card'],
+        enableDiscounts: globalSettings.enableDiscounts || true
+      };
+
+      setSettings(localSettings);
+      setLoading(false);
+    } else if (!isAdmin) {
       setLoading(false);
     }
-  }, [isAdmin]);
-
-  const fetchSettings = async () => {
-    try {
-      setLoading(true);
-      const response = await settingsAPI.getGeneralSettings();
-      if (response.data) {
-        // Filter only general settings from the response
-        const generalSettings = {
-          companyName: response.data.companyName || '',
-          companyLogo: response.data.companyLogo || response.data.logoUrl || '',
-          contactEmail: response.data.contactEmail || '',
-          supportPhone: response.data.supportPhone || '',
-          taxRate: response.data.defaultTaxRate || 0,
-          currencyCode: response.data.currencyCode || 'USD',
-          invoicePrefix: response.data.invoicePrefix || 'INV-',
-          fiscalYear: {
-            start: response.data.fiscalYearStart || '01-01',
-            end: response.data.fiscalYearEnd || '12-31'
-          },
-          receiptFooter: response.data.receiptFooter || '',
-          inventoryAlertThreshold: response.data.inventoryAlertThreshold || 10,
-          pricingStrategy: response.data.pricingStrategy || 'fixed',
-          enableOnlinePayments: response.data.enableOnlinePayments || false,
-          paymentMethods: response.data.paymentMethods || ['cash', 'card'],
-          enableDiscounts: response.data.enableDiscounts || true
-        };
-
-        setSettings(prevSettings => ({
-          ...prevSettings,
-          ...generalSettings
-        }));
-      }
-    } catch (error) {
-      console.error('Error fetching general settings:', error);
-      toast.error('Failed to load general settings');
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [isAdmin, globalSettings]);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -176,16 +160,19 @@ const GeneralSettings = () => {
 
     try {
       setUploading(true);
-      const formData = new FormData();
-      formData.append('logo', file);
 
-      const response = await settingsAPI.uploadLogo(formData);
-      if (response.data && response.data.logoUrl) {
+      // Use the updateLogo function from SettingsContext
+      const result = await updateLogo(file);
+
+      if (result.success) {
+        // Update local state
         setSettings({
           ...settings,
-          companyLogo: response.data.logoUrl
+          companyLogo: result.logoUrl
         });
         toast.success('Logo uploaded successfully');
+      } else {
+        toast.error(result.error || 'Failed to upload logo');
       }
     } catch (error) {
       console.error('Error uploading logo:', error);
@@ -287,15 +274,20 @@ const GeneralSettings = () => {
         enableDiscounts: settings.enableDiscounts
       };
 
-      await settingsAPI.updateGeneralSettings(generalSettings);
+      // Use the updateSettings function from SettingsContext
+      const result = await updateSettings(generalSettings);
 
-      // Add notification
-      addNotification(
-        'settings',
-        'General settings have been updated'
-      );
+      if (result.success) {
+        // Add notification
+        addNotification(
+          'settings',
+          'General settings have been updated'
+        );
 
-      toast.success('General settings updated successfully');
+        toast.success('General settings updated successfully');
+      } else {
+        toast.error(result.error || 'Failed to update settings');
+      }
     } catch (error) {
       console.error('Error updating general settings:', error);
       toast.error('Failed to update general settings');

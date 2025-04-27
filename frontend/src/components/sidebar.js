@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Nav } from 'react-bootstrap';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useSettings } from '../context/SettingsContext';
 import logoImage from '../images/logo-small.png';
 import { RiShoppingBag4Line } from "react-icons/ri";
 import { LuPackage, LuPackagePlus, LuPackageSearch } from "react-icons/lu";
@@ -12,22 +13,13 @@ import { TbReportMoney } from "react-icons/tb";
 import { MdOutlineDisplaySettings } from 'react-icons/md';
 import { FaPlus, FaUpload } from "react-icons/fa";
 import { jwtDecode } from 'jwt-decode';
-import { settingsAPI } from '../services/api';
 import ModernDropdown, { ModernDropdownItem } from './ModernDropdown';
+import './Sidebar.css';
 
 // sidebar layout
 const SideBar = ({ children }) => {
     return (
-        <Nav className="flex-column sidebar-container" style={{
-            width: '270px',
-            height: '100vh',
-            backgroundColor: '#ffffff',
-            boxShadow: '0 0 10px rgba(0, 0, 0, 0.05)',
-            borderRight: '1px solid #e6e6ff',
-            display: 'flex',
-            flexDirection: 'column',
-            position: 'relative'
-        }}>
+        <Nav className="flex-column sidebar-container">
             {children}
         </Nav>
     );
@@ -80,35 +72,29 @@ SideBar.Item = SideBarItem;
 
 // main default sidebar function
 function ToolsSidebar() {
-    const { logout, } = useAuth();
+    const { logout } = useAuth();
+    const { settings } = useSettings();
     const navigate = useNavigate();
     const location = useLocation();
-    const [companyLogo, setCompanyLogo] = useState(null);
-    const [companyName, setCompanyName] = useState('FinTrack');
     const [userRole, setUserRole] = useState(null);
 
-    // Fetch company settings
-    useEffect(() => {
-        const fetchSettings = async () => {
-            try {
-                const response = await settingsAPI.getAll();
-                const settings = response.data;
+    // Get company logo and name from settings context
+    const companyName = settings?.companyName || 'Shop Management System';
 
-                if (settings.logoUrl) {
-                    const baseUrl = process.env.REACT_APP_API_URL || 'http://localhost:5002';
-                    setCompanyLogo(baseUrl + settings.logoUrl);
-                }
+    // Process logo URL
+    let companyLogo = null;
+    if (settings?.companyLogo || settings?.logoUrl) {
+        const logoUrl = settings.companyLogo || settings.logoUrl;
+        if (logoUrl) {
+            // Create a base URL for relative paths
+            const baseUrl = process.env.REACT_APP_API_URL || 'http://localhost:5002';
 
-                if (settings.companyName) {
-                    setCompanyName(settings.companyName);
-                }
-            } catch (error) {
-                console.error('Error fetching company settings:', error);
-            }
-        };
-
-        fetchSettings();
-    }, []);
+            // Create full URL for the logo
+            companyLogo = logoUrl.startsWith('http')
+                ? logoUrl
+                : `${baseUrl}${logoUrl}`;
+        }
+    }
 
     // Get user role from token
     useEffect(() => {
@@ -146,38 +132,19 @@ function ToolsSidebar() {
 
     return (
         <SideBar>
-            {/* Logo Section */}
-            <div className="sidebar-logo-container" style={{
-                display: 'flex',
-                alignItems: 'center',
-                padding: '20px 20px',
-                borderBottom: '1px solid #e6e6ff',
-                flex: '0 0 auto'
-            }}>
-                <img
-                    src={companyLogo || logoImage}
-                    alt="Logo"
-                    className="sidebar-logo"
-                    style={{
-                        width: '32px',
-                        height: '32px',
-                        marginRight: '10px',
-                        objectFit: 'contain'
-                    }}
-                />
-                <span className="sidebar-title" style={{
-                    fontWeight: '600',
-                    fontSize: '22px',
-                    color: '#333'
-                }}>{companyName}</span>
-            </div>
+            {/* Logo Section - Clickable and redirects to dashboard (or home page if no dashboard access) */}
+            <Link to={isCashierOrHigher ? "/dashboard" : "/"} className="sidebar-logo-link">
+                <div className="sidebar-logo-container">
+                    <img
+                        src={companyLogo || logoImage}
+                        alt="Logo"
+                        className="sidebar-logo"
+                    />
+                    <span className="sidebar-title">{companyName}</span>
+                </div>
+            </Link>
 
-            <div className="sidebar-menu-container" style={{
-                padding: '10px 0',
-                flex: '1 1 auto',
-                overflowY: 'auto',
-                overflowX: 'hidden'
-            }}>
+            <div className="sidebar-menu-container">
                 {/* Dashboard (Cashier+) */}
                 {isCashierOrHigher && (
                     <Nav.Item className="sidebar-nav-item" style={{

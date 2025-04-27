@@ -1,5 +1,7 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import DocumentHead from "./components/DocumentHead";
+import { SettingsProvider } from "./context/SettingsContext";
 // eventually make it so all this import components/pages comes in 1 line
 import MainDashboard from "./pages/main_dashboard";
 import AllProducts from "./pages/all_products";
@@ -33,9 +35,11 @@ function App() {
   return (
     <AuthProvider>
       <NotificationProvider>
-        <BrowserRouter>
-          <div className="App">
-            <Routes>
+        <SettingsProvider>
+          <BrowserRouter>
+            <DocumentHead />
+            <div className="App">
+              <Routes>
               {/* Public routes */}
               <Route path="/login" element={<Login />} />
 
@@ -243,9 +247,10 @@ function App() {
               {/* Redirect root and unmatched */}
               <Route path="/" element={<Navigate to="/login" replace />} />
               <Route path="*" element={<Navigate to="/login" replace />} />
-            </Routes>
-          </div>
-        </BrowserRouter>
+              </Routes>
+            </div>
+          </BrowserRouter>
+        </SettingsProvider>
       </NotificationProvider>
     </AuthProvider>
   );
