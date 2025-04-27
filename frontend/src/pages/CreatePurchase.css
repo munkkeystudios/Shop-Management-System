@@ -1,4 +1,6 @@
-.create-purchase-container {
+
+
+  .create-purchase-container {
     padding: 20px;
     background-color: #fff;
     border-radius: 8px;
@@ -223,24 +225,6 @@
     cursor: not-allowed;
   }
   
-  /* Make sure the form elements are properly aligned */
-  .form-select,
-  .form-input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    background-color: #fff;
-    font-size: 14px;
-  }
-  
-  /* Add styles for required fields */
-  .form-select:required,
-  .table-select:required,
-  .table-input:required {
-    border-left: 3px solid #28a745;
-  }
-  
   /* Add loading indicator styles */
   .loading {
     display: inline-block;
@@ -258,4 +242,3 @@
       transform: rotate(360deg);
     }
   }
-  
