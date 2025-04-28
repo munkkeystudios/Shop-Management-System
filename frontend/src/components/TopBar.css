@@ -110,6 +110,7 @@
 .topbar-user-profile {
   display: flex;
   align-items: center;
+  position: relative;
 }
 
 .topbar-user-avatar {
@@ -125,6 +126,75 @@
   color: #333;
   cursor: pointer;
   border: 1px solid #e0e0e0;
+  transition: background-color 0.2s;
+}
+
+.topbar-user-avatar:hover {
+  background-color: #e0e0e0;
+}
+
+/* User Dropdown Styles */
+.user-dropdown {
+  position: absolute;
+  top: 55px;
+  right: 0;
+  width: 250px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  overflow: hidden;
+  border: 1px solid #e6e6e6;
+}
+
+.user-dropdown-header {
+  padding: 16px;
+  border-bottom: 1px solid #eee;
+  background-color: #f8f9fa;
+}
+
+.user-dropdown-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.user-dropdown-role {
+  font-size: 13px;
+  color: #00a838;
+  font-weight: 500;
+}
+
+.user-dropdown-menu {
+  padding: 8px 0;
+}
+
+.user-dropdown-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  color: #333;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.user-dropdown-item:hover {
+  background-color: #f5f5f5;
+  color: #00a838;
+}
+
+.user-dropdown-icon {
+  margin-right: 12px;
+  font-size: 16px;
+  color: #00a838;
+}
+
+.user-dropdown-divider {
+  height: 1px;
+  background-color: #eee;
+  margin: 8px 0;
 }
 
 /* Responsive adjustments */
@@ -148,6 +218,24 @@
     height: 36px;
     font-size: 16px;
   }
+
+  .user-dropdown {
+    width: 220px;
+    right: -10px;
+  }
+
+  .user-dropdown-name {
+    font-size: 14px;
+  }
+
+  .user-dropdown-role {
+    font-size: 12px;
+  }
+
+  .user-dropdown-item {
+    padding: 10px 14px;
+    font-size: 14px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -169,5 +257,23 @@
     width: 32px;
     height: 32px;
     font-size: 14px;
+  }
+
+  .user-dropdown {
+    width: 200px;
+    right: -20px;
+  }
+
+  .user-dropdown-name {
+    font-size: 13px;
+  }
+
+  .user-dropdown-role {
+    font-size: 11px;
+  }
+
+  .user-dropdown-item {
+    padding: 8px 12px;
+    font-size: 13px;
   }
 }

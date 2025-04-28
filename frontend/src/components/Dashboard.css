@@ -10,6 +10,27 @@
   min-height: 100vh;
 }
 
+/* Dashboard Card Colors */
+.card-orange {
+  background-color: #FFF8F3;
+  border-left: 4px solid #FF8A65;
+}
+
+.card-purple {
+  background-color: #F9F5FF;
+  border-left: 4px solid #B388FF;
+}
+
+.card-green {
+  background-color: #F2FBF6;
+  border-left: 4px solid #4CAF50;
+}
+
+.card-red {
+  background-color: #FFF5F5;
+  border-left: 4px solid #FF8A80;
+}
+
 /* Header Styles */
 .header {
   background-color: white;
@@ -62,6 +83,7 @@
 /* Main Content */
 .main-content {
   padding: 1.5rem;
+  background-color: #f8fafc;
 }
 
 /* Stats Cards */
@@ -69,6 +91,7 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 1.5rem;
+  margin: 0;
 }
 
 @media (max-width: 1024px) {
@@ -84,57 +107,118 @@
 }
 
 .stat-card {
-  background-color: white;
-  padding: 1rem;
+  padding: 1.5rem;
   border-radius: 0.75rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 110px;
+  border: none;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* Stats container - white background behind colored cards */
+.stats-container {
+  background-color: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
 }
 
 .stat-icon {
   position: absolute;
-  right: 1rem;
-  top: 1rem;
-  width: 2rem;
-  height: 2rem;
-  background-color: rgba(234, 88, 12, 0.1);
+  right: 1.5rem;
+  top: 1.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #ea580c;
+  font-size: 1.25rem;
 }
 
-.stats-cards article:nth-child(1) .stat-icon {
-  background-color: rgba(234, 88, 12, 0.1);
-  color: #ea580c;
+/* Stat card background colors */
+.stats-cards article:nth-child(1) {
+  background-color: #FFF8F3; /* Light yellow */
 }
 
-.stats-cards article:nth-child(2) .stat-icon {
-  background-color: rgba(168, 85, 247, 0.1);
-  color: #a855f7;
+.stats-cards article:nth-child(2) {
+  background-color: #F9F5FF; /* Light purple */
 }
 
-.stats-cards article:nth-child(3) .stat-icon {
-  background-color: rgba(16, 185, 129, 0.1);
-  color: #10b981;
+.stats-cards article:nth-child(3) {
+  background-color: #F2FBF6; /* Light green */
 }
 
-.stats-cards article:nth-child(4) .stat-icon {
-  background-color: rgba(249, 115, 22, 0.1);
-  color: #f97316;
+.stats-cards article:nth-child(4) {
+  background-color: #FFF5F5; /* Light pink */
 }
 
 .stat-label {
   font-size: 0.875rem;
   color: #64748b;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
+  font-weight: 500;
 }
 
 .stat-value {
-  font-size: 1.5rem;
+  font-size: 1.75rem;
   font-weight: 700;
   color: #1e293b;
+  margin-top: 0.5rem;
+}
+
+/* Period selector */
+.period-selector {
+  padding: 0.25rem 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  background-color: white;
+  cursor: pointer;
+}
+
+/* Date inputs */
+input[type="date"].period-selector {
+  padding: 0.25rem 0.5rem;
+  min-width: 140px;
+  font-family: inherit;
+}
+
+/* Chart container */
+.chart-container {
+  height: 250px;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  padding: 0 10px;
+}
+
+/* Active day bar */
+.active-day-bar {
+  fill: #00a838;
+}
+
+/* Other day bars */
+.other-day-bar {
+  fill: #E0F2F1;
+}
+
+/* Chart tooltip */
+.recharts-tooltip-wrapper {
+  z-index: 1000;
+}
+
+/* Chart grid lines */
+.recharts-cartesian-grid-horizontal line {
+  stroke: #f0f0f0;
+}
+
+/* Chart axis text */
+.recharts-text.recharts-cartesian-axis-tick-value {
+  font-size: 12px;
+  fill: #64748b;
 }
 
 /* Content Row Layout */
@@ -230,6 +314,10 @@
 /* Data Tables */
 .data-table-card {
   overflow-x: auto;
+  margin-top: 1.5rem;
+  background-color: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .data-table {
@@ -263,6 +351,45 @@
 /* Table Row Highlight */
 .data-table tbody tr:hover {
   cursor: pointer;
+}
+
+/* Table section headers */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+/* Status badge */
+.status-badge {
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.status-badge.delivered {
+  background-color: #E8F5E9;
+  color: #2E7D32;
+}
+
+.status-badge.pending {
+  background-color: #FFF8E1;
+  color: #F57F17;
+}
+
+.status-badge.cancelled {
+  background-color: #FFEBEE;
+  color: #C62828;
 }
 
 /* Updated Pagination - Centered with better styling */
@@ -349,16 +476,16 @@ select {
     align-items: flex-start;
     gap: 1rem;
   }
-  
+
   .header-center {
     width: 100%;
     justify-content: space-between;
   }
-  
+
   .header-right {
     align-self: flex-end;
   }
-  
+
   .pagination {
     overflow-x: auto;
     width: 100%;
