@@ -1,5 +1,5 @@
 /* General layout styles */
-.flex {
+/* .flex {
     display: flex;
   }
   
@@ -24,7 +24,7 @@
   }
   
   /* Header and search styles */
-  .justify-between {
+  /* .justify-between {
     justify-content: space-between;
   }
   
@@ -58,7 +58,7 @@
   }
   
   /* Input and button styles */
-  .border {
+  /* .border {
     border-width: 1px;
   }
   
@@ -123,9 +123,9 @@
   
   .duration-200 {
     transition-duration: 200ms;
-  }
+  }  */
   
-  /* Table styles */
+  /* Table styles
   .bg-white {
     background-color: #ffffff;
   }
@@ -263,10 +263,10 @@
   
   .space-x-2 > * + * {
     margin-left: 0.5rem;
-  }
+  } */
   
   /* Pagination styles */
-  .py-3 {
+  /* .py-3 {
     padding-top: 0.75rem;
     padding-bottom: 0.75rem;
   }
@@ -313,10 +313,10 @@
   
   .cursor-not-allowed {
     cursor: not-allowed;
-  }
+  } */
   
   /* Modal styles */
-  .fixed {
+  /* .fixed {
     position: fixed;
   }
   
@@ -384,9 +384,9 @@
   
   .col-span-1 {
     grid-column: span 1 / span 1;
-  }
+  } */
   
-  .aspect-square {
+  /* .aspect-square {
     aspect-ratio: 1 / 1;
   }
   
@@ -454,4 +454,7 @@
   
   .hover\:bg-blue-700:hover {
     background-color: #00a838;
-  }
+  }  */
+
+
+  /* product_page.css - Updated to match Figma design */
