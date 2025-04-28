@@ -676,3 +676,53 @@
       padding: 5pt;
     }
   }
+
+  * Action buttons styling */
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* Buttons base */
+.filter-btn, .pdf-btn, .excel-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  background-color: white;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+
+/* Hover for base buttons */
+.filter-btn:hover {
+  background-color: #f2f2f2;
+  border-color: #ccc;
+}
+
+/* Excel button */
+.excel-btn {
+  background-color: #006400; /* dark green */
+  color: white;
+  border: none;
+}
+
+.excel-btn:hover {
+  background-color: #004d00; /* darker green on hover */
+}
+
+/* PDF button */
+.pdf-btn {
+  background-color: #d32f2f; /* red */
+  color: white;
+  border: none;
+}
+
+.pdf-btn:hover {
+  background-color: #b71c1c; /* darker red on hover */
+}
