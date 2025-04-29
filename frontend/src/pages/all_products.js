@@ -447,11 +447,21 @@ const AllProducts = () => {
           }}
         >
           <div
-            className="products-modal-container edit"
+            className="products-modal-container details"
             onClick={(e) => e.stopPropagation()}
           >
+            {/* Header */}
             <div className="products-modal-header">
-              <div className="products-modal-title">Edit Product</div>
+              <button
+                className="products-print-label-btn"
+                type="submit"
+                form="editProductForm"
+              >
+                Save Changes
+              </button>
+              <div className="products-modal-title">
+                Edit Product
+              </div>
               <button
                 className="products-modal-close"
                 onClick={() => {
@@ -464,131 +474,147 @@ const AllProducts = () => {
               </button>
             </div>
 
-            <form onSubmit={handleEditSubmit} className="p-6">
-              <div className="grid grid-cols-2 gap-6 mb-4">
-                <div>
-                  <label className="block text-sm text-gray-600 mb-1">Product Name</label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={editFormData.name || ''}
-                    onChange={handleEditFormChange}
-                    className="block w-full border border-gray-300 rounded-md p-2 text-sm"
-                    required
-                  />
+            {/* Image Section */}
+            <div className="products-modal-image">
+              <img
+                src={getProductImage({...editFormData, name: editFormData.name || ''})}
+                alt={editFormData.name || 'Product'}
+              />
+            </div>
+
+            {/* Form as Details */}
+            <form id="editProductForm" onSubmit={handleEditSubmit}>
+              <div className="products-modal-details">
+                <div className="products-modal-detail-row">
+                  <div className="products-modal-detail-label">Product Name</div>
+                  <div className="products-modal-detail-value">
+                    <input
+                      type="text"
+                      name="name"
+                      value={editFormData.name || ''}
+                      onChange={handleEditFormChange}
+                      className="w-full border-0 bg-transparent p-0 text-sm focus:outline-none"
+                      required
+                    />
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-sm text-gray-600 mb-1">Barcode</label>
-                  <input
-                    type="text"
-                    name="barcode"
-                    value={editFormData.barcode || ''}
-                    onChange={handleEditFormChange}
-                    className="block w-full border border-gray-300 rounded-md p-2 text-sm"
-                    required
-                  />
+
+                <div className="products-modal-detail-row">
+                  <div className="products-modal-detail-label">Barcode</div>
+                  <div className="products-modal-detail-value">
+                    <input
+                      type="text"
+                      name="barcode"
+                      value={editFormData.barcode || ''}
+                      onChange={handleEditFormChange}
+                      className="w-full border-0 bg-transparent p-0 text-sm focus:outline-none"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="products-modal-detail-row">
+                  <div className="products-modal-detail-label">Description</div>
+                  <div className="products-modal-detail-value">
+                    <input
+                      type="text"
+                      name="description"
+                      value={editFormData.description || ''}
+                      onChange={handleEditFormChange}
+                      className="w-full border-0 bg-transparent p-0 text-sm focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div className="products-modal-detail-row">
+                  <div className="products-modal-detail-label">Sale Price</div>
+                  <div className="products-modal-detail-value">
+                    <input
+                      type="number"
+                      name="price"
+                      value={editFormData.price || 0}
+                      onChange={handleEditFormChange}
+                      className="w-full border-0 bg-transparent p-0 text-sm focus:outline-none"
+                      min="0"
+                      step="0.01"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="products-modal-detail-row">
+                  <div className="products-modal-detail-label">Cost Price</div>
+                  <div className="products-modal-detail-value">
+                    <input
+                      type="number"
+                      name="costPrice"
+                      value={editFormData.costPrice || 0}
+                      onChange={handleEditFormChange}
+                      className="w-full border-0 bg-transparent p-0 text-sm focus:outline-none"
+                      min="0"
+                      step="0.01"
+                    />
+                  </div>
+                </div>
+
+                <div className="products-modal-detail-row">
+                  <div className="products-modal-detail-label">Quantity</div>
+                  <div className="products-modal-detail-value">
+                    <input
+                      type="number"
+                      name="quantity"
+                      value={editFormData.quantity || 0}
+                      onChange={handleEditFormChange}
+                      className="w-full border-0 bg-transparent p-0 text-sm focus:outline-none"
+                      min="0"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="products-modal-detail-row">
+                  <div className="products-modal-detail-label">Min Stock Level</div>
+                  <div className="products-modal-detail-value">
+                    <input
+                      type="number"
+                      name="minStockLevel"
+                      value={editFormData.minStockLevel || 0}
+                      onChange={handleEditFormChange}
+                      className="w-full border-0 bg-transparent p-0 text-sm focus:outline-none"
+                      min="0"
+                    />
+                  </div>
+                </div>
+
+                <div className="products-modal-detail-row">
+                  <div className="products-modal-detail-label">Status</div>
+                  <div className="products-modal-detail-value">
+                    <select
+                      name="status"
+                      value={editFormData.status || 'active'}
+                      onChange={handleEditFormChange}
+                      className="w-full border-0 bg-transparent p-0 text-sm focus:outline-none"
+                    >
+                      <option value="active">Active</option>
+                      <option value="inactive">Inactive</option>
+                      <option value="out_of_stock">Out of Stock</option>
+                    </select>
+                  </div>
                 </div>
               </div>
 
-              <div className="mb-4">
-                <label className="block text-sm text-gray-600 mb-1">Description</label>
-                <textarea
-                  name="description"
-                  value={editFormData.description || ''}
-                  onChange={handleEditFormChange}
-                  className="block w-full border border-gray-300 rounded-md p-2 text-sm"
-                  rows="3"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-6 mb-4">
-                <div>
-                  <label className="block text-sm text-gray-600 mb-1">Sale Price</label>
-                  <input
-                    type="number"
-                    name="price"
-                    value={editFormData.price || 0}
-                    onChange={handleEditFormChange}
-                    className="block w-full border border-gray-300 rounded-md p-2 text-sm"
-                    min="0"
-                    step="0.01"
-                    required
+              {/* Barcode Section */}
+              <div className="products-modal-barcode">
+                <div className="text-center">
+                  <img
+                    src={`https://barcodeapi.org/api/code128/${editFormData.barcode || '000000000000'}`}
+                    alt="Barcode"
+                    style={{ width: '140px', height: '35px' }}
                   />
+                  <div style={{ fontSize: '11px', marginTop: '2px' }}>
+                    {editFormData.barcode || '000000000000'}
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-sm text-gray-600 mb-1">Cost Price</label>
-                  <input
-                    type="number"
-                    name="costPrice"
-                    value={editFormData.costPrice || 0}
-                    onChange={handleEditFormChange}
-                    className="block w-full border border-gray-300 rounded-md p-2 text-sm"
-                    min="0"
-                    step="0.01"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-6 mb-4">
-                <div>
-                  <label className="block text-sm text-gray-600 mb-1">Quantity</label>
-                  <input
-                    type="number"
-                    name="quantity"
-                    value={editFormData.quantity || 0}
-                    onChange={handleEditFormChange}
-                    className="block w-full border border-gray-300 rounded-md p-2 text-sm"
-                    min="0"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm text-gray-600 mb-1">Min Stock Level</label>
-                  <input
-                    type="number"
-                    name="minStockLevel"
-                    value={editFormData.minStockLevel || 0}
-                    onChange={handleEditFormChange}
-                    className="block w-full border border-gray-300 rounded-md p-2 text-sm"
-                    min="0"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-6 mb-6">
-                <div>
-                  <label className="block text-sm text-gray-600 mb-1">Status</label>
-                  <select
-                    name="status"
-                    value={editFormData.status || 'active'}
-                    onChange={handleEditFormChange}
-                    className="block w-full border border-gray-300 rounded-md p-2 text-sm"
-                  >
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                    <option value="out_of_stock">Out of Stock</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="flex justify-end space-x-3 pt-4 border-t">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsEditModalOpen(false);
-                    // Restore body overflow
-                    document.body.style.overflow = 'auto';
-                  }}
-                  className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
-                >
-                  Save Changes
-                </button>
               </div>
             </form>
           </div>

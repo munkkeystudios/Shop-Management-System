@@ -266,7 +266,7 @@
 }
 
 .products-modal-container.edit {
-  width: 550px;
+  width: 420px;
 }
 
 .products-modal-container.delete {
@@ -387,6 +387,24 @@
 
 .products-print-label-btn:hover {
   background-color: #008a2e;
+}
+
+/* Style for input fields in edit mode */
+.products-modal-detail-value input,
+.products-modal-detail-value select {
+  width: 100%;
+  border: 0;
+  background-color: transparent;
+  font-size: 12px;
+  font-weight: 500;
+  color: #111827;
+  padding: 0;
+}
+
+.products-modal-detail-value input:focus,
+.products-modal-detail-value select:focus {
+  outline: none;
+  border-bottom: 1px solid #00a838;
 }
 
 @media (max-width: 768px) {
