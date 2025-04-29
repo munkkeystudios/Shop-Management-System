@@ -434,7 +434,7 @@ const CreatePurchase = () => {
     const { addNotification } = useNotifications();
     const [formData, setFormData] = useState({
         supplier: '',
-        warehouse: '',
+        // warehouse: '',
         purchaseDate: '',
         items: [],
         subtotal: 0,
@@ -447,7 +447,7 @@ const CreatePurchase = () => {
     });
     const [products, setProducts] = useState([]);
     const [suppliers, setSuppliers] = useState([]);
-    const [warehouses, setWarehouses] = useState([]);
+    // const [warehouses, setWarehouses] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [notification, setNotification] = useState({
@@ -473,12 +473,14 @@ const CreatePurchase = () => {
                     setSuppliers(suppliersResponse.data.data);
                 }
 
-                // Mock warehouse data for now
-                setWarehouses([
-                    { _id: '1', name: 'Main Warehouse' },
-                    { _id: '2', name: 'Secondary Warehouse' },
-                    { _id: '3', name: 'External Storage' }
-                ]);
+            //     // Mock warehouse data for now
+            //     setWarehouses(
+            //         [
+            //         { _id: '1', name: 'Main Warehouse' },
+            //         { _id: '2', name: 'Secondary Warehouse' },
+            //         { _id: '3', name: 'External Storage' }
+            //     ]
+            // );
             } catch (err) {
                 console.error("Error fetching data:", err);
                 setError("Failed to load products or suppliers. Please refresh the page.");
@@ -607,7 +609,7 @@ const CreatePurchase = () => {
         // Prepare data for API
         const purchaseData = {
             supplier: formData.supplier,
-            warehouse: formData.warehouse,
+            // warehouse: formData.warehouse,
             purchaseDate: formData.purchaseDate,
             items: formData.items.map(item => ({
                 product: item.product,
@@ -661,7 +663,7 @@ const CreatePurchase = () => {
                 // Reset form for next purchase
                 setFormData({
                     supplier: '',
-                    warehouse: '',
+                    // warehouse: '',
                     purchaseDate: '',
                     items: [],
                     subtotal: 0,
@@ -738,7 +740,7 @@ const CreatePurchase = () => {
                                 ))}
                             </select>
                         </div>
-                        <div className="selector">
+                        {/* <div className="selector">
                             <select
                                 name="warehouse"
                                 value={formData.warehouse}
@@ -752,21 +754,21 @@ const CreatePurchase = () => {
                                     </option>
                                 ))}
                             </select>
-                        </div>
+                        </div> */}
                     </div>
 
                     {/* Search and Add Products */}
                     <div className="search-container">
-                        <div className="search-box">
-                            <FaSearch className="search-icon" />
-                            <input
+                        {/* <div className="search-box"> */}
+                            {/* <FaSearch className="search-icon" /> */}
+                            {/* <input
                                 type="text"
                                 className="search-input"
-                                placeholder="Search products..."
+                                // placeholder="Search products..."
                                 value={searchQuery}
                                 onChange={handleSearchChange}
-                            />
-                        </div>
+                            /> */}
+                        {/* </div> */}
                         <button type="button" className="add-button" onClick={addItem}>
                             <FaPlus /> Add
                         </button>
@@ -781,8 +783,8 @@ const CreatePurchase = () => {
                                     <th>Net Unit Price</th>
                                     <th>Stock</th>
                                     <th>Qty</th>
-                                    <th>Discount</th>
-                                    <th>Tax</th>
+                                    {/* <th>Discount</th> */}
+                                    {/* <th>Tax</th> */}
                                     <th>Subtotal</th>
                                     <th className="action-column"></th>
                                 </tr>
@@ -833,7 +835,7 @@ const CreatePurchase = () => {
                                                     required
                                                 />
                                             </td>
-                                            <td>
+                                            {/* <td>
                                                 <input
                                                     type="number"
                                                     name="discount"
@@ -843,8 +845,8 @@ const CreatePurchase = () => {
                                                     step="0.01"
                                                     min="0"
                                                 />
-                                            </td>
-                                            <td>
+                                            </td> */}
+                                            {/* <td>
                                                 <input
                                                     type="number"
                                                     name="tax"
@@ -854,7 +856,7 @@ const CreatePurchase = () => {
                                                     step="0.01"
                                                     min="0"
                                                 />
-                                            </td>
+                                            </td> */}
                                             <td>
                                                 ${((item.price * item.quantity) - 
                                                   (item.discount || 0) + 
@@ -886,7 +888,7 @@ const CreatePurchase = () => {
                     {/* Order Summary */}
                     <div className="summary-container">
                         <div className="summary-row">
-                            <span className="summary-label">Order Tax</span>
+                            <span className="summary-label">Total</span>
                             <span className="summary-value">$ {formData.subtotal.toFixed(2)}</span>
                         </div>
                         <div className="summary-row">
@@ -909,7 +911,7 @@ const CreatePurchase = () => {
 
                     {/* Order Tax, Discount, Status */}
                     <div className="order-tax-row">
-                        <span className="order-tax-label">Order Tax:</span>
+                        <span className="order-tax-label">Order Tax %:</span>
                         <input
                             type="text"
                             name="tax"
