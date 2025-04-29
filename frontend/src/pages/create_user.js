@@ -1,67 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { usersAPI } from '../services/api'; // Import usersAPI
+import { usersAPI } from '../services/api';
 import Layout from '../components/Layout';
-
-// Inline CSS as a <style> block
-const styles = `
-  .content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    width: 100%;
-  }
-
-  .auth-container {
-    width: 100%;
-    max-width: 500px;
-    background: white;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-
-  .form-title {
-    text-align: center;
-    margin-bottom: 20px;
-    font-size: 24px;
-    font-weight: bold;
-  }
-
-  .form-grid {
-    display: grid;
-    gap: 15px;
-  }
-
-  .form-input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 14px;
-  }
-
-  .submit-button {
-    padding: 10px;
-    background-color: #28a745;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-  }
-
-  .submit-button:hover {
-    background-color: #218838;
-  }
-
-  .error-message {
-    color: red;
-    font-size: 12px;
-  }
-`;
+import '../styles/create_user.css'; 
 
 const CreateUser = () => {
   const [formData, setFormData] = useState({
@@ -74,153 +15,249 @@ const CreateUser = () => {
     password: '',
     confirmPassword: '',
   });
-  const [passwordError, setPasswordError] = useState('');
-  const [error, setError] = useState('');
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
-
+  const [createSuccess, setCreateSuccess] = useState('');
+  
+  const validateForm = () => {
+    const newErrors = {};
+   
+    if (!formData.name.trim()) {
+      newErrors.name = 'Name is required';
+    }
+   
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'Email is invalid';
+    }
+   
+    if (!formData.phone.trim()) {
+      newErrors.phone = 'Phone number is required';
+    }
+   
+    if (!formData.role) {
+      newErrors.role = 'Role selection is required';
+    }
+   
+    if (!formData.shiftTime) {
+      newErrors.shiftTime = 'Shift time selection is required';
+    }
+   
+    if (!formData.username.trim()) {
+      newErrors.username = 'Username is required';
+    }
+   
+    if (!formData.password) {
+      newErrors.password = 'Password is required';
+    } else if (formData.password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters long';
+    }
+   
+    if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = 'Passwords do not match';
+    }
+   
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
     }));
+   
+    // Clear error for this field when user starts typing
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
   };
-
+  
+  const resetForm = () => {
+    setFormData({
+      name: '',
+      email: '',
+      phone: '',
+      role: '',
+      shiftTime: '',
+      username: '',
+      password: '',
+      confirmPassword: '',
+    });
+    setErrors({});
+  };
+  
   const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    // Validate password
-    if (formData.password.length < 6) {
-      setPasswordError('Password must be at least 6 characters long');
+    if (e) e.preventDefault();
+   
+    if (!validateForm()) {
       return;
     }
-
-    if (formData.password !== formData.confirmPassword) {
-      setPasswordError('Passwords do not match');
-      return;
-    }
-
-    setPasswordError('');
+   
     setLoading(true);
-    setError('');
-
+   
     try {
-      // Call the create user API
       const response = await usersAPI.create(formData);
       if (response.data.success) {
-        navigate('/all_users'); // Redirect to the users list after successful creation
+        setCreateSuccess(`User ${formData.name} was created successfully`);
+        resetForm();
+        setTimeout(() => {
+          setCreateSuccess('');
+        }, 3000);
       }
     } catch (err) {
       console.error('Error creating user:', err);
-      setError(err.response?.data?.message || 'Failed to create user');
+      setErrors(prev => ({
+        ...prev,
+        general: err.response?.data?.message || 'Failed to create user'
+      }));
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Layout title="Create User">
-      {/* Inject the CSS */}
-      <style>{styles}</style>
-
-      <div className="content">
-        <div className="auth-container signup-page">
-          <div className="form-card">
-            <h2 className="form-title">Add New User</h2>
-            <form onSubmit={handleSubmit} className="form-grid">
+    <Layout>
+      <div className="user-container">
+        
+        {createSuccess && (
+          <div className="success-container">
+            <div className="success-message">{createSuccess}</div>
+          </div>
+        )}
+        
+        <div className="user-form-container">
+          <h2 className="form-title">Add New User</h2>
+          
+          {errors.general && (
+            <div className="error-message-general">
+              {errors.general}
+            </div>
+          )}
+          
+          <div className="form-content">
+            <div className="form-field">
               <input
                 type="text"
                 name="name"
                 placeholder="Enter Name"
                 value={formData.name}
                 onChange={handleChange}
-                required
-                className="form-input"
+                className={errors.name ? "input-error" : ""}
               />
-              <input
-                type="email"
-                name="email"
-                placeholder="Enter Email Address"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                className="form-input"
-              />
-              <input
-                type="text"
-                name="phone"
-                placeholder="Enter Phone"
-                value={formData.phone}
-                onChange={handleChange}
-                required
-                className="form-input"
-              />
-              <select
-                name="role"
-                value={formData.role}
-                onChange={handleChange}
-                required
-                className="form-input"
-              >
-                <option value="" disabled>
-                  Select Role
-                </option>
-                <option value="admin">Admin</option>
-                <option value="manager">Manager</option>
-                <option value="staff">Staff</option>
-              </select>
-              <select
-                name="shiftTime"
-                value={formData.shiftTime}
-                onChange={handleChange}
-                required
-                className="form-input"
-              >
-                <option value="" disabled>
-                  Select Shift Time
-                </option>
-                <option value="morning">Morning</option>
-                <option value="evening">Evening</option>
-                <option value="night">Night</option>
-              </select>
+              {errors.name && <p className="error-text">{errors.name}</p>}
+            </div>
+            
+            <div className="form-row">
+              <div className="form-field">
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Enter Email Address"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className={errors.email ? "input-error" : ""}
+                />
+                {errors.email && <p className="error-text">{errors.email}</p>}
+              </div>
+              
+              <div className="form-field">
+                <input
+                  type="text"
+                  name="phone"
+                  placeholder="Enter Phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  className={errors.phone ? "input-error" : ""}
+                />
+                {errors.phone && <p className="error-text">{errors.phone}</p>}
+              </div>
+            </div>
+            
+            <div className="form-row">
+              <div className="form-field select-container">
+                <select
+                  name="role"
+                  value={formData.role}
+                  onChange={handleChange}
+                  className={errors.role ? "select-error" : ""}
+                >
+                  <option value="" disabled>Select Role</option>
+                  <option value="admin">Admin</option>
+                  <option value="manager">Manager</option>
+                  <option value="cashier">Cashier</option>
+                </select>
+                <div className="select-arrow"></div>
+                {errors.role && <p className="error-text">{errors.role}</p>}
+              </div>
+              
+              <div className="form-field select-container">
+                <select
+                  name="shiftTime"
+                  value={formData.shiftTime}
+                  onChange={handleChange}
+                  className={errors.shiftTime ? "select-error" : ""}
+                >
+                  <option value="" disabled>Select Shift Time</option>
+                  <option value="morning">Morning</option>
+                  <option value="evening">Evening</option>
+                  <option value="night">Night</option>
+                </select>
+                <div className="select-arrow"></div>
+                {errors.shiftTime && <p className="error-text">{errors.shiftTime}</p>}
+              </div>
+            </div>
+            
+            <div className="form-field">
               <input
                 type="text"
                 name="username"
                 placeholder="Enter Username"
                 value={formData.username}
                 onChange={handleChange}
-                required
-                className="form-input"
+                className={errors.username ? "input-error" : ""}
               />
-              <input
-                type="password"
-                name="password"
-                placeholder="Enter Password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-                className="form-input"
-              />
-              <input
-                type="password"
-                name="confirmPassword"
-                placeholder="Re-Enter Password"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                required
-                className="form-input"
-              />
-              {passwordError && <div className="error-message">{passwordError}</div>}
-              {error && <div className="error-message">{error}</div>}
-              <button
-                type="submit"
-                disabled={loading}
-                className="submit-button"
-              >
-                {loading ? 'Creating account...' : 'Submit'}
-              </button>
-            </form>
+              {errors.username && <p className="error-text">{errors.username}</p>}
+            </div>
+            
+            <div className="form-row">
+              <div className="form-field">
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="Enter Password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  className={errors.password ? "input-error" : ""}
+                />
+                {errors.password && <p className="error-text">{errors.password}</p>}
+              </div>
+              
+              <div className="form-field">
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  placeholder="Re-Enter Password"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  className={errors.confirmPassword ? "input-error" : ""}
+                />
+                {errors.confirmPassword && <p className="error-text">{errors.confirmPassword}</p>}
+              </div>
+            </div>
+            
+            <button
+              onClick={handleSubmit}
+              disabled={loading}
+              className="submit-button"
+            >
+              {loading ? 'Submitting...' : 'Submit'}
+            </button>
           </div>
         </div>
       </div>
