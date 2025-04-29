@@ -7,91 +7,59 @@ import Layout from '../components/Layout';
 const styles = `
   .content {
     display: flex;
-    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     padding: 20px;
     width: 100%;
-    background-color: #f8f9fa;
   }
 
-  .form-container {
+  .auth-container {
     width: 100%;
+    max-width: 500px;
     background: white;
-    padding: 20px;
+    padding: 30px;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
 
-  .add-user-title {
-    font-size: 18px;
-    font-weight: 600;
-    color: #333;
-    margin-top: 0;
+  .form-title {
+    text-align: center;
     margin-bottom: 20px;
-    padding-bottom: 0;
+    font-size: 24px;
+    font-weight: bold;
   }
 
   .form-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    width: 100%;
-    padding: 0;
-  }
-
-  .form-row {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 0;
+    gap: 15px;
   }
 
   .form-input {
     width: 100%;
-    padding: 10px 12px;
-    border: 1px solid #ddd;
+    padding: 10px;
+    border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 14px;
-    color: #333;
-  }
-
-  .form-input::placeholder {
-    color: #999;
-  }
-
-  .form-input:focus {
-    outline: none;
-    border-color: #00a838;
-  }
-
-  select.form-input {
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 10px center;
-    padding-right: 30px;
   }
 
   .submit-button {
-    padding: 8px 24px;
-    background-color: #00a838;
+    padding: 10px;
+    background-color: #28a745;
     color: white;
     border: none;
     border-radius: 4px;
-    font-size: 14px;
-    font-weight: 500;
+    font-size: 16px;
+    font-weight: bold;
     cursor: pointer;
-    width: fit-content;
-    margin-top: 8px;
   }
 
   .submit-button:hover {
-    background-color: #008f2f;
+    background-color: #218838;
   }
 
   .error-message {
-    color: #dc2626;
+    color: red;
     font-size: 12px;
-    margin-top: 4px;
   }
 `;
 
@@ -152,27 +120,24 @@ const CreateUser = () => {
   };
 
   return (
-    <Layout title="Add New User">
+    <Layout title="Create User">
       {/* Inject the CSS */}
       <style>{styles}</style>
 
       <div className="content">
-        <div className="form-container">
-          <h2 className="add-user-title">Add New User</h2>
-          <form onSubmit={handleSubmit} className="form-grid">
-            {/* Full width input for name */}
-            <input
-              type="text"
-              name="name"
-              placeholder="Enter Name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-              className="form-input"
-            />
-
-            {/* Two column layout for email and phone */}
-            <div className="form-row">
+        <div className="auth-container signup-page">
+          <div className="form-card">
+            <h2 className="form-title">Add New User</h2>
+            <form onSubmit={handleSubmit} className="form-grid">
+              <input
+                type="text"
+                name="name"
+                placeholder="Enter Name"
+                value={formData.name}
+                onChange={handleChange}
+                required
+                className="form-input"
+              />
               <input
                 type="email"
                 name="email"
@@ -191,10 +156,6 @@ const CreateUser = () => {
                 required
                 className="form-input"
               />
-            </div>
-
-            {/* Two column layout for role and shift time */}
-            <div className="form-row">
               <select
                 name="role"
                 value={formData.role}
@@ -223,10 +184,6 @@ const CreateUser = () => {
                 <option value="evening">Evening</option>
                 <option value="night">Night</option>
               </select>
-            </div>
-
-            {/* Two column layout for username and password */}
-            <div className="form-row">
               <input
                 type="text"
                 name="username"
@@ -245,33 +202,26 @@ const CreateUser = () => {
                 required
                 className="form-input"
               />
-            </div>
-
-            {/* Re-enter password field */}
-            <input
-              type="password"
-              name="confirmPassword"
-              placeholder="Re-Enter Password"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              required
-              className="form-input"
-              style={{ display: 'none' }}
-            />
-
-            {/* Error messages */}
-            {passwordError && <div className="error-message">{passwordError}</div>}
-            {error && <div className="error-message">{error}</div>}
-
-            {/* Submit button */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="submit-button"
-            >
-              {loading ? 'Creating account...' : 'Submit'}
-            </button>
-          </form>
+              <input
+                type="password"
+                name="confirmPassword"
+                placeholder="Re-Enter Password"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                required
+                className="form-input"
+              />
+              {passwordError && <div className="error-message">{passwordError}</div>}
+              {error && <div className="error-message">{error}</div>}
+              <button
+                type="submit"
+                disabled={loading}
+                className="submit-button"
+              >
+                {loading ? 'Creating account...' : 'Submit'}
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     </Layout>
