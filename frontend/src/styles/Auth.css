@@ -11,7 +11,7 @@
 /* Login page styles */
 .login-page .auth-card-left {
   width: 45%;
-  background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('../images/background-image.jpeg');
+  background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("../images/background-image.jpeg");
   background-size: cover;
   background-position: center;
   color: white;
@@ -30,9 +30,9 @@
 }
 
 .login-page .logo img {
-  height: 36px; 
-  width: auto; 
-  margin-right: 10px; 
+  height: 36px;
+  width: auto;
+  margin-right: 10px;
   vertical-align: center;
 }
 
@@ -301,16 +301,16 @@
   .auth-container {
     flex-direction: column;
   }
-  
+
   .login-page .auth-card-left {
     display: none;
   }
-  
+
   .login-page .auth-card-right {
     width: 100%;
     height: 100vh;
   }
-  
+
   .login-page .form-content {
     width: 90%;
     margin: 0 auto;
@@ -323,7 +323,7 @@
     align-items: flex-start;
     gap: 10px;
   }
-  
+
   .forgot-password {
     align-self: flex-end;
   }
