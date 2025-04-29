@@ -325,7 +325,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Layout from '../components/Layout';
-import html2pdf from 'html2pdf.js';
+import html2pdf from 'node_modules/html2pdf.js/dist/html2pdf.js';
 import '../styles/importPurchase.css';
 
 const ImportPurchase = () => {
