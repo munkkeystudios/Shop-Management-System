@@ -303,16 +303,36 @@ const CreateProducts = () => {
                     </ModernDropdown>
                   </div>
                 </div>
+                
 
+                {/* Note Section */}
                 <div className="form-group form-group-span-2">
-                  <label htmlFor="description">Description</label>
-                  <textarea id="description" name="description" value={formData.description} onChange={handleChange} rows="4" placeholder="Optional product details..."></textarea>
+                  <label htmlFor="description"> Description</label>
+                  <textarea
+                    id="description"
+                    name="description"
+                    value={formData.description}
+                    onChange={handleChange}
+                    placeholder="Add details, care instructions, etc."
+                  ></textarea>
                 </div>
-                <div className="form-group form-group-span-2 image-uploader">
-                  <label htmlFor="productImage">Product Image</label>
-                  <input type="file" id="productImage" name="productImage" onChange={handleFileChange} accept="image/svg+xml, image/png, image/jpeg" />
-                  <p><small>Image upload not functional in this fix.</small></p>
-                  {formData.productImage && <p><small>Selected: {formData.productImage.name}</small></p>}
+
+
+              
+
+                <div className="upload-image-container" onClick={() => document.getElementById('productImageInput')?.click()}>
+                  <div className="upload-icon">📁</div>
+                  <div className="upload-text">
+                    <strong>Click to upload</strong> or drag and drop your product image
+                  </div>
+                  <input
+                    type="file"
+                    id="productImageInput"
+                    name="productImage"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    style={{ display: 'none' }}
+                  />
                 </div>
 
                 <div className="form-group">

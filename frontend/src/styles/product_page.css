@@ -458,3 +458,168 @@
 
 
   /* product_page.css - Updated to match Figma design */
+
+
+  /* Container for the entire form */
+.product-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 2rem;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Grid layout for form fields */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Individual form group styling */
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #333333;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  padding: 0.75rem;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+/* Span two columns for larger fields */
+.form-group-span-2 {
+  grid-column: span 2;
+}
+
+/* Image uploader styling */
+.image-uploader input[type="file"] {
+  padding: 0.5rem 0;
+}
+
+/* Form buttons container */
+.form-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+/* Discard button styling */
+.btn-discard {
+  background-color: #f8f9fa;
+  color: #6c757d;
+  border: 1px solid #ced4da;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-discard:hover {
+  background-color: #e2e6ea;
+}
+
+/* Submit button styling */
+.btn-submit {
+  background-color: #007bff;
+  color: #ffffff;
+  border: none;
+  padding: 0.5rem 1.25rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-submit:hover {
+  background-color: #0056b3;
+}
+
+/* Note Section */
+.note-container {
+  margin-top: 1rem;
+}
+
+.note-container textarea {
+  width: 100%;
+  min-height: 120px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0; /* light gray */
+  padding: 12px 14px;
+  font-size: 14px;
+  resize: vertical;
+  transition: border-color 0.3s ease;
+}
+
+.note-container textarea:focus {
+  outline: none;
+  border-color: #4f46e5; /* blue-600 */
+  box-shadow: 0 0 0 1px #4f46e5;
+}
+
+.note-container label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #1f2937; /* gray-800 */
+}
+
+/* Upload Image Section */
+.upload-image-container {
+  margin-top: 1.5rem;
+  border: 2px dashed #d1d5db; /* light gray border */
+  border-radius: 10px;
+  background-color: #f9fafb;
+  text-align: center;
+  padding: 30px;
+  cursor: pointer;
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.upload-image-container:hover {
+  border-color: #4ade80; /* green-400 */
+  background-color: #f0fdf4; /* green-50 */
+}
+
+.upload-image-container .upload-icon {
+  font-size: 24px;
+  color: #22c55e; /* green-500 */
+  margin-bottom: 10px;
+}
+
+.upload-image-container .upload-text {
+  font-size: 14px;
+  color: #6b7280; /* gray-500 */
+}
+
+.upload-image-container .upload-text strong {
+  color: #10b981; /* green-500 */
+  font-weight: 600;
+}
+
+/* Responsive Adjustment */
+@media (max-width: 768px) {
+  .upload-image-container {
+    padding: 20px;
+  }
+}
