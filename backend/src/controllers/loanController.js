@@ -1,5 +1,8 @@
 const Loan = require('../models/loan');
 const mongoose = require('mongoose');
+const PDFDocument = require('pdfkit');
+const { Parser } = require('json2csv');
+const User = require('../models/user'); // Import the User model
 
 // Create a new loan
 exports.createLoan = async (req, res) => {
@@ -183,16 +186,217 @@ exports.payLoan = async (req, res) => {
     }
 
     // Mark the loan as paid
-    loan.remainingBalance = 0; // Set remaining balance to 0
-    loan.paymentStatus = 'paid'; // Update payment status
-    loan.amountPaid = loan.loanAmount; // Set amountPaid to the total loan amount
+    loan.remainingBalance = 0; 
+    loan.paymentStatus = 'paid'; 
+    loan.amountPaid = loan.loanAmount; 
 
-    // Save the updated loan
     await loan.save();
 
     res.status(200).json({ success: true, message: 'Loan paid off successfully', data: loan });
   } catch (error) {
     console.error('Error paying off loan:', error);
     res.status(500).json({ success: false, message: 'Error paying off loan', error: error.message });
+  }
+};
+
+// Export loans to CSV or PDF
+exports.exportLoans = async (req, res) => {
+  try {
+    const { format = 'csv', startDate, endDate, paymentStatus } = req.query;
+
+    // Build query based on filters
+    const query = {};
+
+    // Date range filter
+    if (startDate || endDate) {
+      query.createdAt = {};
+      if (startDate) {
+        query.createdAt.$gte = new Date(startDate);
+      }
+      if (endDate) {
+        const endOfDay = new Date(endDate);
+        endOfDay.setHours(23, 59, 59, 999);
+        query.createdAt.$lte = endOfDay;
+      }
+    }
+
+    // Payment status filter
+    if (paymentStatus) {
+      query.paymentStatus = paymentStatus;
+    }
+
+    // Fetch loans without populate first to avoid User schema issues
+    let loans = await Loan.find(query)
+      .sort({ createdAt: -1 })
+      .lean();
+
+    // Try to populate createdBy, but handle errors gracefully
+    try {
+      // Only attempt to populate if the User model is available
+      if (mongoose.modelNames().includes('User')) {
+        loans = await Loan.find(query)
+          .populate('createdBy', 'username name')
+          .sort({ createdAt: -1 })
+          .lean();
+      }
+    } catch (populateError) {
+      console.warn('Unable to populate createdBy field:', populateError.message);
+      // Continue with unpopulated loans
+    }
+
+    if (format.toLowerCase() === 'csv') {
+      // CSV Export Logic
+      if (loans.length === 0) {
+        return res.status(200).send('No loans data to export.');
+      }
+
+      // Flatten the data for CSV export
+      const flattenedData = loans.map(loan => ({
+        loanId: loan._id?.toString() || '',
+        loanNumber: loan.loanNumber || 0,
+        date: loan.createdAt ? loan.createdAt.toISOString().split('T')[0] : '',
+        time: loan.createdAt ? loan.createdAt.toISOString().split('T')[1].substring(0, 8) : '',
+        customerName: loan.customer?.name || 'Unknown Customer',
+        customerPhone: loan.customer?.phone || 'N/A',
+        loanAmount: loan.loanAmount || 0,
+        amountPaid: loan.amountPaid || 0,
+        remainingBalance: loan.remainingBalance || 0,
+        paymentMethod: loan.paymentMethod || '',
+        paymentStatus: loan.paymentStatus || '',
+        createdBy: loan.createdBy ? loan.createdBy.name || loan.createdBy.username : 'N/A',
+        notes: loan.notes || ''
+      }));
+
+      const fields = [
+        'loanId', 'loanNumber', 'date', 'time', 'customerName', 'customerPhone',
+        'loanAmount', 'amountPaid', 'remainingBalance', 'paymentMethod', 'paymentStatus',
+        'createdBy', 'notes'
+      ];
+
+      const json2csvParser = new Parser({ fields });
+      const csv = json2csvParser.parse(flattenedData);
+
+      res.header('Content-Type', 'text/csv');
+      res.attachment('loans.csv');
+      return res.status(200).send(csv);
+
+    } else if (format.toLowerCase() === 'pdf') {
+      // PDF Export Logic - Simplified to avoid potential errors
+      try {
+        const doc = new PDFDocument({ margin: 50 });
+        
+        // Set response headers
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'attachment; filename=loans.pdf');
+        
+        // Pipe the PDF to the response
+        doc.pipe(res);
+        
+        // Add title
+        doc.fontSize(20).text('Loans Report', { align: 'center' });
+        doc.moveDown();
+        
+        // Add date
+        doc.fontSize(10).text(`Generated on: ${new Date().toLocaleString()}`, { align: 'center' });
+        doc.moveDown(2);
+        
+        if (loans.length === 0) {
+          doc.fontSize(12).text('No loans data available.', { align: 'center' });
+          doc.end();
+          return;
+        }
+        
+        // Add table headers
+        const tableTop = 150;
+        doc.fontSize(10);
+        
+        // Draw table header
+        doc.text('Loan #', 50, tableTop);
+        doc.text('Customer', 120, tableTop);
+        doc.text('Amount', 250, tableTop);
+        doc.text('Remaining', 320, tableTop);
+        doc.text('Status', 390, tableTop);
+        doc.text('Date', 460, tableTop);
+        
+        // Add a line
+        doc.moveTo(50, tableTop + 15)
+           .lineTo(550, tableTop + 15)
+           .stroke();
+        
+        // Draw rows
+        let y = tableTop + 25;
+        
+        loans.forEach((loan, i) => {
+          // Add a new page if needed
+          if (y > 700) {
+            doc.addPage();
+            y = 50;
+            
+            // Redraw header on new page
+            doc.text('Loan #', 50, y);
+            doc.text('Customer', 120, y);
+            doc.text('Amount', 250, y);
+            doc.text('Remaining', 320, y);
+            doc.text('Status', 390, y);
+            doc.text('Date', 460, y);
+            
+            doc.moveTo(50, y + 15)
+               .lineTo(550, y + 15)
+               .stroke();
+               
+            y += 25;
+          }
+          
+          // Format date
+          const date = loan.createdAt 
+            ? new Date(loan.createdAt).toLocaleDateString() 
+            : 'N/A';
+          
+          // Add row
+          doc.text(loan.loanNumber?.toString() || '', 50, y);
+          doc.text(loan.customer?.name || 'Unknown', 120, y, { width: 120, ellipsis: true });
+          doc.text(`$${(loan.loanAmount || 0).toFixed(2)}`, 250, y);
+          doc.text(`$${(loan.remainingBalance || 0).toFixed(2)}`, 320, y);
+          doc.text(loan.paymentStatus || 'Unknown', 390, y);
+          doc.text(date, 460, y);
+          
+          y += 20;
+        });
+        
+        // Add summary
+        y += 20;
+        const totalLoanAmount = loans.reduce((sum, loan) => sum + (loan.loanAmount || 0), 0);
+        const totalRemaining = loans.reduce((sum, loan) => sum + (loan.remainingBalance || 0), 0);
+        
+        doc.fontSize(12);
+        doc.text(`Total Loans: ${loans.length}`, 300, y);
+        y += 20;
+        doc.text(`Total Amount: $${totalLoanAmount.toFixed(2)}`, 300, y);
+        y += 20;
+        doc.text(`Total Remaining: $${totalRemaining.toFixed(2)}`, 300, y);
+        
+        // Finalize the PDF and end the stream
+        doc.end();
+      } catch (pdfError) {
+        console.error('PDF generation error:', pdfError);
+        return res.status(500).json({
+          success: false,
+          message: 'Error generating PDF',
+          error: pdfError.message
+        });
+      }
+    } else {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid export format. Use 'csv' or 'pdf'."
+      });
+    }
+  } catch (error) {
+    console.error('Error exporting loans:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Server error while exporting loans',
+      error: error.message
+    });
   }
 };

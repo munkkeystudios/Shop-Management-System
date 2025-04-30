@@ -162,6 +162,17 @@ const Brands = () => {
           <div className="categories-div-3">
             <div className="categories-div-4">
               <div className="categories-text-2">Brands</div>
+              <button
+                className="categories-action-button primary"
+                onClick={() => {
+                  setEditingBrand(null);
+                  setBrandName('');
+                  setBrandDescription('');
+                  setIsModalOpen(true);
+                }}
+              >
+                <FaPlus /> Create New Brand
+              </button>
             </div>
 
             {error && (
@@ -230,20 +241,6 @@ const Brands = () => {
                 </table>
               </div>
             </div>
-          </div>
-
-          <div className="categories-action-buttons-container">
-            <button
-              className="categories-action-button primary"
-              onClick={() => {
-                setEditingBrand(null);
-                setBrandName('');
-                setBrandDescription('');
-                setIsModalOpen(true);
-              }}
-            >
-              <FaPlus /> Create New Brand
-            </button>
           </div>
         </div>
       </div>

@@ -109,7 +109,12 @@ export const loansAPI = {
   addItems: (loanId, items) => api.put(`/loans/${loanId}/add-items`, { items }), 
   delete: (id) => api.delete(`/loans/${id}`), 
   validateLoan: (loanNumber) => api.post('/loans/validate-loan', { loanNumber }), 
-  payLoan: (id) => api.put(`/loans/${id}/pay`), 
+  payLoan: (id) => api.put(`/loans/${id}/pay`),
+  exportLoans: (format = 'csv', params = {}) =>
+    api.get(`/loans/export`, {
+      params: { format, ...params },
+      responseType: 'blob',
+    }),
 };
 
 // Brands API 
