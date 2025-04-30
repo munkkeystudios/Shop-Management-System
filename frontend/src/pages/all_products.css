@@ -45,9 +45,10 @@
   align-items: center;
   background-color: #f8f9fa;
   border-radius: 4px;
-  padding: 8px 12px;
+  padding: 8px 16px;
   border: 1px solid #dee2e6;
   width: 300px;
+  height: 38px; /* Match the height of the create button */
 }
 
 .products-search-icon {
@@ -62,6 +63,8 @@
   color: #212529;
   width: 100%;
   font-size: 14px;
+  height: 100%;
+  line-height: 22px; /* Helps with vertical alignment */
 }
 
 .products-search-input::placeholder {
@@ -112,6 +115,7 @@
   background-color: #00a838;
   border: none;
   color: white;
+  height: 38px; /* Explicitly set height to ensure consistency */
 }
 
 .products-filter-button:hover,
@@ -262,11 +266,11 @@
 }
 
 .products-modal-container.details {
-  width: 420px;
+  width: 380px;
 }
 
 .products-modal-container.edit {
-  width: 420px;
+  width: 380px;
 }
 
 .products-modal-container.delete {
@@ -318,12 +322,12 @@
   align-items: center;
   padding: 10px;
   background-color: #f9fafb;
-  height: 160px; /* 140px image height + 20px padding */
+  height: 120px; /* 100px image height + 20px padding */
 }
 
 .products-modal-image img {
-  width: 160px;
-  height: 140px;
+  width: 120px;
+  height: 100px;
   object-fit: contain;
 }
 
@@ -333,14 +337,15 @@
   border-radius: 8px;
   overflow: hidden;
   border: 1px solid #e5e7eb;
-  margin: 8px 16px;
+  margin: 8px 12px;
 }
 
 .products-modal-detail-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  padding: 6px 10px;
+  padding: 5px 8px;
   border-bottom: 1px solid #f3f4f6;
+  align-items: center;
 }
 
 .products-modal-detail-row:nth-child(odd) {
@@ -353,21 +358,27 @@
 
 .products-modal-detail-label {
   color: #6b7280;
-  font-size: 12px;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  height: 100%;
 }
 
 .products-modal-detail-value {
   color: #111827;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 500;
+  display: flex;
+  align-items: center;
+  height: 100%;
 }
 
 /* Barcode */
 .products-modal-barcode {
   display: flex;
   justify-content: center;
-  padding: 10px 0;
-  margin: 8px 16px 0;
+  padding: 8px 0;
+  margin: 8px 12px 8px;
 }
 
 .products-print-label-btn {
@@ -395,10 +406,11 @@
   width: 100%;
   border: 0;
   background-color: transparent;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 500;
   color: #111827;
   padding: 0;
+  height: 100%;
 }
 
 .products-modal-detail-value input:focus,

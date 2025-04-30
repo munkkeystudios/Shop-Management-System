@@ -4,10 +4,12 @@ import { useAuth } from '../context/AuthContext';
 import '../styles/Auth.css';
 import logoImage from '../images/logo-small.png';
 import axios from 'axios';
+import { FiEye, FiMail, FiLock, FiLogIn } from 'react-icons/fi';
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const { login, error, loading } = useAuth();
   const navigate = useNavigate();
@@ -25,19 +27,19 @@ const Login = () => {
     try {
       const baseUrl = process.env.REACT_APP_API_URL || 'http://localhost:5002';
       const response = await axios.get(`${baseUrl}/api/settings`);
-      
+
       if (response.data) {
         const settings = response.data;
         const updatedInfo = {
           name: settings.companyName || 'FinTrack',
           logo: settings.logoUrl || settings.companyLogo || logoImage
         };
-        
+
         // If the logo is a relative path, prepend the API base URL
         if (updatedInfo.logo && !updatedInfo.logo.startsWith('http')) {
           updatedInfo.logo = `${baseUrl}${updatedInfo.logo}`;
         }
-        
+
         setCompanyInfo(updatedInfo);
       }
     } catch (error) {
@@ -89,53 +91,65 @@ const Login = () => {
 
           <form className="login-form" onSubmit={handleSubmit}>
             <div className="form-group">
-              <label htmlFor="username">Username:</label>
-              <input
-                type="text"
-                id="username"
-                name="username"
-                placeholder="username"
-                required
-                autoComplete="off"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
+              <label htmlFor="username">Email Address <span className="required">*</span></label>
+              <div className="input-with-icon">
+                <FiMail className="input-icon" />
+                <input
+                  type="text"
+                  id="username"
+                  name="username"
+                  placeholder="user@username.com"
+                  required
+                  autoComplete="off"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                />
+              </div>
             </div>
             <div className="form-group">
-              <label htmlFor="password">Password:</label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                placeholder="password"
-                required
-                autoComplete="off"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
+              <label htmlFor="password">Password <span className="required">*</span></label>
+              <div className="input-with-icon">
+                <FiLock className="input-icon" />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  name="password"
+                  placeholder="***********"
+                  required
+                  autoComplete="off"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <FiEye
+                  className="password-toggle"
+                  onClick={() => setShowPassword(!showPassword)}
+                />
+              </div>
             </div>
             <div className="form-group">
               <div className="form-options">
                 <div className="remember-me">
-                  <input 
-                    type="checkbox" 
+                  <input
+                    type="checkbox"
                     id="remember"
                     checked={rememberMe}
                     onChange={(e) => setRememberMe(e.target.checked)}
                   />
                   <label htmlFor="remember">Remember Me</label>
                 </div>
-                <Link to="/forgot-password" className="forgot-password">Forget Password?</Link>
+                <Link to="/forgot-password" className="forgot-password">Forgot Password?</Link>
               </div>
             </div>
 
             <div className="form-group">
-              <input 
-                type="submit" 
-                value={loading ? "Logging in..." : "Login"} 
+              <button
+                type="submit"
                 disabled={loading}
                 className="submit-button"
-              />
+              >
+                {loading ? "Signing in..." : "Sign In"}
+                <FiLogIn className="button-icon" />
+              </button>
             </div>
           </form>
         </div>
@@ -144,4 +158,4 @@ const Login = () => {
   );
 };
 
-export default Login; 
+export default Login;
