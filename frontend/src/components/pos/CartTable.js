@@ -25,7 +25,25 @@ const CartTable = ({ cartItems, handleQuantityChange, handleRemoveItem }) => {
             <tr key={item.id}>
               <td>
                 <div className="product-container">
-                  <div className="product-image">{item.image}</div>
+                  <div className="product-image">
+                    {typeof item.image === 'string' ? (
+                      <img 
+                        src={item.image} 
+                        alt={item.name}
+                        style={{ 
+                          width: '40px', 
+                          height: '40px', 
+                          objectFit: 'cover',
+                          borderRadius: '4px'
+                        }}
+                        onError={(e) => {
+                          e.target.src = '/images/default-product-image.jpg';
+                        }}
+                      />
+                    ) : (
+                      item.image
+                    )}
+                  </div>
                   <div className="product-info">
                     <div className="product-name">{item.name}</div>
                     <small className="product-id">ID: {item.id}</small>

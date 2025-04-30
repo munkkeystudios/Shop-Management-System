@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 const useCart = () => {
-  const [cartItems, setCartItems] = useState([]);
+  const [cartItems, setCart] = useState([]);
   const [totalPayable, setTotalPayable] = useState(0);
   const [totalQuantity, setTotalQuantity] = useState(0);
 
@@ -17,7 +17,7 @@ const useCart = () => {
         updatedCartItems[existingProductIndex].quantity *
         (updatedCartItems[existingProductIndex].price * (1 - updatedCartItems[existingProductIndex].discount / 100));
 
-      setCartItems(updatedCartItems);
+      setCart(updatedCartItems);
     } else {
       // If product is new, add it to the cart
       const newProduct = {
@@ -25,13 +25,13 @@ const useCart = () => {
         quantity: 1,
         subtotal: product.price * (1 - product.discount / 100),
       };
-      setCartItems([...cartItems, newProduct]);
+      setCart([...cartItems, newProduct]);
     }
   };
 
   // Remove an item from the cart
   const removeFromCart = (id) => {
-    setCartItems(cartItems.filter(item => item.id !== id));
+    setCart(cartItems.filter(item => item.id !== id));
   };
 
   // Update the quantity of an item in the cart
@@ -50,7 +50,7 @@ const useCart = () => {
       return item;
     });
 
-    setCartItems(updatedCartItems);
+    setCart(updatedCartItems);
   };
 
   // Calculate total payable and total quantity
@@ -63,7 +63,12 @@ const useCart = () => {
   }, [cartItems]);
 
   const resetCart = () => {
-    setCartItems([]);
+    setCart([]);
+  };
+
+  // Add this new method to directly set cart items
+  const setCartItems = (items) => {
+    setCart(items);
   };
 
   return {
@@ -74,6 +79,7 @@ const useCart = () => {
     removeFromCart,
     updateQuantity,
     resetCart,
+    setCartItems  // Include the new method in the return object
   };
 };
 

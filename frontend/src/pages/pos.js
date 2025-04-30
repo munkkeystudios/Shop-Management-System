@@ -4,18 +4,21 @@ import POSLayout from '../components/POSLayout';
 import SearchBar from '../components/pos/searchbarpos.jsx';
 import CartTable from '../components/pos/CartTable.js';
 import BillTab from '../components/pos/BillTab.js';
-import CreateBillButton from '../components/pos/CreateBillButton.js';
 import SalesTable from '../components/pos/SalesTable.js';
 import PayButton from '../components/pos/PayButton.js';
 import { salesAPI } from '../services/api.js';
 import useCart from '../hooks/useCart';
 
 const Pos = () => {
+  // Remove the ref since we won't need it
   const [searchedProduct, setSearchedProduct] = useState(null); // item found from SearchBar
   const [billNumber, setBillNumber] = useState('Loading...'); // Default placeholder value
   const [sales, setSales] = useState([]); // State to store sales data
   const [loadingSales, setLoadingSales] = useState(true); // Loading state for sales
   const [salesError, setSalesError] = useState(null); // Error state for sales
+  
+  // Simply use the current bill number as the active bill
+  const [activeBill, setActiveBill] = useState(null);
 
   const {
     cartItems,
@@ -25,6 +28,7 @@ const Pos = () => {
     removeFromCart,
     updateQuantity,
     resetCart,
+    setCartItems,
   } = useCart();
 
   // Fetch the last bill number
@@ -92,9 +96,26 @@ const Pos = () => {
     window.history.back();
   };
 
-  const handleSaleCreated = () => {
-    fetchLastTenSales(); 
-    resetCart(); 
+  // Simplified handler for payment completion
+  const handlePaymentComplete = (newBillNumber) => {
+    // Update both bill number and active bill
+    setBillNumber(newBillNumber);
+    setActiveBill(newBillNumber);
+    
+    // Clear the cart
+    resetCart();
+  };
+
+  // Set active bill when bill number is initially loaded
+  useEffect(() => {
+    if (billNumber !== 'Loading...' && billNumber !== 'Error' && !activeBill) {
+      setActiveBill(billNumber);
+    }
+  }, [billNumber, activeBill]);
+
+  // Handle tab changes
+  const handleTabChange = (selectedBillNumber) => {
+    setActiveBill(selectedBillNumber);
   };
 
   return (
@@ -117,22 +138,31 @@ const Pos = () => {
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            marginBottom: '1%',
-            borderBottom: '1px solid #dee2e6',
-            paddingBottom: '0.5%',
+            marginBottom: '12px',
+            borderBottom: '1px solid #e9ecef',
+            paddingBottom: '8px',
             width: '100%',
-            maxWidth: '95%'
+            maxWidth: '95%',
+            height: '42px'  // Fixed height for better alignment
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1%' }}>
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '10px', 
+              width: '100%' 
+            }}>
               <button
                 style={{
-                  padding: '0.5% 1%',
-                  fontSize: '80%',
+                  padding: '4px 10px',
+                  fontSize: '13px',
                   backgroundColor: '#007bff',
                   color: 'white',
                   border: 'none',
-                  borderRadius: '0.25rem',
-                  cursor: 'pointer'
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  height: '32px',
+                  display: 'flex',
+                  alignItems: 'center'
                 }}
                 onClick={handleBackClick}
               >
@@ -140,22 +170,38 @@ const Pos = () => {
               </button>
               <span
                 style={{
-                  fontWeight: 'bold',
-                  marginRight: '1%',
-                  fontSize: '90%'
+                  fontWeight: '500',
+                  marginRight: '10px',
+                  fontSize: '13px',
+                  color: '#495057',
+                  whiteSpace: 'nowrap'
                 }}
               >
                 Recent Bills:
               </span>
-              {billNumber !== 'Loading...' && billNumber !== 'Error' ? (
-                <BillTab billNumber={billNumber} />
-              ) : (
-                <div style={{ fontSize: '85%' }}>Loading...</div>
-              )}
-            </div>
-
-            <div>
-              <CreateBillButton />
+              <div style={{ 
+                flex: 1, 
+                display: 'flex', 
+                alignItems: 'center',
+                height: '36px'  // Fixed height for the tab container
+              }}>
+                {billNumber !== 'Loading...' && billNumber !== 'Error' ? (
+                  <BillTab 
+                    billNumber={billNumber} // This will force reinitialization when billNumber changes
+                    onTabChange={handleTabChange}
+                    onTabClose={() => {}} // Add empty handler if needed
+                  />
+                ) : (
+                  <div style={{ 
+                    fontSize: '13px', 
+                    color: '#6c757d',
+                    display: 'flex',
+                    alignItems: 'center'
+                  }}>
+                    Loading...
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
@@ -222,9 +268,10 @@ const Pos = () => {
                   cartItems={cartItems}
                   totalPayable={totalPayable}
                   totalQuantity={totalQuantity}
-                  billNumber={billNumber}
+                  billNumber={activeBill || billNumber}
                   updateBillNumber={setBillNumber}
-                  onSaleCreated={handleSaleCreated} 
+                  onSaleCreated={fetchLastTenSales}
+                  onPaymentComplete={handlePaymentComplete}
                 />
               </Card.Footer>
             </Card>
