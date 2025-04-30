@@ -1,32 +1,102 @@
 import React, { useState } from 'react';
-import { Form, Button, Container, Row, Col, Alert } from 'react-bootstrap';
 import { loansAPI } from '../services/api';
-import Layout from '../components/Layout'; // Import the Layout component
+import Layout from '../components/Layout';
 import { useNotifications } from '../context/NotificationContext';
+import '../styles/create_loan.css';
 
 const CreateLoan = () => {
   const { addNotification } = useNotifications();
-  const [customerName, setCustomerName] = useState('');
-  const [customerEmail, setCustomerEmail] = useState('');
-  const [customerPhone, setCustomerPhone] = useState('');
-  const [customerAddress, setCustomerAddress] = useState('');
-  const [loanAmount, setLoanAmount] = useState('');
-  const [notes, setNotes] = useState('');
-  const [errorMessage, setErrorMessage] = useState(''); // State for error messages
-  const [successMessage, setSuccessMessage] = useState(''); // State for success messages
+  
+  const [formData, setFormData] = useState({
+    customerName: '',
+    customerEmail: '',
+    customerPhone: '',
+    customerAddress: '',
+    loanAmount: '',
+    notes: ''
+  });
+  
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!formData.customerName.trim()) {
+      newErrors.customerName = 'Customer name is required';
+    }
+    
+    if (!formData.customerEmail.trim()) {
+      newErrors.customerEmail = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(formData.customerEmail)) {
+      newErrors.customerEmail = 'Email is invalid';
+    }
+    
+    if (!formData.customerPhone.trim()) {
+      newErrors.customerPhone = 'Phone number is required';
+    }
+    
+    if (!formData.customerAddress.trim()) {
+      newErrors.customerAddress = 'Address is required';
+    }
+    
+    if (!formData.loanAmount) {
+      newErrors.loanAmount = 'Loan amount is required';
+    } else if (parseFloat(formData.loanAmount) <= 0) {
+      newErrors.loanAmount = 'Loan amount must be greater than zero';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    
+    // Clear error for this field when user starts typing
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
+  };
+
+  const resetForm = () => {
+    setFormData({
+      customerName: '',
+      customerEmail: '',
+      customerPhone: '',
+      customerAddress: '',
+      loanAmount: '',
+      notes: ''
+    });
+    setErrors({});
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    
+    if (!validateForm()) {
+      return;
+    }
+    
+    setLoading(true);
+    
     const loanData = {
       customer: {
-        name: customerName,
-        email: customerEmail,
-        phone: customerPhone,
-        address: customerAddress,
+        name: formData.customerName,
+        email: formData.customerEmail,
+        phone: formData.customerPhone,
+        address: formData.customerAddress,
       },
-      loanAmount,
-      notes,
+      loanAmount: parseFloat(formData.loanAmount),
+      notes: formData.notes,
     };
 
     try {
@@ -36,144 +106,148 @@ const CreateLoan = () => {
       const formattedAmount = new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'USD'
-      }).format(loanAmount);
+      }).format(formData.loanAmount);
 
       // Add notification
       addNotification(
         'loan',
-        `New loan #${loanNumber} created for ${customerName} with amount ${formattedAmount}`,
+        `New loan #${loanNumber} created for ${formData.customerName} with amount ${formattedAmount}`,
         loanId
       );
 
-      setSuccessMessage('Loan created successfully!'); // Set success message
+      setSuccessMessage('Loan created successfully!');
       console.log('Loan created:', response.data);
-
+      
       // Reset form fields
-      setCustomerName('');
-      setCustomerEmail('');
-      setCustomerPhone('');
-      setCustomerAddress('');
-      setLoanAmount('');
-      setNotes('');
-      setErrorMessage(''); // Clear any previous error messages
-    } catch (error) {
-      console.error('Error creating loan:', error);
-      setErrorMessage('Failed to create loan. Please try again.'); // Set error message
-      setSuccessMessage(''); // Clear any previous success messages
+      resetForm();
+      
+      // Auto-clear success message after 3 seconds
+      setTimeout(() => {
+        setSuccessMessage('');
+      }, 3000);
+      
+    } catch (err) {
+      console.error('Error creating loan:', err);
+      setErrors(prev => ({
+        ...prev,
+        general: err.response?.data?.message || 'Failed to create loan'
+      }));
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <Layout title="Create Loan">
-      <Container>
-        <h1 className="my-4">Create Loan</h1>
-
-        {/* Display error message */}
-        {errorMessage && (
-          <Alert variant="danger" onClose={() => setErrorMessage('')} dismissible>
-            {errorMessage}
-          </Alert>
-        )}
-
-        {/* Display success message */}
+      <div className="loan-container">
         {successMessage && (
-          <Alert variant="success" onClose={() => setSuccessMessage('')} dismissible>
-            {successMessage}
-          </Alert>
+          <div className="success-container">
+            <div className="success-message">{successMessage}</div>
+          </div>
         )}
-
-        <Form onSubmit={handleSubmit}>
-          <Row className="mb-3">
-            <Col md={6}>
-              <Form.Group controlId="loanAmount">
-                <Form.Label>Loan Amount</Form.Label>
-                <Form.Control
-                  type="number"
-                  placeholder="Enter Loan Amount"
-                  value={loanAmount}
-                  onChange={(e) => setLoanAmount(e.target.value)}
-                  required
-                  autoComplete="off" // Disable browser autofill
-                />
-              </Form.Group>
-            </Col>
-          </Row>
-
-          <h5 className="mt-4">Customer Details</h5>
-          <Row className="mb-3">
-            <Col md={6}>
-              <Form.Group controlId="customerName">
-                <Form.Label>Customer Name</Form.Label>
-                <Form.Control
+        
+        <div className="loan-form-container">
+          <h2 className="form-title">Create New Loan</h2>
+          
+          {errors.general && (
+            <div className="error-message-general">
+              {errors.general}
+            </div>
+          )}
+          
+          <form onSubmit={handleSubmit} className="form-content">
+            <div className="form-field">
+              <input
+                type="number"
+                name="loanAmount"
+                placeholder="Enter Loan Amount"
+                value={formData.loanAmount}
+                onChange={handleChange}
+                className={errors.loanAmount ? "input-error" : ""}
+                autoComplete="off"
+              />
+              {errors.loanAmount && <p className="error-text">{errors.loanAmount}</p>}
+            </div>
+            
+            <div className="customer-section">
+              <h3 className="section-title">Customer Details</h3>
+            </div>
+            
+            <div className="form-row">
+              <div className="form-field">
+                <input
                   type="text"
+                  name="customerName"
                   placeholder="Enter Customer Name"
-                  value={customerName}
-                  onChange={(e) => setCustomerName(e.target.value)}
-                  required
-                  autoComplete="off" // Disable browser autofill
+                  value={formData.customerName}
+                  onChange={handleChange}
+                  className={errors.customerName ? "input-error" : ""}
+                  autoComplete="off"
                 />
-              </Form.Group>
-            </Col>
-            <Col md={6}>
-              <Form.Group controlId="customerEmail">
-                <Form.Label>Customer Email</Form.Label>
-                <Form.Control
+                {errors.customerName && <p className="error-text">{errors.customerName}</p>}
+              </div>
+              <div className="form-field">
+                <input
                   type="email"
+                  name="customerEmail"
                   placeholder="Enter Customer Email"
-                  value={customerEmail}
-                  onChange={(e) => setCustomerEmail(e.target.value)}
-                  required
-                  autoComplete="off" // Disable browser autofill
+                  value={formData.customerEmail}
+                  onChange={handleChange}
+                  className={errors.customerEmail ? "input-error" : ""}
+                  autoComplete="off"
                 />
-              </Form.Group>
-            </Col>
-          </Row>
-          <Row className="mb-3">
-            <Col md={6}>
-              <Form.Group controlId="customerPhone">
-                <Form.Label>Customer Phone</Form.Label>
-                <Form.Control
+                {errors.customerEmail && <p className="error-text">{errors.customerEmail}</p>}
+              </div>
+            </div>
+            
+            <div className="form-row">
+              <div className="form-field">
+                <input
                   type="text"
+                  name="customerPhone"
                   placeholder="Enter Customer Phone"
-                  value={customerPhone}
-                  onChange={(e) => setCustomerPhone(e.target.value)}
-                  required
-                  autoComplete="off" // Disable browser autofill
+                  value={formData.customerPhone}
+                  onChange={handleChange}
+                  className={errors.customerPhone ? "input-error" : ""}
+                  autoComplete="off"
                 />
-              </Form.Group>
-            </Col>
-            <Col md={6}>
-              <Form.Group controlId="customerAddress">
-                <Form.Label>Customer Address</Form.Label>
-                <Form.Control
+                {errors.customerPhone && <p className="error-text">{errors.customerPhone}</p>}
+              </div>
+              <div className="form-field">
+                <input
                   type="text"
+                  name="customerAddress"
                   placeholder="Enter Customer Address"
-                  value={customerAddress}
-                  onChange={(e) => setCustomerAddress(e.target.value)}
-                  required
-                  autoComplete="off" // Disable browser autofill
+                  value={formData.customerAddress}
+                  onChange={handleChange}
+                  className={errors.customerAddress ? "input-error" : ""}
+                  autoComplete="off"
                 />
-              </Form.Group>
-            </Col>
-          </Row>
-
-          <Form.Group controlId="notes" className="mb-3">
-            <Form.Label>Notes</Form.Label>
-            <Form.Control
-              as="textarea"
-              rows={3}
-              placeholder="Enter any additional notes"
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              autoComplete="off" // Disable browser autofill
-            />
-          </Form.Group>
-
-          <Button variant="primary" type="submit">
-            Create Loan
-          </Button>
-        </Form>
-      </Container>
+                {errors.customerAddress && <p className="error-text">{errors.customerAddress}</p>}
+              </div>
+            </div>
+            
+            <div className="form-field">
+              <textarea
+                rows={3}
+                name="notes"
+                placeholder="Enter any additional notes"
+                value={formData.notes}
+                onChange={handleChange}
+                autoComplete="off"
+              />
+            </div>
+            
+            <button 
+              type="submit" 
+              className="submit-button"
+              disabled={loading}
+            >
+              {loading ? 'Creating...' : 'Create Loan'}
+            </button>
+          </form>
+        </div>
+      </div>
     </Layout>
   );
 };

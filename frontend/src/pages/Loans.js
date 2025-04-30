@@ -77,7 +77,6 @@ const Loans = () => {
                 loan._id === loanId
                     ? {
                           ...loan,
-                          loanAmount: 0,
                           amountPaid: 0,
                           remainingBalance: 0,
                           paymentStatus: 'paid',
@@ -104,7 +103,6 @@ const Loans = () => {
             const blob = new Blob([response.data], { type: 'application/pdf' });
             const url = window.URL.createObjectURL(blob);
 
-            // Open in a new tab
             window.open(url, '_blank');
 
             // Clean up the URL object after opening
@@ -149,12 +147,10 @@ const Loans = () => {
         }
     };
 
-    // Handle create new loan
     const handleCreateNewLoan = () => {
         // Navigate to loan creation page or open a modal
-        window.location.href = '/loans/create';
-        // Alternatively, you could set state to open a modal:
-        // setIsCreateModalOpen(true);
+        window.location.href = '/create-loans';
+        
     };
 
     return (
@@ -214,7 +210,7 @@ const Loans = () => {
                             <table className="loans-table">
                                 <thead>
                                     <tr>
-                                        <th>Loan Number</th>
+                                        <th>id</th>
                                         <th>Customer</th>
                                         <th>Loan Amount</th>
                                         <th>Remaining Loan</th>
@@ -236,17 +232,23 @@ const Loans = () => {
                                                     </span>
                                                 </td>
                                                 <td>
-                                                    <button className="loans-action-button">
-                                                        <FaEye />
-                                                    </button>
-                                                    {loan.paymentStatus !== 'paid' && (
-                                                        <button
-                                                            className="loans-action-button pay-button"
-                                                            onClick={() => handlePayLoan(loan._id)}
+                                                    <div className="loans-action-buttons-cell">
+                                                        {loan.paymentStatus !== 'paid' && (
+                                                            <button
+                                                                className="loans-action-button pay-button"
+                                                                onClick={() => handlePayLoan(loan._id)}
+                                                                title="Pay Loan"
+                                                            >
+                                                                <FaMoneyBillWave />
+                                                            </button>
+                                                        )}
+                                                        <button 
+                                                            className="loans-action-button"
+                                                            title="View Details"
                                                         >
-                                                            <FaMoneyBillWave />
+                                                            <FaEye />
                                                         </button>
-                                                    )}
+                                                    </div>
                                                 </td>
                                             </tr>
                                         ))
