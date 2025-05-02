@@ -37,6 +37,8 @@ const isValidObjectId = (id) => /^[0-9a-fA-F]{24}$/.test(id);
 
 const CreateProducts = () => {
   const [formData, setFormData] = useState(getInitialState());
+  const [imagePreview, setImagePreview] = useState('');
+  const fileInputRef = React.useRef(null);
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -88,18 +90,26 @@ const CreateProducts = () => {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    setFormData(prevData => ({
-      ...prevData,
-      productImage: file
-    }));
-    console.log("Selected file (not sending):", file ? file.name : 'None');
+    if (file) {
+      // Create a preview URL for the image
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+        setFormData(prevData => ({
+          ...prevData,
+          productImage: reader.result // Store the base64 data
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleDiscard = () => {
-      setFormData(getInitialState());
-      setError('');
-      setSuccess('');
-      console.log("Form discarded");
+    setFormData(getInitialState());
+    setImagePreview(''); 
+    setError('');
+    setSuccess('');
+    console.log("Form discarded");
   };
 
   const handleSubmit = async (e) => {
@@ -107,9 +117,6 @@ const CreateProducts = () => {
     setError('');
     setSuccess('');
     setIsLoading(true);
-
-    console.log("Form Data Before Submission:", formData);
-
 
     const productData = {
       name: formData.title,
@@ -122,11 +129,9 @@ const CreateProducts = () => {
       supplier: formData.supplier,
       taxRate: formData.gst !== '' ? parseFloat(formData.gst) : undefined,
       minStockLevel: formData.stockAlert !== '' ? parseInt(formData.stockAlert, 10) : undefined,
-      discountRate: formData.discountRate !== '' ? parseFloat(formData.discountRate) : undefined
+      discountRate: formData.discountRate !== '' ? parseFloat(formData.discountRate) : undefined,
+      images: formData.productImage ? [formData.productImage] : [] // Add image data
     };
-
-    console.log("Data being sent to API:", productData);
-
 
     const requiredFrontendFields = ['title', 'sku', 'salePrice', 'category', 'supplier', 'quantity'];
     const missingFrontendFields = requiredFrontendFields.filter(field => !formData[field]);
@@ -184,6 +189,7 @@ const CreateProducts = () => {
         addNotification('product', `New product "${productName}" has been created`, productId);
         console.log('Product created:', responseData.data);
         setFormData(getInitialState());
+        setImagePreview('');
       } else {
         const errorMsg = responseData.message || `Request failed with status: ${response.status}`;
         setError(`Failed to create product: ${errorMsg}`);
@@ -199,6 +205,19 @@ const CreateProducts = () => {
 
 
   const requiredStar = <span style={{ color: 'red' }}>*</span>;
+
+  const handleImageClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleRemoveImage = (e) => {
+    e.stopPropagation();
+    setImagePreview('');
+    setFormData(prevData => ({
+      ...prevData,
+      productImage: null
+    }));
+  };
 
   return (
     <Layout title="Create Product">
@@ -318,21 +337,45 @@ const CreateProducts = () => {
                 </div>
 
 
-              
-
-                <div className="upload-image-container" onClick={() => document.getElementById('productImageInput')?.click()}>
-                  <div className="upload-icon">📁</div>
-                  <div className="upload-text">
-                    <strong>Click to upload</strong> or drag and drop your product image
+                <div className="form-group form-group-span-2">
+                  <label>Product Image</label>
+                  <div 
+                    className="upload-image-container" 
+                    onClick={handleImageClick}
+                  >
+                    {imagePreview ? (
+                      <div className="image-preview-container">
+                        <img 
+                          src={imagePreview} 
+                          alt="Product Preview" 
+                          className="image-preview" 
+                        />
+                        <button 
+                          type="button"
+                          className="remove-image-btn"
+                          onClick={handleRemoveImage}
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="upload-icon">📁</div>
+                        <div className="upload-text">
+                          <strong>Click to upload</strong> or drag and drop your product image
+                        </div>
+                      </>
+                    )}
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      id="productImageInput"
+                      name="productImage"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      style={{ display: 'none' }}
+                    />
                   </div>
-                  <input
-                    type="file"
-                    id="productImageInput"
-                    name="productImage"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                    style={{ display: 'none' }}
-                  />
                 </div>
 
                 <div className="form-group">

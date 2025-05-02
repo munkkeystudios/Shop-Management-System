@@ -1,7 +1,4 @@
-
-
-
-  /* Container for the entire form */
+/* Container for the entire form */
 .product-form {
   display: flex;
   flex-direction: column;
@@ -156,6 +153,62 @@
 .upload-image-container .upload-text strong {
   color: #10b981; /* green-500 */
   font-weight: 600;
+}
+
+.image-preview-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.image-preview {
+  max-width: 100%;
+  max-height: 200px;
+  object-fit: contain;
+}
+
+.remove-image-btn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background-color: rgba(255, 255, 255, 0.8);
+  border: none;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-size: 12px;
+  color: #333;
+}
+
+.remove-image-btn:hover {
+  background-color: rgba(255, 0, 0, 0.1);
+}
+
+.upload-image-container {
+  width: 100%;
+  min-height: 200px;
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  padding: 20px;
+  transition: all 0.3s ease;
+  background-color: #f9f9f9;
+}
+
+.upload-image-container:hover {
+  border-color: #007bff;
+  background-color: #f0f7ff;
 }
 
 /* Responsive Adjustment */
