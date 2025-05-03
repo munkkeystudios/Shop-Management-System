@@ -1,0 +1,38 @@
+.order-details {
+    margin-bottom: 1rem;
+  }
+  
+  .order-details-row {
+    margin-bottom: 0.5rem;
+  }
+  
+  .order-details-total {
+    font-weight: bold;
+  }
+  
+  .text-end {
+    text-align: right;
+  }
+  
+  .payment-summary {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 0.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+  }
+  
+  .payment-total {
+    margin: 0;
+    color: #28a745;
+  }
+  
+  .payment-method-section {
+    margin-bottom: 1rem;
+  }
+  
+  .payment-input-section {
+    margin-bottom: 1rem;
+  }

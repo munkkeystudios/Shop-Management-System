@@ -2,10 +2,11 @@ import React from 'react';
 import { Table } from 'react-bootstrap';
 import { FiTrash2 } from 'react-icons/fi';
 import QuantityButton from './quantitybutton.js';
+import '../styles/CartTable.css'; 
 
 const CartTable = ({ cartItems, handleQuantityChange, handleRemoveItem }) => {
   return (
-    <Table striped bordered hover>
+    <Table striped bordered hover className="cart-table">
       <thead>
         <tr>
           <th width="300">Product</th>
@@ -22,7 +23,7 @@ const CartTable = ({ cartItems, handleQuantityChange, handleRemoveItem }) => {
           const discountedPrice = item.price * (1 - item.discount / 100);
           
           return (
-            <tr key={item.id}>
+            <tr key={item.id} className="cart-item-row">
               <td>
                 <div className="product-container">
                   <div className="product-image">
@@ -30,12 +31,6 @@ const CartTable = ({ cartItems, handleQuantityChange, handleRemoveItem }) => {
                       <img 
                         src={item.image} 
                         alt={item.name}
-                        style={{ 
-                          width: '40px', 
-                          height: '40px', 
-                          objectFit: 'cover',
-                          borderRadius: '4px'
-                        }}
                         onError={(e) => {
                           e.target.src = '/images/default-product-image.jpg';
                         }}
@@ -59,13 +54,14 @@ const CartTable = ({ cartItems, handleQuantityChange, handleRemoveItem }) => {
                     key={item.id}
                     item={item}
                     handleQuantityChange={handleQuantityChange}
+                    handleRemoveItem={handleRemoveItem}  // Add this prop
                   />
                 </div>
               </td>
               <td>${item.subtotal.toFixed(2)}</td>
               <td>
                 <FiTrash2
-                  style={{ cursor: 'pointer' }}
+                  className="delete-icon"
                   onClick={() => handleRemoveItem(item.id)}
                 />
               </td>

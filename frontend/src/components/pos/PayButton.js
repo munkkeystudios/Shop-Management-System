@@ -1,21 +1,21 @@
 import { useState } from 'react';
 import { Button, Modal, Form, Row, Col, Alert } from 'react-bootstrap';
 import { generateReceipt } from './generateReceipt';
-import { salesAPI, loansAPI } from '../../services/api';
+import { salesAPI } from '../../services/api'; // Remove loansAPI if unused
+import '../styles/PayButton.css'; // Import the CSS file
 
-const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateBillNumber, onSaleCreated }) => {
+const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateBillNumber, onPaymentComplete }) => {
   const [show, setShow] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('cash'); // default is always cash
-  const [loanNumber, setLoanNumber] = useState(''); // state for loan number
-  const [errorMessage, setErrorMessage] = useState(''); // state for error messages
+  const [loanNumber, setLoanNumber] = useState(''); 
+  const [errorMessage, setErrorMessage] = useState(''); 
 
-  // global sales tax
   const GST = 0.10;
   const endPayment = Number((totalPayable + GST * totalPayable).toFixed(2));
 
   const handleClose = () => {
     setShow(false);
-    setErrorMessage(''); // Clear error messages when modal is closed
+    setErrorMessage(''); 
   };
   const handleShow = () => setShow(true);
 
@@ -31,14 +31,14 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateB
         customerPhone: 'N/A',
         items: cartItems.map((item) => {
           const discountRate = item.discount || 0; // Default discount is 0 if not provided
-          const effectivePrice = item.price * (1 - discountRate / 100); // Calculate effective price
+          const effectivePrice = item.price * (1 - discountRate / 100); 
 
           return {
-            product: item.id, // Use the product ID
+            product: item.id, 
             quantity: item.quantity,
-            price: item.price, // Include the price of the item
-            effectivePrice: Number(effectivePrice.toFixed(2)), // Include the effective price
-            subtotal: item.subtotal, // Include the subtotal of the item
+            price: item.price, 
+            effectivePrice: Number(effectivePrice.toFixed(2)), 
+            subtotal: item.subtotal, 
           };
         }),
         subtotal: totalPayable,
@@ -46,40 +46,48 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateB
         tax: Number((GST * totalPayable).toFixed(2)),
         total: endPayment,
         paymentMethod,
-        amountPaid: paymentMethod === 'loan' ? 0 : endPayment, // If loan, no payment is made upfront
-        change: paymentMethod === 'loan' ? 0 : endPayment - totalPayable, // No change for loan payments
-        paymentStatus, // Set payment status based on payment method
+        amountPaid: paymentMethod === 'loan' ? 0 : endPayment, 
+        change: paymentMethod === 'loan' ? 0 : endPayment - totalPayable, 
+        paymentStatus, 
         notes: 'Thank you for your purchase!',
         loanNumber: paymentMethod === 'loan' ? loanNumber : null, // Include loanNumber if payment method is loan
       };
 
-      // Create the sale via the API
       const response = await salesAPI.create(saleData);
       console.log('Sale created successfully:', response.data);
-
-      // Update the billNumber for the next transaction
-      updateBillNumber(billNumber + 1); // Increment the billNumber
-
-      // Call the onSaleCreated callback to refresh the sales table
-      if (onSaleCreated) {
-        onSaleCreated();
+      
+      if (response.data && response.data.data && response.data.data._id) {
+        // Get the ID of the newly created sale
+        const newSaleId = response.data.data._id;
+        
+        // Update the billNumber for the next transaction
+        // This sets up the next bill number but doesn't change the active tab yet
+        updateBillNumber(billNumber + 1);
+        
+        // Generate receipt and other existing functionality...
+        generateReceipt({
+          ...saleData,
+          items: cartItems.map((item) => ({
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity,
+            amount: item.subtotal,
+          })),
+          date: new Date(),
+        });
+        
+        // Call onPaymentComplete with the new sale ID
+        if (onPaymentComplete) {
+          onPaymentComplete(newSaleId);
+        }
+        
+        handleClose();
+      } else {
+        console.error('Sale created but no ID returned:', response.data);
+        setErrorMessage('Transaction completed but sale tracking failed. Please check sales history.');
       }
-
-      // Generate the receipt
-      generateReceipt({
-        ...saleData,
-        items: cartItems.map((item) => ({
-          name: item.name,
-          price: item.price,
-          quantity: item.quantity,
-          amount: item.subtotal,
-        })),
-        date: new Date(),
-      });
-
-      handleClose();
     } catch (error) {
-      console.error('Error during transaction:', error.response?.data?.message || error.message);
+      console.error('Error during transaction:', error);
       setErrorMessage('An error occurred during the transaction. Please try again.');
     }
   };
@@ -100,7 +108,7 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateB
               {errorMessage}
             </Alert>
           )}
-          <div className="mb-4">
+          <div className="payment-method-section">
             <h5>Choose Payment Method</h5>
             <Form>
               <Form.Group>
@@ -136,14 +144,14 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateB
           </div>
 
           {paymentMethod === 'card' && (
-            <div className="mb-4">
+            <div className="payment-input-section">
               <h5>Invoice Number</h5>
               <Form.Control type="text" placeholder="Enter Invoice Number" />
             </div>
           )}
 
           {paymentMethod === 'loan' && (
-            <div className="mb-4">
+            <div className="payment-input-section">
               <h5>Loan Number</h5>
               <Form.Control
                 type="text"
@@ -154,28 +162,28 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateB
             </div>
           )}
 
-          <div className="order-details mb-4">
+          <div className="order-details">
             <h5>Order Details</h5>
-            <Row className="mb-2">
+            <Row className="order-details-row">
               <Col>Total Products</Col>
               <Col className="text-end">{totalQuantity}</Col>
             </Row>
-            <Row className="mb-2">
+            <Row className="order-details-row">
               <Col>GST</Col>
               <Col className="text-end">10%</Col>
             </Row>
-            <Row className="mb-2">
+            <Row className="order-details-row">
               <Col>Discount</Col>
               <Col className="text-end">0</Col>
             </Row>
-            <Row className="mb-2 fw-bold">
+            <Row className="order-details-row order-details-total">
               <Col>Total Payable</Col>
               <Col className="text-end">${totalPayable}</Col>
             </Row>
           </div>
 
-          <div className="bg-light p-3 rounded d-flex justify-content-between align-items-center">
-            <h5 className="m-0 text-success">Total Payable: ${endPayment}</h5>
+          <div className="payment-summary">
+            <h5 className="payment-total">Total Payable: ${endPayment}</h5>
             <Button variant="success" onClick={handleTransaction}>
               Complete Transaction
             </Button>

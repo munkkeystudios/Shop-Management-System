@@ -1,5 +1,6 @@
 const { Sale, Product } = require('../models'); 
 const Loan = require('../models/loan');
+const mongoose = require('mongoose'); // Added mongoose
 
 //new sale
 exports.createSale = async (req, res) => {
@@ -228,23 +229,41 @@ exports.getSales = async (req, res) => {
 
 //get a single sale by id
 exports.getSaleById = async (req, res) => {
-    try {
-        const sale = await Sale.findById(req.params.id)
-            .populate('items.product', 'name price barcode') // Added barcode
-            .populate('createdBy', 'username name'); // Added name
-
-        if (!sale) {
-            return res.status(404).json({ success: false, message: 'Sale not found' });
-        }
-
-        res.status(200).json({ success: true, data: sale }); // Added success flag
-    } catch (error) {
-        console.error('Get sale error:', error);
-        if (error.name === 'CastError') {
-            return res.status(400).json({ success: false, message: 'Invalid Sale ID format' });
-        }
-        res.status(500).json({ success: false, message: 'Error fetching sale', error: error.message });
+  try {
+    const { id } = req.params;
+    
+    // Check if id is a valid ObjectId before trying to find the sale
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid sale ID format: ${id}`
+      });
     }
+    
+    const sale = await Sale.findById(id)
+      .populate('items.product', 'name price images')
+      .populate('createdBy', 'username name')
+      .lean();
+
+    if (!sale) {
+      return res.status(404).json({
+        success: false,
+        message: 'Sale not found'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: sale
+    });
+  } catch (error) {
+    console.error('Get sale error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error while fetching sale',
+      error: error.message
+    });
+  }
 };
 
 //update sale payment status
@@ -595,4 +614,28 @@ exports.getLastTenSales = async (req, res) => {
             error: error.message
         });
     }
+};
+
+// Make sure you have a separate endpoint for recent sales
+exports.getRecentSales = async (req, res) => {
+  try {
+    const sales = await Sale.find()
+      .sort({ createdAt: -1 })
+      .limit(10)
+      .populate('items.product', 'name price')
+      .populate('createdBy', 'username name')
+      .lean();
+
+    res.status(200).json({
+      success: true,
+      data: sales
+    });
+  } catch (error) {
+    console.error('Get recent sales error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error while fetching recent sales',
+      error: error.message
+    });
+  }
 };

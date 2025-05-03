@@ -58,6 +58,7 @@ router.patch('/products/:id/stock', productController.updateStock);
 
 router.post('/sales', saleController.createSale);
 router.get('/sales', saleController.getSales);
+router.get('/sales/recent', saleController.getRecentSales);
 router.get('/sales/last-bill-number', saleController.getLastBillNumber); 
 router.get('/sales/last-ten', saleController.getLastTenSales); 
 router.get('/sales/stats', saleController.getSalesStats); 

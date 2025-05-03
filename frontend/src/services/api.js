@@ -52,7 +52,6 @@ api.interceptors.response.use(
 // Auth API
 export const authAPI = {
   login: (credentials) => api.post('/login', credentials),
-  // signup: (userData) => api.post('/signup', userData), // *** Removed public signup ***
   getProfile: () => api.get('/users/profile'), // Corrected path based on routes
   adminCreateUser: (userData) => api.post('/users', userData), // *** Added: Admin create user ***
 };
@@ -133,15 +132,14 @@ export const salesAPI = {
   getById: (id) => api.get(`/sales/${id}`),
   updatePayment: (id, paymentData) => api.put(`/sales/${id}/payment`, paymentData),
   getStats: (params = {}) => api.get('/sales/stats', { params }),
+  getLastTenSales: () => api.get('/sales/recent'),
   getLastBillNumber: () => api.get('/sales/last-bill-number'),
-  getLastTenSales: () => api.get('/sales/last-ten'),
-  // Export sales to CSV or PDF
+  getSale: (id) => api.get(`/sales/${id}`),
   exportSales: (format = 'csv', params = {}) =>
     api.get(`/sales/export`, {
       params: { format, ...params },
       responseType: 'blob',
     }),
-  // Import sales from a file
   importSales: (formData) =>
     api.post('/import/sales', formData, {
       headers: {

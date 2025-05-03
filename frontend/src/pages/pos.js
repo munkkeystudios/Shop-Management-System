@@ -8,16 +8,15 @@ import SalesTable from '../components/pos/SalesTable.js';
 import PayButton from '../components/pos/PayButton.js';
 import { salesAPI } from '../services/api.js';
 import useCart from '../hooks/useCart';
+import '../styles/pos.css'; 
 
 const Pos = () => {
-  // Remove the ref since we won't need it
-  const [searchedProduct, setSearchedProduct] = useState(null); // item found from SearchBar
-  const [billNumber, setBillNumber] = useState('Loading...'); // Default placeholder value
-  const [sales, setSales] = useState([]); // State to store sales data
-  const [loadingSales, setLoadingSales] = useState(true); // Loading state for sales
-  const [salesError, setSalesError] = useState(null); // Error state for sales
-  
-  // Simply use the current bill number as the active bill
+  // State variables 
+  const [searchedProduct, setSearchedProduct] = useState(null);
+  const [billNumber, setBillNumber] = useState('Loading...');
+  const [sales, setSales] = useState([]);
+  const [loadingSales, setLoadingSales] = useState(true);
+  const [salesError, setSalesError] = useState(null);
   const [activeBill, setActiveBill] = useState(null);
 
   const {
@@ -31,7 +30,7 @@ const Pos = () => {
     setCartItems,
   } = useCart();
 
-  // Fetch the last bill number
+  // Fetch the last bill number 
   useEffect(() => {
     const fetchLastBillNumber = async () => {
       try {
@@ -41,7 +40,7 @@ const Pos = () => {
         if (lastBillNumber) {
           setBillNumber(lastBillNumber + 1);
         } else {
-          setBillNumber(1); // Start from 1 if no sales exist
+          setBillNumber(1);
         }
       } catch (error) {
         console.error('Error fetching last bill number:', error);
@@ -52,30 +51,59 @@ const Pos = () => {
     fetchLastBillNumber();
   }, []);
 
+  // Fetch last ten sales 
   const fetchLastTenSales = async () => {
     try {
-      setLoadingSales(true); // Set loading state
+      setLoadingSales(true);
       const response = await salesAPI.getLastTenSales();
-      setSales(response.data.data); // Update the sales data
+      if (response.data && response.data.data) {
+        setSales(response.data.data);
+      } else {
+        setSales([]);
+      }
       setSalesError(null);
     } catch (error) {
       console.error('Error fetching last 10 sales:', error);
-      setSalesError('Failed to fetch sales. Please try again later.');
+      setSalesError('Failed to fetch sales data');
+      setSales([]);
     } finally {
-      setLoadingSales(false); // Reset loading state
+      setLoadingSales(false);
     }
   };
 
-  // Fetch the last 10 sales on component mount
+  // Fetch sales on component mount 
   useEffect(() => {
     fetchLastTenSales();
   }, []);
 
+  // Add new sale function 
+  const addNewSale = async (newSaleId) => {
+    if (!newSaleId) {
+      console.error('No sale ID provided');
+      return;
+    }
+    
+    try {
+      const response = await salesAPI.getSale(newSaleId);
+      
+      if (response.data && response.data.data) {
+        setSales(prevSales => {
+          const currentSales = Array.isArray(prevSales) ? prevSales : [];
+          const updatedSales = [response.data.data, ...currentSales];
+          return updatedSales.slice(0, 10);
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching new sale:', error);
+    }
+  };
+
+  // Product search handler 
   const handleProductSearch = (product) => {
     setSearchedProduct(product);
   };
 
-  // This effect will add the searched product to the cart when it changes
+  // Add searched product to cart 
   useEffect(() => {
     if (searchedProduct) {
       addToCart(searchedProduct);
@@ -83,165 +111,76 @@ const Pos = () => {
     }
   }, [searchedProduct, addToCart]);
 
-  const handleRemoveItem = (id) => {
-    removeFromCart(id);
-  };
-
-  const handleQuantityChange = (id, newQuantity) => {
-    if (newQuantity < 1) return;
-    updateQuantity(id, newQuantity);
-  };
-
+  // Back button handler 
   const handleBackClick = () => {
     window.history.back();
   };
 
-  // Simplified handler for payment completion
-  const handlePaymentComplete = (newBillNumber) => {
-    // Update both bill number and active bill
-    setBillNumber(newBillNumber);
-    setActiveBill(newBillNumber);
+  // Payment completion handler 
+  const handlePaymentComplete = (newSaleId) => {
+    setCartItems([]);
     
-    // Clear the cart
-    resetCart();
+    if (newSaleId) {
+      console.log('New sale created with ID:', newSaleId);
+      addNewSale(newSaleId);
+      
+      setActiveBill(prevBillNumber => {
+        if (typeof billNumber === 'number') {
+          return billNumber + 1;
+        }
+        return prevBillNumber;
+      });
+    } else {
+      console.warn('No sale ID was provided after payment completion');
+    }
   };
 
-  // Set active bill when bill number is initially loaded
+  // Set active bill when bill number is initially loaded 
   useEffect(() => {
     if (billNumber !== 'Loading...' && billNumber !== 'Error' && !activeBill) {
       setActiveBill(billNumber);
     }
   }, [billNumber, activeBill]);
 
-  // Handle tab changes
+  // Tab change handler 
   const handleTabChange = (selectedBillNumber) => {
     setActiveBill(selectedBillNumber);
   };
 
   return (
     <POSLayout title="Point of Sale">
-      <div className="app-container" style={{ 
-        display: 'flex', 
-        height: 'calc(90vh)', 
-        padding: '0',
-        margin: '0'
-      }}>
-        {/* left section */}
-        <div className="main-content" style={{ 
-          flex: '1', 
-          padding: '0', 
-          display: 'flex', 
-          flexDirection: 'column', 
-          alignItems: 'center' 
-        }}>
-          <div className="bill-header" style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: '12px',
-            borderBottom: '1px solid #e9ecef',
-            paddingBottom: '8px',
-            width: '100%',
-            maxWidth: '95%',
-            height: '42px'  // Fixed height for better alignment
-          }}>
-            <div style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '10px', 
-              width: '100%' 
-            }}>
-              <button
-                style={{
-                  padding: '4px 10px',
-                  fontSize: '13px',
-                  backgroundColor: '#007bff',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                  height: '32px',
-                  display: 'flex',
-                  alignItems: 'center'
-                }}
-                onClick={handleBackClick}
-              >
+      <div className="app-container">
+        {/* Left section */}
+        <div className="main-content">
+          <div className="bill-header">
+            <div className="bill-header-content">
+              <button className="back-button" onClick={handleBackClick}>
                 Back
               </button>
-              <span
-                style={{
-                  fontWeight: '500',
-                  marginRight: '10px',
-                  fontSize: '13px',
-                  color: '#495057',
-                  whiteSpace: 'nowrap'
-                }}
-              >
-                Recent Bills:
-              </span>
-              <div style={{ 
-                flex: 1, 
-                display: 'flex', 
-                alignItems: 'center',
-                height: '36px'  // Fixed height for the tab container
-              }}>
+              <span className="bills-label">Recent Bills:</span>
+              <div className="bill-tabs-container">
                 {billNumber !== 'Loading...' && billNumber !== 'Error' ? (
                   <BillTab 
-                    billNumber={billNumber} // This will force reinitialization when billNumber changes
+                    billNumber={activeBill || billNumber}
                     onTabChange={handleTabChange}
-                    onTabClose={() => {}} // Add empty handler if needed
+                    onTabClose={() => {}}
                   />
                 ) : (
-                  <div style={{ 
-                    fontSize: '13px', 
-                    color: '#6c757d',
-                    display: 'flex',
-                    alignItems: 'center'
-                  }}>
-                    Loading...
-                  </div>
+                  <div className="loading-message">Loading...</div>
                 )}
               </div>
             </div>
           </div>
 
-          <Container className="card-container" style={{ 
-            padding: '0', 
-            margin: '0', 
-            maxWidth: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            height: 'calc(85vh)'
-          }}>
-            <div style={{ 
-              width: '100%', 
-              maxWidth: '95%',
-              marginBottom: '1%',
-              padding: '0.75%',
-              backgroundColor: '#fff',
-              borderRadius: '0.25rem',
-              boxShadow: '0 0.125rem 0.25rem rgba(0, 0, 0, 0.075)'
-            }}>
+          <Container className="pos-card-container">
+            <div className="search-bar-wrapper">
               <SearchBar onProductSearch={handleProductSearch} />
             </div>
 
-            {/* main content ie Product details card */}
-            <Card style={{ 
-              width: '100%', 
-              maxWidth: '95%',
-              flex: '1',
-              display: 'flex',
-              flexDirection: 'column'
-            }}>
-              <Card.Header as="h6" style={{ padding: '0.5rem 0.75rem', fontSize: '90%' }}>Products</Card.Header>
-              <Card.Body style={{ 
-                flex: '1',
-                overflowY: 'auto',
-                padding: '0.75%',
-                display: 'flex',
-                flexDirection: 'column'
-              }}>
+            {/* Products card */}
+            <Card className="products-card">
+              <Card.Header as="h6" className="products-header">Products</Card.Header>
+              <Card.Body className="products-body">
                 <CartTable
                   cartItems={cartItems}
                   handleQuantityChange={updateQuantity}
@@ -249,17 +188,12 @@ const Pos = () => {
                 />
               </Card.Body>
 
-              <Card.Footer style={{ 
-                padding: '0.5rem 0.75rem', 
-                display: 'flex', 
-                justifyContent: 'space-between', 
-                alignItems: 'center' 
-              }}>
+              <Card.Footer className="products-footer">
                 <Button variant="danger" size="sm" onClick={resetCart}>
                   Reset
                 </Button>
                 <div className="text-end">
-                  <div className="pay-value" style={{ fontSize: '90%' }}>
+                  <div className="pay-value">
                     Total Payable: ${totalPayable.toFixed(2)}
                   </div>
                 </div>
@@ -270,7 +204,6 @@ const Pos = () => {
                   totalQuantity={totalQuantity}
                   billNumber={activeBill || billNumber}
                   updateBillNumber={setBillNumber}
-                  onSaleCreated={fetchLastTenSales}
                   onPaymentComplete={handlePaymentComplete}
                 />
               </Card.Footer>
@@ -278,26 +211,17 @@ const Pos = () => {
           </Container>
         </div>
 
-        {/* right section */}
-        <div className="sales-sidebar" style={{
-          width: '25%',
-          borderLeft: '1px solid #dee2e6',
-          padding: '1%',
-          backgroundColor: '#fff'
-        }}>
+        {/* Right section */}
+        <div className="sales-sidebar">
           <Card>
-            <Card.Header style={{ 
-              backgroundColor: '#f8f9fa', 
-              padding: '0.5% 1%',
-              fontSize: '85%'
-            }}>
+            <Card.Header className="sales-header">
               Last Sales
             </Card.Header>
-            <Card.Body style={{ padding: '0' }}>
+            <Card.Body className="sales-body">
               {loadingSales ? (
-                <div style={{ padding: '1%', fontSize: '85%' }}>Loading sales...</div>
+                <div className="loading-sales">Loading sales...</div>
               ) : salesError ? (
-                <div className="error-message" style={{ padding: '1%', fontSize: '85%' }}>{salesError}</div>
+                <div className="error-message">{salesError}</div>
               ) : (
                 <SalesTable sales={sales} /> 
               )}
