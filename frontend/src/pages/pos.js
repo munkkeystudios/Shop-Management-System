@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Container, Button, Card } from 'react-bootstrap';
 import POSLayout from '../components/POSLayout';
 import SearchBar from '../components/pos/searchbarpos.jsx';
@@ -18,6 +18,7 @@ const Pos = () => {
   const [loadingSales, setLoadingSales] = useState(true);
   const [salesError, setSalesError] = useState(null);
   const [activeBill, setActiveBill] = useState(null);
+  const billTabRef = useRef(null);
 
   const {
     cartItems,
@@ -117,19 +118,40 @@ const Pos = () => {
   };
 
   // Payment completion handler 
-  const handlePaymentComplete = (newSaleId) => {
+  const handlePaymentComplete = async (newSaleId) => {
+    // Reset cart items
     setCartItems([]);
     
     if (newSaleId) {
       console.log('New sale created with ID:', newSaleId);
       addNewSale(newSaleId);
       
-      setActiveBill(prevBillNumber => {
-        if (typeof billNumber === 'number') {
-          return billNumber + 1;
+      // Store the current bill number before updating
+      const previousBillNumber = activeBill || billNumber;
+      
+      try {
+        // Fetch the latest bill number from the server
+        const response = await salesAPI.getLastBillNumber();
+        const lastBillNumber = response.data.lastBillNumber;
+        
+        // Update the bill number state with the next available number
+        const nextBillNumber = lastBillNumber + 1;
+        setBillNumber(nextBillNumber);
+        
+        // If we have a reference to the BillTab component
+        if (billTabRef.current) {
+          // Close the completed bill tab
+          billTabRef.current.handleTabClose(previousBillNumber);
+          
+          // Update all remaining tabs to use the latest bill numbers
+          billTabRef.current.updateAllBillNumbers(nextBillNumber);
+          
+          // Set the active bill to the next bill number
+          setActiveBill(nextBillNumber);
         }
-        return prevBillNumber;
-      });
+      } catch (error) {
+        console.error('Error updating bill numbers after payment:', error);
+      }
     } else {
       console.warn('No sale ID was provided after payment completion');
     }
@@ -161,9 +183,12 @@ const Pos = () => {
               <div className="pos-bill-tabs-container">
                 {billNumber !== 'Loading...' && billNumber !== 'Error' ? (
                   <BillTab 
+                    ref={billTabRef}
                     billNumber={activeBill || billNumber}
                     onTabChange={handleTabChange}
-                    onTabClose={() => {}}
+                    onTabClose={(closedTab) => {
+                      console.log(`Tab ${closedTab} was closed`);
+                    }}
                   />
                 ) : (
                   <div className="pos-loading-message">Loading...</div>

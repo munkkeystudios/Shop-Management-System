@@ -1,18 +1,23 @@
+/* Main container */
 .pos-app-container {
   display: flex;
   height: calc(90vh);
   padding: 0;
   margin: 0;
+  width: 100%;
 }
 
+/* Left section - make it flexible */
 .pos-main-content {
   flex: 1;
-  padding: 0;
+  padding: 0 15px;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
+  width: 100%;
 }
 
+/* Bill header section */
 .pos-bill-header {
   display: flex;
   justify-content: space-between;
@@ -21,7 +26,6 @@
   border-bottom: 1px solid #e9ecef;
   padding-bottom: 8px;
   width: 100%;
-  max-width: 95%;
   height: 42px;
 }
 
@@ -43,6 +47,7 @@
   height: 32px;
   display: flex;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .pos-bills-label {
@@ -51,6 +56,7 @@
   font-size: 13px;
   color: #495057;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .pos-bill-tabs-container {
@@ -58,28 +64,24 @@
   display: flex;
   align-items: center;
   height: 36px;
+  min-width: 0; /* Allow container to shrink below content size */
+  overflow-x: auto;
 }
 
-.pos-loading-message {
-  font-size: 13px;
-  color: #6c757d;
-  display: flex;
-  align-items: center;
-}
-
+/* Card container - make it flexible */
 .pos-card-container {
   padding: 0;
   margin: 0;
-  max-width: 100%;
+  width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   height: calc(85vh);
 }
 
+/* Search bar wrapper - make it grow with container */
 .pos-search-bar-wrapper {
   width: 100%;
-  max-width: 95%;
   margin-bottom: 1%;
   padding: 0.75%;
   background-color: #fff;
@@ -87,9 +89,9 @@
   box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
 }
 
+/* Products card - make it flexible */
 .pos-products-card {
   width: 100%;
-  max-width: 95%;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -113,14 +115,18 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .pos-pay-value {
   font-size: 90%;
 }
 
+/* Sales sidebar */
 .pos-sales-sidebar {
   width: 25%;
+  min-width: 250px; /* Ensure sidebar doesn't get too narrow */
   border-left: 1px solid #dee2e6;
   padding: 1%;
   background-color: #fff;
@@ -136,12 +142,17 @@
   padding: 0;
 }
 
-.pos-loading-sales {
-  padding: 1%;
-  font-size: 85%;
-}
-
-.pos-error-message {
-  padding: 1%;
-  font-size: 85%;
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .pos-app-container {
+    flex-direction: column;
+    height: auto;
+  }
+  
+  .pos-sales-sidebar {
+    width: 100%;
+    border-left: none;
+    border-top: 1px solid #dee2e6;
+    margin-top: 15px;
+  }
 }
