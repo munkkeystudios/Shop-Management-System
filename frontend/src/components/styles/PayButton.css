@@ -199,17 +199,17 @@
     flex-direction: column;
     gap: 15px;
   }
-  
+
   .payment-summary {
     flex-direction: column;
     gap: 15px;
   }
-  
+
   .payment-total {
     text-align: center;
     width: 100%;
   }
-  
+
   .modal-body {
     padding: 15px 10px;
   }
@@ -220,6 +220,12 @@
   padding: 8px 20px;
   border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #00a838 !important;
+  border-color: #00a838 !important;
 }
 
 .form-check-input {
@@ -229,14 +235,14 @@
   border: 2px solid #ced4da;
 }
 
-.no-spinner::-webkit-inner-spin-button, 
-.no-spinner::-webkit-outer-spin-button { 
-  -webkit-appearance: none; 
-  margin: 0; 
+.no-spinner::-webkit-inner-spin-button,
+.no-spinner::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 .change-display {
-  background-color: #e9ecef !important; 
+  background-color: #e9ecef !important;
   font-weight: 600;
   color: #495057;
   cursor: default;

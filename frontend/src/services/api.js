@@ -1,7 +1,6 @@
 import axios from 'axios';
-// Create an Axios instance with default config
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5002/api', // Updated port to 5002
+  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5002/api',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -192,5 +191,5 @@ export const userAPI = {
   updateNotificationPreferences: (userId, preferences) => api.put(`/users/${userId}/notifications`, preferences)
 };
 
-export default api; // Export the configured instance
+export default api;
 

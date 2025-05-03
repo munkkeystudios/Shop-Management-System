@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import { FaPrint } from 'react-icons/fa';
+import { generateBarcodeUrl, handleBarcodeError } from '../utils/barcodeUtils';
 import './styles/ProductLabel.css';
 
 const ProductLabel = ({ product, onClose }) => {
@@ -70,7 +71,19 @@ const ProductLabel = ({ product, onClose }) => {
 
     // Create multiple copies if needed (for now just one)
     printWindow.document.write('<div class="print-container">');
-    printWindow.document.write(printContent.innerHTML);
+
+    // Clone the content to avoid modifying the original
+    const contentClone = printContent.cloneNode(true);
+
+    // Ensure barcode image is loaded before printing
+    const barcodeImg = contentClone.querySelector('.barcode-container img');
+    if (barcodeImg) {
+      barcodeImg.onerror = function(e) {
+        handleBarcodeError(e);
+      };
+    }
+
+    printWindow.document.write(contentClone.innerHTML);
     printWindow.document.write('</div>');
 
     printWindow.document.write('</body></html>');
@@ -98,8 +111,9 @@ const ProductLabel = ({ product, onClose }) => {
             <div className="product-price">${product.price?.toFixed(2) || '0.00'}</div>
             <div className="barcode-container">
               <img
-                src={`https://barcodeapi.org/api/code128/${product.barcode || '000000000000'}`}
+                src={generateBarcodeUrl(product.barcode)}
                 alt="Barcode"
+                onError={handleBarcodeError}
               />
             </div>
           </div>

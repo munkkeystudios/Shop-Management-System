@@ -141,15 +141,15 @@ const Login = () => {
               </div>
             </div>
 
-            <div className="form-group">
-              <button
-                type="submit"
-                disabled={loading}
-                className="submit-button"
-              >
-                {loading ? "Signing in..." : "Sign In"}
-                <FiLogIn className="button-icon" />
-              </button>
+            <div className="form-group login-button-wrapper">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="submit-button login-submit-button"
+                >
+                  <span>{loading ? "Signing in..." : "Sign In"}</span>
+                  <FiLogIn className="button-icon" />
+                </button>
             </div>
           </form>
         </div>

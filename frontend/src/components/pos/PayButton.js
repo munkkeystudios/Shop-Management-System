@@ -15,7 +15,7 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateB
 
   const GST = 0.10;
   const endPayment = Number((totalPayable + GST * totalPayable).toFixed(2));
-  
+
   // Calculate change based on cash received
   const cashChange = cashReceived ? Number(cashReceived) - endPayment : 0;
 
@@ -27,13 +27,13 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateB
     setCardNumber('');
     setLoanNumber('');
   };
-  
+
   const handleShow = () => setShow(true);
 
   // Validate form based on payment method
   const validateForm = () => {
     const errors = {};
-    
+
     if (paymentMethod === 'cash') {
       if (!cashReceived || isNaN(cashReceived) || Number(cashReceived) <= 0) {
         errors.cashReceived = 'Please enter a valid amount received';
@@ -49,7 +49,7 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateB
         errors.loanNumber = 'Please enter a valid loan number';
       }
     }
-    
+
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -61,7 +61,7 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateB
       if (!validateForm()) {
         return;
       }
-      
+
       // Determine payment status based on payment method
       let paymentStatus = 'paid';
       if (paymentMethod === 'loan') {
@@ -99,14 +99,14 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateB
 
       const response = await salesAPI.create(saleData);
       console.log('Sale created successfully:', response.data);
-      
+
       if (response.data && response.data.data && response.data.data._id) {
         // Get the ID of the newly created sale
         const newSaleId = response.data.data._id;
-        
+
         // Update the billNumber for the next transaction
         updateBillNumber(billNumber + 1);
-        
+
         // Prepare receipt data with correct values for the generateReceipt function
         const receiptData = {
           billNumber: billNumber,
@@ -122,21 +122,21 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateB
           discount: 0,
           tax: Number((GST * totalPayable).toFixed(2)),
           total: endPayment,
-          paymentMethod: paymentMethod === 'cash' ? 'Cash Payment' : 
+          paymentMethod: paymentMethod === 'cash' ? 'Cash Payment' :
                         (paymentMethod === 'card' ? 'Card/Debit Payment' : 'Loan Payment'),
-          received: paymentMethod === 'cash' ? Number(cashReceived) : 
+          received: paymentMethod === 'cash' ? Number(cashReceived) :
                   (paymentMethod === 'card' ? endPayment : 0),
           returned: paymentMethod === 'cash' ? Math.max(0, Number(cashReceived) - endPayment) : 0,
           paymentStatus: paymentStatus,
           date: new Date(),
         };
-        
+
         generateReceipt(receiptData);
-        
+
         if (onPaymentComplete) {
           onPaymentComplete(newSaleId);
         }
-        
+
         handleClose();
       } else {
         console.error('Sale created but no ID returned:', response.data);
@@ -144,7 +144,7 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateB
       }
     } catch (error) {
       console.error('Error during transaction:', error);
-      
+
       // More helpful error messages based on error type
       if (error.response) {
         if (error.response.status === 400) {
@@ -166,7 +166,22 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateB
 
   return (
     <>
-      <Button variant="success" onClick={handleShow}>
+      <Button
+        variant="success"
+        onClick={handleShow}
+        style={{
+          fontSize: '0.95rem',
+          padding: '8px 20px',
+          borderRadius: '4px',
+          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+          height: '38px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: '#00a838',
+          borderColor: '#00a838'
+        }}
+      >
         Pay now
       </Button>
 
@@ -180,7 +195,7 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateB
               {errorMessage}
             </Alert>
           )}
-          
+
           {/* Side-by-side layout container */}
           <div className="payment-layout">
             {/* Left column - Payment methods */}
@@ -225,8 +240,8 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateB
                     <h5>Cash Details</h5>
                     <Form.Group className="mb-3">
                       <Form.Label>Cash Received</Form.Label>
-                      <Form.Control 
-                        type="number" 
+                      <Form.Control
+                        type="number"
                         placeholder="Enter amount received"
                         value={cashReceived}
                         onChange={(e) => {
@@ -240,14 +255,14 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateB
                         {validationErrors.cashReceived}
                       </Form.Control.Feedback>
                     </Form.Group>
-                    
+
                     {/* Cash change box - always visible and updated properly */}
                     <Form.Group className="mb-3">
                       <Form.Label>Cash to Return</Form.Label>
-                      <Form.Control 
-                        type="text" 
+                      <Form.Control
+                        type="text"
                         value={cashReceived && !isNaN(cashReceived) && Number(cashReceived) > 0
-                          ? `$${Math.max(0, (Number(cashReceived) - endPayment)).toFixed(2)}` 
+                          ? `$${Math.max(0, (Number(cashReceived) - endPayment)).toFixed(2)}`
                           : '$0.00'}
                         readOnly
                         className="change-display"
@@ -262,8 +277,8 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateB
                     <h5>Card Details</h5>
                     <Form.Group className="mb-3">
                       <Form.Label>Card Number</Form.Label>
-                      <Form.Control 
-                        type="text" 
+                      <Form.Control
+                        type="text"
                         placeholder="Enter card number"
                         value={cardNumber}
                         onChange={(e) => setCardNumber(e.target.value)}
@@ -273,7 +288,7 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateB
                         {validationErrors.cardNumber}
                       </Form.Control.Feedback>
                     </Form.Group>
-                    
+
                     <Row className="mb-3">
                       <Col>
                         <Form.Group>
@@ -312,7 +327,7 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateB
                 )}
               </div>
             </div>
-            
+
             {/* Right column - Order details */}
             <div className="payment-layout-right">
               <div className="order-details">
@@ -343,8 +358,8 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateB
 
           <div className="payment-summary">
             <h5 className="payment-total">Total Payable: ${endPayment.toFixed(2)}</h5>
-            <Button 
-              variant="success" 
+            <Button
+              variant="success"
               onClick={handleTransaction}
               disabled={
                 (paymentMethod === 'cash' && (!cashReceived || Number(cashReceived) < endPayment)) ||

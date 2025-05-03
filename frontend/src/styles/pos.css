@@ -1,7 +1,7 @@
 /* Main container */
 .pos-app-container {
   display: flex;
-  height: calc(90vh);
+  height: calc(90vh); /* Increased height since we removed the spacer */
   padding: 0;
   margin: 0;
   width: 100%;
@@ -10,7 +10,7 @@
 /* Left section - make it flexible */
 .pos-main-content {
   flex: 1;
-  padding: 0 15px;
+  padding: 0 15px; /* Removed top padding */
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -22,9 +22,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 15px;
+  margin-top: 10px; /* Increased top margin slightly */
   border-bottom: 1px solid #e9ecef;
-  padding-bottom: 8px;
+  padding-bottom: 10px;
   width: 100%;
   height: 42px;
 }
@@ -76,7 +77,7 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  height: calc(85vh);
+  height: calc(85vh); /* Increased height since we removed the spacer */
 }
 
 /* Search bar wrapper - make it grow with container */
@@ -119,8 +120,46 @@
   gap: 8px;
 }
 
+/* Ensure buttons in footer have consistent height */
+.pos-products-footer button,
+.pos-products-footer .btn {
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .pos-pay-value {
   font-size: 90%;
+}
+
+/* Reset button styling to match pay now button */
+.pos-reset-button {
+  background-color: #dc3545;
+  border-color: #dc3545;
+  color: white;
+  font-size: 0.95rem;
+  padding: 8px 20px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: none;
+  transition: all 0.3s ease;
+  height: 38px; /* Match the height of the pay now button */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pos-reset-button:hover {
+  background-color: #c82333;
+  border-color: #bd2130;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.pos-reset-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
 }
 
 /* Sales sidebar */
@@ -129,17 +168,32 @@
   min-width: 250px; /* Ensure sidebar doesn't get too narrow */
   border-left: 1px solid #dee2e6;
   padding: 1%;
-  background-color: #fff;
+  background-color: transparent; /* Changed from white to transparent */
 }
 
 .pos-sales-header {
   background-color: #f8f9fa;
-  padding: 0.5% 1%;
+  padding: 10px 15px;
   font-size: 85%;
+  font-weight: 600;
+  color: #333;
+  border-bottom: 1px solid #e9ecef;
 }
 
 .pos-sales-body {
   padding: 0;
+  max-height: calc(85vh - 50px); /* Limit height and enable scrolling */
+  overflow-y: auto;
+}
+
+/* Styles for the sales card */
+.pos-sales-card {
+  border-radius: 8px !important;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  margin: 0;
+  height: 100%;
 }
 
 /* Responsive adjustments */
@@ -148,11 +202,12 @@
     flex-direction: column;
     height: auto;
   }
-  
+
   .pos-sales-sidebar {
     width: 100%;
     border-left: none;
-    border-top: 1px solid #dee2e6;
+    border-top: none; /* Removed border */
     margin-top: 15px;
+    padding-top: 10px;
   }
 }

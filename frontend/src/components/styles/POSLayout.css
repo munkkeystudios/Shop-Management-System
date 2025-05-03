@@ -15,7 +15,9 @@
 .pos-main-content {
   flex: 1;
   padding: 20px;
-  background-color: #f8f9fa;
+  padding-top: 0; /* Remove top padding */
+  margin-top: 0; /* Remove top margin */
+  background-color: #f8f9fa; /* Light gray background */
   overflow-y: auto;
 }
 

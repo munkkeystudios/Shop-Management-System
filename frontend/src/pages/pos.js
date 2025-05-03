@@ -8,10 +8,10 @@ import SalesTable from '../components/pos/SalesTable.js';
 import PayButton from '../components/pos/PayButton.js';
 import { salesAPI } from '../services/api.js';
 import useCart from '../hooks/useCart';
-import '../styles/pos.css'; 
+import '../styles/pos.css';
 
 const Pos = () => {
-  // State variables 
+  // State variables
   const [searchedProduct, setSearchedProduct] = useState(null);
   const [billNumber, setBillNumber] = useState('Loading...');
   const [sales, setSales] = useState([]);
@@ -31,7 +31,7 @@ const Pos = () => {
     setCartItems,
   } = useCart();
 
-  // Fetch the last bill number 
+  // Fetch the last bill number
   useEffect(() => {
     const fetchLastBillNumber = async () => {
       try {
@@ -52,7 +52,7 @@ const Pos = () => {
     fetchLastBillNumber();
   }, []);
 
-  // Fetch last ten sales 
+  // Fetch last ten sales
   const fetchLastTenSales = async () => {
     try {
       setLoadingSales(true);
@@ -72,21 +72,21 @@ const Pos = () => {
     }
   };
 
-  // Fetch sales on component mount 
+  // Fetch sales on component mount
   useEffect(() => {
     fetchLastTenSales();
   }, []);
 
-  // Add new sale function 
+  // Add new sale function
   const addNewSale = async (newSaleId) => {
     if (!newSaleId) {
       console.error('No sale ID provided');
       return;
     }
-    
+
     try {
       const response = await salesAPI.getSale(newSaleId);
-      
+
       if (response.data && response.data.data) {
         setSales(prevSales => {
           const currentSales = Array.isArray(prevSales) ? prevSales : [];
@@ -99,12 +99,12 @@ const Pos = () => {
     }
   };
 
-  // Product search handler 
+  // Product search handler
   const handleProductSearch = (product) => {
     setSearchedProduct(product);
   };
 
-  // Add searched product to cart 
+  // Add searched product to cart
   useEffect(() => {
     if (searchedProduct) {
       addToCart(searchedProduct);
@@ -112,40 +112,40 @@ const Pos = () => {
     }
   }, [searchedProduct, addToCart]);
 
-  // Back button handler 
+  // Back button handler
   const handleBackClick = () => {
     window.history.back();
   };
 
-  // Payment completion handler 
+  // Payment completion handler
   const handlePaymentComplete = async (newSaleId) => {
     // Reset cart items
     setCartItems([]);
-    
+
     if (newSaleId) {
       console.log('New sale created with ID:', newSaleId);
       addNewSale(newSaleId);
-      
+
       // Store the current bill number before updating
       const previousBillNumber = activeBill || billNumber;
-      
+
       try {
         // Fetch the latest bill number from the server
         const response = await salesAPI.getLastBillNumber();
         const lastBillNumber = response.data.lastBillNumber;
-        
+
         // Update the bill number state with the next available number
         const nextBillNumber = lastBillNumber + 1;
         setBillNumber(nextBillNumber);
-        
+
         // If we have a reference to the BillTab component
         if (billTabRef.current) {
           // Close the completed bill tab
           billTabRef.current.handleTabClose(previousBillNumber);
-          
+
           // Update all remaining tabs to use the latest bill numbers
           billTabRef.current.updateAllBillNumbers(nextBillNumber);
-          
+
           // Set the active bill to the next bill number
           setActiveBill(nextBillNumber);
         }
@@ -157,14 +157,14 @@ const Pos = () => {
     }
   };
 
-  // Set active bill when bill number is initially loaded 
+  // Set active bill when bill number is initially loaded
   useEffect(() => {
     if (billNumber !== 'Loading...' && billNumber !== 'Error' && !activeBill) {
       setActiveBill(billNumber);
     }
   }, [billNumber, activeBill]);
 
-  // Tab change handler 
+  // Tab change handler
   const handleTabChange = (selectedBillNumber) => {
     setActiveBill(selectedBillNumber);
   };
@@ -182,7 +182,7 @@ const Pos = () => {
               <span className="pos-bills-label">Recent Bills:</span>
               <div className="pos-bill-tabs-container">
                 {billNumber !== 'Loading...' && billNumber !== 'Error' ? (
-                  <BillTab 
+                  <BillTab
                     ref={billTabRef}
                     billNumber={activeBill || billNumber}
                     onTabChange={handleTabChange}
@@ -214,9 +214,9 @@ const Pos = () => {
               </Card.Body>
 
               <Card.Footer className="pos-products-footer">
-                <Button variant="danger" size="sm" onClick={resetCart}>
+                <button className="pos-reset-button" onClick={resetCart}>
                   Reset
-                </Button>
+                </button>
                 <div className="text-end">
                   <div className="pos-pay-value">
                     Total Payable: ${totalPayable.toFixed(2)}
@@ -238,7 +238,7 @@ const Pos = () => {
 
         {/* Right section */}
         <div className="pos-sales-sidebar">
-          <Card>
+          <Card className="pos-sales-card">
             <Card.Header className="pos-sales-header">
               Last Sales
             </Card.Header>
@@ -248,7 +248,7 @@ const Pos = () => {
               ) : salesError ? (
                 <div className="pos-error-message">{salesError}</div>
               ) : (
-                <SalesTable sales={sales} /> 
+                <SalesTable sales={sales} />
               )}
             </Card.Body>
           </Card>

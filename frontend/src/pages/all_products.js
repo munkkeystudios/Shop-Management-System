@@ -7,6 +7,7 @@ import { useNotifications } from '../context/NotificationContext';
 import Layout from '../components/Layout';
 import { productsAPI } from '../services/api';
 import ProductLabel from '../components/ProductLabel';
+import { generateBarcodeUrl, handleBarcodeError } from '../utils/barcodeUtils';
 import './all_products.css';
 
 // Import images
@@ -423,9 +424,10 @@ const AllProducts = () => {
               <div className="products-modal-barcode">
                 <div className="text-center">
                   <img
-                    src={`https://barcodeapi.org/api/code128/${selectedProduct.barcode || '000000000000'}`}
+                    src={generateBarcodeUrl(selectedProduct.barcode)}
                     alt="Barcode"
                     style={{ width: '120px', height: '30px' }}
+                    onError={handleBarcodeError}
                   />
                   <div style={{ fontSize: '11px', marginTop: '2px' }}>
                     {selectedProduct.barcode || '000000000000'}
@@ -607,9 +609,10 @@ const AllProducts = () => {
               <div className="products-modal-barcode">
                 <div className="text-center">
                   <img
-                    src={`https://barcodeapi.org/api/code128/${editFormData.barcode || '000000000000'}`}
+                    src={generateBarcodeUrl(editFormData.barcode)}
                     alt="Barcode"
                     style={{ width: '120px', height: '30px' }}
+                    onError={handleBarcodeError}
                   />
                   <div style={{ fontSize: '11px', marginTop: '2px' }}>
                     {editFormData.barcode || '000000000000'}
