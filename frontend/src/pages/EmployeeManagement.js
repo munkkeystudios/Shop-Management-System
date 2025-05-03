@@ -42,13 +42,13 @@ const EmployeeManagement = () => {
     });
     const { addNotification } = useNotifications();
 
-    // State for Modals
+   
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [currentUser, setCurrentUser] = useState(null);
 
-    // State for Forms
+
     const [formData, setFormData] = useState({
         name: '', username: '', password: '', role: 'cashier', phone: '', active: true
     });
@@ -84,7 +84,7 @@ const EmployeeManagement = () => {
         setTimeout(() => setSuccessMessage(''), 3000);
     };
 
-    // --- Modal Handling ---
+
     const openCreateModal = () => {
         setFormData({ name: '', username: '', password: '', role: 'cashier', phone: '', active: true });
         setError(null);
@@ -96,13 +96,13 @@ const EmployeeManagement = () => {
         setCurrentUser(user);
         setEditFormData({
             name: user.name || '',
-            username: user.username, // Usually username cannot be edited
-            password: '', // Clear password field for reset option
+            username: user.username, 
+            password: '', 
             role: user.role,
             phone: user.phone || '',
             active: user.active
         });
-        setError(null); // Clear previous errors
+        setError(null); 
         setIsEditModalOpen(true);
     };
     const closeEditModal = () => setIsEditModalOpen(false);
@@ -130,13 +130,13 @@ const EmployeeManagement = () => {
              setError("Password must be at least 6 characters long.");
              return;
         }
-        setError(null); // Clear previous errors
+        setError(null); 
         setLoading(true);
         try {
             const response = await usersAPI.create({ ...formData });
             const newEmployeeId = response.data?.data?._id;
 
-            // Add notification
+            
             addNotification(
                 'employee',
                 `New employee "${formData.name}" (${formData.username}) has been created`,
@@ -145,7 +145,7 @@ const EmployeeManagement = () => {
 
             showSuccess(`Employee ${formData.username} created successfully.`);
             closeCreateModal();
-            fetchEmployees(); // Refresh list
+            fetchEmployees(); 
         } catch (err) {
             console.error("Create user error:", err);
             setError(err.response?.data?.message || "Failed to create employee.");
@@ -164,7 +164,7 @@ const EmployeeManagement = () => {
              phone: editFormData.phone,
              active: editFormData.active
          };
-         // Only include password if user entered something
+         
          if (editFormData.password) {
              if (editFormData.password.length < 6) {
                  setError("New password must be at least 6 characters long.");
@@ -172,13 +172,13 @@ const EmployeeManagement = () => {
              }
              updateData.password = editFormData.password;
          }
-         setError(null); // Clear previous errors
+         setError(null); 
          setLoading(true);
 
         try {
             await usersAPI.update(currentUser._id, updateData);
 
-            // Add notification
+            
             addNotification(
                 'employee',
                 `Employee "${currentUser.name || currentUser.username}" has been updated`,
@@ -187,7 +187,7 @@ const EmployeeManagement = () => {
 
             showSuccess(`Employee ${currentUser.username} updated successfully.`);
             closeEditModal();
-            fetchEmployees(); // Refresh list
+            fetchEmployees(); 
         } catch (err) {
              console.error("Update user error:", err);
              setError(err.response?.data?.message || "Failed to update employee.");
@@ -202,7 +202,7 @@ const EmployeeManagement = () => {
         try {
             await usersAPI.delete(currentUser._id);
 
-            // Add notification
+            
             addNotification(
                 'employee',
                 `Employee "${currentUser.name || currentUser.username}" has been deleted`
@@ -210,27 +210,27 @@ const EmployeeManagement = () => {
 
             showSuccess(`Employee ${currentUser.username} deleted successfully.`);
             closeDeleteModal();
-            fetchEmployees(); // Refresh list
+            fetchEmployees(); 
         } catch (err) {
              console.error("Delete user error:", err);
              setError(err.response?.data?.message || "Failed to delete employee.");
-             closeDeleteModal(); // Close modal even on error
+             closeDeleteModal(); 
         } finally {
              setLoading(false);
         }
     };
 
-    // Handle applying filters
+    
     const handleApplyFilters = (newFilters) => {
         setFilters(newFilters);
     };
 
-    // Handle PDF export
+   
     const handleExportPDF = async () => {
         try {
             setLoading(true);
 
-            // Add current filters to export
+            
             const params = {
                 format: 'pdf',
                 role: filters.role || '',
@@ -239,14 +239,14 @@ const EmployeeManagement = () => {
 
             const response = await usersAPI.exportUsers('pdf', params);
 
-            // Create a blob URL and open it in a new tab
+          
             const blob = new Blob([response.data], { type: 'application/pdf' });
             const url = window.URL.createObjectURL(blob);
 
-            // Open in a new tab
+          
             window.open(url, '_blank');
 
-            // Clean up the URL object after opening
+          
             setTimeout(() => window.URL.revokeObjectURL(url), 1000);
 
             setError(null);
@@ -258,12 +258,12 @@ const EmployeeManagement = () => {
         }
     };
 
-    // Handle Excel export
+  
     const handleExportExcel = async () => {
         try {
             setLoading(true);
 
-            // Add current filters to export
+           
             const params = {
                 format: 'csv',
                 role: filters.role || '',
@@ -272,18 +272,18 @@ const EmployeeManagement = () => {
 
             const response = await usersAPI.exportUsers('csv', params);
 
-            // Create a blob URL and trigger download
+            
             const blob = new Blob([response.data], { type: 'text/csv' });
             const url = window.URL.createObjectURL(blob);
 
-            // Create a temporary link and trigger download
+            
             const link = document.createElement('a');
             link.href = url;
             link.setAttribute('download', 'employees.csv');
             document.body.appendChild(link);
             link.click();
 
-            // Clean up
+            
             document.body.removeChild(link);
             setTimeout(() => window.URL.revokeObjectURL(url), 1000);
 
@@ -296,7 +296,7 @@ const EmployeeManagement = () => {
         }
     };
 
-    // --- Filtering ---
+   
     const filteredUsers = users.filter(user => {
         const searchTermLower = searchTerm.toLowerCase();
         const matchesSearch =
@@ -304,10 +304,10 @@ const EmployeeManagement = () => {
             user.username.toLowerCase().includes(searchTermLower) ||
             user.role.toLowerCase().includes(searchTermLower);
 
-        // Apply role filter
+        
         const matchesRole = !filters.role || user.role === filters.role;
 
-        // Apply status filter
+       
         const matchesStatus = !filters.status ||
             (filters.status === 'active' && user.active) ||
             (filters.status === 'inactive' && !user.active);
