@@ -15,7 +15,6 @@ const loanController = require('../controllers/loanController'); // Add loanCont
 const { auth } = require('../middleware/auth');
 
 router.post('/login', userController.login);
-// router.post('/signup', userController.register);
 
 router.post('/products', productController.createProduct);
 router.use(auth);
@@ -59,6 +58,7 @@ router.patch('/products/:id/stock', productController.updateStock);
 
 router.post('/sales', saleController.createSale);
 router.get('/sales', saleController.getSales);
+router.get('/sales/recent', saleController.getRecentSales);
 router.get('/sales/last-bill-number', saleController.getLastBillNumber); 
 router.get('/sales/last-ten', saleController.getLastTenSales); 
 router.get('/sales/stats', saleController.getSalesStats); 
@@ -73,12 +73,11 @@ router.get('/purchases/:id', purchaseController.getPurchaseById);
 router.delete('/purchases/:id', purchaseController.deletePurchase);
 router.patch('/purchases/:id/status', purchaseController.updatePurchaseStatus);
 
-
-
 // Loan routes
 router.post('/loans', loanController.createLoan); 
 router.get('/loans', loanController.getAllLoans); 
 router.get('/loans/loan-number/:loanNumber', loanController.getLoanByLoanNumber); 
+router.get('/loans/export', loanController.exportLoans); // Add this new export route
 router.get('/loans/:id', loanController.getLoanById); 
 router.put('/loans/:id/repayment', loanController.updateLoanRepayment); 
 router.put('/loans/:loanId/add-items', loanController.addLoanItems); 

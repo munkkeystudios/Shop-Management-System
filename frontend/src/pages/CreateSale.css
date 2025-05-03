@@ -56,7 +56,7 @@
 }
 
 .create-sale-form .form-group-full {
-    grid-column: 1 / -1; /* Span full width */
+    grid-column: 1 / span 2; /* Span full width */
 }
 
 /* Items Section */

@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { FaSearch, FaEye, FaMoneyBillWave } from 'react-icons/fa';
+import { FaSearch, FaEye, FaMoneyBillWave, FaFileExcel, FaFilePdf, FaPlus } from 'react-icons/fa';
 import Layout from '../components/Layout';
 import '../styles/Loans.css';
-import { loansAPI } from '../services/api'; // Use the actual API
+import { loansAPI } from '../services/api';
 import { useNotifications } from '../context/NotificationContext';
 
 const Loans = () => {
     const { addNotification } = useNotifications();
-    const [loans, setLoans] = useState([]); // Ensure loans is initialized as an array
+    const [loans, setLoans] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
@@ -52,7 +52,7 @@ const Loans = () => {
     const handlePayLoan = async (loanId) => {
         try {
             setLoading(true);
-            const response = await loansAPI.payLoan(loanId); // Call the API to pay the loan
+            const response = await loansAPI.payLoan(loanId);
             console.log('Loan payment response:', response.data);
 
             // Find the loan that was paid
@@ -77,7 +77,6 @@ const Loans = () => {
                 loan._id === loanId
                     ? {
                           ...loan,
-                          loanAmount: 0,
                           amountPaid: 0,
                           remainingBalance: 0,
                           paymentStatus: 'paid',
@@ -94,6 +93,66 @@ const Loans = () => {
         }
     };
 
+    // Handle PDF export
+    const handlePdfExport = async () => {
+        try {
+            setLoading(true);
+            const response = await loansAPI.exportLoans('pdf');
+
+            // Create a blob URL and open it in a new tab
+            const blob = new Blob([response.data], { type: 'application/pdf' });
+            const url = window.URL.createObjectURL(blob);
+
+            window.open(url, '_blank');
+
+            // Clean up the URL object after opening
+            setTimeout(() => window.URL.revokeObjectURL(url), 1000);
+
+            setError(null);
+        } catch (err) {
+            console.error('Error exporting PDF:', err);
+            setError('Failed to export PDF');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Handle Excel export
+    const handleExcelExport = async () => {
+        try {
+            setLoading(true);
+            const response = await loansAPI.exportLoans('csv');
+
+            // Create a blob URL and trigger download
+            const blob = new Blob([response.data], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+
+            // Create a temporary link and trigger download
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'loans.csv');
+            document.body.appendChild(link);
+            link.click();
+
+            // Clean up
+            document.body.removeChild(link);
+            setTimeout(() => window.URL.revokeObjectURL(url), 1000);
+
+            setError(null);
+        } catch (err) {
+            console.error('Error exporting CSV:', err);
+            setError('Failed to export CSV');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleCreateNewLoan = () => {
+        // Navigate to loan creation page or open a modal
+        window.location.href = '/create-loans';
+        
+    };
+
     return (
         <Layout title="Loans">
             {loading ? (
@@ -105,70 +164,104 @@ const Loans = () => {
                     <span className="block sm:inline">{error}</span>
                 </div>
             ) : (
-                <div className="loans-container">
-                    <div className="loans-header">
-                        <h1>Loans</h1>
-                        <div className="loans-search-container">
-                            <FaSearch className="loans-search-icon" />
-                            <input
-                                type="text"
-                                placeholder="Search by customer name or loan number"
-                                className="loans-search-input"
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                            />
+                <div className="loans-frame">
+                    <div className="loans-container">
+                        <div className="loans-header">
+                            <div className="loans-title">Loans</div>
+                            
+                            <div className="loans-controls-container">
+                                <div className="loans-search-container">
+                                    <FaSearch className="loans-search-icon" />
+                                    <input
+                                        type="text"
+                                        placeholder="Search by customer name or loan number"
+                                        className="loans-search-input"
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                    />
+                                </div>
+                                
+                                <div className="loans-action-buttons">
+                                    <button
+                                        className="loans-export-button pdf-button"
+                                        onClick={handlePdfExport}
+                                        disabled={loading}
+                                    >
+                                        <FaFilePdf /> PDF
+                                    </button>
+                                    <button
+                                        className="loans-export-button excel-button"
+                                        onClick={handleExcelExport}
+                                        disabled={loading}
+                                    >
+                                        <FaFileExcel /> Excel
+                                    </button>
+                                    <button 
+                                        className="loans-create-button" 
+                                        onClick={handleCreateNewLoan}
+                                    >
+                                        <FaPlus /> Create New Loan
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                    </div>
 
-                    <div className="loans-table-container">
-                        <table className="loans-table">
-                            <thead>
-                                <tr>
-                                    <th>Loan Number</th>
-                                    <th>Customer</th>
-                                    <th>Loan Amount</th>
-                                    <th>Remaining Loan</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {filteredLoans.length > 0 ? (
-                                    filteredLoans.map((loan) => (
-                                        <tr key={loan.loanNumber}>
-                                            <td>{loan.loanNumber}</td>
-                                            <td>{loan.customer.name}</td>
-                                            <td>${loan.loanAmount.toLocaleString()}</td>
-                                            <td>${loan.remainingBalance.toLocaleString()}</td>
-                                            <td>
-                                                <span className={`status-badge ${loan.paymentStatus}`}>
-                                                    {loan.paymentStatus.charAt(0).toUpperCase() + loan.paymentStatus.slice(1)}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <button className="loans-action-button">
-                                                    <FaEye />
-                                                </button>
-                                                {loan.paymentStatus !== 'paid' && (
-                                                    <button
-                                                        className="loans-action-button pay-button"
-                                                        onClick={() => handlePayLoan(loan._id)}
-                                                    >
-                                                        <FaMoneyBillWave />
-                                                    </button>
-                                                )}
+                        <div className="loans-table-container">
+                            <table className="loans-table">
+                                <thead>
+                                    <tr>
+                                        <th>id</th>
+                                        <th>Customer</th>
+                                        <th>Loan Amount</th>
+                                        <th>Remaining Loan</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {filteredLoans.length > 0 ? (
+                                        filteredLoans.map((loan) => (
+                                            <tr key={loan.loanNumber}>
+                                                <td>{loan.loanNumber}</td>
+                                                <td>{loan.customer.name}</td>
+                                                <td>${loan.loanAmount.toLocaleString()}</td>
+                                                <td>${loan.remainingBalance.toLocaleString()}</td>
+                                                <td>
+                                                    <span className={`loans-status ${loan.paymentStatus}`}>
+                                                        {loan.paymentStatus.charAt(0).toUpperCase() + loan.paymentStatus.slice(1)}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <div className="loans-action-buttons-cell">
+                                                        {loan.paymentStatus !== 'paid' && (
+                                                            <button
+                                                                className="loans-action-button pay-button"
+                                                                onClick={() => handlePayLoan(loan._id)}
+                                                                title="Pay Loan"
+                                                            >
+                                                                <FaMoneyBillWave />
+                                                            </button>
+                                                        )}
+                                                        <button 
+                                                            className="loans-action-button"
+                                                            title="View Details"
+                                                        >
+                                                            <FaEye />
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan="6" className="text-center">
+                                                No loans found.
                                             </td>
                                         </tr>
-                                    ))
-                                ) : (
-                                    <tr>
-                                        <td colSpan="6" className="text-center">
-                                            No loans found.
-                                        </td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             )}

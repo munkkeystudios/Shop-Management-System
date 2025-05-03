@@ -5,7 +5,7 @@ import { FaChevronRight, FaUserCircle, FaSignOutAlt, FaCog } from 'react-icons/f
 import NotificationIcon from './NotificationIcon';
 import { getBreadcrumbs } from '../utils/pathUtils';
 import { useAuth } from '../context/AuthContext';
-import './TopBar.css';
+import './styles/TopBar.css';
 
 const TopBar = () => {
   const location = useLocation();

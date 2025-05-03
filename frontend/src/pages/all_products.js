@@ -425,7 +425,7 @@ const AllProducts = () => {
                   <img
                     src={`https://barcodeapi.org/api/code128/${selectedProduct.barcode || '000000000000'}`}
                     alt="Barcode"
-                    style={{ width: '140px', height: '35px' }}
+                    style={{ width: '120px', height: '30px' }}
                   />
                   <div style={{ fontSize: '11px', marginTop: '2px' }}>
                     {selectedProduct.barcode || '000000000000'}
@@ -609,7 +609,7 @@ const AllProducts = () => {
                   <img
                     src={`https://barcodeapi.org/api/code128/${editFormData.barcode || '000000000000'}`}
                     alt="Barcode"
-                    style={{ width: '140px', height: '35px' }}
+                    style={{ width: '120px', height: '30px' }}
                   />
                   <div style={{ fontSize: '11px', marginTop: '2px' }}>
                     {editFormData.barcode || '000000000000'}

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { usersAPI } from '../services/api';
 import Layout from '../components/Layout';
 import '../styles/create_user.css'; 

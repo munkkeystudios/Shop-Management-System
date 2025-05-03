@@ -211,17 +211,17 @@ const CategoryPage = () => {
                   </div>
                   <span className="categories-page-info">Page 1 of 10</span>
                 </div>
+
+                <div className="categories-action-buttons-container">
+                  <button
+                    className="categories-action-button primary"
+                    onClick={() => setIsModalOpen(true)}
+                  >
+                    <FaPlus /> Create New Category
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-
-          <div className="categories-action-buttons-container">
-            <button
-              className="categories-action-button primary"
-              onClick={() => setIsModalOpen(true)}
-            >
-              <FaPlus /> Create New Category
-            </button>
           </div>
         </div>
       </div>

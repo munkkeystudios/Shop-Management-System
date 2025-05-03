@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FaFilter, FaTimes } from 'react-icons/fa';
-import './EmployeeFilter.css';
+import './styles/EmployeeFilter.css';
 
 const EmployeeFilter = ({ onApplyFilters }) => {
   const [isOpen, setIsOpen] = useState(false);

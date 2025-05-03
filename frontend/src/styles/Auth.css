@@ -11,7 +11,7 @@
 /* Login page styles */
 .login-page .auth-card-left {
   width: 45%;
-  background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('../images/background-image.jpeg');
+  background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("../images/background-image.jpeg");
   background-size: cover;
   background-position: center;
   color: white;
@@ -27,22 +27,25 @@
   top: 20px;
   left: 40px;
   display: flex;
+  align-items: center;
 }
 
 .login-page .logo img {
-  height: 36px; 
-  width: auto; 
-  margin-right: 10px; 
-  vertical-align: center;
+  height: 36px;
+  width: auto;
+  margin-right: 10px;
 }
 
 .login-page .logo {
   display: flex;
+  align-items: center;
 }
 
 .login-page .logo-container h1 {
   font-size: 24px;
   font-weight: bold;
+  margin: 0;
+  line-height: 1;
 }
 
 
@@ -71,14 +74,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #f4f4f4;
+  background-color: white;
 }
 
 .login-page .form-content {
   background-color: white;
   padding: 40px;
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 500px;
 }
@@ -90,7 +92,8 @@
 .login-page .auth-header h2 {
   color: #333;
   margin-bottom: 10px;
-  font-size: 24px;
+  font-size: 28px;
+  font-weight: bold;
 }
 
 .login-page .auth-header p {
@@ -215,10 +218,35 @@
 
 .form-group input {
   width: 100%;
-  padding: 10px;
+  padding: 10px 10px 10px 35px;
   border: 1px solid #ddd;
   border-radius: 4px;
   font-size: 14px;
+}
+
+.input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 10px;
+  color: #666;
+  font-size: 16px;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 10px;
+  color: #666;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.required {
+  color: red;
 }
 
 .form-options {
@@ -237,6 +265,8 @@
 
 .remember-me input {
   margin-right: 10px;
+  width: auto;
+  accent-color: #00a838;
 }
 
 .remember-me label {
@@ -246,24 +276,32 @@
 }
 
 .forgot-password {
-  color: #007bff;
+  color: #00a838;
   text-decoration: none;
 }
 
 .submit-button {
   width: 100%;
   padding: 12px;
-  background-color: #007bff;
+  background-color: #00a838;
   color: white;
   border: none;
   border-radius: 4px;
   font-size: 16px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
 }
 
 .submit-button:hover {
-  background-color: #0056b3;
+  background-color: #008a2e;
+}
+
+.button-icon {
+  margin-left: 5px;
 }
 
 .auth-footer {
@@ -273,7 +311,7 @@
 }
 
 .auth-footer a {
-  color: #007bff;
+  color: #00a838;
   text-decoration: none;
 }
 
@@ -301,16 +339,16 @@
   .auth-container {
     flex-direction: column;
   }
-  
+
   .login-page .auth-card-left {
     display: none;
   }
-  
+
   .login-page .auth-card-right {
     width: 100%;
     height: 100vh;
   }
-  
+
   .login-page .form-content {
     width: 90%;
     margin: 0 auto;
@@ -323,7 +361,7 @@
     align-items: flex-start;
     gap: 10px;
   }
-  
+
   .forgot-password {
     align-self: flex-end;
   }

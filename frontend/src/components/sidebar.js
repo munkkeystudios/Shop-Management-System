@@ -14,7 +14,7 @@ import { MdOutlineDisplaySettings } from 'react-icons/md';
 import { FaPlus, FaUpload } from "react-icons/fa";
 import { jwtDecode } from 'jwt-decode';
 import ModernDropdown, { ModernDropdownItem } from './ModernDropdown';
-import './Sidebar.css';
+import './styles/Sidebar.css';
 
 // sidebar layout
 const SideBar = ({ children }) => {
