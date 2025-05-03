@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { Tabs, Tab, Button } from 'react-bootstrap';
 import { FaTimes } from 'react-icons/fa';
 import '../styles/billTab.css'; // Import the CSS file
@@ -20,9 +20,39 @@ export const CreateBillButton = ({ onClick, text }) => {
   );
 };
 
-function BillTab({ billNumber, onTabChange, onTabClose }) {
+//  forwardRef to accept refs from parent component
+const BillTab = forwardRef(({ billNumber, onTabChange, onTabClose }, ref) => {
   const [billTabs, setBillTabs] = useState([billNumber]);
   const [activeTab, setActiveTab] = useState(`#${billNumber}`);
+
+  // Expose methods to parent component via ref
+  useImperativeHandle(ref, () => ({
+    handleTabClose: (billNum) => {
+      closeTab(null, billNum);
+    },
+    
+    updateAllBillNumbers: (nextBillNumber) => {
+      
+      
+      // If we have multiple tabs, we should keep them
+      // but update their bill numbers
+      if (billTabs.length > 0) {
+        const updatedTabs = [nextBillNumber];
+        
+        for (let i = 1; i < billTabs.length; i++) {
+          updatedTabs.push(nextBillNumber + i);
+        }
+        
+        setBillTabs(updatedTabs);
+        
+        setActiveTab(`#${nextBillNumber}`);
+        
+        if (onTabChange) {
+          onTabChange(nextBillNumber);
+        }
+      }
+    }
+  }));
 
   // Effect to handle when billNumber changes externally (like after a sale is made)
   useEffect(() => {
@@ -32,7 +62,6 @@ function BillTab({ billNumber, onTabChange, onTabClose }) {
     
     setActiveTab(`#${billNumber}`);
     
-    // Notify parent component about the change
     if (onTabChange) {
       onTabChange(billNumber);
     }
@@ -59,9 +88,10 @@ function BillTab({ billNumber, onTabChange, onTabClose }) {
     }
   };
 
-  const handleTabClose = (event, billNum) => {
-    // Stop the click event from propagating to the tab itself
-    event.stopPropagation();
+  const closeTab = (event, billNum) => {
+    if (event) {
+      event.stopPropagation();
+    }
     
     const updatedTabs = billTabs.filter(tab => tab !== billNum);
     
@@ -81,6 +111,11 @@ function BillTab({ billNumber, onTabChange, onTabClose }) {
     if (onTabClose) {
       onTabClose(billNum);
     }
+  };
+
+  // UI event handler for tab close button
+  const handleTabClose = (event, billNum) => {
+    closeTab(event, billNum);
   };
 
   // Custom tab title with close button
@@ -115,6 +150,6 @@ function BillTab({ billNumber, onTabChange, onTabClose }) {
       <CreateBillButton onClick={handleCreateNewBill} text="Create New Bill" />
     </div>
   );
-}
+});
 
 export default BillTab;

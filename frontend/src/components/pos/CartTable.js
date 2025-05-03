@@ -12,7 +12,7 @@ const CartTable = ({ cartItems, handleQuantityChange, handleRemoveItem }) => {
           <th width="300">Product</th>
           <th width="120">Price</th>
           <th width="120">Discount</th>
-          <th width="120">Price After Discount</th>
+          <th width="120">Disc. Price</th>
           <th width="100">Qty</th>
           <th width="120">Subtotal</th>
           <th width="60">Action</th>
