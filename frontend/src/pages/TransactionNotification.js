@@ -1,4 +1,3 @@
-// components/TransactionNotification.js
 import React, { useState, useEffect } from 'react';
 import './TransactionNotification.css';
 
