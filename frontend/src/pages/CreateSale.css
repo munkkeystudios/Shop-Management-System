@@ -1,7 +1,7 @@
 
 .create-sale-container {
     padding: 20px;
-    max-width: 1000px; /* Adjust as needed */
+    max-width: 1000px; 
     margin: 20px auto;
     background-color: #fff;
     border-radius: 8px;
@@ -56,7 +56,7 @@
 }
 
 .create-sale-form .form-group-full {
-    grid-column: 1 / span 2; /* Span full width */
+    grid-column: 1 / span 2; 
 }
 
 /* Items Section */
@@ -73,9 +73,9 @@
 
 .item-row {
     display: grid;
-    grid-template-columns: 3fr 1fr 1.5fr 1fr 1.5fr auto; /* Adjust columns as needed */
+    grid-template-columns: 3fr 1fr 1.5fr 1fr 1.5fr auto; 
     gap: 15px;
-    align-items: flex-end; /* Align items to bottom */
+    align-items: flex-end;
     margin-bottom: 15px;
     padding-bottom: 15px;
     border-bottom: 1px dashed #eee;
@@ -88,17 +88,17 @@
 }
 
 .item-row .form-group {
-    margin-bottom: 0; /* Remove default margin */
+    margin-bottom: 0; 
 }
 
 .item-row label {
-    font-size: 12px; /* Smaller label for item rows */
+    font-size: 12px; 
 }
 
 .item-row span {
     font-weight: 500;
-    padding-top: 10px; /* Align with input baseline */
-     display: block; /* Ensure it takes space */
+    padding-top: 10px; 
+     display: block; 
 }
 
 .add-item-button,
@@ -111,17 +111,17 @@
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    height: 38px; /* Match input height */
-    align-self: flex-end; /* Align button to the bottom */
+    height: 38px; 
+    align-self: flex-end; 
 }
 
 .add-item-button {
-    background-color: #17a2b8;
+    background-color: #28a745;
     color: white;
     margin-top: 10px;
 }
 .add-item-button:hover {
-    background-color: #138496;
+    background-color: #28a745;
 }
 
 .remove-item-button {
@@ -137,7 +137,7 @@
 }
 
 
-/* Totals and Payment Section */
+
 .totals-payment-section {
      display: grid;
      grid-template-columns: 1fr 1fr;
@@ -225,7 +225,7 @@
      background-color: #5a6268;
 }
 
-/* Alerts */
+
 .alert {
     padding: 15px;
     margin-bottom: 20px;
