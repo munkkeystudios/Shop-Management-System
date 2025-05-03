@@ -4,7 +4,7 @@ import Layout from '../components/Layout';
 import { salesAPI } from '../services/api';
 import { SalesBarChart, PaymentMethodPieChart, SalesTrendLineChart } from '../components/SalesCharts';
 import AISalesInsights from '../components/AISalesInsights';
-import '../components/AISalesInsights.css';
+import '../components/styles/AISalesInsights.css';
 import './sales.css'; // Reusing sales.css for styling
 import './collapsible-sales-report.css'; // New styles for collapsible report
 

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { FaBell, FaRegBell, FaBox, FaTag, FaFolder, FaTruck, FaUser, FaShoppingCart, FaFileImport, FaMoneyBillWave, FaCog, FaShoppingBasket } from 'react-icons/fa';
 import { useNotifications } from '../context/NotificationContext';
-import './NotificationIcon.css';
+import './styles/NotificationIcon.css';
 
 const NotificationIcon = () => {
   const [isOpen, setIsOpen] = useState(false);

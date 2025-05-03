@@ -149,16 +149,16 @@ const Pos = () => {
 
   return (
     <POSLayout title="Point of Sale">
-      <div className="app-container">
+      <div className="pos-app-container">
         {/* Left section */}
-        <div className="main-content">
-          <div className="bill-header">
-            <div className="bill-header-content">
-              <button className="back-button" onClick={handleBackClick}>
+        <div className="pos-main-content">
+          <div className="pos-bill-header">
+            <div className="pos-bill-header-content">
+              <button className="pos-back-button" onClick={handleBackClick}>
                 Back
               </button>
-              <span className="bills-label">Recent Bills:</span>
-              <div className="bill-tabs-container">
+              <span className="pos-bills-label">Recent Bills:</span>
+              <div className="pos-bill-tabs-container">
                 {billNumber !== 'Loading...' && billNumber !== 'Error' ? (
                   <BillTab 
                     billNumber={activeBill || billNumber}
@@ -166,21 +166,21 @@ const Pos = () => {
                     onTabClose={() => {}}
                   />
                 ) : (
-                  <div className="loading-message">Loading...</div>
+                  <div className="pos-loading-message">Loading...</div>
                 )}
               </div>
             </div>
           </div>
 
           <Container className="pos-card-container">
-            <div className="search-bar-wrapper">
+            <div className="pos-search-bar-wrapper">
               <SearchBar onProductSearch={handleProductSearch} />
             </div>
 
             {/* Products card */}
-            <Card className="products-card">
-              <Card.Header as="h6" className="products-header">Products</Card.Header>
-              <Card.Body className="products-body">
+            <Card className="pos-products-card">
+              <Card.Header as="h6" className="pos-products-header">Products</Card.Header>
+              <Card.Body className="pos-products-body">
                 <CartTable
                   cartItems={cartItems}
                   handleQuantityChange={updateQuantity}
@@ -188,12 +188,12 @@ const Pos = () => {
                 />
               </Card.Body>
 
-              <Card.Footer className="products-footer">
+              <Card.Footer className="pos-products-footer">
                 <Button variant="danger" size="sm" onClick={resetCart}>
                   Reset
                 </Button>
                 <div className="text-end">
-                  <div className="pay-value">
+                  <div className="pos-pay-value">
                     Total Payable: ${totalPayable.toFixed(2)}
                   </div>
                 </div>
@@ -212,16 +212,16 @@ const Pos = () => {
         </div>
 
         {/* Right section */}
-        <div className="sales-sidebar">
+        <div className="pos-sales-sidebar">
           <Card>
-            <Card.Header className="sales-header">
+            <Card.Header className="pos-sales-header">
               Last Sales
             </Card.Header>
-            <Card.Body className="sales-body">
+            <Card.Body className="pos-sales-body">
               {loadingSales ? (
-                <div className="loading-sales">Loading sales...</div>
+                <div className="pos-loading-sales">Loading sales...</div>
               ) : salesError ? (
-                <div className="error-message">{salesError}</div>
+                <div className="pos-error-message">{salesError}</div>
               ) : (
                 <SalesTable sales={sales} /> 
               )}

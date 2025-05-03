@@ -1,6 +1,6 @@
 import React from 'react';
 import TopBar from './TopBar';
-import './POSLayout.css';
+import './styles/POSLayout.css';
 
 const POSLayout = ({ children, title }) => {
   return (

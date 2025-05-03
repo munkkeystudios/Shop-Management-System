@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { FaPrint } from 'react-icons/fa';
-import './ProductLabel.css';
+import './styles/ProductLabel.css';
 
 const ProductLabel = ({ product, onClose }) => {
   const labelRef = useRef(null);
