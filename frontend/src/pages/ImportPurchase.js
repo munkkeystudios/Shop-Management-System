@@ -1,20 +1,24 @@
-
-
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Layout from '../components/Layout'; 
 import '../styles/importPurchase.css';
-import html2pdf from 'html2pdf.js'; 
+import html2pdf from 'html2pdf.js';
+import TransactionNotification from './TransactionNotification';
+import { useNotifications } from '../context/NotificationContext';
+import { FaFileUpload } from 'react-icons/fa';
 
 const ImportPurchase = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [suppliers, setSuppliers] = useState([]);
   const [warehouses, setWarehouses] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState('');
   const [formData, setFormData] = useState({
     date: new Date().toISOString().split('T')[0],
     supplier: '',
     warehouse: '',
+    product: '',
     orderTax: '0',
     discount: '0',
     status: 'pending',
@@ -24,13 +28,27 @@ const ImportPurchase = () => {
   const [error, setError] = useState('');
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
+  const { addNotification } = useNotifications();
+  const [notification, setNotification] = useState({
+    show: false,
+    data: null
+  });
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const suppliersResponse = await axios.get('/api/suppliers');
         if (suppliersResponse.data.success) {
-          setSuppliers(suppliersResponse.data.data);
+          setSuppliers(suppliersResponse.data.success ? suppliersResponse.data.data : []);
+        }
+
+        try {
+          const productsResponse = await axios.get('/api/products');
+          if (productsResponse.data.success) {
+            setProducts(productsResponse.data.data);
+          }
+        } catch (error) {
+          console.error('Error fetching products:', error);
         }
 
         try {
@@ -43,7 +61,7 @@ const ImportPurchase = () => {
         }
       } catch (error) {
         console.error('Error fetching data:', error);
-        setError('Error loading suppliers or warehouses.');
+        setError('Error loading suppliers, products, or warehouses.');
       }
     };
 
@@ -93,6 +111,10 @@ const ImportPurchase = () => {
     fileInputRef.current.click();
   };
 
+  const closeNotification = () => {
+    setNotification({ show: false, data: null });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -119,14 +141,68 @@ const ImportPurchase = () => {
       });
 
       if (response.data.success) {
-        alert('Purchase data imported successfully!');
-        navigate('/purchases');
+        const purchaseId = response.data.data._id || response.data.data.id;
+        const purchaseAmount = response.data.data.totalAmount || 0;
+        const itemCount = response.data.data.items?.length || 0;
+        const supplierName = suppliers.find(s => s._id === formData.supplier)?.name || 'Unknown Supplier';
+
+        // Add notification to the system
+        addNotification(
+          'purchase',
+          `New purchase imported from ${supplierName} for ${new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD'
+          }).format(purchaseAmount)} with ${itemCount} ${itemCount === 1 ? 'item' : 'items'}`,
+          purchaseId
+        );
+
+        // Show success notification
+        setNotification({
+          show: true,
+          data: {
+            status: 'success',
+            id: purchaseId,
+            amount: purchaseAmount,
+            items: response.data.data.items?.map(item => ({
+              id: item.product,
+              name: products.find(p => p._id === item.product)?.name || 'Unknown',
+              price: item.price,
+              quantity: item.quantity
+            })) || [],
+            type: 'purchase'
+          }
+        });
+
+        // Reset form after successful import
+        setFormData({
+          date: new Date().toISOString().split('T')[0],
+          supplier: '',
+          warehouse: '',
+          product: '',
+          orderTax: '0',
+          discount: '0',
+          status: 'pending',
+          notes: ''
+        });
+        setSelectedFile(null);
       } else {
-        setError(response.data.message || 'Error importing purchase data.');
+        setNotification({
+          show: true,
+          data: {
+            status: 'error',
+            message: response.data.message || 'Error importing purchase data.'
+          }
+        });
       }
     } catch (error) {
       console.error('Import error:', error);
-      setError(error.response?.data?.message || 'Error importing purchase data. Please try again.');
+      setNotification({
+        show: true,
+        data: {
+          status: 'error',
+          message: error.response?.data?.message || 'Error importing purchase data. Please try again.'
+        }
+      });
     } finally {
       setLoading(false);
     }
@@ -137,18 +213,25 @@ const ImportPurchase = () => {
   };
 
   const downloadExample = () => {
-    const element = document.getElementById('import-purchase-form'); // Get the form or section you want to convert into PDF
+    const element = document.getElementById('import-purchase-form');
     html2pdf()
       .from(element)
-      .save('import-purchase-example.pdf'); // Specify the file name for the PDF
+      .save('import-purchase-example.pdf');
   };
 
   return (
-    <Layout> {/*  Wrapping everything in Layout */}
+    <Layout>
       <div className="import-purchase-container">
         <h1>Import Purchase</h1>
 
-        <form onSubmit={handleSubmit} id="import-purchase-form"> {/* Add id to target the form */}
+        <TransactionNotification
+          show={notification.show}
+          type="purchase"
+          data={notification.data}
+          onClose={closeNotification}
+        />
+
+        <form onSubmit={handleSubmit} id="import-purchase-form">
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="date">Date</label>
@@ -180,9 +263,44 @@ const ImportPurchase = () => {
               </select>
             </div>
 
+            <div className="form-group">
+              <label htmlFor="product">Product</label>
+              <select
+                id="product"
+                name="product"
+                value={formData.product}
+                onChange={handleInputChange}
+              >
+                <option value="">Choose Product</option>
+                {products.map(product => (
+                  <option key={product._id} value={product._id}>
+                    {product.name}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
           <div className="form-row">
+            {warehouses.length > 0 && (
+              <div className="form-group">
+                <label htmlFor="warehouse">Warehouse</label>
+                <select
+                  id="warehouse"
+                  name="warehouse"
+                  value={formData.warehouse}
+                  onChange={handleInputChange}
+                >
+                  <option value="">Choose Warehouse</option>
+                  {warehouses.map(warehouse => (
+                    <option key={warehouse._id} value={warehouse._id}>
+                      {warehouse.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
             <div className="form-group">
               <label htmlFor="orderTax">Order Tax (%)</label>
               <input
@@ -223,6 +341,7 @@ const ImportPurchase = () => {
                 <option value="pending">Pending</option>
                 <option value="ordered">Ordered</option>
                 <option value="received">Received</option>
+                <option value="cancelled">Cancelled</option>
               </select>
             </div>
           </div>
@@ -248,7 +367,7 @@ const ImportPurchase = () => {
                   </div>
                 ) : (
                   <div>
-                    <span className="upload-icon">📁</span>
+                    <span className="upload-icon"><FaFileUpload /></span>
                     <p>Click to upload or drag and drop</p>
                     <p className="small-text">CSV, XLS, or XLSX files are allowed.</p>
                   </div>
