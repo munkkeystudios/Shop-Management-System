@@ -1,3 +1,0 @@
-selenium==4.10.0
-webdriver-manager==3.8.6
-PyPDF2==3.0.1
