@@ -422,8 +422,7 @@ const CreateSale = () => {
                                    >
                                        <option value="cash">Cash</option>
                                        <option value="card">Card</option>
-                                       <option value="mobile_payment">Mobile Payment</option>
-                                       <option value="credit">Credit</option>
+                                       <option value="loan">Loan</option>
                                    </select>
                                </div>
                                <div className="form-group">

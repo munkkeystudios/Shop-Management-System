@@ -64,10 +64,7 @@ const GeneralSettings = () => {
   const availablePaymentMethods = [
     { value: 'cash', label: 'Cash' },
     { value: 'card', label: 'Credit/Debit Card' },
-    { value: 'online', label: 'Online Payment' },
-    { value: 'bank', label: 'Bank Transfer' },
-    { value: 'check', label: 'Check' },
-    { value: 'mobile', label: 'Mobile Payment' }
+    { value: 'loan', label: 'Loan' }
   ];
 
   useEffect(() => {

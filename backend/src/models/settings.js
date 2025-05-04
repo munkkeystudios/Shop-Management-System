@@ -20,7 +20,7 @@ const settingsSchema = mongoose.Schema(
       type: String,
       default: ''
     },
-    
+
     // Financial Settings (General Settings)
     defaultTaxRate: {
       type: Number,
@@ -53,7 +53,7 @@ const settingsSchema = mongoose.Schema(
       type: String,
       default: '12-31', // December 31st
     },
-    
+
     // Inventory Settings (General Settings)
     inventoryAlertThreshold: {
       type: Number,
@@ -64,7 +64,7 @@ const settingsSchema = mongoose.Schema(
       enum: ['fixed', 'tiered', 'dynamic', 'custom'],
       default: 'fixed'
     },
-    
+
     // Payment Settings (General Settings)
     enableOnlinePayments: {
       type: Boolean,
@@ -72,14 +72,14 @@ const settingsSchema = mongoose.Schema(
     },
     paymentMethods: {
       type: [String],
-      default: ['cash', 'card'],
-      enum: ['cash', 'card', 'online', 'bank', 'check', 'mobile']
+      default: ['cash', 'card', 'loan'],
+      enum: ['cash', 'card', 'loan', 'online', 'bank', 'check', 'mobile']
     },
     enableDiscounts: {
       type: Boolean,
       default: true
     },
-    
+
     // Display Settings
     dateFormat: {
       type: String,
@@ -146,7 +146,7 @@ const settingsSchema = mongoose.Schema(
       max: 1.3,
       default: 1.0
     },
-    
+
     // Receipt & Invoice Settings
     receiptFooter: {
       type: String,
@@ -156,7 +156,7 @@ const settingsSchema = mongoose.Schema(
       type: String,
       default: ''
     },
-    
+
     // Legacy fields
     logoUrl: {
       type: String,
@@ -179,10 +179,10 @@ settingsSchema.statics.getSingleton = async function() {
   if (settings) {
     return settings;
   }
-  
+
   return this.create({});
 };
 
 const Settings = mongoose.model('Settings', settingsSchema);
 
-module.exports = Settings; 
+module.exports = Settings;

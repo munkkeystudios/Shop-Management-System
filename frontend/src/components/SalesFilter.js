@@ -21,7 +21,7 @@ const SalesFilter = ({ onApplyFilters }) => {
       paymentStatus,
       paymentMethod
     };
-    
+
     // Count active filters
     let count = 0;
     if (startDate) count++;
@@ -29,7 +29,7 @@ const SalesFilter = ({ onApplyFilters }) => {
     if (paymentStatus) count++;
     if (paymentMethod) count++;
     setActiveFilters(count);
-    
+
     onApplyFilters(filters);
     setIsOpen(false);
   };
@@ -40,7 +40,7 @@ const SalesFilter = ({ onApplyFilters }) => {
     setPaymentStatus('');
     setPaymentMethod('');
     setActiveFilters(0);
-    
+
     onApplyFilters({
       startDate: '',
       endDate: '',
@@ -51,11 +51,11 @@ const SalesFilter = ({ onApplyFilters }) => {
 
   return (
     <div className="sales-filter-container">
-      <button 
-        className={`sales-filter-button ${activeFilters > 0 ? 'active' : ''}`} 
+      <button
+        className={`sales-filter-button ${activeFilters > 0 ? 'active' : ''}`}
         onClick={toggleFilter}
       >
-        <FaFilter /> 
+        <FaFilter />
         Filter
         {activeFilters > 0 && (
           <span className="filter-badge">{activeFilters}</span>
@@ -70,7 +70,7 @@ const SalesFilter = ({ onApplyFilters }) => {
               <FaTimes />
             </button>
           </div>
-          
+
           <div className="sales-filter-content">
             <div className="filter-group">
               <h4>Date Range</h4>
@@ -122,12 +122,12 @@ const SalesFilter = ({ onApplyFilters }) => {
                 <div className="filter-option">
                   <input
                     type="radio"
-                    id="status-partial"
+                    id="status-unpaid"
                     name="payment-status"
-                    checked={paymentStatus === 'partial'}
-                    onChange={() => setPaymentStatus('partial')}
+                    checked={paymentStatus === 'unpaid'}
+                    onChange={() => setPaymentStatus('unpaid')}
                   />
-                  <label htmlFor="status-partial">Partial</label>
+                  <label htmlFor="status-unpaid">Unpaid</label>
                 </div>
                 <div className="filter-option">
                   <input
@@ -178,22 +178,12 @@ const SalesFilter = ({ onApplyFilters }) => {
                 <div className="filter-option">
                   <input
                     type="radio"
-                    id="method-mobile"
+                    id="method-loan"
                     name="payment-method"
-                    checked={paymentMethod === 'mobile_payment'}
-                    onChange={() => setPaymentMethod('mobile_payment')}
+                    checked={paymentMethod === 'loan'}
+                    onChange={() => setPaymentMethod('loan')}
                   />
-                  <label htmlFor="method-mobile">Mobile Payment</label>
-                </div>
-                <div className="filter-option">
-                  <input
-                    type="radio"
-                    id="method-credit"
-                    name="payment-method"
-                    checked={paymentMethod === 'credit'}
-                    onChange={() => setPaymentMethod('credit')}
-                  />
-                  <label htmlFor="method-credit">Credit</label>
+                  <label htmlFor="method-loan">Loan</label>
                 </div>
               </div>
             </div>

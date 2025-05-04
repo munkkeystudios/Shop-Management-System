@@ -2,9 +2,11 @@ import { useState } from 'react';
 import { Button, Modal, Form, Row, Col, Alert } from 'react-bootstrap';
 import { generateReceipt } from './generateReceipt';
 import { salesAPI } from '../../services/api';
+import { useNotifications } from '../../context/NotificationContext';
 import '../styles/PayButton.css';
 
 const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateBillNumber, onPaymentComplete }) => {
+  const { addNotification } = useNotifications();
   const [show, setShow] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('cash');
   const [loanNumber, setLoanNumber] = useState('');
@@ -103,6 +105,18 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateB
       if (response.data && response.data.data && response.data.data._id) {
         // Get the ID of the newly created sale
         const newSaleId = response.data.data._id;
+        const saleAmount = endPayment;
+        const productCount = cartItems.length;
+
+        // Add notification to the system
+        addNotification(
+          'sale',
+          `New POS sale created for ${new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD'
+          }).format(saleAmount)} with ${productCount} ${productCount === 1 ? 'product' : 'products'}`,
+          newSaleId
+        );
 
         // Update the billNumber for the next transaction
         updateBillNumber(billNumber + 1);

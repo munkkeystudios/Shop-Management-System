@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { FaSearch, FaFileExcel, FaFilePdf } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { salesAPI } from '../services/api';
 import SalesFilter from '../components/SalesFilter';
 import './sales.css';
 
 export const Frame = () => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [sales, setSales] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -185,7 +187,10 @@ export const Frame = () => {
                   >
                     <FaFileExcel /> Excel
                   </button>
-                  <button className="sales-create-button">
+                  <button
+                    className="sales-create-button"
+                    onClick={() => navigate('/create-sale')}
+                  >
                     Create New Sale
                   </button>
                 </div>

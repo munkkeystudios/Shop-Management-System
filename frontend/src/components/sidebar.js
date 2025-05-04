@@ -328,7 +328,7 @@ function ToolsSidebar() {
                 {/* Sales Dropdown */}
                 {isManagerOrHigher && (
                     <ModernDropdown
-                        isActive={isGroupActive(['/sales', '/create-sale', '/import-sales'])}
+                        isActive={isGroupActive(['/sales', '/create-sale', '/import-sales']) && !isPathActive('/sales-report')}
                         title={
                             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                                 <TbReportMoney size={16}/> Sales
@@ -414,25 +414,29 @@ function ToolsSidebar() {
 
                 {/* Reports Link (Manager+) */}
                 {isManagerOrHigher && (
-                    <Nav.Item className="sidebar-nav-item" style={{
-                        padding: '12px 16px',
-                        textAlign: 'left',
-                        fontSize: '14px',
-                        fontWeight: '500',
-                        color: isPathActive('/sales-report') ? '#ffffff' : '#505050',
-                        backgroundColor: isPathActive('/sales-report') ? '#00a838' : 'transparent',
-                        margin: '2px 8px',
-                        borderRadius: '4px'
-                    }}>
-                        <Link to="/sales-report" className="sidebar-link" style={{
-                            textDecoration: 'none',
-                            color: 'inherit',
+                    <Nav.Item
+                        className="sidebar-nav-item"
+                        onClick={() => navigate('/sales-report')}
+                        style={{
+                            cursor: 'pointer',
+                            padding: '12px 16px',
+                            textAlign: 'left',
+                            fontSize: '14px',
+                            fontWeight: '500',
+                            color: isPathActive('/sales-report') ? '#ffffff' : '#505050',
+                            backgroundColor: isPathActive('/sales-report') ? '#00a838' : 'transparent',
+                            margin: '2px 8px',
+                            borderRadius: '4px',
+                            zIndex: 20 // Higher z-index to ensure it's above other elements
+                        }}
+                    >
+                        <div style={{
                             display: 'flex',
                             alignItems: 'center',
                             gap: '12px'
                         }}>
                             <HiOutlineDocumentReport size={16} /> Reports
-                        </Link>
+                        </div>
                     </Nav.Item>
                 )}
 
