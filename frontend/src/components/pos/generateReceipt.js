@@ -1,7 +1,8 @@
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
+import axios from "axios";
 
-export const generateReceipt = (transactionData) => {
+export const generateReceipt = async (transactionData) => {
   try {
     const {
       billNumber = 0,
@@ -20,12 +21,9 @@ export const generateReceipt = (transactionData) => {
       loanNumber = null,
     } = transactionData;
 
-    // Check if items array is valid
     if (!Array.isArray(items) || items.length === 0) {
       console.error("No items provided for receipt or invalid items array");
     }
-
-    console.log("Receipt items:", items); 
 
     // Format date
     const formattedDate = date.toLocaleString('en-US', {
@@ -41,57 +39,79 @@ export const generateReceipt = (transactionData) => {
     const doc = new jsPDF({
       orientation: "portrait",
       unit: "mm",
-      format: [80, 200], // Receipt-like size (80mm width)
+      format: [80, 200],
     });
     
     doc.setFont("helvetica");
     
-    // Try to get company info from settings context
+    // Default company info
     let companyName = "Shop Management System";
     let logoUrl = null;
     
+    // First try to get settings from API
     try {
-      // Access settings from localStorage if available
-      const settingsData = localStorage.getItem('appSettings');
-      if (settingsData) {
-        const parsedSettings = JSON.parse(settingsData);
-        companyName = parsedSettings.companyName || companyName;
-        logoUrl = parsedSettings.companyLogo || null;
+      const baseUrl = process.env.REACT_APP_API_URL || 'http://localhost:5002';
+      const response = await axios.get(`${baseUrl}/api/settings`);
+
+      if (response.data) {
+        const settings = response.data;
+        companyName = settings.companyName || companyName;
+        logoUrl = settings.logoUrl || settings.companyLogo || logoUrl;
+
+        // If the logo is a relative path, prepend the API base URL
+        if (logoUrl && !logoUrl.startsWith('http') && !logoUrl.startsWith('data:')) {
+          logoUrl = `${baseUrl}${logoUrl}`;
+        }
+        
+        console.log("Retrieved company settings from API:", { companyName, logoUrl });
       }
     } catch (error) {
-      console.error("Error retrieving settings:", error);
+      console.error("Error fetching company settings from API:", error);
+      
+      // Fallback to localStorage if API call fails
+      try {
+        const settingsData = localStorage.getItem('appSettings');
+        if (settingsData) {
+          const parsedSettings = JSON.parse(settingsData);
+          companyName = parsedSettings.companyName || companyName;
+          logoUrl = parsedSettings.companyLogo || parsedSettings.logoUrl || logoUrl;
+          
+          console.log("Retrieved company settings from localStorage:", { companyName, logoUrl });
+        }
+      } catch (localStorageError) {
+        console.error("Error retrieving settings from localStorage:", localStorageError);
+      }
     }
     
     // Start Y position
     let yPos = 10;
     const margin = 5;
     const pageWidth = doc.internal.pageSize.width;
-    const contentWidth = pageWidth - (margin * 2);
     
     // Add logo if available
     if (logoUrl) {
       try {
-        // For base64 image data
-        if (logoUrl.startsWith('data:image')) {
-          const logoWidth = 20;
-          const logoHeight = 10;
-          const logoX = (pageWidth - logoWidth) / 2;
-          doc.addImage(logoUrl, 'JPEG', logoX, yPos, logoWidth, logoHeight);
-          yPos += 15;
-        } 
+        const logoWidth = 30;
+        const logoHeight = 15;
+        const logoX = (pageWidth - logoWidth) / 2;
+        
+        doc.addImage(logoUrl, 'JPEG', logoX, yPos, logoWidth, logoHeight);
+        yPos += 20;
+        
+        console.log("Logo added successfully to receipt");
       } catch (error) {
-        console.error("Error adding logo:", error);
-        // Continue without logo
+        console.error("Error adding logo to receipt:", error);
+        yPos = 10;
       }
     }
     
-    // Add company name (centered)
+    // Add company name
     doc.setFontSize(12);
     doc.setFont("helvetica", "bold");
     doc.text(companyName, pageWidth / 2, yPos, { align: "center" });
     yPos += 7;
     
-    // Add receipt info (centered)
+    // Add receipt info
     doc.setFontSize(9);
     doc.setFont("helvetica", "normal");
     doc.text("Receipt #: " + billNumber, pageWidth / 2, yPos, { align: "center" });
@@ -113,11 +133,10 @@ export const generateReceipt = (transactionData) => {
     doc.text("Warehouse: " + warehouse, margin, yPos);
     yPos += 5;
     
-    // Add divider line
     doc.line(margin, yPos, pageWidth - margin, yPos);
     yPos += 5;
 
-    // Items header
+    // Items table header
     doc.setFontSize(9);
     doc.setFont("helvetica", "bold");
     doc.text("Item", margin, yPos);
@@ -126,54 +145,45 @@ export const generateReceipt = (transactionData) => {
     doc.text("Total", pageWidth - 5, yPos, { align: "right" });
     yPos += 4;
 
-    // Add divider line
     doc.setLineWidth(0.1);
     doc.line(margin, yPos, pageWidth - margin, yPos);
     yPos += 5;
 
+    // List items
     doc.setFontSize(8);
     doc.setFont("helvetica", "normal");
     
-    // Check if items exist and are properly formatted
     if (Array.isArray(items) && items.length > 0) {
-      items.forEach((item, index) => {
-        // Make sure item is valid
-        if (!item) {
-          console.error("Invalid item at index", index);
-          return; // Skip this item
-        }
+      items.forEach((item) => {
+        if (!item) return;
         
         const itemName = item.name || "Unknown Item";
         const quantity = item.quantity || 0;
         const price = item.price || 0;
         const amount = item.amount || (quantity * price) || 0;
 
-        // Truncate name if too long
         let displayName = itemName;
         if (displayName.length > 15) {
           displayName = displayName.substring(0, 12) + "...";
         }
         
-        // Item name, quantity, price and subtotal on the same row
         doc.text(displayName, margin, yPos);
         doc.text(`${quantity}x`, pageWidth - 45, yPos, { align: "right" });
         doc.text(`$${price.toFixed(2)}`, pageWidth - 25, yPos, { align: "right" });
         doc.text(`$${amount.toFixed(2)}`, pageWidth - 5, yPos, { align: "right" });
-        yPos += 6; // Increase space between items for better readability
+        yPos += 6;
       });
     } else {
       doc.text("No items in receipt", margin, yPos);
       yPos += 6;
     }
 
-    // Add divider line
     doc.line(margin, yPos, pageWidth - margin, yPos);
     yPos += 8;
     
     // Summary section
     doc.setFontSize(8);
     
-    // Totals
     doc.text("Subtotal:", margin, yPos);
     doc.text(`$${subtotal.toFixed(2)}`, pageWidth - margin, yPos, { align: "right" });
     yPos += 5;
@@ -186,7 +196,6 @@ export const generateReceipt = (transactionData) => {
     doc.text(`$${tax.toFixed(2)}`, pageWidth - margin, yPos, { align: "right" });
     yPos += 5;
     
-    // Add divider line
     doc.line(margin, yPos, pageWidth - margin, yPos);
     yPos += 5;
     
@@ -197,8 +206,6 @@ export const generateReceipt = (transactionData) => {
     doc.text(`$${total.toFixed(2)}`, pageWidth - margin, yPos, { align: "right" });
     yPos += 8;
     
-    // Add divider line
-    doc.setLineWidth(0.1);
     doc.line(margin, yPos, pageWidth - margin, yPos);
     yPos += 8;
     
@@ -244,7 +251,6 @@ export const generateReceipt = (transactionData) => {
       yPos += 5;
     }
     
-    // Add divider line
     doc.line(margin, yPos, pageWidth - margin, yPos);
     yPos += 8;
     
@@ -256,16 +262,8 @@ export const generateReceipt = (transactionData) => {
     doc.text("Please keep this receipt for your records", pageWidth / 2, yPos, { align: "center" });
     
     // Save the PDF with proper name
-    try {
-      doc.save(`Receipt_${billNumber}_${Date.now()}.pdf`);
-      console.log("Receipt PDF generated successfully");
-      return true;
-    } catch (saveError) {
-      console.error("Error saving PDF:", saveError);
-      alert("There was a problem generating the receipt. Please try again.");
-      return false;
-    }
-    
+    doc.save(`Receipt_${billNumber}_${Date.now()}.pdf`);
+    return true;
   } catch (error) {
     console.error("Receipt generation failed:", error);
     alert("Receipt generation failed. Please try again or check the console for details.");
