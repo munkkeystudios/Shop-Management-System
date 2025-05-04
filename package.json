@@ -2,42 +2,39 @@
   "name": "shop-management-system",
   "version": "1.0.0",
   "description": "Shop Management System with React frontend and Node.js backend",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node server.js",
-    "setup": "node setup-glitch.js",
-    "build": "npm run setup && node build-for-glitch.js",
-    "dev": "nodemon server.js"
-  },
-  "engines": {
-    "node": "16.x"
+    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd backend && npm start",
+    "client": "cd frontend && npm start",
+    "install-all": "npm install && cd backend && npm install && cd ../frontend && npm install"
   },
   "keywords": [
     "shop",
     "management",
     "react",
-    "nodejs",
-    "glitch"
+    "nodejs"
   ],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "all": "^0.0.0",
+    "axios": "^1.8.4",
     "bcrypt": "^5.1.1",
-    "bcryptjs": "^3.0.2",
-    "cors": "^2.8.5",
+    "concurrently": "^8.2.0",
     "csv-parser": "^3.2.0",
-    "dotenv": "^16.4.7",
-    "express": "^4.18.3",
-    "express-async-handler": "^1.2.0",
-    "express-session": "^1.18.1",
-    "fs-extra": "^11.2.0",
+    "file-saver": "^2.0.5",
+    "html2canvas": "^1.4.1",
+    "html2pdf.js": "^0.10.3",
     "json2csv": "^6.0.0-alpha.2",
-    "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.13.2",
+    "jspdf": "^3.0.1",
+    "jspdf-autotable": "^5.0.2",
+    "lucide-react": "^0.487.0",
     "multer": "^1.4.5-lts.2",
-    "path": "^0.12.7"
-  },
-  "devDependencies": {
-    "nodemon": "^3.1.0"
+    "pdfkit": "^0.17.0",
+    "react-icons": "^5.5.0",
+    "react-router-dom": "^7.5.1",
+    "react-toastify": "^11.0.5",
+    "xlsx": "^0.18.5"
   }
 }

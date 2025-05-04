@@ -3,11 +3,3 @@ node_modules/
 /node_modules
 /dashboard/node_modules
 node_modules
-/electron/
-npm-debug.log
-.DS_Store
-.env
-.history/
-*.log
-uploads/*
-!uploads/.gitkeep
