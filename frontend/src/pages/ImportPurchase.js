@@ -213,11 +213,14 @@ const ImportPurchase = () => {
   };
 
   const downloadExample = () => {
-    const element = document.getElementById('import-purchase-form');
-    html2pdf()
-      .from(element)
-      .save('import-purchase-example.pdf');
+    const link = document.createElement('a');
+    link.href = '/purchases_example.xlsx';
+    link.download = 'purchases_example.xlsx';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
+  
 
   return (
     <Layout>
