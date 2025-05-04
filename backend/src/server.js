@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const path = require('path');
 const apiRoutes = require('./routes/api');
 
 const app = express();
@@ -61,8 +62,17 @@ mongoose.connect(mongoURI || 'mongodb://localhost:27017/shop-management', {
     })
     .catch(err => console.error('MongoDB connection error:', err));
 
-// Routes
+// API Routes - Must come before static file serving
 app.use('/api', apiRoutes);
+
+// Serve static files from the React app build directory
+console.log('Frontend build path:', path.join(__dirname, '../../frontend/build'));
+app.use(express.static(path.join(__dirname, '../../frontend/build')));
+
+// All remaining requests return the React app
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../frontend/build', 'index.html'));
+});
 
 // Error handling middleware
 app.use((err, req, res, next) => {
