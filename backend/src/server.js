@@ -74,6 +74,17 @@ app.use((err, req, res, next) => {
     });
 });
 
+// Add this to backend/src/server.js
+const path = require('path');
+
+// After your API routes
+app.use(express.static(path.join(__dirname, '../../frontend/build')));
+
+// All remaining requests return the React app
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../frontend/build', 'index.html'));
+});
+
 // 404 handler
 app.use((req, res) => {
     res.status(404).json({ success: false, message: 'Route not found' });
