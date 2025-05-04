@@ -1,9 +1,17 @@
 import axios from 'axios';
+
+// Determine if running in Electron or web browser
+const isElectron = window.electron !== undefined;
+
+// Create an Axios instance with default config
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5002/api',
+  // In Electron production, use the localhost directly since we're running the backend locally
+  baseURL: 'http://localhost:5002/api',
   headers: {
     'Content-Type': 'application/json',
   },
+  // Add a timeout to prevent hanging requests
+  timeout: 10000,
 });
 
 // Request interceptor to add auth token to requests
@@ -32,16 +40,37 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
+    // Special handling for network errors in Electron
+    if (isElectron && error.code === 'ERR_NETWORK') {
+      console.error('Network error in Electron. Backend might not be running.');
+      // If running in Electron with a network error, the backend might not be started yet
+      if (window.location.pathname !== '/login' && window.location.hash !== '#/login') {
+        // Use hash-based routing in Electron
+        window.location.href = isElectron ? '#/login' : '/login';
+      }
+      return Promise.reject(error);
+    }
+
     console.error(
       `Error response from ${error.config?.url}:`,
       error.response?.status,
       error.response?.data || error.message
     );
+    
     if (error.response && (error.response.status === 401 || error.response.status === 403)) {
       console.warn(`Auth Error (${error.response.status}): Redirecting to login.`);
       localStorage.removeItem('token'); // Clear invalid token
-      if (window.location.pathname !== '/login') {
-        window.location.href = '/login';
+      localStorage.removeItem('userData'); // Also clear user data
+      
+      // Use hash-based routing in Electron
+      if (isElectron) {
+        if (window.location.hash !== '#/login') {
+          window.location.hash = '#/login';
+        }
+      } else {
+        if (window.location.pathname !== '/login') {
+          window.location.href = '/login';
+        }
       }
     }
     return Promise.reject(error);

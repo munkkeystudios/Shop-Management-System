@@ -1,0 +1,47 @@
+{
+    "name": "shop-management-system-desktop",
+    "version": "1.0.0",
+    "description": "Shop Management System Desktop Application",
+    "main": "src/main.js",
+    "author": "Your Name",
+    "license": "ISC",
+    "dependencies": {},
+    "devDependencies": {
+      "electron": "^36.0.0"
+    },
+    "build": {
+      "appId": "com.yourdomain.shop-management-system",
+      "productName": "Shop Management System",
+      "files": [
+        "src/**/*",
+        "assets/**/*"
+      ],
+      "extraResources": [
+        {
+          "from": "../frontend/build",
+          "to": "frontend/build"
+        },
+        {
+          "from": "../backend",
+          "to": "backend",
+          "filter": ["**/*", "!node_modules/**/*"]
+        }
+      ],
+      "asar": true,
+      "asarUnpack": ["src/preload.js"],
+      "directories": {
+        "buildResources": "assets",
+        "output": "dist"
+      },
+      "win": {
+        "target": ["nsis"],
+        "icon": "assets/icon.png"
+      },
+      "nsis": {
+        "oneClick": false,
+        "allowToChangeInstallationDirectory": true,
+        "createDesktopShortcut": true,
+        "createStartMenuShortcut": true
+      }
+    }
+  }

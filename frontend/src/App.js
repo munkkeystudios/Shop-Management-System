@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import DocumentHead from "./components/DocumentHead";
 import { SettingsProvider } from "./context/SettingsContext";
 // eventually make it so all this import components/pages comes in 1 line
@@ -36,7 +36,7 @@ function App() {
     <AuthProvider>
       <NotificationProvider>
         <SettingsProvider>
-          <BrowserRouter>
+          <HashRouter>
             <DocumentHead />
             <div className="App">
               <Routes>
@@ -249,7 +249,7 @@ function App() {
               <Route path="*" element={<Navigate to="/login" replace />} />
               </Routes>
             </div>
-          </BrowserRouter>
+          </HashRouter>
         </SettingsProvider>
       </NotificationProvider>
     </AuthProvider>
