@@ -266,20 +266,21 @@ const CreatePurchase = () => {
 
     return (
         <Layout title="Create Purchase">
-            <div className="create-purchase-container">
-                
-                <TransactionNotification
-                    show={notification.show}
-                    type="purchase"
-                    data={notification.data}
-                    onClose={closeNotification}
-                />
+            <div className="sales-frame">
+                <div className="sales-div-2">
+                    <div className="create-purchase-container">
+                        <TransactionNotification
+                            show={notification.show}
+                            type="purchase"
+                            data={notification.data}
+                            onClose={closeNotification}
+                        />
 
-                <h1 className="page-title">Create Purchase</h1>
+                        <h2 className="sales-text-2">Create Purchase</h2>
 
-                {error && <div className="error-message">{error}</div>}
+                        {error && <div className="error-message">{error}</div>}
 
-                <form onSubmit={handleSubmit}>
+                        <form onSubmit={handleSubmit}>
                     {/* Top selectors row */}
                     <div className="selectors-row">
                         <div className="selector">
@@ -483,6 +484,8 @@ const CreatePurchase = () => {
                         </button>
                     </div>
                 </form>
+                    </div>
+                </div>
             </div>
         </Layout>
     );

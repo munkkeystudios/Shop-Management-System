@@ -1,23 +1,29 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Container, Button, Card } from 'react-bootstrap';
 import POSLayout from '../components/POSLayout';
 import SearchBar from '../components/pos/searchbarpos.jsx';
 import CartTable from '../components/pos/CartTable.js';
 import BillTab from '../components/pos/BillTab.js';
-import SalesTable from '../components/pos/SalesTable.js';
 import PayButton from '../components/pos/PayButton.js';
-import { salesAPI } from '../services/api.js';
+import { salesAPI, productsAPI } from '../services/api.js';
+import { useSettings } from '../context/SettingsContext';
 import useCart from '../hooks/useCart';
+import { getCurrencySymbol } from '../utils/currencyUtils';
 import '../styles/pos.css';
+import defaultProductImage from '../images/default-product-image.jpg';
 
 const Pos = () => {
+  // Get settings context
+  const { settings } = useSettings();
+  const currencySymbol = settings?.currencyCode ? getCurrencySymbol(settings.currencyCode) : '₦';
+
   // State variables
   const [searchedProduct, setSearchedProduct] = useState(null);
   const [billNumber, setBillNumber] = useState('Loading...');
-  const [sales, setSales] = useState([]);
-  const [loadingSales, setLoadingSales] = useState(true);
-  const [salesError, setSalesError] = useState(null);
   const [activeBill, setActiveBill] = useState(null);
+  const [products, setProducts] = useState([]);
+  const [loadingProducts, setLoadingProducts] = useState(true);
+  const [productsError, setProductsError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
   const billTabRef = useRef(null);
 
   const {
@@ -52,52 +58,26 @@ const Pos = () => {
     fetchLastBillNumber();
   }, []);
 
-  // Fetch last ten sales
-  const fetchLastTenSales = async () => {
-    try {
-      setLoadingSales(true);
-      const response = await salesAPI.getLastTenSales();
-      if (response.data && response.data.data) {
-        setSales(response.data.data);
-      } else {
-        setSales([]);
-      }
-      setSalesError(null);
-    } catch (error) {
-      console.error('Error fetching last 10 sales:', error);
-      setSalesError('Failed to fetch sales data');
-      setSales([]);
-    } finally {
-      setLoadingSales(false);
-    }
-  };
-
-  // Fetch sales on component mount
+  // Fetch products for the product grid
   useEffect(() => {
-    fetchLastTenSales();
-  }, []);
-
-  // Add new sale function
-  const addNewSale = async (newSaleId) => {
-    if (!newSaleId) {
-      console.error('No sale ID provided');
-      return;
-    }
-
-    try {
-      const response = await salesAPI.getSale(newSaleId);
-
-      if (response.data && response.data.data) {
-        setSales(prevSales => {
-          const currentSales = Array.isArray(prevSales) ? prevSales : [];
-          const updatedSales = [response.data.data, ...currentSales];
-          return updatedSales.slice(0, 10);
-        });
+    const fetchProducts = async () => {
+      try {
+        setLoadingProducts(true);
+        const response = await productsAPI.getAll();
+        const data = response.data?.data || [];
+        setProducts(Array.isArray(data) ? data : []);
+        setProductsError(null);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+        setProductsError('Failed to load products');
+        setProducts([]);
+      } finally {
+        setLoadingProducts(false);
       }
-    } catch (error) {
-      console.error('Error fetching new sale:', error);
-    }
-  };
+    };
+
+    fetchProducts();
+  }, []);
 
   // Product search handler
   const handleProductSearch = (product) => {
@@ -111,10 +91,28 @@ const Pos = () => {
       setSearchedProduct(null);
     }
   }, [searchedProduct, addToCart]);
+  const buildCartProduct = (product) => {
+    const discountRate = product.discountRate || 0;
+    const effectivePrice = product.price * (1 - discountRate / 100);
 
-  // Back button handler
-  const handleBackClick = () => {
-    window.history.back();
+    return {
+      id: product._id,
+      name: product.name,
+      price: product.price,
+      discount: discountRate,
+      quantity: 1,
+      subtotal: effectivePrice,
+      image:
+        product.images && product.images.length > 0
+          ? product.images[0]
+          : '/images/default-product-image.jpg',
+    };
+  };
+
+  const handleProductTileClick = (product) => {
+    if (!product) return;
+    const formattedProduct = buildCartProduct(product);
+    addToCart(formattedProduct);
   };
 
   // Payment completion handler
@@ -124,8 +122,6 @@ const Pos = () => {
 
     if (newSaleId) {
       console.log('New sale created with ID:', newSaleId);
-      addNewSale(newSaleId);
-
       // Store the current bill number before updating
       const previousBillNumber = activeBill || billNumber;
 
@@ -169,89 +165,170 @@ const Pos = () => {
     setActiveBill(selectedBillNumber);
   };
 
+  const getProductImage = (product) => {
+    if (product.images && product.images.length > 0) {
+      return product.images[0];
+    }
+    return defaultProductImage;
+  };
+
+  const getStockStatus = (quantity) => {
+    if (quantity == null) return 'medium';
+    if (quantity <= 5) return 'low';
+    if (quantity <= 20) return 'medium';
+    return 'high';
+  };
+
+  const normalizedSearch = searchTerm.trim().toLowerCase();
+  const filteredProducts = normalizedSearch
+    ? products.filter((product) => {
+        const name = product.name?.toLowerCase() || '';
+        const barcode = product.barcode?.toLowerCase() || '';
+        const description = product.description?.toLowerCase() || '';
+        return (
+          name.includes(normalizedSearch) ||
+          barcode.includes(normalizedSearch) ||
+          description.includes(normalizedSearch)
+        );
+      })
+    : products;
+
+  const itemsCount = filteredProducts.length || 0;
+
   return (
     <POSLayout title="Point of Sale">
-      <div className="pos-app-container">
-        {/* Left section */}
-        <div className="pos-main-content">
-          <div className="pos-bill-header">
-            <div className="pos-bill-header-content">
-              <button className="pos-back-button" onClick={handleBackClick}>
-                Back
-              </button>
-              <span className="pos-bills-label">Recent Bills:</span>
-              <div className="pos-bill-tabs-container">
-                {billNumber !== 'Loading...' && billNumber !== 'Error' ? (
-                  <BillTab
-                    ref={billTabRef}
-                    billNumber={activeBill || billNumber}
-                    onTabChange={handleTabChange}
-                    onTabClose={(closedTab) => {
-                      console.log(`Tab ${closedTab} was closed`);
-                    }}
-                  />
-                ) : (
-                  <div className="pos-loading-message">Loading...</div>
-                )}
-              </div>
+      <div className="pos-page">
+        {/* Left side: menu + product grid (like the inspiration layout) */}
+        <div className="pos-left">
+          {/* Search bar row with items count (no menu title or category tabs) */}
+          <div className="pos-search-row">
+            <div className="pos-right-search">
+              <SearchBar
+                onProductSearch={handleProductSearch}
+                onSearchTextChange={setSearchTerm}
+              />
+            </div>
+            <div className="pos-menu-count">
+              Showing {itemsCount} {itemsCount === 1 ? 'item' : 'items'}
             </div>
           </div>
 
-          <Container className="pos-card-container">
-            <div className="pos-search-bar-wrapper">
-              <SearchBar onProductSearch={handleProductSearch} />
-            </div>
+          <div className="pos-right-grid">
+            {loadingProducts ? (
+              <div className="pos-loading-products">Loading products...</div>
+            ) : productsError ? (
+              <div className="pos-error-message">{productsError}</div>
+            ) : (
+              <div className="pos-product-grid">
+                {filteredProducts.map((product) => {
+                  const available = product.quantity ?? 0;
+                  const stockStatus = getStockStatus(available);
 
-            {/* Products card */}
-            <Card className="pos-products-card">
-              <Card.Header as="h6" className="pos-products-header">Products</Card.Header>
-              <Card.Body className="pos-products-body">
-                <CartTable
-                  cartItems={cartItems}
-                  handleQuantityChange={updateQuantity}
-                  handleRemoveItem={removeFromCart}
-                />
-              </Card.Body>
-
-              <Card.Footer className="pos-products-footer">
-                <button className="pos-reset-button" onClick={resetCart}>
-                  Reset
-                </button>
-                <div className="text-end">
-                  <div className="pos-pay-value">
-                    Total Payable: ${totalPayable.toFixed(2)}
-                  </div>
-                </div>
-
-                <PayButton
-                  cartItems={cartItems}
-                  totalPayable={totalPayable}
-                  totalQuantity={totalQuantity}
-                  billNumber={activeBill || billNumber}
-                  updateBillNumber={setBillNumber}
-                  onPaymentComplete={handlePaymentComplete}
-                />
-              </Card.Footer>
-            </Card>
-          </Container>
+                  return (
+                    <button
+                      key={product._id}
+                      type="button"
+                      className="pos-product-card pos-product-card-simple"
+                      onClick={() => handleProductTileClick(product)}
+                    >
+                      <div className="pos-product-card-name pos-product-card-name-multiline">
+                        {product.name}
+                      </div>
+                      <div className="pos-product-card-stock-only">
+                        <span
+                          className={`pos-stock-pill pos-stock-pill-${stockStatus}`}
+                        >
+                          {available}
+                        </span>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* Right section */}
-        <div className="pos-sales-sidebar">
-          <Card className="pos-sales-card">
-            <Card.Header className="pos-sales-header">
-              Last Sales
-            </Card.Header>
-            <Card.Body className="pos-sales-body">
-              {loadingSales ? (
-                <div className="pos-loading-sales">Loading sales...</div>
-              ) : salesError ? (
-                <div className="pos-error-message">{salesError}</div>
+        {/* Right side: customer, cart, and totals / order summary */}
+        <div className="pos-right">
+          <div className="pos-right-header">
+            <div className="pos-right-header-top">
+              <div className="pos-customer-select-wrapper">
+                <select className="pos-customer-select" defaultValue="walk-in">
+                  <option value="walk-in">Walk-in Customer</option>
+                </select>
+              </div>
+              <button className="pos-header-plus-btn" type="button">
+                +
+              </button>
+            </div>
+            {/* Loyalty and Suspend Sales buttons removed as requested */}
+          </div>
+
+          <div className="pos-bill-row">
+            <div className="pos-bill-info">
+              <span className="pos-bill-label">Bill #{activeBill || billNumber}</span>
+            </div>
+            <div className="pos-bill-tabs">
+              {billNumber !== 'Loading...' && billNumber !== 'Error' ? (
+                <BillTab
+                  ref={billTabRef}
+                  billNumber={activeBill || billNumber}
+                  onTabChange={handleTabChange}
+                  onTabClose={(closedTab) => {
+                    console.log(`Tab ${closedTab} was closed`);
+                  }}
+                />
               ) : (
-                <SalesTable sales={sales} />
+                <div className="pos-loading-message">Loading...</div>
               )}
-            </Card.Body>
-          </Card>
+            </div>
+          </div>
+
+          <div className="pos-cart-panel">
+            <div className="pos-cart-body">
+              <CartTable
+                cartItems={cartItems}
+                handleQuantityChange={updateQuantity}
+                handleRemoveItem={removeFromCart}
+              />
+            </div>
+          </div>
+
+          <div className="pos-bottom-bar">
+            <div className="pos-bottom-summary">
+              <div className="pos-summary-row">
+                <span>Discount:</span>
+                <span>
+                  
+                  {currencySymbol}0.00
+                </span>
+              </div>
+              <div className="pos-summary-row">
+                <span>VAT:</span>
+                <span>{currencySymbol}0.00</span>
+              </div>
+            </div>
+            <div className="pos-bottom-total">
+              <div className="pos-total-label">Total</div>
+              <div className="pos-total-value">{currencySymbol}{totalPayable.toFixed(2)}</div>
+            </div>
+            <div className="pos-bottom-payment">
+                <div className="pos-pay-button-wrapper">
+                  <PayButton
+                    cartItems={cartItems}
+                    totalPayable={totalPayable}
+                    totalQuantity={totalQuantity}
+                    billNumber={activeBill || billNumber}
+                    updateBillNumber={setBillNumber}
+                    onPaymentComplete={handlePaymentComplete}
+                  />
+                </div>
+              <button className="pos-reset-button" onClick={resetCart}>
+                Reset
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </POSLayout>

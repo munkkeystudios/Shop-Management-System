@@ -4,7 +4,7 @@ import { HiMiniQrCode } from "react-icons/hi2";
 import { productsAPI } from '../../services/api';
 import '../styles/searchbarpos.css';
 
-const SearchBar = ({ onProductSearch }) => {
+const SearchBar = ({ onProductSearch, onSearchTextChange }) => {
     const [input, setInput] = useState("");
     const [searchResults, setSearchResults] = useState([]);
     const [error, setError] = useState(null);
@@ -66,7 +66,13 @@ const SearchBar = ({ onProductSearch }) => {
                     placeholder="Scan/Search Product by Name, Barcode, or Description"
                     className="pos-search-input"
                     value={input}
-                    onChange={(e) => setInput(e.target.value)}
+                    onChange={(e) => {
+                        const value = e.target.value;
+                        setInput(value);
+                        if (onSearchTextChange) {
+                            onSearchTextChange(value);
+                        }
+                    }}
                     onKeyDown={(e) => {
                         if (e.key === 'Enter' || e.key === 'NumpadEnter') {
                             handleClick();

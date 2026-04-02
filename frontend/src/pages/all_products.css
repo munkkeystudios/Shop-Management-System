@@ -48,7 +48,12 @@
   padding: 8px 16px;
   border: 1px solid #dee2e6;
   width: 300px;
-  height: 38px; /* Match the height of the create button */
+  height: 40px;
+}
+
+.products-search-container:focus-within {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.25);
 }
 
 .products-search-icon {
@@ -65,6 +70,12 @@
   font-size: 14px;
   height: 100%;
   line-height: 22px; /* Helps with vertical alignment */
+}
+
+.products-search-input:focus {
+  outline: none;
+  border: none;
+  box-shadow: none;
 }
 
 .products-search-input::placeholder {
@@ -88,6 +99,7 @@
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
+  height: 40px;
 }
 
 .products-filter-button {
@@ -112,10 +124,10 @@
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
-  background-color: #00a838;
+  background-color: #4f46e5;
   border: none;
   color: white;
-  height: 38px; /* Explicitly set height to ensure consistency */
+  height: 40px;
 }
 
 .products-filter-button:hover,
@@ -124,45 +136,53 @@
 }
 
 .products-create-button:hover {
-  background-color: #00a838;
+  background-color: #4338ca;
 }
 
+/* All Products table - align styling with POS right cart table */
 .products-table {
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
+  border-collapse: collapse; /* Match POS cart table */
   margin-bottom: 20px;
-  border-radius: 8px;
-  overflow: hidden;
 }
 
 .products-table th,
 .products-table td {
-  padding: 12px;
+  padding: 10px 12px;
+  border: none;
+  font-size: 0.85rem;
+}
+
+.products-table thead th {
+  background-color: #f9fafb;
+  font-weight: 500;
+  font-size: 0.8rem;
+  color: #6b7280;
+  text-transform: uppercase;
+  border-bottom: 1px solid #e5e7eb; /* Subtle separator like POS cart */
+}
+
+/* Align columns similar to cart table: first left, rest centered */
+.products-table thead th:first-child,
+.products-table tbody td:first-child {
   text-align: left;
-  border-bottom: 1px solid #dee2e6;
 }
 
-.products-table th {
-  background-color: #f8f9fa;
-  font-weight: 600;
-  color: #212529;
+.products-table thead th:nth-child(n + 2),
+.products-table tbody td:nth-child(n + 2) {
+  text-align: center;
 }
 
-.products-table thead tr {
-  background-color: #f8f9fa;
-}
-
-.products-table tbody tr:nth-child(odd) {
+.products-table tbody tr {
   background-color: #ffffff;
 }
 
-.products-table tbody tr:nth-child(even) {
-  background-color: #f8f9fa;
+.products-table tbody tr + tr td {
+  border-top: 1px solid #e5e7eb;
 }
 
 .products-table tbody tr:hover {
-  background-color: #e9ecef;
+  background-color: #f9fafb;
 }
 
 .products-image-container {
@@ -170,6 +190,10 @@
   height: 40px;
   border-radius: 4px;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto; /* Center image in photo column */
 }
 
 .products-image {
@@ -181,6 +205,8 @@
 .action-icons {
   display: flex;
   gap: 10px;
+  justify-content: center; /* Center icons in actions column */
+  align-items: center;
 }
 
 .edit-icon, .delete-icon {
@@ -193,7 +219,7 @@
 }
 
 .edit-icon:hover {
-  color: #00a838;
+  color: #4f46e5;
 }
 
 .delete-icon {
@@ -205,12 +231,7 @@
 }
 
 .products-pagination-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 24px;
-  padding-top: 16px;
-  border-top: 1px solid #dee2e6;
+  display: none; /* Hide pagination bar and bottom separator line */
 }
 
 .products-pagination-controls {
@@ -229,7 +250,7 @@
 }
 
 .products-pagination-button:hover {
-  color: #00a838;
+  color: #4f46e5;
 }
 
 .products-page-info {
@@ -273,24 +294,21 @@
   width: 380px;
 }
 
-.products-modal-container.delete {
-  width: 400px;
-  padding: 24px;
-}
-
 /* Modal Header */
 .products-modal-header {
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
   padding: 16px;
   border-bottom: 1px solid #e5e7eb;
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
+  gap: 12px;
+  position: relative;
 }
 
 .products-modal-header .products-print-label-btn {
-  margin-right: 10px;
+  grid-column: 1;
 }
 
 .products-modal-title {
@@ -298,7 +316,18 @@
   font-weight: 600;
   color: #111827;
   text-align: center;
-  grid-column: 2;
+  margin: 0;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Override for delete modal title */
+.products-modal-container.details:has(.products-delete-modal-body) .products-modal-title {
+  position: static;
+  text-align: left;
+  transform: none;
+  left: auto;
 }
 
 .products-modal-close {
@@ -307,8 +336,13 @@
   font-size: 20px;
   color: #9ca3af;
   cursor: pointer;
-  padding: 4px;
-  justify-self: end;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  grid-column: 3;
 }
 
 .products-modal-close:hover {
@@ -388,7 +422,7 @@
 }
 
 .products-print-label-btn {
-  background-color: #00a838;
+  background-color: #4f46e5;
   color: white;
   font-size: 12px;
   padding: 5px 10px;
@@ -403,7 +437,7 @@
 }
 
 .products-print-label-btn:hover {
-  background-color: #008a2e;
+  background-color: #4338ca;
 }
 
 /* Style for input fields in edit mode */
@@ -422,7 +456,59 @@
 .products-modal-detail-value input:focus,
 .products-modal-detail-value select:focus {
   outline: none;
-  border-bottom: 1px solid #00a838;
+  border-bottom: 1px solid #4f46e5;
+}
+
+/* Delete Modal Content Styling */
+.products-delete-modal-body {
+  padding: 20px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.products-delete-modal-message {
+  font-size: 14px;
+  color: #6b7280;
+  line-height: 1.6;
+  margin: 0 0 20px 0;
+  text-align: left;
+}
+
+.products-delete-modal-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.products-delete-modal-btn {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid #d1d5db;
+}
+
+.products-delete-modal-btn.cancel {
+  background-color: #f3f4f6;
+  color: #374151;
+  border-color: #d1d5db;
+}
+
+.products-delete-modal-btn.cancel:hover {
+  background-color: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.products-delete-modal-btn.delete {
+  background-color: transparent;
+  color: #dc2626;
+  border-color: #dc2626;
+}
+
+.products-delete-modal-btn.delete:hover {
+  background-color: #fef2f2;
+  border-color: #dc2626;
 }
 
 @media (max-width: 768px) {

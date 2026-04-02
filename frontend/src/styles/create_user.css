@@ -1,8 +1,8 @@
 .user-container {
-    padding: 16px;
-    background-color: transparent;
-    min-height: 100%;
-  }
+  padding: 20px;
+  background-color: #f8f9fa; /* Match other management pages */
+  min-height: 100vh;
+}
   
   .breadcrumb {
     display: flex;
@@ -22,16 +22,16 @@
   
   .user-form-container {
     background-color: #ffffff;
-    border-radius: 4px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    padding: 24px;
+    border-radius: 8px; /* Match Brands / Employee cards */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
   }
-  
+
   .form-title {
-    font-size: 20px;
-    font-weight: 500;
+    font-size: 24px; /* Match other page titles */
+    font-weight: 600;
     margin-bottom: 24px;
-    color: #333;
+    color: #212529;
   }
   
   .form-content {
@@ -55,21 +55,24 @@
     position: relative;
   }
   
-  input, select {
-    width: 100%;
-    padding: 10px 12px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 14px;
-    outline: none;
-    transition: border-color 0.2s;
-    height: 40px; 
-    box-sizing: border-box; 
-  }
-  
-  input:focus, select:focus {
-    border-color: #4a90e2;
-  }
+  input,
+  select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+  height: 40px;
+  box-sizing: border-box;
+}
+
+input:focus,
+select:focus {
+  border-color: #4f46e5; /* Indigo focus to match global inputs */
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.25);
+}
   
   .input-error, .select-error {
     border-color: #e74c3c;
@@ -112,22 +115,22 @@
   }
   
   .submit-button {
-    background-color: #28a745;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    padding: 10px 24px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    width: fit-content;
-    margin-top: 4px; 
-  }
-  
-  .submit-button:hover {
-    background-color: #218838;
-  }
+  background-color: #4f46e5; /* Match primary indigo buttons */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  width: fit-content;
+  margin-top: 4px;
+}
+
+.submit-button:hover {
+  background-color: #4338ca;
+}
   
   .submit-button:disabled {
     background-color: #6c757d;

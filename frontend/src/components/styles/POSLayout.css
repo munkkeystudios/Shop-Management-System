@@ -14,11 +14,11 @@
 
 .pos-main-content {
   flex: 1;
-  padding: 20px;
-  padding-top: 0; /* Remove top padding */
-  margin-top: 0; /* Remove top margin */
-  background-color: #f8f9fa; /* Light gray background */
+  padding: 0;
+  margin: 0;
+  background-color: #f8fafc; /* Very light slate gray background for full POS page */
   overflow-y: auto;
+  overflow-x: hidden; /* Prevent horizontal scrollbar in POS area */
 }
 
 @media (max-width: 768px) {

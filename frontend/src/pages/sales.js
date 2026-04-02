@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { FaSearch, FaFileExcel, FaFilePdf } from 'react-icons/fa';
+import { FaFileExcel, FaFilePdf } from 'react-icons/fa';
+import { FiSearch } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { salesAPI } from '../services/api';
@@ -150,11 +151,6 @@ export const Frame = () => {
           <span className="block sm:inline">{error}</span>
         </div>
       )}
-      {loading && (
-        <div className="flex justify-center items-center p-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-        </div>
-      )}
       <div className="sales-frame">
         <div className="sales-div-2">
           <div className="sales-div-3">
@@ -162,7 +158,7 @@ export const Frame = () => {
               <div className="sales-text-2">All Sales</div>
               <div className="sales-controls-container">
                 <div className="sales-search-container">
-                  <FaSearch className="sales-search-icon" />
+                  <FiSearch className="sales-search-icon" />
                   <input
                     type="text"
                     placeholder="Search this table"
@@ -199,42 +195,51 @@ export const Frame = () => {
 
             <div className="sales-div-6">
               <div className="sales-div-7">
-                <table className="sales-table">
-                  <thead>
-                    <tr>
-                      <th>Date</th>
-                      <th>Reference</th>
-                      <th>Added by</th>
-                      <th>Customer</th>
-                      <th>Grand Total</th>
-                      <th>Paid</th>
-                      <th>Due</th>
-                      <th>Payment Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredSales.map((sale, index) => (
-                      <tr key={index}>
-                        <td>{new Date(sale.createdAt).toLocaleDateString()}</td>
-                        <td>{sale._id}</td>
-                        <td>{sale.createdBy?.name}</td>
-                        <td>{sale.customer.name}</td>
-                        <td>{sale.total}</td>
-                        <td>{sale.amountPaid}</td>
-                        <td>{sale.change}</td>
-                        <td><span className={`sales-status-badge ${sale.paymentStatus.toLowerCase()}`}>{sale.paymentStatus}</span></td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-
-                <div className="sales-pagination-container">
-                  <div className="sales-pagination-controls">
-                    <button className="sales-pagination-button">Previous</button>
-                    <button className="sales-pagination-button">Next</button>
+                {loading ? (
+                  <div className="employee-loading">
+                    <div className="employee-spinner"></div>
+                    <div className="employee-loading-text">Loading sales...</div>
                   </div>
-                  <span className="sales-page-info">Page 1 of 10</span>
-                </div>
+                ) : (
+                  <>
+                    <table className="sales-table">
+                      <thead>
+                        <tr>
+                          <th>Date</th>
+                          <th>Reference</th>
+                          <th>Added by</th>
+                          <th>Customer</th>
+                          <th>Grand Total</th>
+                          <th>Paid</th>
+                          <th>Due</th>
+                          <th>Payment Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredSales.map((sale, index) => (
+                          <tr key={index}>
+                            <td>{new Date(sale.createdAt).toLocaleDateString()}</td>
+                            <td>{sale._id}</td>
+                            <td>{sale.createdBy?.name}</td>
+                            <td>{sale.customer.name}</td>
+                            <td>{sale.total}</td>
+                            <td>{sale.amountPaid}</td>
+                            <td>{sale.change}</td>
+                            <td><span className={`sales-status-badge ${sale.paymentStatus.toLowerCase()}`}>{sale.paymentStatus}</span></td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+
+                    <div className="sales-pagination-container">
+                      <div className="sales-pagination-controls">
+                        <button className="sales-pagination-button">Previous</button>
+                        <button className="sales-pagination-button">Next</button>
+                      </div>
+                      <span className="sales-page-info">Page 1 of 10</span>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>

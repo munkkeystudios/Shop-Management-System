@@ -20,12 +20,10 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import './styles/tailwind.css';
+import "./global-reset.css";
 import "./index.css";
 import App from "./App"; // Root component
 import reportWebVitals from "./reportWebVitals";
-
-// Ensure Tailwind is imported if you're using it
-import "./styles/tailwind.css"; 
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 

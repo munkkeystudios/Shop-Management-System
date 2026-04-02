@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FaSearch, FaFileExcel, FaFilePdf, FaCalendarAlt, FaChevronDown } from 'react-icons/fa';
+import { FaSearch, FaFileExcel, FaFilePdf, FaCalendarAlt } from 'react-icons/fa';
 import Layout from '../components/Layout';
 import { salesAPI } from '../services/api';
 import { SalesBarChart, PaymentMethodPieChart, SalesTrendLineChart } from '../components/SalesCharts';
@@ -15,7 +15,6 @@ const Reports = () => {
   const [error, setError] = useState(null);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [isReportOpen, setIsReportOpen] = useState(false);
   const [salesStats, setSalesStats] = useState({
     overall: {
       totalSalesValue: 0,
@@ -153,7 +152,7 @@ const Reports = () => {
   };
 
   return (
-    <Layout title="Reports">
+    <Layout title="Sales Report">
       {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
           <span className="block sm:inline">{error}</span>
@@ -165,21 +164,13 @@ const Reports = () => {
         </div>
       )}
       <div className="sales-frame">
-        <div className="collapsible-report-container">
-          {/* Collapsible Header */}
-          <div
-            className="collapsible-report-header"
-            onClick={() => setIsReportOpen(!isReportOpen)}
-          >
-            <div className="collapsible-report-title">Sales Report</div>
-            <FaChevronDown className={`collapsible-report-icon ${isReportOpen ? 'open' : ''}`} />
-          </div>
-
-          {/* Collapsible Content */}
-          <div className={`collapsible-report-content ${isReportOpen ? 'open' : ''}`}>
+        <div className="collapsible-report-container sales-div-2">
+          {/* Report Content (always visible) */}
+          <div className="collapsible-report-content open">
             <div className="collapsible-report-inner">
               <div className="sales-div-3">
                 <div className="sales-div-4">
+                  <div className="sales-text-2">Sales Report</div>
                   {/* Date Filter Controls */}
                   <div className="sales-controls-container">
                     <div className="sales-date-filter">

@@ -1,7 +1,7 @@
 
 
 import React, { useState, useEffect } from 'react';
-import { FiSearch, FiPlus, FiEdit, FiTrash, FiX } from 'react-icons/fi';
+import { FiSearch, FiPlus, FiEdit, FiTrash2, FiX } from 'react-icons/fi';
 import { FaFileExcel, FaFilePdf } from 'react-icons/fa';
 import { usersAPI } from '../services/api';
 import Layout from '../components/Layout';
@@ -372,19 +372,12 @@ const EmployeeManagement = () => {
                         </div>
                     )}
 
-                    {loading && !isCreateModalOpen && !isEditModalOpen && !isDeleteModalOpen && (
-                        <div className="employee-loading-overlay">
-                            <div className="employee-spinner"></div>
-                            <div className="employee-loading-text">Processing...</div>
-                        </div>
-                    )}
-
-                    {loading && !isCreateModalOpen && !isEditModalOpen ? (
-                        <div className="employee-loading">
-                            <div className="employee-spinner"></div>
-                            <div className="employee-loading-text">Loading employees...</div>
-                        </div>
-                    ) : (
+                            {loading && !isCreateModalOpen && !isEditModalOpen ? (
+                                <div className="employee-loading">
+                                    <div className="employee-spinner"></div>
+                                    <div className="employee-loading-text">Loading employees...</div>
+                                </div>
+                            ) : (
                         <div>
                             <table className="employee-table">
                                 <thead>
@@ -413,7 +406,7 @@ const EmployeeManagement = () => {
                                                 <td>
                                                     <div className="action-icons">
                                                         <FiEdit className="edit-icon" title="Edit" onClick={() => openEditModal(user)} />
-                                                        <FiTrash className="delete-icon" title="Delete" onClick={() => openDeleteModal(user)} />
+                                                        <FiTrash2 className="delete-icon" title="Delete" onClick={() => openDeleteModal(user)} />
                                                     </div>
                                                 </td>
                                             </tr>

@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import { FaPrint } from 'react-icons/fa';
+import { FiX } from 'react-icons/fi';
 import { generateBarcodeUrl, handleBarcodeError } from '../utils/barcodeUtils';
 import './styles/ProductLabel.css';
 
@@ -102,7 +103,7 @@ const ProductLabel = ({ product, onClose }) => {
       <div className="product-label-container" onClick={(e) => e.stopPropagation()}>
         <div className="product-label-header">
           <h3>Product Label</h3>
-          <button className="product-label-close" onClick={onClose}>×</button>
+          <button className="product-label-close" onClick={onClose}><FiX /></button>
         </div>
 
         <div className="product-label-content-wrapper">

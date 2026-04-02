@@ -129,8 +129,10 @@ const ImportSale = () => {
 
     return (
         <Layout title="Import Sales">
-            <div className="import-purchase-container"> {/* Reusing purchase import styles */}
-                <h1>Import Sales Data</h1>
+            <div className="sales-frame">
+                <div className="sales-div-2">
+                    <div className="import-purchase-container"> {/* Reusing purchase import styles inside shared sales card */}
+                <h1 className="sales-text-2">Import Sales Data</h1>
                 <p>Upload a CSV or Excel file with sales information. Ensure it matches the required format.</p>
 
                 <div className="download-sample">
@@ -206,6 +208,8 @@ const ImportSale = () => {
                         </button>
                     </div>
                 </form>
+                    </div>
+                </div>
             </div>
         </Layout>
     );

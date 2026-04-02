@@ -6,16 +6,11 @@ import '../styles/billTab.css'; // Import the CSS file
 export const CreateBillButton = ({ onClick, text }) => {
   return (
     <Button
-      className="new-bill-button"
-      style={{ 
-        backgroundColor: '#00a838', 
-        borderColor: '#00a838',
-        color: 'white'
-      }}
-      size="sm"
-      onClick={onClick}
+	  className="new-bill-button"
+	  size="sm"
+	  onClick={onClick}
     >
-      {text || "+ New Bill"}
+      {text || 'Create New Bill'}
     </Button>
   );
 };

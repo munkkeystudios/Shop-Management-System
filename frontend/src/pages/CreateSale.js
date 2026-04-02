@@ -256,19 +256,21 @@ const CreateSale = () => {
 
     return (
         <Layout title="Create New Sale">
-            <div className="create-sale-container">
-                {/* Transaction notification */}
-                <TransactionNotification
-                    show={notification.show}
-                    type="sale"
-                    data={notification.data}
-                    onClose={closeNotification}
-                />
+            <div className="sales-frame">
+                <div className="sales-div-2">
+                    <div className="create-sale-container">
+                        {/* Transaction notification */}
+                        <TransactionNotification
+                            show={notification.show}
+                            type="sale"
+                            data={notification.data}
+                            onClose={closeNotification}
+                        />
 
-                <h1>Create New Sale</h1>
+                        <h2 className="sales-text-2">Create New Sale</h2>
 
-                {error && <div className="alert error">{error}</div>}
-                {success && <div className="alert success">{success}</div>}
+                        {error && <div className="alert error">{error}</div>}
+                        {success && <div className="alert success">{success}</div>}
 
                 <form onSubmit={handleSubmit} className="create-sale-form">
                     {/* Rest of your form remains the same */}
@@ -462,11 +464,17 @@ const CreateSale = () => {
                         <button type="submit" disabled={loading} className="submit-button">
                             {loading ? 'Creating Sale...' : 'Create Sale'}
                         </button>
-                         <button type="button" onClick={() => navigate('/dashboard')} className="cancel-button">
-                              Cancel
-                         </button>
+                        <button
+                            type="button"
+                            onClick={() => navigate('/dashboard')}
+                            className="cancel-button"
+                        >
+                            Cancel
+                        </button>
                     </div>
                 </form>
+                    </div>
+                </div>
             </div>
         </Layout>
     );

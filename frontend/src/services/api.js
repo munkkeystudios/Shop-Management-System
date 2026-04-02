@@ -237,6 +237,7 @@ api.interceptors.response.use(
       error.response?.status,
       error.response?.data || error.message
     );
+    console.error('Full error object:', error);
     if (error.response && (error.response.status === 401 || error.response.status === 403)) {
       console.warn(`Auth Error (${error.response.status}): Redirecting to login.`);
       localStorage.removeItem('token'); // Clear invalid token
@@ -302,6 +303,72 @@ export const purchasesAPI = {
     api.get(`/purchases/export?format=${format}`, { responseType: 'blob' }),
 };
 
-// --- Keep other APIs unchanged --- //
+// Categories API 
+export const categoriesAPI = {
+  getAll: () => api.get('/categories'),
+  getById: (id) => api.get(`/categories/${id}`),
+  create: (categoryData) => api.post('/categories', categoryData),
+  update: (id, categoryData) => api.put(`/categories/${id}`, categoryData),
+  delete: (id) => api.delete(`/categories/${id}`),
+};
+
+// Suppliers API 
+export const suppliersAPI = {
+  getAll: () => api.get('/suppliers'),
+  getById: (id) => api.get(`/suppliers/${id}`),
+  create: (supplierData) => api.post('/suppliers', supplierData),
+  update: (id, supplierData) => api.put(`/suppliers/${id}`, supplierData),
+  delete: (id) => api.delete(`/suppliers/${id}`),
+};
+
+// Loans API
+export const loansAPI = {
+  getAll: () => api.get('/loans'), 
+  getById: (id) => api.get(`/loans/${id}`), 
+  getByLoanNumber: (loanNumber) => api.get(`/loans/loan-number/${loanNumber}`), 
+  create: (loanData) => api.post('/loans', loanData), 
+  updateRepayment: (id, repaymentData) => api.put(`/loans/${id}/repayment`, repaymentData), 
+  addItems: (loanId, items) => api.put(`/loans/${loanId}/add-items`, { items }), 
+  delete: (id) => api.delete(`/loans/${id}`), 
+  validateLoan: (loanNumber) => api.post('/loans/validate-loan', { loanNumber }), 
+  payLoan: (id) => api.put(`/loans/${id}/pay`),
+  exportLoans: (format = 'csv', params = {}) =>
+    api.get(`/loans/export`, {
+      params: { format, ...params },
+      responseType: 'blob',
+    }),
+};
+
+// Brands API 
+export const brandsAPI = {
+  getAll: () => api.get('/brands'),
+  getById: (id) => api.get(`/brands/${id}`),
+  create: (brandData) => api.post('/brands', brandData),
+  update: (id, brandData) => api.put(`/brands/${id}`, brandData),
+  delete: (id) => api.delete(`/brands/${id}`),
+};
+
+// Settings API
+export const settingsAPI = {
+  getAll: () => api.get('/settings'),
+  update: (settingsData) => api.put('/settings', settingsData),
+  uploadLogo: (formData) => api.post('/settings/logo', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  }),
+  changePassword: (passwordData) => api.post('/settings/change-password', passwordData),
+  getDisplaySettings: () => api.get('/settings'), 
+  updateDisplaySettings: (displaySettings) => api.put('/settings', displaySettings),
+  getGeneralSettings: () => api.get('/settings'), 
+  updateGeneralSettings: (generalSettings) => api.put('/settings', generalSettings)
+};
+
+// User Profile API
+export const userAPI = {
+  getUserProfile: (userId) => api.get(`/users/${userId}/profile`),
+  updateUserProfile: (userId, profileData) => api.put(`/users/${userId}/profile`, profileData),
+  updateNotificationPreferences: (userId, preferences) => api.put(`/users/${userId}/notifications`, preferences)
+};
 
 export default api;

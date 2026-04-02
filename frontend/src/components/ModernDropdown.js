@@ -34,7 +34,6 @@ const ModernDropdown = ({ title, children, isActive, headerColor = '#ffffff', cl
       <div
         className={`sidebar-dropdown-header ${isActive ? 'active' : ''}`}
         onClick={() => setIsOpen(!isOpen)}
-        style={{ backgroundColor: isActive ? '#f0f8f4' : headerColor }}
       >
         <div className="sidebar-dropdown-title">
           {title}

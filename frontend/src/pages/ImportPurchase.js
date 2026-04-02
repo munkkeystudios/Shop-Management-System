@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Layout from '../components/Layout'; 
 import '../styles/importPurchase.css';
+import './sales.css'; // Reuse shared sales layout and title styles
 import html2pdf from 'html2pdf.js';
 import TransactionNotification from './TransactionNotification';
 import { useNotifications } from '../context/NotificationContext';
@@ -223,18 +224,20 @@ const ImportPurchase = () => {
   
 
   return (
-    <Layout>
-      <div className="import-purchase-container">
-        <h1>Import Purchase</h1>
+    <Layout title="Import Purchase">
+      <div className="sales-frame">
+        <div className="sales-div-2">
+          <div className="import-purchase-container">
+            <h2 className="sales-text-2">Import Purchase</h2>
 
-        <TransactionNotification
-          show={notification.show}
-          type="purchase"
-          data={notification.data}
-          onClose={closeNotification}
-        />
+            <TransactionNotification
+              show={notification.show}
+              type="purchase"
+              data={notification.data}
+              onClose={closeNotification}
+            />
 
-        <form onSubmit={handleSubmit} id="import-purchase-form">
+  <form onSubmit={handleSubmit} id="import-purchase-form">
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="date">Date</label>
@@ -403,11 +406,13 @@ const ImportPurchase = () => {
             <button type="button" className="btn-discard" onClick={handleDiscard}>
               Discard
             </button>
-            <button type="submit" className="btn-save-submit" disabled={loading}>
+            <button type="submit" className="btn-submit" disabled={loading}>
               {loading ? 'Processing...' : 'Save & Submit'}
             </button>
           </div>
         </form>
+          </div>
+        </div>
       </div>
     </Layout>
   );

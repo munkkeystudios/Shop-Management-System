@@ -3,6 +3,8 @@ const { Product, Category, Supplier } = require('../models');
 //gt all products
 exports.getAllProducts = async (req, res) => {
   try {
+    console.log('=== getAllProducts called ===');
+    console.log('Auth user:', req.user);
     //parameters for iltering
     const { 
       category, 
@@ -34,6 +36,9 @@ exports.getAllProducts = async (req, res) => {
     //spread onto different pages
     const skip = (parseInt(page) - 1) * parseInt(limit);
     
+    console.log('Query:', query);
+    console.log('Skip:', skip, 'Limit:', limit);
+    
     //excute query
     const products = await Product.find(query)
       .populate('category', 'name')
@@ -42,17 +47,24 @@ exports.getAllProducts = async (req, res) => {
       .skip(skip)
       .limit(parseInt(limit));
     
+    console.log('Found products:', products.length);
+    
     //total count of pages
     const total = await Product.countDocuments(query);
     
-    res.status(200).json({
+    console.log('Total count:', total);
+    
+    const response = {
       success: true,
       count: products.length,
       total,
       totalPages: Math.ceil(total / parseInt(limit)),
       currentPage: parseInt(page),
       data: products
-    });
+    };
+    
+    console.log('Sending response:', JSON.stringify(response, null, 2));
+    res.status(200).json(response);
   } catch (error) {
     console.error('Error fetching products:', error);
     res.status(500).json({

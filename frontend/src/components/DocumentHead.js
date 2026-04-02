@@ -58,59 +58,53 @@ const DocumentHead = () => {
     }
 
     try {
-      // Update favicon with company logo
-      let logoUrl = settings.companyLogo || settings.logoUrl;
-
-      if (logoUrl) {
-        // Create a base URL for relative paths
-        const baseUrl = process.env.REACT_APP_API_URL || 'http://localhost:5002';
-
-        // Create full URL for the logo
-        const fullLogoUrl = logoUrl.startsWith('http')
-          ? logoUrl
-          : `${baseUrl}${logoUrl}`;
-
-        // Try to convert the image to a proper favicon
-        try {
-          const faviconDataUrl = await convertImageToFavicon(fullLogoUrl);
-
-          // Create a link element for the favicon
-          const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
-          link.type = 'image/png';
-          link.rel = 'shortcut icon';
-          link.href = faviconDataUrl;
-
-          // Add to document head if it doesn't exist
-          if (!document.querySelector("link[rel*='icon']")) {
-            document.getElementsByTagName('head')[0].appendChild(link);
-          } else {
-            // Update existing favicon
-            document.querySelector("link[rel*='icon']").href = faviconDataUrl;
-          }
-        } catch (error) {
-          // If conversion fails, use the original image
-          const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
-          link.type = 'image/x-icon';
-          link.rel = 'shortcut icon';
-          link.href = fullLogoUrl;
-
-          if (!document.querySelector("link[rel*='icon']")) {
-            document.getElementsByTagName('head')[0].appendChild(link);
-          } else {
-            document.querySelector("link[rel*='icon']").href = fullLogoUrl;
-          }
-        }
-      } else {
-        // Use default logo if no custom logo is set
-        const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
-        link.type = 'image/png';
-        link.rel = 'shortcut icon';
-        link.href = logoImage;
-
-        if (!document.querySelector("link[rel*='icon']")) {
-          document.getElementsByTagName('head')[0].appendChild(link);
-        }
-      }
+      // Update favicon with company logo - DISABLED
+      // let logoUrl = settings.companyLogo || settings.logoUrl;
+      // 
+      // if (logoUrl) {
+      //   // Create a base URL for relative paths
+      //   const baseUrl = process.env.REACT_APP_API_URL || 'http://localhost:5002';
+      //   // Create full URL for the logo
+      //   const fullLogoUrl = logoUrl.startsWith('http')
+      //     ? logoUrl
+      //     : `${baseUrl}${logoUrl}`;
+      //   // Try to convert the image to a proper favicon
+      //   try {
+      //     const faviconDataUrl = await convertImageToFavicon(fullLogoUrl);
+      //     // Create a link element for the favicon
+      //     const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+      //     link.type = 'image/png';
+      //     link.rel = 'shortcut icon';
+      //     link.href = faviconDataUrl;
+      //     // Add to document head if it doesn't exist
+      //     if (!document.querySelector("link[rel*='icon']")) {
+      //       document.getElementsByTagName('head')[0].appendChild(link);
+      //     } else {
+      //       // Update existing favicon
+      //       document.querySelector("link[rel*='icon']").href = faviconDataUrl;
+      //     }
+      //   } catch (error) {
+      //     // If conversion fails, use the original image
+      //     const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+      //     link.type = 'image/x-icon';
+      //     link.rel = 'shortcut icon';
+      //     link.href = fullLogoUrl;
+      //     if (!document.querySelector("link[rel*='icon']")) {
+      //       document.getElementsByTagName('head')[0].appendChild(link);
+      //     } else {
+      //       document.querySelector("link[rel*='icon']").href = fullLogoUrl;
+      //     }
+      //   }
+      // } else {
+      //   // Use default logo if no custom logo is set
+      //   const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+      //   link.type = 'image/png';
+      //   link.rel = 'shortcut icon';
+      //   link.href = logoImage;
+      //   if (!document.querySelector("link[rel*='icon']")) {
+      //     document.getElementsByTagName('head')[0].appendChild(link);
+      //   }
+      // }
     } catch (error) {
       console.error('Error updating favicon:', error);
     }

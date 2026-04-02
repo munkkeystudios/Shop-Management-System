@@ -181,22 +181,22 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateB
   return (
     <>
       <Button
-        variant="success"
+        variant="primary"
         onClick={handleShow}
         style={{
           fontSize: '0.95rem',
-          padding: '8px 20px',
-          borderRadius: '4px',
-          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-          height: '38px',
+          padding: '6px 18px',
+          borderRadius: '8px',
+          boxShadow: '0 4px 10px rgba(79, 70, 229, 0.4)',
+          height: '42px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: '#00a838',
-          borderColor: '#00a838'
+          backgroundColor: '#4f46e5',
+          borderColor: '#4f46e5'
         }}
       >
-        Pay now
+        Payment
       </Button>
 
       <Modal show={show} onHide={() => { setPaymentMethod('cash'); handleClose(); }} centered size="lg">
@@ -373,13 +373,17 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateB
           <div className="payment-summary">
             <h5 className="payment-total">Total Payable: ${endPayment.toFixed(2)}</h5>
             <Button
-              variant="success"
+              variant="primary"
               onClick={handleTransaction}
               disabled={
                 (paymentMethod === 'cash' && (!cashReceived || Number(cashReceived) < endPayment)) ||
                 (paymentMethod === 'card' && (!cardNumber || cardNumber.length < 13)) ||
                 (paymentMethod === 'loan' && !loanNumber)
               }
+              style={{
+                backgroundColor: '#4f46e5',
+                borderColor: '#4f46e5'
+              }}
             >
               Complete Payment
             </Button>

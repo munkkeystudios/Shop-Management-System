@@ -49,23 +49,27 @@
     font-size: 13px;
   }
   
-  /* New Bill Button */
+  /* New Bill Button - keep original compact style, only update color */
   .new-bill-button {
-    background-color: #00A838;
-    border-color: #009a33;
+    background-color: #4f46e5 !important; /* Match Payment button color */
+    border-color: #4f46e5 !important;
+    color: #ffffff;
     font-size: 13px;
-    padding: 4px 10px;
+    padding: 6px 18px;
     height: 32px;
     margin-left: 12px;
     box-shadow: none;
     display: flex;
     align-items: center;
     justify-content: center;
+    border-radius: 8px;
+    text-align: center;
   }
-  
+
   .new-bill-button:hover {
-    background-color: #009a33;
-    border-color: #008a2e;
+    background-color: #4338ca !important;
+    border-color: #4338ca !important;
+    color: #ffffff;
   }
   
   /* Tab Navigation Styles */
@@ -98,7 +102,7 @@
   .bill-tabs-container .nav-link.active {
     background-color: #fff;
     border-color: #dee2e6;
-    color: #00A838;
+    color: #4f46e5; /* Active tab in primary indigo */
     font-weight: 500;
   }
   

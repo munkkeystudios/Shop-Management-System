@@ -9,9 +9,14 @@
     background-color: #f8f9fa;
     border: 1px solid #dee2e6;
     border-radius: 4px;
-    height: 38px;
+    height: 40px;
     display: flex;
     align-items: center;
+  }
+
+  .pos-search-container:focus-within {
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.25);
   }
   
   .pos-search-qr-icon {
@@ -43,10 +48,11 @@
     color: #212529;
     height: 100%;
   }
-  
+
   .pos-search-input:focus {
-    border-color: #00a838;
-    box-shadow: 0 0 0 2px rgba(0, 168, 56, 0.25);
+    outline: none;
+    border: none;
+    box-shadow: none;
   }
   
   .pos-search-input::placeholder {

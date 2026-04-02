@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import '../styles/Auth.css';
 import logoImage from '../images/logo-small.png';
+import loginBgImage from '../images/Gemini_Generated_Image_fmlbtzfmlbtzfmlb.png';
 import axios from 'axios';
 import { FiEye, FiMail, FiLock, FiLogIn } from 'react-icons/fi';
 
@@ -58,26 +59,15 @@ const Login = () => {
 
   return (
     <div className="auth-container login-page">
-      <div className="auth-card-left">
-        <div className="logo-container">
-          <div className="logo">
-            <img src={companyInfo.logo} alt="Company Logo" />
-          </div>
-          <h1>{companyInfo.name}</h1>
-        </div>
-
-        <div className="promo-content">
-          <h2>Start your Journey with us!</h2>
-          <p>Experience seamless transactions and personalized solutions. Let's enhance your business operations together.
-            Start optimizing your POS system today with us!</p>
-          <div className="company-info">
-            <p>{companyInfo.name} Solutions Inc.</p>
-          </div>
-        </div>
-      </div>
-
       <div className="auth-card-right">
         <div className="form-content">
+          <div className="logo-container-top">
+            <div className="logo">
+              <img src={companyInfo.logo} alt="Company Logo" />
+            </div>
+            <h1>{companyInfo.name}</h1>
+          </div>
+
           <div className="auth-header">
             <h2>Login</h2>
             <p>Login to your account!</p>
@@ -126,20 +116,6 @@ const Login = () => {
                 />
               </div>
             </div>
-            <div className="form-group">
-              <div className="form-options">
-                <div className="remember-me">
-                  <input
-                    type="checkbox"
-                    id="remember"
-                    checked={rememberMe}
-                    onChange={(e) => setRememberMe(e.target.checked)}
-                  />
-                  <label htmlFor="remember">Remember Me</label>
-                </div>
-                <Link to="/forgot-password" className="forgot-password">Forgot Password?</Link>
-              </div>
-            </div>
 
             <div className="form-group login-button-wrapper">
                 <button
@@ -153,6 +129,9 @@ const Login = () => {
             </div>
           </form>
         </div>
+      </div>
+
+      <div className="auth-card-left">
       </div>
     </div>
   );

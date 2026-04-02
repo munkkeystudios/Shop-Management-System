@@ -145,47 +145,35 @@ const MainDashboard = () => {
         limit: 100 // Get enough data to find top 5 after processing
       };
 
-      // Calculate date range based on selected period
-      const today = new Date();
-      let periodStartDate = new Date();
-
-      if (tablePeriod === 'Daily') {
-        // Last 24 hours
-        periodStartDate.setDate(today.getDate() - 1);
-      } else if (tablePeriod === 'Weekly') {
-        // Last 7 days
-        periodStartDate.setDate(today.getDate() - 7);
-      } else {
-        // Monthly (default) - Last 30 days
-        periodStartDate.setDate(today.getDate() - 30);
-      }
-
-      // Use provided date range if specified, otherwise use calculated period
+      // Only add date filters if user has explicitly set dates, otherwise fetch all
       if (startDate) {
         params.startDate = startDate;
-      } else {
-        params.startDate = periodStartDate.toISOString().split('T')[0];
       }
-
       if (endDate) {
         params.endDate = endDate;
-      } else {
-        params.endDate = today.toISOString().split('T')[0];
       }
 
+      console.log('DEBUG: Fetching sales with params:', params);
       const response = await salesAPI.getAll(params);
+      console.log('DEBUG: Sales API response:', response);
+      console.log('DEBUG: response.data:', response.data);
+      
       let salesData = [];
 
       if (response.data.success && Array.isArray(response.data.data)) {
         salesData = response.data.data;
+        console.log('DEBUG: Using response.data.data, length:', salesData.length);
       } else if (response.data.success && Array.isArray(response.data.sales)) {
         // if your server calls it "sales" instead of "data"
         salesData = response.data.sales;
+        console.log('DEBUG: Using response.data.sales, length:', salesData.length);
       } else {
         // fallback to empty array
-        console.warn('Unexpected sales shape, defaulting to []');
+        console.warn('DEBUG: Unexpected sales shape, defaulting to []');
+        console.warn('DEBUG: Full response.data structure:', JSON.stringify(response.data, null, 2));
       }
 
+      console.log('DEBUG: Setting sales state with data length:', salesData.length);
       // Set sales data for the chart
       setSales(salesData);
 
@@ -193,7 +181,7 @@ const MainDashboard = () => {
       await processTopPayments(salesData);
     } catch (err) {
       setError('Failed to fetch sales data');
-      console.error('Error fetching sales:', err);
+      console.error('DEBUG: Error fetching sales:', err);
       setSales([]);
       // Use sample data on error
       setTopPayments(sampleTopPayments);
@@ -464,7 +452,7 @@ const MainDashboard = () => {
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
-                      <div style={{ color: '#00a838', marginTop: '0.2rem' }}>
+                      <div style={{ color: '#4f46e5', marginTop: '0.2rem' }}>
                         <FaBell />
                       </div>
                       <div>
@@ -545,7 +533,7 @@ const MainDashboard = () => {
                 <button
                   className="btn btn-sm"
                   style={{
-                    backgroundColor: '#00a838',
+                    backgroundColor: '#4f46e5',
                     color: 'white',
                     border: 'none',
                     borderRadius: '4px',
@@ -600,7 +588,7 @@ const MainDashboard = () => {
             )}
             {productsOutOfStock.length > 0 && (
               <div className="pagination" style={{ marginTop: '1rem' }}>
-                <a href="/products" style={{ color: '#00a838', textDecoration: 'none' }}>View All Products</a>
+                <a href="/products" style={{ color: '#4f46e5', textDecoration: 'none' }}>View All Products</a>
                 <div style={{ marginLeft: 'auto' }}>Showing {productsOutOfStock.length} items</div>
               </div>
             )}
@@ -614,7 +602,7 @@ const MainDashboard = () => {
                 <button
                   className="btn btn-sm"
                   style={{
-                    backgroundColor: '#00a838',
+                    backgroundColor: '#4f46e5',
                     color: 'white',
                     border: 'none',
                     borderRadius: '4px',
@@ -647,7 +635,7 @@ const MainDashboard = () => {
                       <tr key={idx}>
                         <td>{payment.date}</td>
                         <td>{payment.customer}</td>
-                        <td style={{ color: '#00a838' }}>{payment.paid}</td>
+                        <td style={{ color: '#10b981' }}>{payment.paid}</td>
                         <td style={{ color: payment.due === '$0' ? '#64748b' : '#f43f5e' }}>{payment.due}</td>
                       </tr>
                     ))
@@ -662,7 +650,7 @@ const MainDashboard = () => {
               </Table>
             )}
             <div className="pagination" style={{ marginTop: '1rem' }}>
-              <a href="/sales" style={{ color: '#00a838', textDecoration: 'none' }}>View All Sales</a>
+              <a href="/sales" style={{ color: '#4f46e5', textDecoration: 'none' }}>View All Sales</a>
               <div style={{ marginLeft: 'auto' }}>Showing {topPayments.length} items</div>
             </div>
           </article>

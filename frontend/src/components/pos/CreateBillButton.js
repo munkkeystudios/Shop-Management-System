@@ -1,12 +1,20 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
 
-const CreateBillButton = () => {
+const CreateBillButton = ({ onClick, text = 'Create New Bill' }) => {
   return (
     <Button
-      style={{ backgroundColor: '#00A838', borderColor: '#357EC7', fontSize: '14px' }}
+      variant="primary"
+      onClick={onClick}
+      style={{
+        backgroundColor: '#6d28d9',
+        borderColor: '#6d28d9',
+        fontSize: '14px',
+        borderRadius: '999px',
+        padding: '8px 20px',
+      }}
     >
-      Create New Bill
+      {text}
     </Button>
   );
 };

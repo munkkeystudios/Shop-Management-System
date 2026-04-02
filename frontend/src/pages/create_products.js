@@ -221,9 +221,11 @@ const CreateProducts = () => {
 
   return (
     <Layout title="Create Product">
-      <div>
-        <Card>
-          <Card.Header>Create New Product</Card.Header>
+      <div className="create-products-page">
+        <Card className="create-products-card">
+          <Card.Header>
+            <span className="create-products-title">Create New Product</span>
+          </Card.Header>
           <Card.Body>
             {error && <Alert variant="danger" onClose={() => setError('')} dismissible>{error}</Alert>}
             {success && <Alert variant="success" onClose={() => setSuccess('')} dismissible>{success}</Alert>}

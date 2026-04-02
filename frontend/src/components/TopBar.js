@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { RiShoppingBag4Line } from 'react-icons/ri';
-import { FaChevronRight, FaUserCircle, FaSignOutAlt, FaCog } from 'react-icons/fa';
+import { FaSignOutAlt, FaCog } from 'react-icons/fa';
 import NotificationIcon from './NotificationIcon';
 import { getBreadcrumbs } from '../utils/pathUtils';
 import { useAuth } from '../context/AuthContext';
@@ -17,8 +17,9 @@ const TopBar = () => {
   // Get user info from context or localStorage
   const userInfo = user || JSON.parse(localStorage.getItem('userData')) || { username: 'User' };
 
-  // Get breadcrumbs for current path
+  // Get breadcrumbs for current path and derive current page label
   const breadcrumbs = getBreadcrumbs(location.pathname);
+  const currentCrumb = breadcrumbs[breadcrumbs.length - 1];
 
   // Handle logout
   const handleLogout = () => {
@@ -43,22 +44,8 @@ const TopBar = () => {
   return (
     <div className="topbar-container">
       <div className="topbar-left">
-        <div className="topbar-breadcrumbs">
-          {breadcrumbs.map((crumb, index) => (
-            <React.Fragment key={crumb.path + index}>
-              {index > 0 && <FaChevronRight className="breadcrumb-separator" />}
-              {crumb.isVirtual ? (
-                <span className="breadcrumb-item">{crumb.label}</span>
-              ) : (
-                <Link
-                  to={crumb.path}
-                  className={`breadcrumb-item ${index === breadcrumbs.length - 1 ? 'active' : ''}`}
-                >
-                  {crumb.label}
-                </Link>
-              )}
-            </React.Fragment>
-          ))}
+        <div className="topbar-page-title">
+          {currentCrumb ? currentCrumb.label : 'Dashboard'}
         </div>
       </div>
 

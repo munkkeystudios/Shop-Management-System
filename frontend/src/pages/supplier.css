@@ -40,6 +40,13 @@
   background-color: #f8f9fa;
   border-radius: 4px;
   padding: 8px 12px;
+  border: 1px solid #dee2e6;
+  height: 40px;
+}
+
+.supplier-search-container:focus-within {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.25);
 }
 
 .supplier-search-icon {
@@ -53,65 +60,96 @@
   outline: none;
   color: #212529;
   width: 200px;
+  font-size: 14px;
+  height: 100%;
+  line-height: 22px;
+}
+
+.supplier-search-input:focus {
+  outline: none;
+  border: none;
+  box-shadow: none;
 }
 
 .supplier-search-input::placeholder {
   color: #6c757d;
 }
 
+/* Supplier table - align styling with All Products / POS cart */
 .supplier-table {
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
+  border-collapse: collapse;
   margin-bottom: 20px;
-  border-radius: 8px;
-  overflow: hidden;
+  table-layout: fixed;
 }
 
 .supplier-table th,
 .supplier-table td {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid #dee2e6;
+  padding: 10px 12px;
+  border: none;
+  font-size: 0.85rem;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
-.supplier-table th:first-child {
-  border-top-left-radius: 8px;
+.supplier-table thead th {
+  background-color: #f9fafb;
+  font-weight: 500;
+  font-size: 0.8rem;
+  color: #6b7280;
+  text-transform: uppercase;
+  border-bottom: 1px solid #e5e7eb;
 }
 
-.supplier-table th:last-child {
-  border-top-right-radius: 8px;
+/* All columns left-aligned except actions */
+.supplier-table thead th:first-child,
+.supplier-table tbody td:first-child {
+  text-align: left !important;
 }
 
-.supplier-table tr:last-child td:first-child {
-  border-bottom-left-radius: 8px;
+.supplier-table thead th:nth-child(2),
+.supplier-table tbody td:nth-child(2) {
+  text-align: left !important;
 }
 
-.supplier-table tr:last-child td:last-child {
-  border-bottom-right-radius: 8px;
+.supplier-table thead th:nth-child(3),
+.supplier-table tbody td:nth-child(3) {
+  text-align: left !important;
 }
 
-.supplier-table tbody tr:nth-child(even) {
-  background-color: #f8f9fa;
+.supplier-table thead th:nth-child(4),
+.supplier-table tbody td:nth-child(4) {
+  text-align: left !important;
 }
 
-.supplier-table tbody tr:nth-child(odd) {
+.supplier-table thead th:nth-child(5),
+.supplier-table tbody td:nth-child(5) {
+  text-align: left !important;
+}
+
+.supplier-table thead th:last-child,
+.supplier-table tbody td:last-child {
+  text-align: center !important;
+}
+
+.supplier-table tbody tr {
   background-color: #ffffff;
+  height: 60.8px;
+}
+
+.supplier-table tbody tr + tr td {
+  border-top: 1px solid #e5e7eb;
 }
 
 .supplier-table tbody tr:hover {
-  background-color: #f3f4f6;
-}
-
-.supplier-table th {
-  font-weight: 600;
-  color: #212529;
-  background-color: #f8f9fa;
+  background-color: #f9fafb;
 }
 
 .action-icons {
   display: flex;
   gap: 10px;
+  justify-content: center;
+  align-items: center;
 }
 
 .edit-icon, .delete-icon {
@@ -124,7 +162,7 @@
 }
 
 .edit-icon:hover {
-  color: #00a838;
+  color: #4f46e5;
 }
 
 .delete-icon {
@@ -136,27 +174,24 @@
 }
 
 .supplier-action-button.primary {
-  background-color: #00a838;
+  background-color: #4f46e5;
   color: white;
   padding: 8px 16px;
   border-radius: 4px;
   display: flex;
   align-items: center;
   gap: 8px;
+  height: 40px;
 }
 
 .supplier-action-button.primary:hover {
-  background-color: #00a838;
+  background-color: #4338ca;
   color: white;
 }
 
+/* Hide supplier pagination bar and bottom separator line */
 .supplier-pagination-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 24px;
-  padding-top: 16px;
-  border-top: 1px solid #dee2e6;
+  display: none;
 }
 
 .supplier-pagination-controls {
@@ -175,7 +210,7 @@
 }
 
 .supplier-pagination-button:hover {
-  color: #00a838;
+  color: #4f46e5;
 }
 
 .supplier-page-info {
@@ -199,79 +234,92 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 2000;
 }
 
 .supplier-modal {
-  background: white;
-  padding: 32px;
-  border-radius: 16px;
-  width: 100%;
-  max-width: 500px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  margin: 0 auto;
   position: relative;
+  overflow: hidden;
+  width: 380px;
 }
 
 .supplier-modal-close {
   position: absolute;
-  top: 24px;
-  right: 24px;
+  top: 16px;
+  right: 16px;
   background: none;
   border: none;
-  font-size: 24px;
+  font-size: 20px;
   cursor: pointer;
-  color: #6c757d;
+  color: #9ca3af;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .supplier-modal-close:hover {
-  color: #212529;
+  color: #6b7280;
 }
 
 .supplier-modal-title {
-  font-size: 24px;
+  font-size: 18px;
   font-weight: 600;
-  color: #212529;
-  margin-bottom: 24px;
-  text-align: center;
+  color: #111827;
+  padding: 20px 20px 16px 20px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+  margin: 0;
 }
 
 .supplier-modal-form {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  padding: 20px;
 }
 
 .supplier-modal-input {
   width: 100%;
   padding: 12px;
-  border: 1px solid #dee2e6;
-  border-radius: 8px;
-  font-size: 16px;
-  color: #212529;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #111827;
   background-color: #fff;
+  font-family: inherit;
 }
 
 .supplier-modal-input:focus {
   outline: none;
-  border-color: #00a838;
-  box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.25);
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.25);
 }
 
 .supplier-modal-submit {
-  background-color: #00a838;
+  background-color: #4f46e5;
   color: white;
   border: none;
-  border-radius: 8px;
-  padding: 12px;
-  font-size: 16px;
+  border-radius: 4px;
+  font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  margin-top: 8px;
   width: 100%;
+  height: 40px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .supplier-modal-submit:hover {
-  background-color: #00a838;
+  background-color: #4338ca;
 }

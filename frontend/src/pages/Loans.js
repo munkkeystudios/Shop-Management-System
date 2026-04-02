@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { FaSearch, FaEye, FaMoneyBillWave, FaFileExcel, FaFilePdf, FaPlus } from 'react-icons/fa';
+import { FaEye, FaMoneyBillWave, FaFileExcel, FaFilePdf, FaPlus } from 'react-icons/fa';
+import { FiSearch } from 'react-icons/fi';
 import Layout from '../components/Layout';
 import '../styles/Loans.css';
 import { loansAPI } from '../services/api';
@@ -154,59 +155,61 @@ const Loans = () => {
     };
 
     return (
-        <Layout title="Loans">
-            {loading ? (
-                <div className="flex justify-center items-center p-4">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-                </div>
-            ) : error ? (
+        <Layout title="All Loans">
+            {error && (
                 <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
                     <span className="block sm:inline">{error}</span>
                 </div>
-            ) : (
-                <div className="loans-frame">
-                    <div className="loans-container">
-                        <div className="loans-header">
-                            <div className="loans-title">Loans</div>
+            )}
+            <div className="loans-frame">
+                <div className="loans-container">
+                    <div className="loans-header">
+                        <div className="loans-title">All Loans</div>
+                        
+                        <div className="loans-controls-container">
+                            <div className="loans-search-container">
+                                <FiSearch className="loans-search-icon" />
+                                <input
+                                    type="text"
+                                    placeholder="Search by customer name or loan number"
+                                    className="loans-search-input"
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                />
+                            </div>
                             
-                            <div className="loans-controls-container">
-                                <div className="loans-search-container">
-                                    <FaSearch className="loans-search-icon" />
-                                    <input
-                                        type="text"
-                                        placeholder="Search by customer name or loan number"
-                                        className="loans-search-input"
-                                        value={searchTerm}
-                                        onChange={(e) => setSearchTerm(e.target.value)}
-                                    />
-                                </div>
-                                
-                                <div className="loans-action-buttons">
-                                    <button
-                                        className="loans-export-button pdf-button"
-                                        onClick={handlePdfExport}
-                                        disabled={loading}
-                                    >
-                                        <FaFilePdf /> PDF
-                                    </button>
-                                    <button
-                                        className="loans-export-button excel-button"
-                                        onClick={handleExcelExport}
-                                        disabled={loading}
-                                    >
-                                        <FaFileExcel /> Excel
-                                    </button>
-                                    <button 
-                                        className="loans-create-button" 
-                                        onClick={handleCreateNewLoan}
-                                    >
-                                        <FaPlus /> Create New Loan
-                                    </button>
-                                </div>
+                            <div className="loans-action-buttons">
+                                <button
+                                    className="loans-export-button pdf-button"
+                                    onClick={handlePdfExport}
+                                    disabled={loading}
+                                >
+                                    <FaFilePdf /> PDF
+                                </button>
+                                <button
+                                    className="loans-export-button excel-button"
+                                    onClick={handleExcelExport}
+                                    disabled={loading}
+                                >
+                                    <FaFileExcel /> Excel
+                                </button>
+                                <button 
+                                    className="loans-create-button" 
+                                    onClick={handleCreateNewLoan}
+                                >
+                                    <FaPlus /> Create New Loan
+                                </button>
                             </div>
                         </div>
+                    </div>
 
-                        <div className="loans-table-container">
+                    <div className="loans-table-container">
+                        {loading ? (
+                            <div className="employee-loading">
+                                <div className="employee-spinner"></div>
+                                <div className="employee-loading-text">Loading loans...</div>
+                            </div>
+                        ) : (
                             <table className="loans-table">
                                 <thead>
                                     <tr>
@@ -261,10 +264,10 @@ const Loans = () => {
                                     )}
                                 </tbody>
                             </table>
-                        </div>
+                        )}
                     </div>
                 </div>
-            )}
+            </div>
         </Layout>
     );
 };

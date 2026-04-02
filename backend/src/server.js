@@ -63,7 +63,11 @@ mongoose.connect(mongoURI || 'mongodb://localhost:27017/shop-management', {
     .catch(err => console.error('MongoDB connection error:', err));
 
 // API Routes - Must come before static file serving
-app.use('/api', apiRoutes);
+app.use('/api', (req, res, next) => {
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
+    console.log('Headers:', {authorization: req.headers.authorization ? 'present' : 'missing', contentType: req.headers['content-type']});
+    next();
+}, apiRoutes);
 
 // Serve static files from the React app build directory
 console.log('Frontend build path:', path.join(__dirname, '../../frontend/build'));

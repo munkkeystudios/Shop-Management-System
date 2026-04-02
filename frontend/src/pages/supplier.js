@@ -1,6 +1,5 @@
 import React, { useState, useEffect} from "react";
-import { FaSearch, FaPlus, FaTimes } from 'react-icons/fa';
-import { FiEdit, FiTrash } from 'react-icons/fi';
+import { FiSearch, FiPlus, FiX, FiEdit, FiTrash2 } from 'react-icons/fi';
 import Layout from '../components/Layout';
 import { useNotifications } from '../context/NotificationContext';
 import './supplier.css';
@@ -14,6 +13,8 @@ export const Frame = () => {
   const [suppliers, setSuppliers] = useState([]);
   const [isEditMode, setIsEditMode] = useState(false);
   const [editingSupplierId, setEditingSupplierId] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const { addNotification } = useNotifications();
 
 
@@ -22,6 +23,8 @@ export const Frame = () => {
 useEffect(() => {
   const fetchSuppliers = async () => {
     try {
+      setLoading(true);
+      setError(null);
       const token = localStorage.getItem('token');
       if (!token) {
         // Not logged in → force login
@@ -43,9 +46,13 @@ useEffect(() => {
         setSuppliers(data.data);
       } else {
         console.warn('Suppliers fetch failed:', data.message);
+        setError(data.message || 'Failed to fetch suppliers');
       }
     } catch (error) {
       console.error('Error fetching suppliers:', error);
+      setError('Failed to fetch suppliers');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -146,13 +153,18 @@ const handleSubmit = async (e) => {
 
   return (
     <Layout title="Suppliers">
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+          <span className="block sm:inline">{error}</span>
+        </div>
+      )}
       <div className="supplier-frame">
         <div className="supplier-div-2">
           <div className="supplier-div-3">
             <div className="supplier-div-4">
               <div className="supplier-text-2">Supplier</div>
               <div className="supplier-search-container">
-                <FaSearch className="supplier-search-icon" />
+                <FiSearch className="supplier-search-icon" />
                 <input
                   type="text"
                   placeholder="Search this table"
@@ -165,49 +177,58 @@ const handleSubmit = async (e) => {
 
             <div className="supplier-div-6">
               <div className="supplier-div-7">
-                <table className="supplier-table">
-                  <thead>
-                    <tr>
-                      <th>ID</th>
-                      <th>Name</th>
-                      <th>Contact</th>
-                      <th>Location</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredSuppliers.map((supplier) => (
-                      <tr key={supplier.id}>
-                        <td>{supplier._id}</td>
-                        <td>{supplier.name}</td>
-                        <td>{supplier.phone}</td>
-                        <td>{supplier.address}</td>
-                        <td>
-                          <div className="action-icons">
-                            <FiEdit
-                              className="edit-icon"
-                              title="Edit"
-                              onClick={() => handleEdit(supplier)}
-                            />
-                            <FiTrash
-                              className="delete-icon"
-                              title="Delete"
-                              onClick={() => handleDelete(supplier._id)}
-                            />
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-
-                <div className="supplier-pagination-container">
-                  <div className="supplier-pagination-controls">
-                    <button className="supplier-pagination-button">Previous</button>
-                    <button className="supplier-pagination-button">Next</button>
+                {loading ? (
+                  <div className="employee-loading">
+                    <div className="employee-spinner"></div>
+                    <div className="employee-loading-text">Loading suppliers...</div>
                   </div>
-                  <span className="supplier-page-info">Page 1 of 10</span>
-                </div>
+                ) : (
+                  <>
+                    <table className="supplier-table">
+                      <thead>
+                        <tr>
+                          <th>ID</th>
+                          <th>Name</th>
+                          <th>Contact</th>
+                          <th>Location</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredSuppliers.map((supplier) => (
+                          <tr key={supplier._id}>
+                            <td>{supplier._id}</td>
+                            <td>{supplier.name}</td>
+                            <td>{supplier.phone}</td>
+                            <td>{supplier.address}</td>
+                            <td>
+                              <div className="action-icons">
+                                <FiEdit
+                                  className="edit-icon"
+                                  title="Edit"
+                                  onClick={() => handleEdit(supplier)}
+                                />
+                                <FiTrash2
+                                  className="delete-icon"
+                                  title="Delete"
+                                  onClick={() => handleDelete(supplier._id)}
+                                />
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+
+                    <div className="supplier-pagination-container">
+                      <div className="supplier-pagination-controls">
+                        <button className="supplier-pagination-button">Previous</button>
+                        <button className="supplier-pagination-button">Next</button>
+                      </div>
+                      <span className="supplier-page-info">Page 1 of 10</span>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -217,7 +238,7 @@ const handleSubmit = async (e) => {
               className="supplier-action-button primary"
               onClick={() => setIsModalOpen(true)}
             >
-              <FaPlus /> Add New Supplier
+              <FiPlus /> Add New Supplier
             </button>
                 </div>
               </div>
@@ -230,7 +251,7 @@ const handleSubmit = async (e) => {
               className="supplier-modal-close"
               onClick={() => setIsModalOpen(false)}
             >
-              <FaTimes />
+              <FiX />
             </button>
             <h2 className="supplier-modal-title">Add Supplier</h2>
             <form className="supplier-modal-form" onSubmit={handleSubmit}>

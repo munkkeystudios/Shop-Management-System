@@ -3,10 +3,35 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  padding: 2rem;
-  background-color: #ffffff;
+  padding: 20px;
+}
+
+/* Create Product title - match All Products title styling */
+.create-products-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #212529;
+}
+
+/* Remove default Bootstrap header background and underline for Create Product card */
+.create-products-card .card-header {
+  background-color: transparent;
+  border-bottom: none;
+}
+
+/* Create Product page layout and card sizing to match other listing pages */
+.create-products-page {
+  padding: 20px;
+}
+
+.create-products-card {
+  border: none;
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: none; /* Remove dark outline/shadow around the card */
+}
+
+.create-products-card .card-body {
+  padding: 0; /* product-form handles inner padding */
 }
 
 .form-grid {
@@ -30,7 +55,7 @@
 .form-group textarea,
 .form-group select {
   padding: 0.75rem;
-  border: 1px solid #cccccc;
+  border: 1px solid #dee2e6;
   border-radius: 4px;
   font-size: 1rem;
   transition: border-color 0.3s ease;
@@ -39,8 +64,9 @@
 .form-group input:focus,
 .form-group textarea:focus,
 .form-group select:focus {
-  border-color: #007bff;
+  border-color: #4f46e5; /* Indigo to match global inputs/search */
   outline: none;
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.25);
 }
 
 .form-group-span-2 {
@@ -59,31 +85,42 @@
 }
 
 .btn-discard {
-  background-color: #f8f9fa;
-  color: #6c757d;
-  border: 1px solid #ced4da;
-  padding: 0.5rem 1rem;
+  background-color: #fff !important;
+  color: #f03e3e !important;
+  border: 1px solid #f03e3e !important;
+  padding: 0 16px !important;
   border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  font-size: 14px;
+  transition: all 0.2s;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
 .btn-discard:hover {
-  background-color: #e2e6ea;
+  background-color: rgba(240, 62, 62, 0.05) !important;
+  color: #f03e3e !important;
 }
 
 .btn-submit {
-  background-color: #007bff;
-  color: #ffffff;
+  background-color: #4f46e5 !important; /* Match All Products primary button */
+  color: #ffffff !important;
   border: none;
   padding: 0.5rem 1.25rem;
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btn-submit:hover {
-  background-color: #0056b3;
+  background-color: #4338ca !important;
 }
 
 .note-container {
@@ -126,13 +163,13 @@
 }
 
 .upload-image-container:hover {
-  border-color: #4ade80; 
-  background-color: #f0fdf4; 
+  border-color: #4f46e5; /* Align accent color with All Products */
+  background-color: #eef2ff; 
 }
 
 .upload-image-container .upload-icon {
   font-size: 24px;
-  color: #22c55e; 
+  color: #4f46e5; 
   margin-bottom: 10px;
 }
 
@@ -142,7 +179,7 @@
 }
 
 .upload-image-container .upload-text strong {
-  color: #10b981; 
+  color: #4f46e5; 
   font-weight: 600;
 }
 
@@ -183,25 +220,7 @@
   background-color: rgba(255, 0, 0, 0.1);
 }
 
-.upload-image-container {
-  width: 100%;
-  min-height: 200px;
-  border: 2px dashed #ccc;
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  padding: 20px;
-  transition: all 0.3s ease;
-  background-color: #f9f9f9;
-}
-
-.upload-image-container:hover {
-  border-color: #007bff;
-  background-color: #f0f7ff;
-}
+/* (Legacy duplicate .upload-image-container block removed; unified style above matches All Products palette) */
 
 @media (max-width: 768px) {
   .upload-image-container {

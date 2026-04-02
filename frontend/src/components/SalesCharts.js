@@ -277,14 +277,14 @@ const preparePaymentMethodData = (paymentMethodStats) => {
 
   const data = paymentMethodStats.map(method => method.totalValue);
 
-  // Generate green-themed colors
+  // Generate indigo-themed colors
   const backgroundColors = [
-    'rgba(0, 168, 56, 0.8)',     // Primary green (#00a838)
-    'rgba(0, 138, 46, 0.7)',     // Dark green
-    'rgba(46, 184, 92, 0.8)',    // Medium green
-    'rgba(152, 229, 173, 0.8)',  // Light green
-    'rgba(34, 197, 94, 0.7)',    // Bootstrap green
-    'rgba(220, 252, 231, 0.8)',  // Pale green
+    'rgba(79, 70, 229, 0.8)',    // Primary indigo (#4f46e5)
+    'rgba(67, 56, 202, 0.7)',    // Dark indigo
+    'rgba(129, 140, 248, 0.8)',  // Medium indigo
+    'rgba(199, 210, 254, 0.8)',  // Light indigo
+    'rgba(165, 180, 252, 0.7)',  // Soft indigo
+    'rgba(224, 231, 255, 0.8)',  // Pale indigo
   ];
 
   return {
@@ -344,8 +344,8 @@ export const SalesBarChart = ({ sales }) => {
   // Create background colors array with the highest month highlighted
   const backgroundColors = salesByMonth.labels.map(month => {
     return month === highestMonth ?
-      '#00a838' : // Green for highest month
-      'rgba(220, 252, 231, 0.8)'; // Light green for other months
+      '#4f46e5' : // Indigo for highest month
+      'rgba(224, 231, 255, 0.8)'; // Light indigo for other months
   });
 
   const data = {

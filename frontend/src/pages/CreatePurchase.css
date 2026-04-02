@@ -1,10 +1,10 @@
-
-
   .create-purchase-container {
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 0;
+    max-width: 100%;
+    margin: 0;
+    background-color: transparent; /* Card styling now comes from sales-div-2 */
+    border-radius: 0;
+    box-shadow: none;
   }
   
   .page-title {
@@ -27,7 +27,7 @@
   .form-select {
     width: 100%;
     padding: 10px;
-    border: 1px solid #ddd;
+    border: 1px solid #dee2e6;
     border-radius: 4px;
     background-color: #fff;
     font-size: 14px;
@@ -45,9 +45,10 @@
     position: relative;
     display: flex;
     align-items: center;
-    border: 1px solid #ddd;
+    border: 1px solid #dee2e6;
     border-radius: 4px;
     padding: 0 10px;
+    background-color: #f8f9fa;
   }
   
   .search-icon {
@@ -61,18 +62,31 @@
     padding: 10px 0;
     font-size: 14px;
     outline: none;
+    background: transparent;
+  }
+
+  .search-box:focus-within {
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.25);
   }
   
   .add-button {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #28a745;
+    background-color: #4f46e5; /* Match primary indigo */
     color: white;
     border: none;
     border-radius: 4px;
-    padding: 10px;
+    padding: 10px 16px;
     cursor: pointer;
+    font-size: 14px;
+    gap: 6px;
+    height: 40px;
+  }
+
+  .add-button:hover {
+    background-color: #4338ca;
   }
   
   .table-container {
@@ -115,7 +129,7 @@
   .table-input {
     width: 100%;
     padding: 8px;
-    border: 1px solid #ddd;
+    border: 1px solid #dee2e6;
     border-radius: 4px;
     font-size: 14px;
   }
@@ -149,7 +163,7 @@
   
   .summary-input {
     width: 80px;
-    border: 1px solid #ddd;
+    border: 1px solid #dee2e6;
     border-radius: 4px;
     padding: 5px;
     text-align: right;
@@ -172,7 +186,7 @@
   .form-input {
     width: 100%;
     padding: 10px;
-    border: 1px solid #ddd;
+    border: 1px solid #dee2e6;
     border-radius: 4px;
     font-size: 14px;
   }
@@ -184,7 +198,7 @@
   .note-textarea {
     width: 100%;
     padding: 10px;
-    border: 1px solid #ddd;
+    border: 1px solid #dee2e6;
     border-radius: 4px;
     min-height: 100px;
     resize: vertical;
@@ -197,7 +211,7 @@
   }
   
   .submit-button {
-    background-color: #28a745;
+    background-color: #4f46e5; /* Match primary indigo */
     color: white;
     border: none;
     border-radius: 4px;
@@ -205,10 +219,14 @@
     font-size: 16px;
     cursor: pointer;
     transition: background-color 0.2s;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   
   .submit-button:hover {
-    background-color: #218838;
+    background-color: #4338ca;
   }
   
   .error-message {
@@ -221,8 +239,20 @@
   }
   
   .submit-button:disabled {
-    background-color: #6c757d;
+    background-color: #a5b4fc;
     cursor: not-allowed;
+  }
+
+  /* Unified focus styles for inputs/selects/textarea */
+  .form-select:focus,
+  .table-select:focus,
+  .table-input:focus,
+  .form-input:focus,
+  .note-textarea:focus,
+  .summary-input:focus {
+    border-color: #4f46e5;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.25);
   }
   
   /* Add loading indicator styles */

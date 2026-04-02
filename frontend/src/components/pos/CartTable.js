@@ -6,16 +6,16 @@ import '../styles/CartTable.css';
 
 const CartTable = ({ cartItems, handleQuantityChange, handleRemoveItem }) => {
   return (
-    <Table striped bordered hover className="cart-table">
+    <Table className="cart-table">
       <thead>
         <tr>
-          <th width="300">Product</th>
+          <th width="320">Items</th>
           <th width="120">Price</th>
-          <th width="120">Discount</th>
-          <th width="120">Disc. Price</th>
-          <th width="100">Qty</th>
-          <th width="120">Subtotal</th>
-          <th width="60">Action</th>
+          <th width="80">Qty</th>
+          <th width="140">Subtotal</th>
+          <th width="40">
+            <FiTrash2 />
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -26,28 +26,12 @@ const CartTable = ({ cartItems, handleQuantityChange, handleRemoveItem }) => {
             <tr key={item.id} className="cart-item-row">
               <td>
                 <div className="product-container">
-                  <div className="product-image">
-                    {typeof item.image === 'string' ? (
-                      <img 
-                        src={item.image} 
-                        alt={item.name}
-                        onError={(e) => {
-                          e.target.src = '/images/default-product-image.jpg';
-                        }}
-                      />
-                    ) : (
-                      item.image
-                    )}
-                  </div>
                   <div className="product-info">
                     <div className="product-name">{item.name}</div>
-                    <small className="product-id">ID: {item.id}</small>
                   </div>
                 </div>
               </td>
               <td>${item.price.toFixed(2)}</td>
-              <td>{item.discount > 0 ? `${item.discount}%` : '-'}</td>
-              <td>${discountedPrice.toFixed(2)}</td>
               <td>
                 <div className="quantity-container">
                   <QuantityButton
@@ -68,11 +52,7 @@ const CartTable = ({ cartItems, handleQuantityChange, handleRemoveItem }) => {
             </tr>
           );
         })}
-        {cartItems.length === 0 && (
-          <tr>
-            <td colSpan="7" className="empty-cart">No products added yet</td>
-          </tr>
-        )}
+        {cartItems.length === 0 && null}
       </tbody>
     </Table>
   );

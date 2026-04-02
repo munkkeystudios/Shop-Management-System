@@ -6,7 +6,7 @@
 
 .main-wrapper {
   flex: 1;
-  background-color: #f1f5f9;
+  background-color: var(--color-bg-main);
   min-height: 100vh;
 }
 
@@ -58,12 +58,20 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
-  background-color: #3b82f6;
+  background-color: var(--color-primary);
   color: white;
   border: none;
   border-radius: 0.25rem;
   font-weight: 500;
   cursor: pointer;
+  box-shadow: 0 8px 18px rgba(79, 70, 229, 0.35);
+  transition: background-color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
+}
+
+.pos-button:hover {
+  background-color: #4338ca;
+  box-shadow: 0 10px 22px rgba(79, 70, 229, 0.45);
+  transform: translateY(-1px);
 }
 
 .search-bar {
@@ -83,7 +91,7 @@
 /* Main Content */
 .main-content {
   padding: 1.5rem;
-  background-color: #f8fafc;
+  background-color: var(--color-bg-main);
 }
 
 /* Stats Cards */
@@ -195,9 +203,9 @@ input[type="date"].period-selector {
   padding: 0 10px;
 }
 
-/* Active day bar */
+/* Active day bar (use primary indigo) */
 .active-day-bar {
-  fill: #00a838;
+  fill: #4f46e5;
 }
 
 /* Other day bars */

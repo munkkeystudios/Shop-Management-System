@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { FaSearch, FaPlus, FaTimes, FaUpload } from 'react-icons/fa';
-import { FiEdit, FiTrash } from 'react-icons/fi';
+import { FiSearch, FiPlus, FiX, FiUpload, FiEdit, FiTrash2 } from 'react-icons/fi';
 import Layout from '../components/Layout';
 import api from '../services/api';
 import { useNotifications } from '../context/NotificationContext';
@@ -15,7 +14,7 @@ const Brands = () => {
   const [imagePreview, setImagePreview] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [brands, setBrands] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [editingBrand, setEditingBrand] = useState(null);
   const fileInputRef = useRef(null);
@@ -171,7 +170,7 @@ const Brands = () => {
                   setIsModalOpen(true);
                 }}
               >
-                <FaPlus /> Create New Brand
+                <FiPlus /> Create New Brand
               </button>
             </div>
 
@@ -182,7 +181,7 @@ const Brands = () => {
             )}
 
             <div className="categories-search-container">
-              <FaSearch className="categories-search-icon" />
+              <FiSearch className="categories-search-icon" />
               <input
                 type="text"
                 placeholder="Search brands"
@@ -194,51 +193,54 @@ const Brands = () => {
 
             <div className="categories-div-6">
               <div className="categories-div-7">
-                <table className="categories-table">
-                  <thead>
-                    <tr>
-                      <th>Image</th>
-                      <th>Brand Name</th>
-                      <th>Brand Description</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {loading ? (
+                {loading ? (
+                  <div className="employee-loading">
+                    <div className="employee-spinner"></div>
+                    <div className="employee-loading-text">Loading brands...</div>
+                  </div>
+                ) : (
+                  <table className="brands-table">
+                    <thead>
                       <tr>
-                        <td colSpan="4">Loading...</td>
+                        <th>Image</th>
+                        <th>Brand Name</th>
+                        <th>Brand Description</th>
+                        <th>Actions</th>
                       </tr>
-                    ) : filteredBrands.map((brand) => (
-                      <tr key={brand._id}>
-                        <td>
-                          <div className="brand-image-container">
-                            <img
-                              src={brand.image || defaultBrandImage}
-                              alt={brand.name}
-                              className="brand-image"
-                            />
-                          </div>
-                        </td>
-                        <td>{brand.name}</td>
-                        <td>{brand.description}</td>
-                        <td>
-                          <div className="action-icons">
-                            <FiEdit
-                              className="edit-icon"
-                              title="Edit"
-                              onClick={() => handleEdit(brand)}
-                            />
-                            <FiTrash
-                              className="delete-icon"
-                              title="Delete"
-                              onClick={() => handleDelete(brand._id)}
-                            />
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {filteredBrands.map((brand) => (
+                        <tr key={brand._id}>
+                          <td>
+                            <div className="brand-image-container">
+                              <img
+                                src={brand.image || defaultBrandImage}
+                                alt={brand.name}
+                                className="brand-image"
+                              />
+                            </div>
+                          </td>
+                          <td>{brand.name}</td>
+                          <td>{brand.description}</td>
+                          <td>
+                            <div className="action-icons">
+                              <FiEdit
+                                className="edit-icon"
+                                title="Edit"
+                                onClick={() => handleEdit(brand)}
+                              />
+                              <FiTrash2
+                                className="delete-icon"
+                                title="Delete"
+                                onClick={() => handleDelete(brand._id)}
+                              />
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
               </div>
             </div>
           </div>
@@ -259,7 +261,7 @@ const Brands = () => {
                 setImagePreview('');
               }}
             >
-              <FaTimes />
+              <FiX />
             </button>
             <h2 className="categories-modal-title">
               {editingBrand ? 'Edit Brand' : 'Create Brand'}
@@ -274,7 +276,7 @@ const Brands = () => {
                     <img src={imagePreview} alt="Brand Preview" />
                   ) : (
                     <div className="upload-placeholder">
-                      <FaUpload />
+                      <FiUpload />
                       <span>Upload Image</span>
                     </div>
                   )}

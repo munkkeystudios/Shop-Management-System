@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { FaSearch, FaPlus, FaPrint } from 'react-icons/fa';
-import { FiEdit, FiTrash, FiEye } from 'react-icons/fi';
+import { FiSearch, FiPlus, FiPrinter, FiEdit, FiTrash2, FiEye, FiX } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useSettings } from '../context/SettingsContext';
 import { useNotifications } from '../context/NotificationContext';
 import Layout from '../components/Layout';
 import { productsAPI } from '../services/api';
+import { getCurrencySymbol } from '../utils/currencyUtils';
 import ProductLabel from '../components/ProductLabel';
 import { generateBarcodeUrl, handleBarcodeError } from '../utils/barcodeUtils';
 import './all_products.css';
@@ -19,6 +20,9 @@ import defaultProductImage from '../images/default-product-image.jpg';
 const AllProducts = () => {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
+  const { settings } = useSettings();
+  const currencySymbol = settings?.currencyCode ? getCurrencySymbol(settings.currencyCode) : '$';
+  
   // State management
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -73,6 +77,7 @@ const AllProducts = () => {
         setLoading(true);
         // Get token from localStorage
         const token = localStorage.getItem('token');
+        console.log('Token in localStorage:', token);
 
         if (!token) {
           // Redirect to login if not authenticated
@@ -80,13 +85,26 @@ const AllProducts = () => {
           return;
         }
 
+        console.log('Making API call with token:', token.substring(0, 20) + '...');
+        console.log('API URL will be:', '/products');
         const response = await productsAPI.getAll({ page: currentPage });
+        console.log('Full Products API Response:', response);
+        console.log('Response status:', response.status);
+        console.log('Response data:', response.data);
+        console.log('Products array:', response.data.data);
+        console.log('Number of products:', response.data.data ? response.data.data.length : 0);
 
-        setProducts(response.data.data);
+        setProducts(response.data.data || []);
         setTotalPages(response.data.totalPages || 1);
         setLoading(false);
       } catch (err) {
-        console.error('Error fetching products:', err);
+        console.error('===== FULL ERROR OBJECT =====');
+        console.error('Error:', err);
+        console.error('Error status:', err.response?.status);
+        console.error('Error response:', err.response?.data);
+        console.error('Error message:', err.message);
+        console.error('Error stack:', err.stack);
+        console.error('=============================');
         setError('Failed to load products. Please try again later.');
         setLoading(false);
       }
@@ -102,6 +120,9 @@ const AllProducts = () => {
     product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     product.barcode.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  console.log('Products state:', products);
+  console.log('Filtered products:', filteredProducts);
 
   // Helper function to get product image
   const getProductImage = (product) => {
@@ -211,11 +232,6 @@ const AllProducts = () => {
           <span className="block sm:inline">{error}</span>
         </div>
       )}
-      {loading && (
-        <div className="flex justify-center items-center p-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-        </div>
-      )}
       <div className="products-frame">
         <div className="products-div-2">
           <div className="products-div-3">
@@ -223,7 +239,7 @@ const AllProducts = () => {
               <div className="products-text-2">All Products</div>
               <div className="products-controls-container">
                 <div className="products-search-container">
-                  <FaSearch className="products-search-icon" />
+                  <FiSearch className="products-search-icon" />
                   <input
                     type="text"
                     placeholder="Search this table"
@@ -237,7 +253,7 @@ const AllProducts = () => {
                     className="products-create-button"
                     onClick={handleCreateProduct}
                   >
-                    <FaPlus /> Create New Product
+                    <FiPlus /> Create New Product
                   </button>
                 </div>
               </div>
@@ -245,84 +261,75 @@ const AllProducts = () => {
 
             <div className="products-div-6">
               <div className="products-div-7">
-                <table className="products-table">
-                  <thead>
-                    <tr>
-                      <th>P-Code</th>
-                      <th>Photo</th>
-                      <th>Title</th>
-                      <th>Category</th>
-                      <th>SKU</th>
-                      <th>Sale Price</th>
-                      <th>Qty</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredProducts.map((product) => (
-                      <tr key={product._id}>
-                        <td>{product.barcode}</td>
-                        <td>
-                          <div className="products-image-container">
-                            <img
-                              src={getProductImage(product)}
-                              alt={product.name}
-                              className="products-image"
-                            />
-                          </div>
-                        </td>
-                        <td>{product.name}</td>
-                        <td>{product.category ? product.category.name : 'Uncategorized'}</td>
-                        <td>{product.barcode}</td>
-                        <td>${product.price?.toFixed(2)}</td>
-                        <td>{product.quantity}</td>
-                        <td>
-                          <div className="action-icons">
-                            <FiEye
-                              className="edit-icon"
-                              title="View"
-                              onClick={() => {
-                                setSelectedProduct(product);
-                                // Add overflow hidden to body to prevent background scrolling
-                                document.body.style.overflow = 'hidden';
-                              }}
-                            />
-                            <FiEdit
-                              className="edit-icon"
-                              title="Edit"
-                              onClick={() => handleEditClick(product)}
-                            />
-                            <FiTrash
-                              className="delete-icon"
-                              title="Delete"
-                              onClick={() => handleDeleteClick(product)}
-                            />
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-
-                <div className="products-pagination-container">
-                  <div className="products-pagination-controls">
-                    <button
-                      onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                      disabled={currentPage === 1}
-                      className="products-pagination-button"
-                    >
-                      Previous
-                    </button>
-                    <button
-                      onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                      disabled={currentPage === totalPages}
-                      className="products-pagination-button"
-                    >
-                      Next
-                    </button>
+                {loading ? (
+                  <div className="employee-loading">
+                    <div className="employee-spinner"></div>
+                    <div className="employee-loading-text">Loading products...</div>
                   </div>
-                  <span className="products-page-info">Page {currentPage} of {totalPages}</span>
-                </div>
+                ) : (
+                  <>
+                    <table className="products-table">
+                      <thead>
+                        <tr>
+                          <th>P-Code</th>
+                          <th>Photo</th>
+                          <th>Title</th>
+                          <th>Category</th>
+                          <th>SKU</th>
+                          <th>Sale Price</th>
+                          <th>Qty</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredProducts.map((product) => (
+                          <tr key={product._id}>
+                            <td>{product.barcode}</td>
+                            <td>
+                              <div className="products-image-container">
+                                <img
+                                  src={getProductImage(product)}
+                                  alt={product.name}
+                                  className="products-image"
+                                />
+                              </div>
+                            </td>
+                            <td>{product.name}</td>
+                            <td>{product.category ? product.category.name : 'Uncategorized'}</td>
+                            <td>{product.barcode}</td>
+                            <td>{currencySymbol}{product.price?.toFixed(2)}</td>
+                            <td>{product.quantity}</td>
+                            <td>
+                              <div className="action-icons">
+                                <FiEye
+                                  className="edit-icon"
+                                  title="View"
+                                  onClick={() => {
+                                    setSelectedProduct(product);
+                                    // Add overflow hidden to body to prevent background scrolling
+                                    document.body.style.overflow = 'hidden';
+                                  }}
+                                />
+                                <FiEdit
+                                  className="edit-icon"
+                                  title="Edit"
+                                  onClick={() => handleEditClick(product)}
+                                />
+                                <FiTrash2
+                                  className="delete-icon"
+                                  title="Delete"
+                                  onClick={() => handleDeleteClick(product)}
+                                />
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+
+                    {/* Pagination controls removed as requested (no bottom separator, no Prev/Next or page text) */}
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -348,7 +355,7 @@ const AllProducts = () => {
                 className="products-print-label-btn"
                 onClick={() => setShowProductLabel(true)}
               >
-                <FaPrint size={12} /> Print Label
+                <FiPrinter size={12} /> Print Label
               </button>
               <div className="products-modal-title">
                 Product Details
@@ -361,7 +368,7 @@ const AllProducts = () => {
                   document.body.style.overflow = 'auto';
                 }}
               >
-                ×
+                <FiX />
               </button>
             </div>
 
@@ -397,7 +404,7 @@ const AllProducts = () => {
               </div>
               <div className="products-modal-detail-row">
                 <div className="products-modal-detail-label">Cost</div>
-                <div className="products-modal-detail-value">${selectedProduct.costPrice?.toFixed(2) || '0.00'}</div>
+                <div className="products-modal-detail-value">{currencySymbol}{selectedProduct.costPrice?.toFixed(2) || '0.00'}</div>
               </div>
               <div className="products-modal-detail-row">
                 <div className="products-modal-detail-label">Warehouse</div>
@@ -405,7 +412,7 @@ const AllProducts = () => {
               </div>
               <div className="products-modal-detail-row">
                 <div className="products-modal-detail-label">Price</div>
-                <div className="products-modal-detail-value">${selectedProduct.price?.toFixed(2) || '0.00'}</div>
+                <div className="products-modal-detail-value">{currencySymbol}{selectedProduct.price?.toFixed(2) || '0.00'}</div>
               </div>
               <div className="products-modal-detail-row">
                 <div className="products-modal-detail-label">Unit</div>
@@ -472,7 +479,7 @@ const AllProducts = () => {
                   document.body.style.overflow = 'auto';
                 }}
               >
-                ×
+                <FiX />
               </button>
             </div>
 
@@ -645,7 +652,7 @@ const AllProducts = () => {
           }}
         >
           <div
-            className="products-modal-container delete"
+            className="products-modal-container details"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="products-modal-header">
@@ -658,14 +665,14 @@ const AllProducts = () => {
                   document.body.style.overflow = 'auto';
                 }}
               >
-                ×
+                <FiX />
               </button>
             </div>
-            <div className="p-6 text-center">
-              <p className="text-sm text-gray-500 mb-6">
+            <div className="products-delete-modal-body">
+              <p className="products-delete-modal-message">
                 Are you sure you want to delete the product "{productToDelete?.name}"? This action cannot be undone.
               </p>
-              <div className="flex justify-center space-x-4">
+              <div className="products-delete-modal-buttons">
                 <button
                   type="button"
                   onClick={() => {
@@ -673,14 +680,14 @@ const AllProducts = () => {
                     // Restore body overflow
                     document.body.style.overflow = 'auto';
                   }}
-                  className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+                  className="products-delete-modal-btn cancel"
                 >
                   Cancel
                 </button>
                 <button
                   type="button"
                   onClick={handleDeleteConfirm}
-                  className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700"
+                  className="products-delete-modal-btn delete"
                 >
                   Delete
                 </button>

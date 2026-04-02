@@ -243,7 +243,7 @@
 }
 
 .save-button {
-  background-color: #00a838;
+  background-color: #4f46e5;
   color: white;
   padding: 8px 16px;
   border-radius: 8px;
@@ -258,7 +258,7 @@
 }
 
 .save-button:hover {
-  background-color: #008f2f;
+  background-color: #4338ca;
   transform: translateY(-1px);
 }
 
