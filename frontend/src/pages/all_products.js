@@ -283,7 +283,7 @@ const AllProducts = () => {
                       </thead>
                       <tbody>
                         {filteredProducts.map((product) => (
-                          <tr key={product._id}>
+                          <tr key={product._id} className="product-row">
                             <td>{product.barcode}</td>
                             <td>
                               <div className="products-image-container">
@@ -295,7 +295,11 @@ const AllProducts = () => {
                               </div>
                             </td>
                             <td>{product.name}</td>
-                            <td>{product.category ? product.category.name : 'Uncategorized'}</td>
+                            <td>
+                              <span className="category-badge">
+                                {product.category ? product.category.name : 'Uncategorized'}
+                              </span>
+                            </td>
                             <td>{product.barcode}</td>
                             <td>{currencySymbol}{product.price?.toFixed(2)}</td>
                             <td>{product.quantity}</td>

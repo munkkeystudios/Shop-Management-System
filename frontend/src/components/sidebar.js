@@ -61,13 +61,12 @@ SideBar.Dropdown = SideBarDropdown;
 SideBar.Item = SideBarItem;
 
 // main default sidebar function
-function ToolsSidebar() {
+function ToolsSidebar({ isCollapsed }) {
     const { logout } = useAuth();
     const { settings } = useSettings();
     const navigate = useNavigate();
     const location = useLocation();
     const [userRole, setUserRole] = useState(null);
-    const [isCollapsed, setIsCollapsed] = useState(true);
 
     // Get company logo and name from settings context
     const companyName = settings?.companyName || 'FinTrack';
@@ -108,9 +107,9 @@ function ToolsSidebar() {
 
     return (
         <SideBar isCollapsed={isCollapsed}>
-            {/* Logo + collapse toggle */}
-            <div className={`sidebar-header ${isCollapsed ? 'sidebar-header-collapsed' : ''}`}>
-                {!isCollapsed && (
+            {/* Logo only - toggle button now in TopBar */}
+            {!isCollapsed && (
+                <div className="sidebar-header">
                     <Link to={isCashierOrHigher ? "/dashboard" : "/"} className="sidebar-logo-link">
                         <div className="sidebar-logo-container">
                             <img
@@ -121,16 +120,8 @@ function ToolsSidebar() {
                             <span className="sidebar-title">{companyName}</span>
                         </div>
                     </Link>
-                )}
-                <button
-                    type="button"
-                    className={`sidebar-toggle-btn ${isCollapsed ? 'sidebar-toggle-btn-collapsed' : ''}`}
-                    onClick={() => setIsCollapsed(!isCollapsed)}
-                    aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-                >
-                    {isCollapsed ? <FiMenu size={20} /> : <FiChevronLeft size={18} />}
-                </button>
-            </div>
+                </div>
+            )}
 
             {!isCollapsed && (
             <div className="sidebar-menu-container">

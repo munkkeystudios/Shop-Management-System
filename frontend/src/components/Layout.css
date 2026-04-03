@@ -2,14 +2,16 @@
   display: flex;
   min-height: 100vh;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .layout-content {
   display: flex;
   flex-direction: column;
   flex: 1;
+  overflow-y: auto;
   overflow-x: hidden;
+  max-height: 100vh;
 }
 
 .main-content {

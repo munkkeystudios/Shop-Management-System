@@ -6,6 +6,8 @@ import BillTab from '../components/pos/BillTab.js';
 import PayButton from '../components/pos/PayButton.js';
 import { salesAPI, productsAPI } from '../services/api.js';
 import { useSettings } from '../context/SettingsContext';
+import { usePOSTheme } from '../context/POSThemeContext';
+import { getCategoryColor } from '../utils/categoryColorUtils';
 import useCart from '../hooks/useCart';
 import { getCurrencySymbol } from '../utils/currencyUtils';
 import '../styles/pos.css';
@@ -14,6 +16,7 @@ import defaultProductImage from '../images/default-product-image.jpg';
 const Pos = () => {
   // Get settings context
   const { settings } = useSettings();
+  const { isDarkMode, toggleTheme } = usePOSTheme();
   const currencySymbol = settings?.currencyCode ? getCurrencySymbol(settings.currencyCode) : '₦';
 
   // State variables
@@ -196,8 +199,8 @@ const Pos = () => {
   const itemsCount = filteredProducts.length || 0;
 
   return (
-    <POSLayout title="Point of Sale">
-      <div className="pos-page">
+    <POSLayout title="Point of Sale" isDarkMode={isDarkMode}>
+      <div className={`pos-page ${isDarkMode ? 'dark-mode' : ''}`}>
         {/* Left side: menu + product grid (like the inspiration layout) */}
         <div className="pos-left">
           {/* Search bar row with items count (no menu title or category tabs) */}
@@ -223,12 +226,13 @@ const Pos = () => {
                 {filteredProducts.map((product) => {
                   const available = product.quantity ?? 0;
                   const stockStatus = getStockStatus(available);
+                  const categoryColor = getCategoryColor(product);
 
                   return (
                     <button
                       key={product._id}
                       type="button"
-                      className="pos-product-card pos-product-card-simple"
+                      className={`pos-product-card pos-product-card-simple ${categoryColor}`}
                       onClick={() => handleProductTileClick(product)}
                     >
                       <div className="pos-product-card-name pos-product-card-name-multiline">
@@ -257,6 +261,32 @@ const Pos = () => {
                 <select className="pos-customer-select" defaultValue="walk-in">
                   <option value="walk-in">Walk-in Customer</option>
                 </select>
+              </div>
+              <div className="pos-theme-toggle-wrapper">
+                <button 
+                  className="pos-theme-toggle-btn" 
+                  type="button"
+                  onClick={toggleTheme}
+                  title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+                >
+                  {isDarkMode ? (
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="12" r="5"></circle>
+                      <line x1="12" y1="1" x2="12" y2="3"></line>
+                      <line x1="12" y1="21" x2="12" y2="23"></line>
+                      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                      <line x1="1" y1="12" x2="3" y2="12"></line>
+                      <line x1="21" y1="12" x2="23" y2="12"></line>
+                      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                  ) : (
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                  )}
+                </button>
               </div>
               <button className="pos-header-plus-btn" type="button">
                 +
@@ -322,6 +352,7 @@ const Pos = () => {
                     billNumber={activeBill || billNumber}
                     updateBillNumber={setBillNumber}
                     onPaymentComplete={handlePaymentComplete}
+                    isDarkMode={isDarkMode}
                   />
                 </div>
               <button className="pos-reset-button" onClick={resetCart}>

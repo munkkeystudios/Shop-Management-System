@@ -14,27 +14,25 @@
     height: 100%;
   }
   
-  .bill-tab-number {
-    font-size: 13px;
-  }
-  
-  .bill-tab-close {
-    position: absolute;
-    right: 4px;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
-    font-size: 10px;
-    opacity: 0.7;
-    color: #555;
-  }
-  
-  .bill-tab-close:hover {
-    opacity: 1;
-    color: #333;
-  }
-  
-  /* Tabs Component */
+.bill-tab-number {
+  font-size: 13px;
+}
+
+.bill-tab-close {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 10px;
+  opacity: 0.7;
+  color: #555;
+}
+
+.bill-tab-close:hover {
+  opacity: 1;
+  color: #333;
+}  /* Tabs Component */
   .bill-tabs-container {
     margin: 0;
     border: none;
@@ -98,15 +96,13 @@
     margin-right: 2px;
     background-color: #f8f9fa;
   }
-  
+
   .bill-tabs-container .nav-link.active {
     background-color: #fff;
     border-color: #dee2e6;
     color: #4f46e5; /* Active tab in primary indigo */
     font-weight: 500;
-  }
-  
-  .bill-tabs-container .nav-tabs::-webkit-scrollbar {
+  }  .bill-tabs-container .nav-tabs::-webkit-scrollbar {
     height: 4px;
   }
   

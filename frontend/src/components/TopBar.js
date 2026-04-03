@@ -2,12 +2,13 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { RiShoppingBag4Line } from 'react-icons/ri';
 import { FaSignOutAlt, FaCog } from 'react-icons/fa';
+import { FiMenu, FiChevronLeft } from 'react-icons/fi';
 import NotificationIcon from './NotificationIcon';
 import { getBreadcrumbs } from '../utils/pathUtils';
 import { useAuth } from '../context/AuthContext';
 import './styles/TopBar.css';
 
-const TopBar = () => {
+const TopBar = ({ onMenuToggle, isSidebarCollapsed }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
@@ -44,6 +45,14 @@ const TopBar = () => {
   return (
     <div className="topbar-container">
       <div className="topbar-left">
+        <button
+          type="button"
+          className="topbar-menu-button"
+          onClick={onMenuToggle}
+          aria-label="Toggle sidebar"
+        >
+          {isSidebarCollapsed ? <FiMenu size={20} /> : <FiChevronLeft size={20} />}
+        </button>
         <div className="topbar-page-title">
           {currentCrumb ? currentCrumb.label : 'Dashboard'}
         </div>

@@ -6,17 +6,18 @@
   .pos-search-container {
     position: relative;
     width: 100%;
-    background-color: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 4px;
+    background-color: #ffffff;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
     height: 40px;
     display: flex;
     align-items: center;
+    transition: all 0.2s ease;
   }
 
   .pos-search-container:focus-within {
     border-color: #4f46e5;
-    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.25);
+    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
   }
   
   .pos-search-qr-icon {
@@ -24,29 +25,36 @@
     left: 12px;
     top: 50%;
     transform: translateY(-50%);
-    color: #6c757d;
+    color: #9ca3af;
     font-size: 18px;
+    cursor: pointer;
   }
-  
+
   .pos-search-icon {
     position: absolute;
     left: 40px;
     top: 50%;
     transform: translateY(-50%);
-    color: #6c757d;
+    color: #9ca3af;
     font-size: 18px;
     cursor: pointer;
+    transition: color 0.2s ease;
   }
   
+  .pos-search-icon:hover {
+    color: #6b7280;
+  }
+
   .pos-search-input {
     width: 100%;
     padding: 8px 16px 8px 70px;
     border: none;
     background: none;
     outline: none;
-    font-size: 14px;
-    color: #212529;
+    font-size: 0.9rem;
+    color: #1e293b;
     height: 100%;
+    font-weight: 500;
   }
 
   .pos-search-input:focus {
@@ -54,15 +62,16 @@
     border: none;
     box-shadow: none;
   }
-  
+
   .pos-search-input::placeholder {
-    color: #6c757d;
+    color: #9ca3af;
+    font-weight: 400;
   }
   
   .pos-error-message {
     background-color: #fee2e2;
     border-left: 4px solid #ef4444;
-    color: #ef4444;
+    color: #991b1b;
     padding: 12px 16px;
     margin-top: 8px;
     border-radius: 4px;
@@ -75,31 +84,32 @@
     top: 100%;
     left: 0;
     width: 100%;
-    background-color: white;
-    border-radius: 4px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    margin-top: 4px;
+    background-color: #ffffff;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+    margin-top: 8px;
     max-height: 400px;
     overflow-y: auto;
     z-index: 100;
+    border: 1px solid #e5e7eb;
   }
-  
+
   .pos-product-item {
     padding: 12px;
-    border-bottom: 1px solid #dee2e6;
+    border-bottom: 1px solid #e5e7eb;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: space-between;
     transition: background-color 0.2s;
   }
-  
+
   .pos-product-item:last-child {
     border-bottom: none;
   }
-  
+
   .pos-product-item:hover {
-    background-color: #f8f9fa;
+    background-color: #f9fafb;
   }
   
   .pos-product-info {
@@ -110,14 +120,16 @@
     display: block;
     font-size: 14px;
     margin-bottom: 4px;
-    color: #212529;
+    color: #1e293b;
+    font-weight: 600;
   }
   
   .pos-product-description {
     font-size: 12px;
-    color: #6c757d;
+    color: #6b7280;
     margin-bottom: 4px;
     display: -webkit-box;
+    line-clamp: 2;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
@@ -125,8 +137,8 @@
   
   .pos-product-price {
     font-size: 13px;
-    color: #212529;
-    font-weight: 500;
+    color: #059669;
+    font-weight: 600;
   }
   
   .pos-product-image {
@@ -135,6 +147,63 @@
     object-fit: cover;
     border-radius: 4px;
     margin-left: 12px;
+  }
+
+  /* Dark Mode */
+  .pos-page.dark-mode .pos-search-container {
+    background-color: #1e293b;
+    border: 1.5px solid #334155;
+  }
+
+  .pos-page.dark-mode .pos-search-container:focus-within {
+    border-color: #064e3b;
+    box-shadow: 0 0 0 2px rgba(6, 78, 59, 0.2);
+  }
+
+  .pos-page.dark-mode .pos-search-qr-icon {
+    color: #64748b;
+  }
+
+  .pos-page.dark-mode .pos-search-icon {
+    color: #64748b;
+  }
+
+  .pos-page.dark-mode .pos-search-icon:hover {
+    color: #94a3b8;
+  }
+
+  .pos-page.dark-mode .pos-search-input {
+    color: #f8fafc;
+  }
+
+  .pos-page.dark-mode .pos-search-input::placeholder {
+    color: #64748b;
+  }
+
+  .pos-page.dark-mode .pos-search-results {
+    background-color: #0f172a;
+    border: 1px solid #334155;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  .pos-page.dark-mode .pos-product-item {
+    border-bottom: 1px solid #334155;
+  }
+
+  .pos-page.dark-mode .pos-product-item:hover {
+    background-color: #1e293b;
+  }
+
+  .pos-page.dark-mode .pos-product-info strong {
+    color: #f8fafc;
+  }
+
+  .pos-page.dark-mode .pos-product-description {
+    color: #94a3b8;
+  }
+
+  .pos-page.dark-mode .pos-product-price {
+    color: #10b981;
   }
   
   @media (max-width: 768px) {

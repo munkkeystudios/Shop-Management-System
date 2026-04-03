@@ -5,7 +5,7 @@ import { salesAPI } from '../../services/api';
 import { useNotifications } from '../../context/NotificationContext';
 import '../styles/PayButton.css';
 
-const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateBillNumber, onPaymentComplete }) => {
+const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateBillNumber, onPaymentComplete, isDarkMode }) => {
   const { addNotification } = useNotifications();
   const [show, setShow] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('cash');
@@ -199,7 +199,7 @@ const PayButton = ({ cartItems, totalPayable, totalQuantity, billNumber, updateB
         Payment
       </Button>
 
-      <Modal show={show} onHide={() => { setPaymentMethod('cash'); handleClose(); }} centered size="lg">
+      <Modal show={show} onHide={() => { setPaymentMethod('cash'); handleClose(); }} centered size="lg" className={isDarkMode ? 'dark-mode' : ''}>
         <Modal.Header closeButton>
           <Modal.Title>Complete Transaction</Modal.Title>
         </Modal.Header>

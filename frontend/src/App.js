@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import DocumentHead from "./components/DocumentHead";
 import { SettingsProvider } from "./context/SettingsContext";
+import { POSThemeProvider } from "./context/POSThemeContext";
 // eventually make it so all this import components/pages comes in 1 line
 import MainDashboard from "./pages/main_dashboard";
 import AllProducts from "./pages/all_products";
@@ -36,6 +37,7 @@ function App() {
     <AuthProvider>
       <NotificationProvider>
         <SettingsProvider>
+          <POSThemeProvider>
           <BrowserRouter>
             <DocumentHead />
             <div className="App">
@@ -250,6 +252,7 @@ function App() {
               </Routes>
             </div>
           </BrowserRouter>
+          </POSThemeProvider>
         </SettingsProvider>
       </NotificationProvider>
     </AuthProvider>

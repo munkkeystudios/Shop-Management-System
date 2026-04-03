@@ -254,3 +254,258 @@
   box-shadow: none;
   border-color: #ced4da;
 }
+
+/* ============================================
+   DARK MODE PAYMENT MODAL
+   ============================================ */
+
+.modal.dark-mode .modal-content {
+  background-color: #1e293b;
+  border: 1px solid #334155;
+}
+
+.modal.dark-mode .modal-header {
+  background-color: #0f172a;
+  border-bottom: 1px solid #334155;
+}
+
+.modal.dark-mode .modal-header .modal-title {
+  color: #f8fafc;
+}
+
+.modal.dark-mode .modal-body {
+  background-color: #1e293b;
+  color: #cbd5e1;
+}
+
+.modal.dark-mode .order-details {
+  background-color: #0f172a;
+  border: 1px solid #334155;
+}
+
+.modal.dark-mode .order-details h5 {
+  color: #f8fafc;
+  border-bottom-color: #334155;
+}
+
+.modal.dark-mode .order-details-row {
+  color: #cbd5e1;
+  border-bottom-color: #334155;
+}
+
+.modal.dark-mode .order-details-total {
+  color: #f8fafc;
+  border-top-color: #334155;
+}
+
+.modal.dark-mode .payment-summary {
+  background-color: #0f172a;
+  border: 1px solid #334155;
+}
+
+.modal.dark-mode .payment-total {
+  color: #f8fafc;
+}
+
+.modal.dark-mode .payment-method-section {
+  background-color: #0f172a;
+  border: 1px solid #334155;
+}
+
+.modal.dark-mode .payment-method-section h5 {
+  color: #f8fafc;
+  border-bottom-color: #334155;
+}
+
+.modal.dark-mode .form-check {
+  border-bottom-color: #334155;
+}
+
+.modal.dark-mode .form-check-input {
+  border-color: #475569;
+  background-color: transparent;
+}
+
+.modal.dark-mode .form-check-input:checked {
+  background-color: #4f46e5;
+  border-color: #4f46e5;
+}
+
+.modal.dark-mode .form-check-label {
+  color: #cbd5e1;
+}
+
+.modal.dark-mode .payment-input-section {
+  background-color: #0f172a;
+  border: 1px solid #334155;
+}
+
+.modal.dark-mode .payment-input-section h5 {
+  color: #f8fafc;
+  border-bottom-color: #334155;
+}
+
+.modal.dark-mode .form-control {
+  background-color: #0f172a;
+  border-color: #334155;
+  color: #cbd5e1;
+}
+
+.modal.dark-mode .form-control::placeholder {
+  color: #64748b;
+  opacity: 1;
+}
+
+.modal.dark-mode .form-control:focus {
+  background-color: #0f172a;
+  border-color: #4f46e5;
+  color: #cbd5e1;
+  box-shadow: 0 0 0 0.25rem rgba(79, 70, 229, 0.25);
+}
+
+.modal.dark-mode .btn-close {
+  filter: brightness(0) invert(1);
+}
+
+.modal.dark-mode .alert-danger {
+  background-color: #7f1d1d;
+  border-left-color: #ef4444;
+  color: #fca5a5;
+}
+
+.modal.dark-mode .change-display {
+  background-color: #334155 !important;
+  color: #cbd5e1;
+  border-color: #475569;
+}
+
+.modal.dark-mode .change-display:focus {
+  background-color: #334155 !important;
+  border-color: #475569;
+}
+
+/* Keep backward compatibility with pos-page selector */
+.pos-page.dark-mode .modal-content {
+  background-color: #1e293b;
+  border: 1px solid #334155;
+}
+
+.pos-page.dark-mode .modal-header {
+  background-color: #0f172a;
+  border-bottom: 1px solid #334155;
+}
+
+.pos-page.dark-mode .modal-header .modal-title {
+  color: #f8fafc;
+}
+
+.pos-page.dark-mode .modal-body {
+  background-color: #1e293b;
+  color: #cbd5e1;
+}
+
+.pos-page.dark-mode .order-details {
+  background-color: #0f172a;
+  border: 1px solid #334155;
+}
+
+.pos-page.dark-mode .order-details h5 {
+  color: #f8fafc;
+  border-bottom-color: #334155;
+}
+
+.pos-page.dark-mode .order-details-row {
+  color: #cbd5e1;
+  border-bottom-color: #334155;
+}
+
+.pos-page.dark-mode .order-details-total {
+  color: #f8fafc;
+  border-top-color: #334155;
+}
+
+.pos-page.dark-mode .payment-summary {
+  background-color: #0f172a;
+  border: 1px solid #334155;
+}
+
+.pos-page.dark-mode .payment-total {
+  color: #f8fafc;
+}
+
+.pos-page.dark-mode .payment-method-section {
+  background-color: #0f172a;
+  border: 1px solid #334155;
+}
+
+.pos-page.dark-mode .payment-method-section h5 {
+  color: #f8fafc;
+  border-bottom-color: #334155;
+}
+
+.pos-page.dark-mode .form-check {
+  border-bottom-color: #334155;
+}
+
+.pos-page.dark-mode .form-check-input {
+  border-color: #475569;
+  background-color: transparent;
+}
+
+.pos-page.dark-mode .form-check-input:checked {
+  background-color: #4f46e5;
+  border-color: #4f46e5;
+}
+
+.pos-page.dark-mode .form-check-label {
+  color: #cbd5e1;
+}
+
+.pos-page.dark-mode .payment-input-section {
+  background-color: #0f172a;
+  border: 1px solid #334155;
+}
+
+.pos-page.dark-mode .payment-input-section h5 {
+  color: #f8fafc;
+  border-bottom-color: #334155;
+}
+
+.pos-page.dark-mode .form-control {
+  background-color: #0f172a;
+  border-color: #334155;
+  color: #cbd5e1;
+}
+
+.pos-page.dark-mode .form-control::placeholder {
+  color: #64748b;
+  opacity: 1;
+}
+
+.pos-page.dark-mode .form-control:focus {
+  background-color: #0f172a;
+  border-color: #4f46e5;
+  color: #cbd5e1;
+  box-shadow: 0 0 0 0.25rem rgba(79, 70, 229, 0.25);
+}
+
+.pos-page.dark-mode .btn-close {
+  filter: brightness(0) invert(1);
+}
+
+.pos-page.dark-mode .alert-danger {
+  background-color: #7f1d1d;
+  border-left-color: #ef4444;
+  color: #fca5a5;
+}
+
+.pos-page.dark-mode .change-display {
+  background-color: #334155 !important;
+  color: #cbd5e1;
+  border-color: #475569;
+}
+
+.pos-page.dark-mode .change-display:focus {
+  background-color: #334155 !important;
+  border-color: #475569;
+}

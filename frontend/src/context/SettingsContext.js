@@ -15,7 +15,11 @@ export const useSettings = () => {
 
 // Provider component
 export const SettingsProvider = ({ children }) => {
-  const [settings, setSettings] = useState(null);
+  const [settings, setSettings] = useState({
+    companyName: 'Shop Management System',
+    companyLogo: null,
+    currencyCode: 'NGN'  // Default currency
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 

@@ -1,7 +1,11 @@
+/* ============================================
+   LIGHT MODE (DEFAULT)
+   ============================================ */
+
 .pos-page {
   display: flex;
   gap: 16px;
-  height: calc(100vh - 32px); /* Match vertical padding (16px top + 16px bottom) */
+  height: calc(100vh - 32px);
   max-height: calc(100vh - 32px);
   background-color: #ffffff;
 }
@@ -13,7 +17,7 @@
   background-color: #ffffff;
   border-radius: 0;
   box-shadow: none;
-  padding: 32px 16px 0 50px; /* 16px top, 32px left/right for comfortable spacing */
+  padding: 32px 16px 0 50px;
   height: 100vh;
 }
 
@@ -25,12 +29,12 @@
   background-color: #ffffff;
   border-radius: 0;
   box-shadow: none;
-  margin-top: 0; /* Ensure the border starts at the very top of the area */
-  padding: 32px 32px 0 16px; /* Match left side: 32px top, 32px left/right */
-  border-left: 1px solid #e5e7eb; /* Vertical separator extending full height */
+  margin-top: 0;
+  padding: 32px 32px 0 16px;
+  border-left: 1px solid #e5e7eb;
 }
 
-/* Left menu header (Menu title + category tabs) */
+/* Left menu header */
 
 .pos-menu-count {
   font-size: 0.8rem;
@@ -85,6 +89,12 @@
   gap: 8px;
 }
 
+.pos-theme-toggle-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .pos-customer-select-wrapper {
   flex: 1;
 }
@@ -95,7 +105,7 @@
   border-radius: 6px;
   border: 1px solid #d1d5db;
   font-size: 0.9rem;
-  color: #1e293b; /* Deep slate text */
+  color: #1e293b;
   background-color: #f9fafb;
 }
 
@@ -104,7 +114,7 @@
   height: 40px;
   border-radius: 8px;
   border: none;
-  background-color: #4f46e5; /* Primary indigo */
+  background-color: #4f46e5;
   color: #ffffff;
   font-size: 1.4rem;
   display: flex;
@@ -116,6 +126,32 @@
 
 .pos-header-plus-btn:active {
   transform: translateY(1px);
+}
+
+.pos-theme-toggle-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+  color: #111827;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.pos-theme-toggle-btn svg {
+  width: 22px !important;
+  height: 22px !important;
+  stroke-width: 1.5;
+}
+
+.pos-theme-toggle-btn:hover {
+  background-color: #f3f4f6;
+  border-color: #d1d5db;
 }
 
 .pos-right-header-actions {
@@ -202,7 +238,7 @@
 }
 
 .pos-cart-body::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 
 .pos-cart-body::-webkit-scrollbar-track {
@@ -210,8 +246,8 @@
 }
 
 .pos-cart-body::-webkit-scrollbar-thumb {
-  background-color: #4f46e5; /* Primary indigo for scrollbar */
-  border-radius: 999px;
+  background-color: #94a3b8;
+  border-radius: 4px;
 }
 
 /* Bottom bar (discount / VAT / total / pay) */
@@ -310,21 +346,22 @@
 }
 
 .pos-product-card {
-  border-radius: 12px;
+  border-radius: 4px;
   padding: 12px 10px;
-  background-color: #f1f5f9; /* Slate background */
-  border: 1px solid #e2e8f0;
+  background-color: #f1f5f9;
+  border: 1px solid #d1d5db;
   display: flex;
   flex-direction: column;
-  justify-content: center; /* Center content vertically */
+  justify-content: center;
   align-items: center;
   text-align: center;
   cursor: pointer;
   transition: transform 0.1s ease, box-shadow 0.1s ease, border-color 0.1s ease;
+  position: relative;
 }
 
 .pos-product-card-simple {
-  aspect-ratio: 1 / 1; /* Make product cards square: height equals width */
+  aspect-ratio: 1 / 1;
 }
 
 .pos-product-card:hover {
@@ -333,9 +370,47 @@
   border-color: #4f46e5;
 }
 
+/* Light Mode Category Colors - Very light, washed-out tinted pastels */
+
+/* Category A: Casual Wear - Ultra-light Navy Pastel */
+.pos-product-card.category-a {
+  background-color: #f0f4ff;
+  border-color: #e0e7ff;
+}
+
+.pos-product-card.category-a:hover {
+  background-color: #e0e7ff;
+  border-color: #c7d2fe;
+  box-shadow: 0 6px 18px rgba(30, 58, 138, 0.15);
+}
+
+/* Category B: Formal Wear - Ultra-light Amber Pastel */
+.pos-product-card.category-b {
+  background-color: #fffbf0;
+  border-color: #fef3c7;
+}
+
+.pos-product-card.category-b:hover {
+  background-color: #fef3c7;
+  border-color: #fde68a;
+  box-shadow: 0 6px 18px rgba(120, 53, 15, 0.15);
+}
+
+/* Category C: Sportswear - Ultra-light Charcoal Pastel */
+.pos-product-card.category-c {
+  background-color: #f8fafc;
+  border-color: #f1f5f9;
+}
+
+.pos-product-card.category-c:hover {
+  background-color: #f1f5f9;
+  border-color: #e2e8f0;
+  box-shadow: 0 6px 18px rgba(51, 65, 85, 0.15);
+}
+
 .pos-product-card-image-wrapper {
   width: 100%;
-  border-radius: 10px;
+  border-radius: 2px;
   overflow: hidden;
   margin-bottom: 8px;
 }
@@ -348,14 +423,17 @@
 }
 
 .pos-product-card-name {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #1e293b; /* Deep slate text */
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #1e293b;
+  text-transform: uppercase;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
 }
 
 .pos-product-card-name-multiline {
-  line-height: 1.25;
-  max-height: 40px;
+  line-height: 1.15;
+  max-height: 45px;
   overflow: hidden;
 }
 
@@ -399,13 +477,18 @@
 }
 
 .pos-stock-pill {
-  min-width: 26px;
-  padding: 2px 6px;
-  border-radius: 999px;
-  background-color: #e5e7eb;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  min-width: 32px;
+  padding: 4px 8px;
+  border-radius: 3px;
+  background-color: #ffffff;
   color: #1e293b;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
+  font-weight: 700;
   text-align: center;
+  border: 1px solid #e5e7eb;
 }
 
 .pos-stock-label {
@@ -414,22 +497,28 @@
 }
 
 .pos-product-card-stock-only {
-  margin-top: 10px;
+  margin-top: 0;
+  position: absolute;
+  top: 8px;
+  right: 8px;
 }
 
 .pos-stock-pill-low {
-  background-color: #f59e0b; /* Warning/low stock amber */
-  color: #ffffff;
+  background-color: #fecaca;
+  color: #991b1b;
+  border-color: #fca5a5;
 }
 
 .pos-stock-pill-medium {
-  background-color: #e5e7eb;
+  background-color: #ffffff;
   color: #1e293b;
+  border-color: #d1d5db;
 }
 
 .pos-stock-pill-high {
-  background-color: #10b981; /* Success/high stock emerald */
-  color: #ffffff;
+  background-color: #d1fae5;
+  color: #065f46;
+  border-color: #a7f3d0;
 }
 
 .pos-product-card-bottom {
@@ -448,7 +537,7 @@
 .pos-qty-btn {
   width: 26px;
   height: 26px;
-  border-radius: 999px;
+  border-radius: 3px;
   border: none;
   display: flex;
   align-items: center;
@@ -465,7 +554,7 @@
 }
 
 .pos-qty-plus {
-  background-color: #10b981; /* Success/add emerald */
+  background-color: #10b981;
   color: #ffffff;
   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
 }
@@ -479,6 +568,7 @@
   text-align: center;
   font-size: 0.85rem;
   color: #111827;
+  font-weight: 600;
 }
 
 /* Responsive */
@@ -494,4 +584,354 @@
     flex: none;
     width: 100%;
   }
+}
+
+/* Bootstrap Table Overrides for Light Theme POS */
+.pos-page .table {
+  color: #1e293b;
+  background-color: #ffffff;
+  margin-bottom: 0;
+}
+
+.pos-page .table thead th {
+  background-color: #f9fafb;
+  color: #6b7280;
+  border-color: #e5e7eb;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.75rem;
+  padding: 8px 12px;
+}
+
+.pos-page .table tbody td {
+  background-color: #ffffff;
+  color: #1e293b;
+  border-color: #e5e7eb;
+  padding: 6px 12px;
+  font-size: 0.9rem;
+}
+
+.pos-page .table tbody tr {
+  background-color: #ffffff;
+  color: #1e293b;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.pos-page .table tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+/* ============================================
+   DARK MODE
+   ============================================ */
+
+.pos-page.dark-mode {
+  background-color: #0f172a;
+}
+
+.pos-page.dark-mode .pos-left {
+  background-color: #0f172a;
+}
+
+.pos-page.dark-mode .pos-right {
+  background-color: #020617;
+  border-left: 1px solid #334155;
+}
+
+.pos-page.dark-mode .pos-menu-count {
+  color: #64748b;
+}
+
+.pos-page.dark-mode .pos-bill-info {
+  color: #94a3b8;
+}
+
+.pos-page.dark-mode .pos-bill-label {
+  color: #f8fafc;
+}
+
+.pos-page.dark-mode .pos-customer-select {
+  background-color: #1e293b;
+  border-color: #334155;
+  color: #f8fafc;
+}
+
+.pos-page.dark-mode .pos-header-plus-btn {
+  background-color: #4f46e5;
+  border: 1px solid #4f46e5;
+  box-shadow: 0 4px 10px rgba(79, 70, 229, 0.4);
+}
+
+.pos-page.dark-mode .pos-header-plus-btn:hover {
+  background-color: #4338ca;
+  border-color: #4338ca;
+}
+
+.pos-page.dark-mode .pos-theme-toggle-btn {
+  background-color: #1e293b;
+  border-color: #334155;
+  color: #f8fafc;
+}
+
+.pos-page.dark-mode .pos-theme-toggle-btn svg {
+  width: 22px !important;
+  height: 22px !important;
+  stroke-width: 1.5;
+}
+
+.pos-page.dark-mode .pos-theme-toggle-btn:hover {
+  background-color: #334155;
+  border-color: #475569;
+}
+
+.pos-page.dark-mode .pos-cart-panel {
+  background-color: #0f172a;
+  border: 1px solid #334155;
+}
+
+.pos-page.dark-mode .pos-cart-header {
+  background-color: #1e293b;
+  border-bottom: 1px solid #334155;
+  color: #94a3b8;
+}
+
+.pos-page.dark-mode .pos-cart-body {
+  background-color: #0f172a;
+}
+
+.pos-page.dark-mode .pos-cart-body::-webkit-scrollbar-thumb {
+  background-color: #475569;
+  border-radius: 4px;
+}
+
+.pos-page.dark-mode .pos-bottom-bar {
+  background-color: #020617;
+  border-top: 1px solid #334155;
+}
+
+.pos-page.dark-mode .pos-bottom-summary {
+  color: #cbd5e1;
+}
+
+.pos-page.dark-mode .pos-summary-row {
+  color: #cbd5e1;
+}
+
+.pos-page.dark-mode .pos-total-label {
+  color: #94a3b8;
+}
+
+.pos-page.dark-mode .pos-total-value {
+  color: #f8fafc;
+}
+
+.pos-page.dark-mode .pos-reset-button {
+  color: #4f46e5;
+}
+
+.pos-page.dark-mode .pos-reset-button:hover {
+  color: #4338ca;
+}
+
+.pos-page.dark-mode .pos-pay-button-wrapper button {
+  background-color: #4f46e5 !important;
+  border-color: #4f46e5 !important;
+  color: #ffffff !important;
+}
+
+.pos-page.dark-mode .pos-pay-button-wrapper button:hover {
+  background-color: #4338ca !important;
+  border-color: #4338ca !important;
+}
+
+/* Dark Mode Product Cards */
+
+.pos-page.dark-mode .pos-product-card {
+  background-color: #1e3a8a;
+  border: 1px solid #1e40af;
+  position: relative;
+}
+
+.pos-page.dark-mode .pos-product-card:hover {
+  background-color: #1e40af;
+  box-shadow: 0 8px 16px rgba(30, 58, 138, 0.4);
+  border-color: #3b82f6;
+}
+
+/* Category-based color coding */
+
+/* Category A: Casual Wear - Slate Navy (#1E3A8A) */
+.pos-page.dark-mode .pos-product-card.category-a {
+  background-color: #1e3a8a;
+  border-color: #1e40af;
+}
+
+.pos-page.dark-mode .pos-product-card.category-a:hover {
+  background-color: #1e40af;
+  border-color: #3b82f6;
+  box-shadow: 0 8px 16px rgba(30, 58, 138, 0.4);
+}
+
+/* Category B: Formal Wear - Oxide Amber (#78350F) */
+.pos-page.dark-mode .pos-product-card.category-b {
+  background-color: #78350f;
+  border-color: #92400e;
+}
+
+.pos-page.dark-mode .pos-product-card.category-b:hover {
+  background-color: #92400e;
+  border-color: #b45309;
+  box-shadow: 0 8px 16px rgba(120, 53, 15, 0.4);
+}
+
+/* Category C: Sportswear - Deep Charcoal (#334155) */
+.pos-page.dark-mode .pos-product-card.category-c {
+  background-color: #334155;
+  border-color: #475569;
+}
+
+.pos-page.dark-mode .pos-product-card.category-c:hover {
+  background-color: #475569;
+  border-color: #64748b;
+  box-shadow: 0 8px 16px rgba(51, 65, 85, 0.4);
+}
+
+.pos-page.dark-mode .pos-product-card-name {
+  color: #ffffff;
+  text-transform: uppercase;
+  font-weight: 800;
+  font-size: 0.95rem;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.pos-page.dark-mode .pos-stock-pill {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background-color: #ffffff;
+  color: #1e293b;
+  font-weight: 700;
+  min-width: 32px;
+  padding: 4px 8px;
+  border-radius: 3px;
+  border: 1px solid #f3f4f6;
+  font-size: 0.75rem;
+}
+
+.pos-page.dark-mode .pos-product-card-stock-only {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  margin-top: 0;
+}
+
+.pos-page.dark-mode .pos-stock-pill-low {
+  background-color: #fecaca;
+  color: #991b1b;
+  border-color: #fca5a5;
+}
+
+.pos-page.dark-mode .pos-stock-pill-medium {
+  background-color: #ffffff;
+  color: #1e293b;
+  border-color: #f3f4f6;
+}
+
+.pos-page.dark-mode .pos-stock-pill-high {
+  background-color: #d1fae5;
+  color: #065f46;
+  border-color: #a7f3d0;
+}
+
+/* Dark Mode Table */
+
+.pos-page.dark-mode .table {
+  color: #f8fafc;
+  background-color: transparent;
+}
+
+.pos-page.dark-mode .table thead th {
+  background-color: #1e293b;
+  color: #cbd5e1;
+  border-color: #334155;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.75rem;
+}
+
+.pos-page.dark-mode .table tbody td {
+  background-color: transparent;
+  color: #f8fafc;
+  border-color: #334155;
+  padding: 6px 12px;
+  border-bottom: 1px solid #334155;
+}
+
+.pos-page.dark-mode .table tbody tr {
+  background-color: transparent;
+  color: #f8fafc;
+  border-bottom: 1px solid #334155;
+}
+
+.pos-page.dark-mode .table tbody tr:hover {
+  background-color: rgba(52, 73, 94, 0.2);
+}
+
+/* Dark Mode Cart Input Fields */
+
+.pos-page.dark-mode input[type="number"],
+.pos-page.dark-mode input[type="text"] {
+  background-color: #1e293b;
+  border-color: #334155;
+  color: #f8fafc;
+}
+
+.pos-page.dark-mode input[type="number"]:focus,
+.pos-page.dark-mode input[type="text"]:focus {
+  background-color: #0f172a;
+  border-color: #064e3b;
+  color: #f8fafc;
+}
+
+/* Dark Mode Quantity Controls */
+
+.pos-page.dark-mode .pos-qty-btn {
+  transition: background-color 0.1s ease, transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.pos-page.dark-mode .pos-qty-minus {
+  background-color: #334155;
+  color: #cbd5e1;
+}
+
+.pos-page.dark-mode .pos-qty-minus:hover {
+  background-color: #475569;
+}
+
+.pos-page.dark-mode .pos-qty-plus {
+  background-color: #064e3b;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(6, 78, 59, 0.5);
+}
+
+.pos-page.dark-mode .pos-qty-plus:hover {
+  background-color: #047857;
+}
+
+.pos-page.dark-mode .pos-qty-value {
+  color: #f8fafc;
+}
+
+/* Dark Mode Delete Icons */
+
+.pos-page.dark-mode .pos-cart-delete-btn {
+  color: #64748b;
+  transition: color 0.2s ease;
+}
+
+.pos-page.dark-mode .pos-cart-delete-btn:hover {
+  color: #ef4444;
 }

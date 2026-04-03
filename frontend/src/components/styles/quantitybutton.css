@@ -2,29 +2,33 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #d1d5db;
   border-radius: 4px;
   background-color: #f9fafb;
   width: 56px;
   height: 32px;
+  transition: all 0.2s ease;
 }
 
 .quantity-display {
   padding: 2px 8px;
   font-size: 0.9rem;
-  font-weight: 500;
+  font-weight: 600;
   text-align: center;
-  cursor: text; /* Show text cursor to hint it's editable */
+  cursor: text;
+  color: #1e293b;
 }
 
 .quantity-input {
   width: 100%;
   padding: 2px 8px;
   font-size: 0.9rem;
+  font-weight: 600;
   text-align: center;
   border: none;
   outline: none;
   background-color: transparent;
+  color: #1e293b;
 }
 
 .quantity-buttons {
@@ -33,4 +37,19 @@
 
 .quantity-button {
   display: none;
+}
+
+/* Dark Mode */
+.pos-page.dark-mode .quantity-control {
+  background-color: #1e293b;
+  border-color: #334155;
+}
+
+.pos-page.dark-mode .quantity-display {
+  color: #f8fafc;
+}
+
+.pos-page.dark-mode .quantity-input {
+  background-color: transparent;
+  color: #f8fafc;
 }

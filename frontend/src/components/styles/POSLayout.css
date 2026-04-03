@@ -21,6 +21,11 @@
   overflow-x: hidden; /* Prevent horizontal scrollbar in POS area */
 }
 
+/* Dark mode support */
+.pos-main-content.dark-mode {
+  background-color: #0f172a;
+}
+
 @media (max-width: 768px) {
   .pos-layout-container {
     flex-direction: column;

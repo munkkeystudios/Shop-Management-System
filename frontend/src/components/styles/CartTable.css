@@ -9,15 +9,17 @@
 }
 
 .product-name {
-  font-weight: 500;
+  font-weight: 600;
   font-size: 0.9rem;
+  color: #1e293b;
+  text-transform: capitalize;
 }
-  
-  .quantity-container {
-    display: flex;
-    justify-content: center;
-  }
-  
+
+.quantity-container {
+  display: flex;
+  justify-content: center;
+}
+
 .empty-cart {
   text-align: center;
   padding: 20px;
@@ -26,17 +28,19 @@
 
 .delete-icon {
   cursor: pointer;
-  color: #6b7280;
+  color: #ef4444;
+  transition: color 0.2s ease;
 }
 
 .delete-icon:hover {
-  color: #111827;
+  color: #dc2626;
 }
 
 .cart-table {
   border-radius: 0;
   border-collapse: collapse;
   width: 100%;
+  margin-bottom: 0;
 }
 
 .cart-table th,
@@ -46,20 +50,31 @@
 
 .cart-table thead th {
   background-color: #f9fafb;
-  font-weight: 500;
-  font-size: 0.8rem;
+  font-weight: 600;
+  font-size: 0.75rem;
   color: #6b7280;
   border-bottom: 1px solid #e5e7eb;
+  text-transform: uppercase;
+  padding: 8px 12px;
+  letter-spacing: 0.05em;
 }
 
-/* Align columns: Items left, others centered */
+/* Align columns: Items left, Price/Subtotal right, others centered */
 .cart-table thead th:first-child,
 .cart-table tbody td:first-child {
   text-align: left;
 }
 
-.cart-table thead th:nth-child(n + 2),
-.cart-table tbody td:nth-child(n + 2) {
+.cart-table thead th:nth-child(2),
+.cart-table tbody td:nth-child(2) {
+  text-align: right;
+  padding-right: 12px;
+}
+
+.cart-table thead th:nth-child(3),
+.cart-table tbody td:nth-child(3),
+.cart-table thead th:nth-child(4),
+.cart-table tbody td:nth-child(4) {
   text-align: center;
 }
 
@@ -67,10 +82,47 @@
   background-color: #ffffff;
 }
 
-.cart-table tbody tr + tr td {
-  border-top: 1px solid #e5e7eb;
+.cart-table tbody td {
+  color: #1e293b;
+  padding: 6px 12px;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 0.9rem;
 }
 
 .cart-item-row {
   vertical-align: middle;
+  height: auto;
+}
+
+/* Dark Mode Overrides */
+.pos-page.dark-mode .cart-table thead th {
+  background-color: #1e293b;
+  color: #cbd5e1;
+  border-bottom: 1px solid #334155;
+}
+
+.pos-page.dark-mode .cart-table tbody tr {
+  background-color: transparent;
+  border-bottom: 1px solid #334155;
+}
+
+.pos-page.dark-mode .cart-table tbody td {
+  color: #f8fafc;
+  background-color: transparent;
+  border-bottom: 1px solid #334155;
+  padding: 6px 12px;
+}
+
+.pos-page.dark-mode .product-name {
+  color: #f8fafc;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.pos-page.dark-mode .delete-icon {
+  color: #ef4444;
+}
+
+.pos-page.dark-mode .delete-icon:hover {
+  color: #dc2626;
 }
