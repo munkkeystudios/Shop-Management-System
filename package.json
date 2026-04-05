@@ -3,11 +3,15 @@
   "version": "1.0.0",
   "description": "Shop Management System with React frontend and Node.js backend",
   "main": "index.js",
+  "engines": {
+    "node": "20.x"
+  },
   "scripts": {
     "start": "concurrently \"npm run server\" \"npm run client\"",
     "server": "cd backend && npm start",
     "client": "cd frontend && npm start",
-    "install-all": "npm install && cd backend && npm install && cd ../frontend && npm install"
+    "install-all": "npm install && cd backend && npm install && cd ../frontend && npm install",
+    "heroku-postbuild": "cd backend && npm install --production && cd ../frontend && npm install && npm run build"
   },
   "keywords": [
     "shop",

@@ -26,7 +26,7 @@ const Login = () => {
 
   const fetchCompanySettings = async () => {
     try {
-      const baseUrl = process.env.REACT_APP_API_URL || 'http://localhost:5002';
+      const baseUrl = process.env.REACT_APP_API_URL || '';
       const response = await axios.get(`${baseUrl}/api/settings`);
 
       if (response.data) {
