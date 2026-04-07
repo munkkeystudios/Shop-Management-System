@@ -83,8 +83,8 @@
 }
 .search-bar input[type="search"]:focus {
      outline: none;
-    border-color: #2374F5;
-    box-shadow: 0 0 0 2px rgba(35, 116, 245, 0.2);
+    border-color: #565e74;
+    box-shadow: 0 0 0 2px rgba(86, 94, 116, 0.12);
 }
 /* Add styles for a search icon inside the input if needed */
 

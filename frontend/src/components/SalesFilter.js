@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FaFilter, FaTimes } from 'react-icons/fa';
 import './styles/SalesFilter.css';
 
-const SalesFilter = ({ onApplyFilters }) => {
+const SalesFilter = ({ onApplyFilters, iconOnly = false }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -54,9 +54,11 @@ const SalesFilter = ({ onApplyFilters }) => {
       <button
         className={`sales-filter-button ${activeFilters > 0 ? 'active' : ''}`}
         onClick={toggleFilter}
+        aria-label="Filter sales"
+        title="Filter sales"
       >
         <FaFilter />
-        Filter
+        {!iconOnly && 'Filter'}
         {activeFilters > 0 && (
           <span className="filter-badge">{activeFilters}</span>
         )}

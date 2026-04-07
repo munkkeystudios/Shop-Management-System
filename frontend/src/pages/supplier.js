@@ -1,5 +1,5 @@
 import React, { useState, useEffect} from "react";
-import { FiSearch, FiPlus, FiX, FiEdit, FiTrash2 } from 'react-icons/fi';
+import { FiX } from 'react-icons/fi';
 import Layout from '../components/Layout';
 import { useNotifications } from '../context/NotificationContext';
 import './supplier.css';
@@ -151,6 +151,11 @@ const handleSubmit = async (e) => {
     supplier.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const totalSuppliers = suppliers.length;
+  const withPhoneCount = suppliers.filter((supplier) => supplier.phone && String(supplier.phone).trim()).length;
+  const withAddressCount = suppliers.filter((supplier) => supplier.address && String(supplier.address).trim()).length;
+  const filteredCount = filteredSuppliers.length;
+
   return (
     <Layout title="Suppliers">
       {error && (
@@ -158,131 +163,305 @@ const handleSubmit = async (e) => {
           <span className="block sm:inline">{error}</span>
         </div>
       )}
-      <div className="supplier-frame">
-        <div className="supplier-div-2">
-          <div className="supplier-div-3">
-            <div className="supplier-div-4">
-              <div className="supplier-text-2">Supplier</div>
-              <div className="supplier-search-container">
-                <FiSearch className="supplier-search-icon" />
-                <input
-                  type="text"
-                  placeholder="Search this table"
-                  className="supplier-search-input"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
+      <div style={{ backgroundColor: '#f7f9fb', minHeight: 'calc(100vh - 80px)', fontFamily: 'Manrope, sans-serif' }}>
+        <main style={{ flex: 1, minHeight: '100vh', background: '#f7f9fb' }}>
+          {loading && !isModalOpen ? (
+            <div className="products-loading-container">
+              <div className="block-pulse">
+                <div className="block rounded-sm"></div>
+                <div className="block rounded-sm"></div>
+                <div className="block rounded-sm"></div>
+                <div className="block rounded-sm"></div>
+                <div className="block rounded-sm"></div>
+                <div className="block rounded-sm"></div>
+                <div className="block rounded-sm"></div>
+                <div className="block rounded-sm"></div>
+                <div className="block rounded-sm"></div>
               </div>
             </div>
+          ) : (
+            <section style={{ padding: '32px', maxWidth: '100%', margin: '0 auto' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '40px' }}>
+                <div>
+                  <p
+                    style={{
+                      margin: '0 0 4px',
+                      color: '#565e74',
+                      fontWeight: 700,
+                      letterSpacing: '0.1em',
+                      textTransform: 'uppercase',
+                      fontSize: '12px',
+                    }}
+                  >
+                    Vendor Registry
+                  </p>
+                  <h2 style={{ margin: 0, fontSize: '36px', fontWeight: 700, letterSpacing: '-0.025em', color: '#2a3439' }}>
+                    All Suppliers
+                  </h2>
+                </div>
 
-            <div className="supplier-div-6">
-              <div className="supplier-div-7">
-                {loading ? (
-                  <div className="employee-loading">
-                    <div className="employee-spinner"></div>
-                    <div className="employee-loading-text">Loading suppliers...</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                  <div style={{ position: 'relative' }}>
+                    <span
+                      style={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '12px',
+                        transform: 'translateY(-50%)',
+                        color: '#717c82',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>search</span>
+                    </span>
+                    <input
+                      type="text"
+                      placeholder="Search supplier name..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      style={{
+                        width: '320px',
+                        backgroundColor: '#f0f4f7',
+                        border: 'none',
+                        borderRadius: '4px',
+                        padding: '12px 16px 12px 40px',
+                        fontSize: '14px',
+                        outline: 'none',
+                        boxShadow: 'rgba(15, 23, 42, 0.06) 0px 1px 2px',
+                        color: '#2a3439',
+                      }}
+                    />
                   </div>
-                ) : (
-                  <>
-                    <table className="supplier-table">
-                      <thead>
-                        <tr>
-                          <th>ID</th>
-                          <th>Name</th>
-                          <th>Contact</th>
-                          <th>Location</th>
-                          <th>Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {filteredSuppliers.map((supplier) => (
-                          <tr key={supplier._id}>
-                            <td>{supplier._id}</td>
-                            <td>{supplier.name}</td>
-                            <td>{supplier.phone}</td>
-                            <td>{supplier.address}</td>
-                            <td>
-                              <div className="action-icons">
-                                <FiEdit
-                                  className="edit-icon"
-                                  title="Edit"
-                                  onClick={() => handleEdit(supplier)}
-                                />
-                                <FiTrash2
-                                  className="delete-icon"
-                                  title="Delete"
-                                  onClick={() => handleDelete(supplier._id)}
-                                />
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-
-                    <div className="supplier-pagination-container">
-                      <div className="supplier-pagination-controls">
-                        <button className="supplier-pagination-button">Previous</button>
-                        <button className="supplier-pagination-button">Next</button>
-                      </div>
-                      <span className="supplier-page-info">Page 1 of 10</span>
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
-
-          <div className="supplier-action-buttons-container">
-            <button
-              className="supplier-action-button primary"
-              onClick={() => setIsModalOpen(true)}
-            >
-              <FiPlus /> Add New Supplier
-            </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsEditMode(false);
+                      setEditingSupplierId(null);
+                      setSupplierName('');
+                      setContactNumber('');
+                      setAddress('');
+                      setIsModalOpen(true);
+                    }}
+                    style={{
+                      backgroundColor: '#565e74',
+                      color: '#f7f7ff',
+                      border: 'none',
+                      borderRadius: '4px',
+                      padding: '12px 24px',
+                      fontWeight: 700,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      cursor: 'pointer',
+                      boxShadow: 'rgba(15, 23, 42, 0.08) 0px 1px 2px',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    <span className="material-symbols-outlined">add</span>
+                    Create New Supplier
+                  </button>
                 </div>
               </div>
-            </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: '24px', marginBottom: '48px' }}>
+                <div style={{ background: '#f0f4f7', padding: '24px', borderRadius: '4px' }}>
+                  <p style={{ margin: '0 0 16px', fontSize: '12px', fontWeight: 700, color: '#566166', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                    Total Suppliers
+                  </p>
+                  <p style={{ margin: 0, fontSize: '30px', fontWeight: 900, letterSpacing: '-0.05em', color: '#2a3439' }}>
+                    {totalSuppliers.toLocaleString()}
+                  </p>
+                </div>
+                <div style={{ background: '#f0f4f7', padding: '24px', borderRadius: '4px' }}>
+                  <p style={{ margin: '0 0 16px', fontSize: '12px', fontWeight: 700, color: '#566166', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                    With Contact
+                  </p>
+                  <p style={{ margin: 0, fontSize: '30px', fontWeight: 900, letterSpacing: '-0.05em', color: '#2a3439' }}>
+                    {withPhoneCount}
+                  </p>
+                </div>
+                <div style={{ background: '#f0f4f7', padding: '24px', borderRadius: '4px' }}>
+                  <p style={{ margin: '0 0 16px', fontSize: '12px', fontWeight: 700, color: '#566166', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                    With Address
+                  </p>
+                  <p style={{ margin: 0, fontSize: '30px', fontWeight: 900, letterSpacing: '-0.05em', color: '#2a3439' }}>
+                    {withAddressCount}
+                  </p>
+                </div>
+                <div style={{ background: '#f0f4f7', padding: '24px', borderRadius: '4px', borderLeft: '4px solid #565e74' }}>
+                  <p style={{ margin: '0 0 16px', fontSize: '12px', fontWeight: 700, color: '#566166', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                    Search Results
+                  </p>
+                  <p style={{ margin: 0, fontSize: '30px', fontWeight: 900, letterSpacing: '-0.05em', color: '#2a3439' }}>
+                    {filteredCount}
+                  </p>
+                </div>
+              </div>
+
+              <div style={{ background: '#ffffff', borderRadius: '4px', overflow: 'hidden' }}>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '2.5fr 2fr 3fr 1.5fr',
+                    background: '#e8eff3',
+                    padding: '16px 24px',
+                    columnGap: '12px',
+                  }}
+                >
+                  <div style={{ fontSize: '10px', fontWeight: 900, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#566166' }}>Supplier</div>
+                  <div style={{ fontSize: '10px', fontWeight: 900, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#566166' }}>Contact</div>
+                  <div style={{ fontSize: '10px', fontWeight: 900, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#566166' }}>Location</div>
+                  <div style={{ fontSize: '10px', fontWeight: 900, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#566166', textAlign: 'center' }}>Actions</div>
+                </div>
+
+                {filteredSuppliers.length > 0 ? (
+                  <div>
+                    {filteredSuppliers.map((supplier, index) => {
+                      const isStriped = index % 2 === 1;
+                      return (
+                        <div
+                          key={supplier._id}
+                          style={{
+                            display: 'grid',
+                            gridTemplateColumns: '2.5fr 2fr 3fr 1.5fr',
+                            padding: '20px 24px',
+                            alignItems: 'center',
+                            columnGap: '12px',
+                            background: isStriped ? 'rgba(240, 244, 247, 0.3)' : 'transparent',
+                          }}
+                        >
+                          <div>
+                            <div style={{ fontWeight: 700, color: '#2a3439' }}>{supplier.name}</div>
+                            <div style={{ fontFamily: 'monospace', fontSize: '12px', color: '#566166', marginTop: '2px' }}>
+                              {supplier._id?.substring(0, 12) || 'N/A'}
+                            </div>
+                          </div>
+                          <div style={{ color: '#566166', fontSize: '14px' }}>{supplier.phone || '-'}</div>
+                          <div style={{ color: '#566166', fontSize: '14px' }}>{supplier.address || '-'}</div>
+                          <div className="action-icons" style={{ display: 'flex', justifyContent: 'center', gap: '8px' }}>
+                            <button
+                              className="supplier-action-icon-btn"
+                              title="Edit"
+                              onClick={() => handleEdit(supplier)}
+                            >
+                              <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>edit</span>
+                            </button>
+                            <button
+                              className="supplier-action-icon-btn delete"
+                              title="Delete"
+                              onClick={() => handleDelete(supplier._id)}
+                            >
+                              <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>delete</span>
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div style={{ padding: '40px 24px', color: '#566166', fontSize: '14px' }}>
+                    No suppliers found.
+                  </div>
+                )}
+              </div>
+            </section>
+          )}
+        </main>
+      </div>
 
       {isModalOpen && (
         <div className="supplier-modal-overlay">
-          <div className="supplier-modal">
-            <button
-              className="supplier-modal-close"
-              onClick={() => setIsModalOpen(false)}
-            >
-              <FiX />
-            </button>
-            <h2 className="supplier-modal-title">Add Supplier</h2>
-            <form className="supplier-modal-form" onSubmit={handleSubmit}>
-              <input
-                type="text"
-                placeholder="Supplier Name"
-                className="supplier-modal-input"
-                value={supplierName}
-                onChange={(e) => setSupplierName(e.target.value)}
-                required
-              />
-              <input
-                type="text"
-                placeholder="Contact Number"
-                className="supplier-modal-input"
-                value={contactNumber}
-                onChange={(e) => setContactNumber(e.target.value)}
-                required
-              />
-              <input
-                type="text"
-                placeholder="Address"
-                className="supplier-modal-input"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                required
-              />
-              <button type="submit" className="supplier-modal-submit">
-                Submit
+          <div className={`supplier-modal ${isEditMode ? 'edit' : 'create'}`}>
+            <div className="supplier-modal-header">
+              <div>
+                <span className="supplier-modal-badge">{isEditMode ? 'Action: Edit' : 'Action: Create'}</span>
+                <h2 className="supplier-modal-title">{isEditMode ? 'Edit Supplier' : 'Add Supplier'}</h2>
+                <p className="supplier-modal-subtitle">
+                  {isEditMode ? (
+                    <>ID: <span>{editingSupplierId?.substring(0, 10) || 'N/A'}</span></>
+                  ) : (
+                    <>Prepare supplier registry entry</>
+                  )}
+                </p>
+              </div>
+              <button
+                type="button"
+                className="supplier-modal-close"
+                onClick={() => setIsModalOpen(false)}
+              >
+                <FiX />
               </button>
+            </div>
+
+            <form id="supplierModalForm" className="supplier-modal-form" onSubmit={handleSubmit}>
+              <div className="supplier-modal-form-grid">
+                <div className="supplier-modal-field">
+                  <label className="supplier-modal-label">Supplier Name</label>
+                  <input
+                    type="text"
+                    placeholder="Supplier Name"
+                    className="supplier-modal-input"
+                    value={supplierName}
+                    onChange={(e) => setSupplierName(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="supplier-modal-field">
+                  <label className="supplier-modal-label">Contact Number</label>
+                  <input
+                    type="text"
+                    placeholder="Contact Number"
+                    className="supplier-modal-input"
+                    value={contactNumber}
+                    onChange={(e) => setContactNumber(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="supplier-modal-field supplier-modal-field-full">
+                  <label className="supplier-modal-label">Address</label>
+                  <input
+                    type="text"
+                    placeholder="Address"
+                    className="supplier-modal-input"
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
             </form>
+
+            <div className="supplier-modal-footer">
+              <button
+                type="button"
+                className="supplier-modal-cancel"
+                onClick={() => setIsModalOpen(false)}
+                style={{
+                  border: 'none',
+                  background: 'transparent',
+                  color: '#566166',
+                  padding: '14px',
+                  fontSize: '12px',
+                  fontWeight: 800,
+                  letterSpacing: '0.13em',
+                  textTransform: 'uppercase',
+                  borderRadius: 0,
+                  cursor: 'pointer',
+                  transition: 'color 0.2s ease',
+                  outline: 'none',
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.color = '#9f403d'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.color = '#566166'; }}
+              >
+                Cancel
+              </button>
+              <button type="submit" form="supplierModalForm" className="supplier-modal-submit">
+                {isEditMode ? 'Save Changes' : 'Submit'}
+              </button>
+            </div>
           </div>
         </div>
       )}

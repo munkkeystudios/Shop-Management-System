@@ -1,33 +1,27 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import POSLayout from '../components/POSLayout';
-import SearchBar from '../components/pos/searchbarpos.jsx';
-import CartTable from '../components/pos/CartTable.js';
-import BillTab from '../components/pos/BillTab.js';
 import PayButton from '../components/pos/PayButton.js';
 import { salesAPI, productsAPI } from '../services/api.js';
 import { useSettings } from '../context/SettingsContext';
-import { usePOSTheme } from '../context/POSThemeContext';
-import { getCategoryColor } from '../utils/categoryColorUtils';
 import useCart from '../hooks/useCart';
 import { getCurrencySymbol } from '../utils/currencyUtils';
-import '../styles/pos.css';
-import defaultProductImage from '../images/default-product-image.jpg';
+import '../styles/pos-slate.css';
+
+const DISPLAY_TAX_RATE = 0.085;
 
 const Pos = () => {
-  // Get settings context
+  const navigate = useNavigate();
   const { settings } = useSettings();
-  const { isDarkMode, toggleTheme } = usePOSTheme();
   const currencySymbol = settings?.currencyCode ? getCurrencySymbol(settings.currencyCode) : '₦';
 
-  // State variables
-  const [searchedProduct, setSearchedProduct] = useState(null);
-  const [billNumber, setBillNumber] = useState('Loading...');
+  const [billNumber, setBillNumber] = useState('-');
   const [activeBill, setActiveBill] = useState(null);
   const [products, setProducts] = useState([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [productsError, setProductsError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const billTabRef = useRef(null);
+  const [selectedCategory, setSelectedCategory] = useState('all');
 
   const {
     cartItems,
@@ -35,23 +29,16 @@ const Pos = () => {
     totalQuantity,
     addToCart,
     removeFromCart,
-    updateQuantity,
     resetCart,
     setCartItems,
   } = useCart();
 
-  // Fetch the last bill number
   useEffect(() => {
     const fetchLastBillNumber = async () => {
       try {
         const response = await salesAPI.getLastBillNumber();
-        const lastBillNumber = response.data.lastBillNumber;
-
-        if (lastBillNumber) {
-          setBillNumber(lastBillNumber + 1);
-        } else {
-          setBillNumber(1);
-        }
+        const lastBillNumber = response.data?.lastBillNumber;
+        setBillNumber(lastBillNumber ? lastBillNumber + 1 : 1);
       } catch (error) {
         console.error('Error fetching last bill number:', error);
         setBillNumber('Error');
@@ -61,7 +48,6 @@ const Pos = () => {
     fetchLastBillNumber();
   }, []);
 
-  // Fetch products for the product grid
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -82,18 +68,55 @@ const Pos = () => {
     fetchProducts();
   }, []);
 
-  // Product search handler
-  const handleProductSearch = (product) => {
-    setSearchedProduct(product);
+  useEffect(() => {
+    if (billNumber !== '-' && billNumber !== 'Error' && !activeBill) {
+      setActiveBill(billNumber);
+    }
+  }, [billNumber, activeBill]);
+
+  const getCategoryName = (product) => {
+    if (typeof product?.category === 'string') return product.category;
+    if (product?.category?.name) return product.category.name;
+    if (product?.categoryName) return product.categoryName;
+    return 'Uncategorized';
   };
 
-  // Add searched product to cart
-  useEffect(() => {
-    if (searchedProduct) {
-      addToCart(searchedProduct);
-      setSearchedProduct(null);
-    }
-  }, [searchedProduct, addToCart]);
+  const categories = useMemo(() => {
+    const unique = new Set();
+    products.forEach((product) => unique.add(getCategoryName(product)));
+    return ['all', ...Array.from(unique)];
+  }, [products]);
+
+  const categoryCodeMap = useMemo(() => {
+    const map = new Map();
+    categories
+      .filter((category) => category !== 'all')
+      .forEach((category, index) => {
+        map.set(category, `CAT-${String(index + 1).padStart(2, '0')}`);
+      });
+    return map;
+  }, [categories]);
+
+  const normalizedSearch = searchTerm.trim().toLowerCase();
+  const filteredProducts = products.filter((product) => {
+    const categoryName = getCategoryName(product);
+    const matchesCategory = selectedCategory === 'all' || categoryName === selectedCategory;
+
+    if (!matchesCategory) return false;
+
+    if (!normalizedSearch) return true;
+
+    const name = product.name?.toLowerCase() || '';
+    const barcode = product.barcode?.toLowerCase() || '';
+    const description = product.description?.toLowerCase() || '';
+
+    return (
+      name.includes(normalizedSearch) ||
+      barcode.includes(normalizedSearch) ||
+      description.includes(normalizedSearch)
+    );
+  });
+
   const buildCartProduct = (product) => {
     const discountRate = product.discountRate || 0;
     const effectivePrice = product.price * (1 - discountRate / 100);
@@ -105,262 +128,336 @@ const Pos = () => {
       discount: discountRate,
       quantity: 1,
       subtotal: effectivePrice,
-      image:
-        product.images && product.images.length > 0
-          ? product.images[0]
-          : '/images/default-product-image.jpg',
+      description: product.description || '',
     };
   };
 
   const handleProductTileClick = (product) => {
     if (!product) return;
-    const formattedProduct = buildCartProduct(product);
-    addToCart(formattedProduct);
+    addToCart(buildCartProduct(product));
   };
 
-  // Payment completion handler
   const handlePaymentComplete = async (newSaleId) => {
-    // Reset cart items
     setCartItems([]);
 
-    if (newSaleId) {
-      console.log('New sale created with ID:', newSaleId);
-      // Store the current bill number before updating
-      const previousBillNumber = activeBill || billNumber;
-
-      try {
-        // Fetch the latest bill number from the server
-        const response = await salesAPI.getLastBillNumber();
-        const lastBillNumber = response.data.lastBillNumber;
-
-        // Update the bill number state with the next available number
-        const nextBillNumber = lastBillNumber + 1;
-        setBillNumber(nextBillNumber);
-
-        // If we have a reference to the BillTab component
-        if (billTabRef.current) {
-          // Close the completed bill tab
-          billTabRef.current.handleTabClose(previousBillNumber);
-
-          // Update all remaining tabs to use the latest bill numbers
-          billTabRef.current.updateAllBillNumbers(nextBillNumber);
-
-          // Set the active bill to the next bill number
-          setActiveBill(nextBillNumber);
-        }
-      } catch (error) {
-        console.error('Error updating bill numbers after payment:', error);
-      }
-    } else {
+    if (!newSaleId) {
       console.warn('No sale ID was provided after payment completion');
+      return;
+    }
+
+    try {
+      const response = await salesAPI.getLastBillNumber();
+      const lastBillNumber = response.data?.lastBillNumber;
+      const nextBillNumber = (lastBillNumber || 0) + 1;
+
+      setBillNumber(nextBillNumber);
+      setActiveBill(nextBillNumber);
+    } catch (error) {
+      console.error('Error updating bill numbers after payment:', error);
     }
   };
 
-  // Set active bill when bill number is initially loaded
-  useEffect(() => {
-    if (billNumber !== 'Loading...' && billNumber !== 'Error' && !activeBill) {
-      setActiveBill(billNumber);
-    }
-  }, [billNumber, activeBill]);
+  const taxAmount = Number((totalPayable * DISPLAY_TAX_RATE).toFixed(2));
+  const totalDue = Number((totalPayable + taxAmount).toFixed(2));
 
-  // Tab change handler
-  const handleTabChange = (selectedBillNumber) => {
-    setActiveBill(selectedBillNumber);
+  const rightSideType = {
+    panel: { fontFamily: 'Manrope, sans-serif' },
+    title: {
+      fontSize: '2rem',
+      fontWeight: 800,
+      letterSpacing: '-0.03em',
+      lineHeight: 1,
+      margin: 0,
+    },
+    orderBadge: {
+      fontSize: '10px',
+      fontWeight: 700,
+      letterSpacing: '0.08em',
+      textTransform: 'uppercase',
+    },
+    customerText: {
+      fontSize: '12px',
+      fontWeight: 700,
+      letterSpacing: '0.02em',
+      textTransform: 'uppercase',
+    },
+    cartTitle: {
+      fontSize: '14px',
+      fontWeight: 700,
+      lineHeight: '1.25',
+      letterSpacing: '-0.01em',
+      margin: 0,
+    },
+    cartMeta: {
+      fontSize: '10px',
+      fontWeight: 500,
+      letterSpacing: '0.08em',
+      textTransform: 'uppercase',
+      lineHeight: '1.3',
+    },
+    cartAmount: {
+      fontSize: '14px',
+      fontWeight: 700,
+      lineHeight: '1.25',
+    },
+    remove: {
+      fontSize: '10px',
+      fontWeight: 700,
+      letterSpacing: '0.14em',
+      textTransform: 'uppercase',
+    },
+    totalLine: {
+      fontSize: '14px',
+      fontWeight: 500,
+      lineHeight: '1.4',
+    },
+    totalDueLabel: {
+      fontSize: '11px',
+      fontWeight: 700,
+      letterSpacing: '0.14em',
+      textTransform: 'uppercase',
+      lineHeight: 1.1,
+    },
+    totalDueValue: {
+      fontSize: '48px',
+      fontWeight: 800,
+      letterSpacing: '-0.03em',
+      lineHeight: 1,
+    },
+    quickCash: {
+      fontSize: '14px',
+      fontWeight: 700,
+      lineHeight: 1,
+    },
+    reset: {
+      fontSize: '13px',
+      fontWeight: 700,
+      letterSpacing: '0.02em',
+      textTransform: 'uppercase',
+      lineHeight: 1,
+    },
   };
-
-  const getProductImage = (product) => {
-    if (product.images && product.images.length > 0) {
-      return product.images[0];
-    }
-    return defaultProductImage;
-  };
-
-  const getStockStatus = (quantity) => {
-    if (quantity == null) return 'medium';
-    if (quantity <= 5) return 'low';
-    if (quantity <= 20) return 'medium';
-    return 'high';
-  };
-
-  const normalizedSearch = searchTerm.trim().toLowerCase();
-  const filteredProducts = normalizedSearch
-    ? products.filter((product) => {
-        const name = product.name?.toLowerCase() || '';
-        const barcode = product.barcode?.toLowerCase() || '';
-        const description = product.description?.toLowerCase() || '';
-        return (
-          name.includes(normalizedSearch) ||
-          barcode.includes(normalizedSearch) ||
-          description.includes(normalizedSearch)
-        );
-      })
-    : products;
-
-  const itemsCount = filteredProducts.length || 0;
 
   return (
-    <POSLayout title="Point of Sale" isDarkMode={isDarkMode}>
-      <div className={`pos-page ${isDarkMode ? 'dark-mode' : ''}`}>
-        {/* Left side: menu + product grid (like the inspiration layout) */}
-        <div className="pos-left">
-          {/* Search bar row with items count (no menu title or category tabs) */}
-          <div className="pos-search-row">
-            <div className="pos-right-search">
-              <SearchBar
-                onProductSearch={handleProductSearch}
-                onSearchTextChange={setSearchTerm}
-              />
+    <POSLayout title="Point of Sale" isDarkMode={false}>
+      <div className="slate-pos-root">
+        <main className="slate-catalog-stage">
+          <header className="slate-header">
+            <div className="slate-header-left">
+              <h1 className="slate-brand" onClick={() => navigate('/dashboard')}>FinTrack POS</h1>
+              <div className="slate-header-divider" />
+              <nav className="slate-header-nav" aria-label="Primary POS sections">
+                  <button type="button" className="slate-nav-btn slate-nav-btn-active">
+                    Catalog
+                  </button>
+                  <button type="button" className="slate-nav-btn" onClick={() => navigate('/all_products')} aria-label="Go to Inventory">
+                    Inventory
+                  </button>
+                  <button type="button" className="slate-nav-btn" onClick={() => navigate('/sales-report')} aria-label="Go to Sales Report">
+                    Reports
+                  </button>
+              </nav>
             </div>
-            <div className="pos-menu-count">
-              Showing {itemsCount} {itemsCount === 1 ? 'item' : 'items'}
+            <div className="slate-header-right">
+              <div className="slate-search-wrap" role="search">
+                <span className="slate-search-icon" aria-hidden="true">
+                  ⌕
+                </span>
+                <input
+                  className="slate-search-input"
+                  type="text"
+                  placeholder="Search items..."
+                  value={searchTerm}
+                  onChange={(event) => setSearchTerm(event.target.value)}
+                />
+              </div>
+              <button
+                type="button"
+                className="slate-settings-btn"
+                aria-label="General Settings"
+                title="General Settings"
+                onClick={() => navigate('/settings/general')}
+              >
+                <span className="material-symbols-outlined" aria-hidden="true">
+                  settings
+                </span>
+              </button>
             </div>
+          </header>
+
+          <div className="slate-category-ribbon">
+            {categories.map((category) => {
+              const isActive = selectedCategory === category;
+              const label = category === 'all' ? 'All Items' : category;
+
+              return (
+                <button
+                  key={category}
+                  type="button"
+                  className={`slate-category-pill ${isActive ? 'active' : ''}`}
+                  onClick={() => setSelectedCategory(category)}
+                >
+                  {label}
+                </button>
+              );
+            })}
           </div>
 
-          <div className="pos-right-grid">
+          <section className="slate-grid-section" aria-label="Product catalog">
             {loadingProducts ? (
-              <div className="pos-loading-products">Loading products...</div>
+              <div className="pos-loading-container">
+                <div className="block-pulse-small">
+                  <div className="block-small rounded-sm"></div>
+                  <div className="block-small rounded-sm"></div>
+                  <div className="block-small rounded-sm"></div>
+                  <div className="block-small rounded-sm"></div>
+                  <div className="block-small rounded-sm"></div>
+                  <div className="block-small rounded-sm"></div>
+                  <div className="block-small rounded-sm"></div>
+                  <div className="block-small rounded-sm"></div>
+                  <div className="block-small rounded-sm"></div>
+                </div>
+              </div>
             ) : productsError ? (
-              <div className="pos-error-message">{productsError}</div>
+              <div className="slate-state-message slate-state-error">{productsError}</div>
+            ) : filteredProducts.length === 0 ? (
+              <div className="slate-state-message">No products match your current filters.</div>
             ) : (
-              <div className="pos-product-grid">
+              <div className="slate-product-grid">
                 {filteredProducts.map((product) => {
-                  const available = product.quantity ?? 0;
-                  const stockStatus = getStockStatus(available);
-                  const categoryColor = getCategoryColor(product);
+                  const productCategory = getCategoryName(product);
+                  const categoryCode = categoryCodeMap.get(productCategory) || 'CAT-00';
+                  const description = product.description || '—';
+                  const price = Number(product.price || 0);
 
                   return (
                     <button
                       key={product._id}
                       type="button"
-                      className={`pos-product-card pos-product-card-simple ${categoryColor}`}
+                      className="slate-product-card"
                       onClick={() => handleProductTileClick(product)}
                     >
-                      <div className="pos-product-card-name pos-product-card-name-multiline">
-                        {product.name}
+                      <div>
+                        <div className="slate-product-top-row">
+                          <span className="slate-product-code">{categoryCode}</span>
+                          <span className="slate-product-add" aria-hidden="true">
+                            <span className="material-symbols-outlined">add_circle</span>
+                          </span>
+                        </div>
+                        <h3 className="slate-product-name">{product.name}</h3>
+                        <p className="slate-product-description">{description}</p>
                       </div>
-                      <div className="pos-product-card-stock-only">
-                        <span
-                          className={`pos-stock-pill pos-stock-pill-${stockStatus}`}
-                        >
-                          {available}
+                      <div className="slate-product-footer">
+                        <span className="slate-product-price">
+                          {currencySymbol}
+                          {price.toFixed(2)}
                         </span>
+                        <span className="slate-product-accent" aria-hidden="true" />
                       </div>
                     </button>
                   );
                 })}
               </div>
             )}
-          </div>
-        </div>
+          </section>
+        </main>
 
-        {/* Right side: customer, cart, and totals / order summary */}
-        <div className="pos-right">
-          <div className="pos-right-header">
-            <div className="pos-right-header-top">
-              <div className="pos-customer-select-wrapper">
-                <select className="pos-customer-select" defaultValue="walk-in">
-                  <option value="walk-in">Walk-in Customer</option>
-                </select>
-              </div>
-              <div className="pos-theme-toggle-wrapper">
-                <button 
-                  className="pos-theme-toggle-btn" 
-                  type="button"
-                  onClick={toggleTheme}
-                  title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-                >
-                  {isDarkMode ? (
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <circle cx="12" cy="12" r="5"></circle>
-                      <line x1="12" y1="1" x2="12" y2="3"></line>
-                      <line x1="12" y1="21" x2="12" y2="23"></line>
-                      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                      <line x1="1" y1="12" x2="3" y2="12"></line>
-                      <line x1="21" y1="12" x2="23" y2="12"></line>
-                      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                    </svg>
-                  ) : (
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                    </svg>
-                  )}
-                </button>
-              </div>
-              <button className="pos-header-plus-btn" type="button">
-                +
-              </button>
+        <aside className="slate-checkout-panel" style={rightSideType.panel}>
+          <div className="slate-checkout-header">
+            <div className="slate-checkout-heading-row">
+              <h2 className="slate-checkout-title" style={rightSideType.title}>Current Sale</h2>
+              <span className="slate-order-badge" style={rightSideType.orderBadge}>ORDER #{activeBill || billNumber}</span>
             </div>
-            {/* Loyalty and Suspend Sales buttons removed as requested */}
+            
           </div>
 
-          <div className="pos-bill-row">
-            <div className="pos-bill-info">
-              <span className="pos-bill-label">Bill #{activeBill || billNumber}</span>
-            </div>
-            <div className="pos-bill-tabs">
-              {billNumber !== 'Loading...' && billNumber !== 'Error' ? (
-                <BillTab
-                  ref={billTabRef}
-                  billNumber={activeBill || billNumber}
-                  onTabChange={handleTabChange}
-                  onTabClose={(closedTab) => {
-                    console.log(`Tab ${closedTab} was closed`);
-                  }}
-                />
-              ) : (
-                <div className="pos-loading-message">Loading...</div>
-              )}
-            </div>
+          <div className="slate-cart-list" aria-label="Current cart items">
+            {cartItems.length === 0 ? (
+              <div className="slate-empty-cart">Cart is empty. Click products to add items.</div>
+            ) : (
+              cartItems.map((item) => (
+                <div key={item.id} className="slate-cart-row">
+                  <div className="slate-cart-left">
+                    <div className="slate-qty-box">x{item.quantity}</div>
+                    <div className="slate-cart-meta">
+                      <h4 style={rightSideType.cartTitle}>{item.name}</h4>
+                      <p style={rightSideType.cartMeta}>{(item.description || 'No note').toUpperCase()}</p>
+                    </div>
+                  </div>
+                  <div className="slate-cart-right">
+                    <p style={rightSideType.cartAmount}>
+                      {currencySymbol}
+                      {Number(item.subtotal || 0).toFixed(2)}
+                    </p>
+                    <button
+                      type="button"
+                      className="slate-remove-btn"
+                      style={rightSideType.remove}
+                      onClick={() => removeFromCart(item.id)}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
 
-          <div className="pos-cart-panel">
-            <div className="pos-cart-body">
-              <CartTable
-                cartItems={cartItems}
-                handleQuantityChange={updateQuantity}
-                handleRemoveItem={removeFromCart}
-              />
-            </div>
-          </div>
-
-          <div className="pos-bottom-bar">
-            <div className="pos-bottom-summary">
-              <div className="pos-summary-row">
-                <span>Discount:</span>
-                <span>
-                  
-                  {currencySymbol}0.00
+          <div className="slate-totals-panel">
+            <div className="slate-totals-lines">
+              <div className="slate-total-line">
+                <span style={rightSideType.totalLine}>Subtotal</span>
+                <span style={rightSideType.totalLine}>
+                  {currencySymbol}
+                  {totalPayable.toFixed(2)}
                 </span>
               </div>
-              <div className="pos-summary-row">
-                <span>VAT:</span>
-                <span>{currencySymbol}0.00</span>
+              <div className="slate-total-line">
+                <span style={rightSideType.totalLine}>Tax (8.5%)</span>
+                <span style={rightSideType.totalLine}>
+                  {currencySymbol}
+                  {taxAmount.toFixed(2)}
+                </span>
+              </div>
+              <div className="slate-total-due">
+                <span style={rightSideType.totalDueLabel}>Total Due</span>
+                <span style={rightSideType.totalDueValue}>
+                  {currencySymbol}
+                  {totalDue.toFixed(2)}
+                </span>
               </div>
             </div>
-            <div className="pos-bottom-total">
-              <div className="pos-total-label">Total</div>
-              <div className="pos-total-value">{currencySymbol}{totalPayable.toFixed(2)}</div>
-            </div>
-            <div className="pos-bottom-payment">
-                <div className="pos-pay-button-wrapper">
-                  <PayButton
-                    cartItems={cartItems}
-                    totalPayable={totalPayable}
-                    totalQuantity={totalQuantity}
-                    billNumber={activeBill || billNumber}
-                    updateBillNumber={setBillNumber}
-                    onPaymentComplete={handlePaymentComplete}
-                    isDarkMode={isDarkMode}
-                  />
-                </div>
-              <button className="pos-reset-button" onClick={resetCart}>
-                Reset
+
+            <div className="slate-quick-cash-grid">
+              <button type="button" className="slate-quick-cash-btn" style={rightSideType.quickCash}>
+                {currencySymbol}35
+              </button>
+              <button type="button" className="slate-quick-cash-btn" style={rightSideType.quickCash}>
+                {currencySymbol}40
+              </button>
+              <button type="button" className="slate-quick-cash-btn" style={rightSideType.quickCash}>
+                {currencySymbol}50
               </button>
             </div>
+
+            <div className="slate-action-row">
+              <button type="button" className="slate-split-btn" style={rightSideType.reset} onClick={resetCart}>
+                Reset ({totalQuantity})
+              </button>
+              <div className="slate-pay-btn-host">
+                <PayButton
+                  cartItems={cartItems}
+                  totalPayable={totalPayable}
+                  totalQuantity={totalQuantity}
+                  billNumber={activeBill || billNumber}
+                  updateBillNumber={setBillNumber}
+                  onPaymentComplete={handlePaymentComplete}
+                  isDarkMode={false}
+                />
+              </div>
+            </div>
           </div>
-        </div>
+        </aside>
       </div>
     </POSLayout>
   );

@@ -1,78 +1,19 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import Layout from '../components/Layout'; 
-import '../styles/importPurchase.css';
-import './sales.css'; // Reuse shared sales layout and title styles
-import html2pdf from 'html2pdf.js';
-import TransactionNotification from './TransactionNotification';
+import Layout from '../components/Layout';
+import { purchasesAPI } from '../services/api';
+import '../styles/importSale.css';
 import { useNotifications } from '../context/NotificationContext';
-import { FaFileUpload } from 'react-icons/fa';
 
 const ImportPurchase = () => {
   const [selectedFile, setSelectedFile] = useState(null);
-  const [suppliers, setSuppliers] = useState([]);
-  const [warehouses, setWarehouses] = useState([]);
-  const [products, setProducts] = useState([]);
-  const [selectedProduct, setSelectedProduct] = useState('');
-  const [formData, setFormData] = useState({
-    date: new Date().toISOString().split('T')[0],
-    supplier: '',
-    warehouse: '',
-    product: '',
-    orderTax: '0',
-    discount: '0',
-    status: 'pending',
-    notes: ''
-  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [importResults, setImportResults] = useState(null);
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
   const { addNotification } = useNotifications();
-  const [notification, setNotification] = useState({
-    show: false,
-    data: null
-  });
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const suppliersResponse = await axios.get('/api/suppliers');
-        if (suppliersResponse.data.success) {
-          setSuppliers(suppliersResponse.data.success ? suppliersResponse.data.data : []);
-        }
-
-        try {
-          const productsResponse = await axios.get('/api/products');
-          if (productsResponse.data.success) {
-            setProducts(productsResponse.data.data);
-          }
-        } catch (error) {
-          console.error('Error fetching products:', error);
-        }
-
-        try {
-          const warehousesResponse = await axios.get('/api/warehouses');
-          if (warehousesResponse.data.success) {
-            setWarehouses(warehousesResponse.data.data);
-          }
-        } catch {
-          console.log('Warehouses might not be implemented yet');
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        setError('Error loading suppliers, products, or warehouses.');
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -87,6 +28,8 @@ const ImportPurchase = () => {
       ) {
         setSelectedFile(file);
         setError('');
+        setSuccess('');
+        setImportResults(null);
       } else {
         setError('Only CSV, XLS, or XLSX files are allowed.');
         setSelectedFile(null);
@@ -112,10 +55,6 @@ const ImportPurchase = () => {
     fileInputRef.current.click();
   };
 
-  const closeNotification = () => {
-    setNotification({ show: false, data: null });
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -124,295 +63,224 @@ const ImportPurchase = () => {
       return;
     }
 
-    if (!formData.supplier) {
-      setError('Please select a supplier.');
-      return;
-    }
-
     setLoading(true);
+    setError('');
+    setSuccess('');
+    setImportResults(null);
     const submitFormData = new FormData();
     submitFormData.append('file', selectedFile);
-    Object.entries(formData).forEach(([key, value]) => {
-      submitFormData.append(key, value);
-    });
 
     try {
-      const response = await axios.post('/api/purchases/import', submitFormData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
+      const response = await purchasesAPI.importPurchases(submitFormData);
 
       if (response.data.success) {
-        const purchaseId = response.data.data._id || response.data.data.id;
-        const purchaseAmount = response.data.data.totalAmount || 0;
-        const itemCount = response.data.data.items?.length || 0;
-        const supplierName = suppliers.find(s => s._id === formData.supplier)?.name || 'Unknown Supplier';
+        const successCount = response.data.successCount ?? 1;
 
-        // Add notification to the system
         addNotification(
           'purchase',
-          `New purchase imported from ${supplierName} for ${new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD'
-          }).format(purchaseAmount)} with ${itemCount} ${itemCount === 1 ? 'item' : 'items'}`,
-          purchaseId
+          `Successfully imported ${successCount} ${successCount === 1 ? 'purchase' : 'purchases'}`
         );
 
-        // Show success notification
-        setNotification({
-          show: true,
-          data: {
-            status: 'success',
-            id: purchaseId,
-            amount: purchaseAmount,
-            items: response.data.data.items?.map(item => ({
-              id: item.product,
-              name: products.find(p => p._id === item.product)?.name || 'Unknown',
-              price: item.price,
-              quantity: item.quantity
-            })) || [],
-            type: 'purchase'
-          }
+        setSuccess(response.data.message || 'Purchase data imported successfully.');
+        setImportResults({
+          totalProcessed: response.data.totalProcessed ?? successCount,
+          successCount,
+          errorCount: response.data.errorCount ?? 0,
+          errors: response.data.errors || []
         });
 
-        // Reset form after successful import
-        setFormData({
-          date: new Date().toISOString().split('T')[0],
-          supplier: '',
-          warehouse: '',
-          product: '',
-          orderTax: '0',
-          discount: '0',
-          status: 'pending',
-          notes: ''
-        });
         setSelectedFile(null);
+        if (fileInputRef.current) fileInputRef.current.value = '';
       } else {
-        setNotification({
-          show: true,
-          data: {
-            status: 'error',
-            message: response.data.message || 'Error importing purchase data.'
-          }
+        setError(response.data.message || 'Import failed.');
+        setImportResults({
+          totalProcessed: response.data.totalProcessed || 0,
+          successCount: response.data.successCount || 0,
+          errorCount: response.data.errorCount || 0,
+          errors: response.data.errors || []
         });
       }
     } catch (error) {
       console.error('Import error:', error);
-      setNotification({
-        show: true,
-        data: {
-          status: 'error',
-          message: error.response?.data?.message || 'Error importing purchase data. Please try again.'
-        }
-      });
+      setError(error.response?.data?.message || 'Error importing purchase data. Please try again.');
+      if (error.response?.data) {
+        setImportResults({
+          totalProcessed: error.response.data.totalProcessed || 0,
+          successCount: error.response.data.successCount || 0,
+          errorCount: error.response.data.errorCount || 0,
+          errors: error.response.data.errors || []
+        });
+      }
     } finally {
       setLoading(false);
     }
   };
 
   const handleDiscard = () => {
-    navigate('/purchases');
+    navigate('/all_purchases');
   };
 
-  const downloadExample = () => {
-    const link = document.createElement('a');
-    link.href = '/purchases_example.xlsx';
-    link.download = 'purchases_example.xlsx';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const downloadExample = async () => {
+    try {
+      const response = await purchasesAPI.downloadImportTemplate();
+      const blobUrl = window.URL.createObjectURL(response.data);
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.setAttribute('download', 'purchase-import-template.csv');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+    } catch {
+      window.location.href = '/purchases_example.xlsx';
+    }
   };
-  
 
   return (
-    <Layout title="Import Purchase">
-      <div className="sales-frame">
-        <div className="sales-div-2">
-          <div className="import-purchase-container">
-            <h2 className="sales-text-2">Import Purchase</h2>
+    <Layout title="Import Purchases">
+      <div className="import-sales-page">
+        <main className="import-sales-main">
+          <header className="import-sales-header">
+            <h1>Import Purchase Data</h1>
+            <p className="import-sales-subheading">
+              Streamline your workflow by uploading bulk purchase records. The system validates incoming
+              entries and maps them into your procurement pipeline securely.
+            </p>
+          </header>
 
-            <TransactionNotification
-              show={notification.show}
-              type="purchase"
-              data={notification.data}
-              onClose={closeNotification}
-            />
+          {(error || success) && (
+            <div className="import-sales-alerts" role="status">
+              {error && <div className="import-sales-alert import-sales-alert-error">{error}</div>}
+              {success && <div className="import-sales-alert import-sales-alert-success">{success}</div>}
+            </div>
+          )}
 
-  <form onSubmit={handleSubmit} id="import-purchase-form">
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="date">Date</label>
-              <input
-                type="date"
-                id="date"
-                name="date"
-                value={formData.date}
-                onChange={handleInputChange}
-                required
-              />
+          <div className="import-sales-grid">
+            <div className="import-sales-left-col">
+              <section className="import-sales-card import-sales-template-card">
+                <div>
+                  <span className="material-symbols-outlined import-sales-card-icon" aria-hidden="true">description</span>
+                  <h3>Sample Template</h3>
+                  <p>
+                    Download our standardized template to ensure purchase imports align with required procurement fields.
+                  </p>
+                </div>
+                <button type="button" className="import-sales-primary-btn" onClick={downloadExample}>
+                  <span className="material-symbols-outlined" aria-hidden="true">download</span>
+                  Download Template
+                </button>
+              </section>
+
+              <section className="import-sales-card import-sales-requirements-card">
+                <h3>Required Fields</h3>
+                <ul>
+                  <li><span className="dot" />Supplier Identifier</li>
+                  <li><span className="dot" />Product SKU / Item Code</li>
+                  <li><span className="dot" />Quantity and Unit Cost</li>
+                  <li><span className="dot" />Purchase Date</li>
+                </ul>
+              </section>
             </div>
 
-            <div className="form-group">
-              <label htmlFor="supplier">Supplier</label>
-              <select
-                id="supplier"
-                name="supplier"
-                value={formData.supplier}
-                onChange={handleInputChange}
-                required
-              >
-                <option value="">Choose Supplier</option>
-                {suppliers.map(supplier => (
-                  <option key={supplier._id} value={supplier._id}>
-                    {supplier.name}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <div className="import-sales-right-col">
+              <form onSubmit={handleSubmit} className="import-sales-upload-shell">
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileChange}
+                  style={{ display: 'none' }}
+                  accept=".csv,.xls,.xlsx"
+                />
 
-            <div className="form-group">
-              <label htmlFor="product">Product</label>
-              <select
-                id="product"
-                name="product"
-                value={formData.product}
-                onChange={handleInputChange}
-              >
-                <option value="">Choose Product</option>
-                {products.map(product => (
-                  <option key={product._id} value={product._id}>
-                    {product.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <div className="form-row">
-            {warehouses.length > 0 && (
-              <div className="form-group">
-                <label htmlFor="warehouse">Warehouse</label>
-                <select
-                  id="warehouse"
-                  name="warehouse"
-                  value={formData.warehouse}
-                  onChange={handleInputChange}
+                <div
+                  className={`import-sales-drop-zone ${selectedFile ? 'has-file' : ''}`}
+                  onDragOver={handleDragOver}
+                  onDrop={handleDrop}
+                  onClick={handleUploadClick}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      handleUploadClick();
+                    }
+                  }}
                 >
-                  <option value="">Choose Warehouse</option>
-                  {warehouses.map(warehouse => (
-                    <option key={warehouse._id} value={warehouse._id}>
-                      {warehouse.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
-
-            <div className="form-group">
-              <label htmlFor="orderTax">Order Tax (%)</label>
-              <input
-                type="number"
-                id="orderTax"
-                name="orderTax"
-                value={formData.orderTax}
-                onChange={handleInputChange}
-                placeholder="0"
-                min="0"
-                step="0.01"
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="discount">Discount</label>
-              <input
-                type="number"
-                id="discount"
-                name="discount"
-                value={formData.discount}
-                onChange={handleInputChange}
-                placeholder="0"
-                min="0"
-                step="0.01"
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="status">Status</label>
-              <select
-                id="status"
-                name="status"
-                value={formData.status}
-                onChange={handleInputChange}
-                required
-              >
-                <option value="pending">Pending</option>
-                <option value="ordered">Ordered</option>
-                <option value="received">Received</option>
-                <option value="cancelled">Cancelled</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="file-upload-section">
-            <div
-              className="file-drop-area"
-              onDragOver={handleDragOver}
-              onDrop={handleDrop}
-              onClick={handleUploadClick}
-            >
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleFileChange}
-                style={{ display: 'none' }}
-                accept=".csv,.xls,.xlsx"
-              />
-              <div className="file-message">
-                {selectedFile ? (
-                  <div>
-                    <p>Selected file: {selectedFile.name}</p>
+                  <div className="upload-icon-wrap">
+                    <span className="material-symbols-outlined" aria-hidden="true">cloud_upload</span>
                   </div>
-                ) : (
-                  <div>
-                    <span className="upload-icon"><FaFileUpload /></span>
-                    <p>Click to upload or drag and drop</p>
-                    <p className="small-text">CSV, XLS, or XLSX files are allowed.</p>
+                  <h2>{selectedFile ? 'File selected and ready' : 'Drag and drop files here'}</h2>
+                  <p className="upload-subtext">
+                    {selectedFile
+                      ? selectedFile.name
+                      : 'Supported formats: .CSV, .XLS, .XLSX (Max 15MB)'}
+                  </p>
+                  <div className="upload-or-row">
+                    <div className="line" />
+                    <span>OR</span>
+                    <div className="line" />
+                  </div>
+                  <button type="button" className="browse-btn" onClick={handleUploadClick}>
+                    Browse Local Storage
+                  </button>
+                </div>
+
+                {importResults && (
+                  <div className="import-sales-results">
+                    <h4>Import Summary</h4>
+                    <p>Total Rows Processed: {importResults.totalProcessed}</p>
+                    <p>Successfully Imported: {importResults.successCount}</p>
+                    <p>Errors: {importResults.errorCount}</p>
+                    {importResults.errorCount > 0 && (
+                      <ul>
+                        {importResults.errors.slice(0, 10).map((err, index) => (
+                          <li key={index}>Row {err.row || 'N/A'}: {err.error}</li>
+                        ))}
+                        {importResults.errors.length > 10 && (
+                          <li>... and {importResults.errors.length - 10} more errors.</li>
+                        )}
+                      </ul>
+                    )}
                   </div>
                 )}
+
+                <footer className="import-sales-actions-footer">
+                  <button type="button" className="cancel-btn" onClick={handleDiscard} disabled={loading}>
+                    Cancel
+                  </button>
+                  <button type="submit" className="import-btn" disabled={loading || !selectedFile}>
+                    {loading ? 'Processing...' : 'Import Purchases'}
+                  </button>
+                </footer>
+              </form>
+            </div>
+          </div>
+
+          <div className="import-sales-status-row">
+            <div className="status-card">
+              <span className="material-symbols-outlined" aria-hidden="true">info</span>
+              <div>
+                <h4>Automatic Validation</h4>
+                <p>Supplier and product identifiers are cross-checked before records are committed.</p>
               </div>
             </div>
-
-            {error && <p className="error-message">{error}</p>}
-
-            <div className="download-sample">
-              <button type="button" className="btn-download" onClick={downloadExample}>
-                Download Example
-              </button>
+            <div className="status-card">
+              <span className="material-symbols-outlined" aria-hidden="true">history</span>
+              <div>
+                <h4>Audit Logging</h4>
+                <p>Every import session is logged for procurement review and compliance.</p>
+              </div>
+            </div>
+            <div className="status-card">
+              <span className="material-symbols-outlined" aria-hidden="true">security</span>
+              <div>
+                <h4>Secure Transfer</h4>
+                <p>Uploads are encrypted in transit to protect vendor and pricing data.</p>
+              </div>
             </div>
           </div>
 
-          <div className="note-section">
-            <label htmlFor="notes">Notes</label>
-            <textarea
-              id="notes"
-              name="notes"
-              value={formData.notes}
-              onChange={handleInputChange}
-              placeholder="Write a note..."
-              rows={3}
-            />
-          </div>
-
-          <div className="form-buttons">
-            <button type="button" className="btn-discard" onClick={handleDiscard}>
-              Discard
-            </button>
-            <button type="submit" className="btn-submit" disabled={loading}>
-              {loading ? 'Processing...' : 'Save & Submit'}
-            </button>
-          </div>
-        </form>
-          </div>
-        </div>
+        </main>
       </div>
     </Layout>
   );

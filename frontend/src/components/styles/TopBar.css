@@ -1,54 +1,68 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+
 .topbar-container {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  height: 64px;
-  padding: 0 24px;
-  background-color: #ffffff;
-  border-bottom: 1px solid #e0e0e0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  align-items: center;
+  flex-shrink: 0;
+  width: 100%;
+  padding: 16px 32px;
+  background: #f8fafc;
   position: sticky;
   top: 0;
-  z-index: 1000;
-  width: 100%;
+  z-index: 60;
+  border-bottom: 1px solid rgba(169, 180, 185, 0.1);
+  font-family: 'Manrope', sans-serif;
 }
 
 .topbar-left {
   display: flex;
   align-items: center;
-  gap: 16px;
-  min-width: 0; /* allow title to shrink instead of overlapping */
+  gap: 32px;
 }
 
-.topbar-menu-button,
-.topbar-back-button {
-  background: none;
-  border: none;
-  color: #333;
-  font-size: 18px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px;
+.topbar-menu-toggle {
+  color: #334155;
 }
 
-.topbar-page-title {
+.topbar-menu-toggle:hover {
+  background: #e8eff3;
+  color: #1e293b;
+}
+
+.topbar-brand {
   font-size: 20px;
-  font-weight: 600;
-  color: var(--color-text-primary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis; /* prevent long titles from overlapping other elements */
+  font-weight: 700;
+  letter-spacing: -0.05em;
+  color: #1e293b;
+  line-height: 1;
 }
 
-.topbar-center {
-  flex: 1;
+.topbar-nav {
   display: flex;
-  justify-content: center;
+  gap: 24px;
+  font-weight: 500;
+  letter-spacing: -0.025em;
 }
 
-/* Search container removed */
+.topbar-nav-link {
+  color: #64748b;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.topbar-nav-link:hover {
+  color: #0f172a;
+}
+
+.topbar-nav-link.active {
+  color: #0f172a;
+  border-bottom: 2px solid #334155;
+  padding-bottom: 4px;
+}
 
 .topbar-right {
   display: flex;
@@ -56,199 +70,409 @@
   gap: 16px;
 }
 
-.topbar-pos-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #4f46e5;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 8px 16px;
-  font-size: 14px;
-  font-weight: 500;
-  text-decoration: none;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  height: 36px;
-  gap: 8px; /* Add space between text and icon */
-}
-
-.topbar-pos-button .pos-icon {
-  font-size: 16px;
-}
-
-.topbar-pos-button:hover {
-  background-color: #4338ca;
-}
-
-.topbar-user-profile {
-  display: flex;
-  align-items: center;
+/* Profile button and dropdown */
+.topbar-profile-wrap {
   position: relative;
 }
 
-.topbar-user-avatar {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background-color: #f0f0f0;
-  display: flex;
+.topbar-profile-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0; /* only avatar visible in topbar */
+  padding: 4px; /* tighter so hover highlight is circular */
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 999px; /* make hover highlight circular */
+  color: #334155;
+}
+
+.topbar-profile-btn:hover {
+  background: #e8eff3; /* keep slate-like hover, circular because of large radius */
+}
+
+.topbar-profile-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  background: #e8eff3;
+  color: #566166;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
-  font-weight: 500;
-  color: #333;
-  cursor: pointer;
-  border: 1px solid #e0e0e0;
-  transition: background-color 0.2s;
+  font-weight: 700;
 }
 
-.topbar-user-avatar:hover {
-  background-color: #e0e0e0;
+.topbar-profile-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
-/* User Dropdown Styles */
-.user-dropdown {
-  position: absolute;
-  top: 55px;
-  right: 0;
-  width: 250px;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 1000;
-  overflow: hidden;
-  border: 1px solid #e6e6e6;
+.topbar-profile-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #334155;
 }
 
-.user-dropdown-header {
-  padding: 16px;
-  border-bottom: 1px solid #eee;
-  background-color: #f8f9fa;
-}
-
-.user-dropdown-name {
-  font-size: 16px;
+.topbar-profile-role {
+  font-size: 11px;
+  color: #64748b;
   font-weight: 600;
-  color: #333;
-  margin-bottom: 4px;
 }
 
-.user-dropdown-role {
-  font-size: 13px;
-  color: #4f46e5;
-  font-weight: 500;
+.topbar-profile-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 220px;
+  background: #ffffff;
+  border: 1px solid rgba(169, 180, 185, 0.2);
+  border-radius: 8px;
+  box-shadow: 0 18px 40px -12px rgba(15,23,42,0.25);
+  z-index: 60;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
-.user-dropdown-menu {
-  padding: 8px 0;
+.topbar-profile-item {
+  padding: 12px 16px;
+  border: none;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  font-weight: 700;
+  color: #334155;
 }
 
-.user-dropdown-item {
+.topbar-profile-item:hover {
+  background: #f0f4f7;
+}
+
+/* Center the logout/profile buttons in the dropdown and ensure they share the same styling */
+.topbar-profile-dropdown {
+  /* left-align children and make heading full-bleed (no outer padding) */
+  align-items: stretch;
+  padding: 0; /* ensure heading can touch popup edges */
+  gap: 8px;
+}
+
+.topbar-profile-heading {
+  width: 100%;
+  margin: 0; /* no outer spacing so it covers the popup sides/top */
+  padding: 12px 16px; /* internal spacing for text */
+  background: #f0f4f7;
+  border-radius: 8px 8px 0 0; /* only top corners rounded to match popup */
+  text-align: left;
+}
+
+.topbar-profile-heading-title {
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #566166;
+  font-weight: 700;
+}
+
+.topbar-profile-heading-name {
+  font-size: 16px;
+  color: #2a3439;
+  font-weight: 800;
+  margin-top: 4px;
+}
+
+.topbar-profile-dropdown .topbar-logout-btn {
+  margin-left: 0; /* undo global nudge */
+  width: 100%;
+  display: inline-flex;
+  justify-content: flex-start; /* left-align content */
+  gap: 12px;
+  padding-left: 12px;
+}
+
+.topbar-profile-dropdown .topbar-logout-btn .material-symbols-outlined {
+  font-size: 18px;
+}
+
+/* Profile settings hover: red glow */
+/* removed red glow on hover for profile settings (kept previous behavior) */
+
+.topbar-icon-btn {
+  padding: 8px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: #64748b;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.topbar-icon-btn:hover {
+  background: #e8eff3;
+  color: #334155;
+}
+
+.topbar-notification-wrap {
+  position: relative;
+}
+
+.topbar-notification-btn {
+  position: relative;
+}
+
+.topbar-notification-btn.has-unread {
+  color: #334155;
+}
+
+.topbar-notification-indicator {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #565e74;
+}
+
+.topbar-notification-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 384px;
+  max-width: min(92vw, 384px);
+  background: #ffffff;
+  border: 1px solid rgba(169, 180, 185, 0.2);
+  border-radius: 12px;
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
+  overflow: hidden;
+  z-index: 50;
+}
+
+.topbar-notification-head,
+.topbar-notification-foot {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: 12px 16px;
-  color: #333;
-  text-decoration: none;
+  background: #f0f4f7;
+}
+
+.topbar-notification-head {
+  border-bottom: 1px solid rgba(169, 180, 185, 0.1);
+}
+
+.topbar-notification-foot {
+  border-top: 1px solid rgba(169, 180, 185, 0.1);
+  justify-content: center;
+}
+
+.topbar-notification-head h3 {
+  margin: 0;
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: #2a3439;
+}
+
+.topbar-notification-action {
+  border: none;
+  background: transparent;
+  color: #565e74;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 700;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: color 0.2s ease;
 }
 
-.user-dropdown-item:hover {
-  background-color: #f5f5f5;
-  color: #4f46e5;
+.topbar-notification-action:hover {
+  color: #4a5268;
 }
 
-.user-dropdown-icon {
-  margin-right: 12px;
+.topbar-notification-action:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+.topbar-notification-clear {
+  color: #566166;
+  letter-spacing: 0.15em;
+}
+
+.topbar-notification-clear:hover {
+  color: #2a3439;
+}
+
+.topbar-notification-list {
+  max-height: 480px;
+  overflow-y: auto;
+  background: #ffffff;
+}
+
+.topbar-notification-item {
+  width: 100%;
+  border: none;
+  background: #ffffff;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  padding: 16px;
+  text-align: left;
+  cursor: pointer;
+  position: relative;
+  transition: background-color 0.2s ease;
+}
+
+.topbar-notification-item.unread {
+  background: #f7f9fb;
+}
+
+.topbar-notification-item:hover {
+  background: #f0f4f7;
+}
+
+.topbar-notification-item-leading {
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+.topbar-notification-item-icon-wrap {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  background: #d9e4ea;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.topbar-notification-item.read .topbar-notification-item-leading {
+  filter: grayscale(1);
+  opacity: 0.5;
+}
+
+.topbar-notification-item.read .topbar-notification-item-icon-wrap {
+  background: #e8eff3;
+}
+
+.topbar-notification-item-icon {
   font-size: 16px;
-  color: #4f46e5;
+  color: #565e74;
 }
 
-.user-dropdown-divider {
-  height: 1px;
-  background-color: #eee;
-  margin: 8px 0;
+.topbar-notification-item-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+  padding-right: 16px;
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .topbar-breadcrumbs {
-    font-size: 14px;
-    gap: 4px;
-  }
+.topbar-notification-item-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
 
-  .breadcrumb-separator {
-    font-size: 10px;
-  }
+.topbar-notification-title {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: #2a3439;
+}
 
-  .topbar-pos-button {
-    padding: 6px 12px;
-    font-size: 14px;
-  }
+.topbar-notification-item.read .topbar-notification-title {
+  font-weight: 500;
+  color: #566166;
+}
 
-  .topbar-user-avatar {
-    width: 36px;
-    height: 36px;
-    font-size: 16px;
-  }
+.topbar-notification-message {
+  font-size: 12px;
+  color: #566166;
+  line-height: 1.5;
+}
 
-  .user-dropdown {
-    width: 220px;
-    right: -10px;
-  }
+.topbar-notification-item.read .topbar-notification-message {
+  color: rgba(86, 97, 102, 0.7);
+}
 
-  .user-dropdown-name {
-    font-size: 14px;
-  }
+.topbar-notification-time {
+  flex-shrink: 0;
+  font-size: 10px;
+  font-weight: 500;
+  color: #717c82;
+}
 
-  .user-dropdown-role {
-    font-size: 12px;
-  }
+.topbar-notification-item-dot {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: #565e74;
+  transform: translateY(-50%);
+}
 
-  .user-dropdown-item {
-    padding: 10px 14px;
-    font-size: 14px;
+.topbar-notification-empty {
+  padding: 20px 16px;
+  font-size: 12px;
+  color: #566166;
+  text-align: center;
+}
+
+.topbar-notification-error {
+  color: #9f403d;
+}
+
+@media (max-width: 640px) {
+  .topbar-notification-dropdown {
+    right: -8px;
   }
 }
 
-@media (max-width: 480px) {
-  .topbar-breadcrumbs {
-    font-size: 12px;
-    gap: 2px;
-  }
+.topbar-logout-btn {
+  border: none;
+  background: transparent;
+  color: #566166;
+  padding: 8px 10px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.2s ease;
+  /* nudge left slightly so bell/notifications sit closer */
+  margin-left: -6px;
+}
 
-  .breadcrumb-separator {
-    font-size: 8px;
-  }
+.topbar-logout-btn:hover {
+  color: #9f403d;
+}
 
-  .topbar-pos-button {
-    padding: 4px 8px;
-    font-size: 12px;
-  }
+/* Make the Profile settings button keep slate color on hover instead of red */
+.topbar-profile-dropdown .topbar-profile-settings:hover {
+  color: #565e74;
+  background: transparent; /* don't apply the red hover bg */
+}
 
-  .topbar-user-avatar {
-    width: 32px;
-    height: 32px;
-    font-size: 14px;
-  }
+.topbar-logout-btn .material-symbols-outlined {
+  font-size: 20px;
+}
 
-  .user-dropdown {
-    width: 200px;
-    right: -20px;
-  }
-
-  .user-dropdown-name {
-    font-size: 13px;
-  }
-
-  .user-dropdown-role {
-    font-size: 11px;
-  }
-
-  .user-dropdown-item {
-    padding: 8px 12px;
-    font-size: 13px;
-  }
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  font-size: 24px;
+  line-height: 1;
 }

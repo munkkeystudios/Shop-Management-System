@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FaFileExcel, FaFilePdf } from 'react-icons/fa';
-import { FiSearch } from 'react-icons/fi';
+import { FiPlus, FiSearch } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { salesAPI } from '../services/api';
@@ -39,7 +39,6 @@ export const Frame = () => {
         if (filters.paymentMethod) params.paymentMethod = filters.paymentMethod;
 
         const response = await salesAPI.getAll(params);
-        console.log('sales payload:', response.data);
 
         if (response.data.success && Array.isArray(response.data.data)) {
           setSales(response.data.data);
@@ -138,112 +137,271 @@ export const Frame = () => {
     setFilters(newFilters);
   };
 
+  const normalizeAmount = (value) => {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : 0;
+  };
+
+  const formatAmount = (value) => {
+    const amount = normalizeAmount(value);
+    return amount.toLocaleString(undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+  };
+
+  const getSaleDue = (sale) => {
+    if (sale.change !== undefined && sale.change !== null) {
+      return normalizeAmount(sale.change);
+    }
+
+    return Math.max(0, normalizeAmount(sale.total) - normalizeAmount(sale.amountPaid));
+  };
+
+  const getSaleStatus = (sale) => {
+    const due = getSaleDue(sale);
+    const paid = normalizeAmount(sale.amountPaid);
+    const total = normalizeAmount(sale.total);
+
+    if (due <= 0 || paid >= total) {
+      return { label: 'Completed', className: 'completed' };
+    }
+
+    if (paid > 0) {
+      return { label: 'Partial', className: 'partial' };
+    }
+
+    return { label: 'Unpaid', className: 'unpaid' };
+  };
+
+  const formatDate = (dateValue) => {
+    if (!dateValue) return '-';
+    return new Date(dateValue).toLocaleDateString(undefined, {
+      month: 'short',
+      day: '2-digit',
+      year: 'numeric'
+    });
+  };
+
+  const formatTime = (dateValue) => {
+    if (!dateValue) return '';
+    return new Date(dateValue).toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
   // Filter sales based on reference number or customer name
   const filteredSales = sales.filter(sale =>
     sale._id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     sale.customer?.name?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const totalSalesAmount = filteredSales.reduce(
+    (sum, sale) => sum + normalizeAmount(sale.total),
+    0
+  );
+
+  const totalItemsSold = filteredSales.reduce(
+    (sum, sale) => sum + (Array.isArray(sale.items)
+      ? sale.items.reduce((itemSum, item) => itemSum + normalizeAmount(item?.quantity), 0)
+      : 0),
+    0
+  );
+
+  const averageOrderValue = filteredSales.length > 0
+    ? totalSalesAmount / filteredSales.length
+    : 0;
+
+  const totalDueAmount = filteredSales.reduce(
+    (sum, sale) => sum + getSaleDue(sale),
+    0
+  );
+
+  const highPriorityPending = filteredSales.filter((sale) => getSaleDue(sale) > 0).length;
+
   return (
     <Layout title="All Sales">
-      {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-          <span className="block sm:inline">{error}</span>
-        </div>
-      )}
-      <div className="sales-frame">
-        <div className="sales-div-2">
-          <div className="sales-div-3">
-            <div className="sales-div-4">
-              <div className="sales-text-2">All Sales</div>
-              <div className="sales-controls-container">
-                <div className="sales-search-container">
-                  <FiSearch className="sales-search-icon" />
-                  <input
-                    type="text"
-                    placeholder="Search this table"
-                    className="sales-search-input"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                </div>
-                <div className="sales-action-buttons">
-                  <SalesFilter onApplyFilters={handleApplyFilters} />
-                  <button
-                    className="sales-export-button pdf-button"
-                    onClick={handlePdfExport}
-                    disabled={loading}
-                  >
-                    <FaFilePdf /> PDF
-                  </button>
-                  <button
-                    className="sales-export-button excel-button"
-                    onClick={handleExcelExport}
-                    disabled={loading}
-                  >
-                    <FaFileExcel /> Excel
-                  </button>
-                  <button
-                    className="sales-create-button"
-                    onClick={() => navigate('/create-sale')}
-                  >
-                    Create New Sale
-                  </button>
-                </div>
+      <div className="slate-sales-main">
+<section className="slate-sales-shell">
+          <header className="slate-sales-header">
+            <h1>All Sales</h1>
+          </header>
+
+          {error && (
+            <div className="slate-sales-alert" role="alert">
+              {error}
+            </div>
+          )}
+
+          <section className="slate-sales-stat-grid">
+            <article className="slate-sales-stat-card">
+              <span>Total Sales</span>
+              <strong>{formatAmount(totalSalesAmount)}</strong>
+              <p className="slate-sales-stat-meta slate-sales-stat-meta-positive">+12.5% from last month</p>
+            </article>
+            <article className="slate-sales-stat-card">
+              <span>Average Order Value</span>
+              <strong>{formatAmount(averageOrderValue)}</strong>
+              <p className="slate-sales-stat-meta">Target: 90.00</p>
+            </article>
+            <article className="slate-sales-stat-card">
+              <span>Total Items Sold</span>
+              <strong>{totalItemsSold.toLocaleString()}</strong>
+              <p className="slate-sales-stat-meta">Daily average: {Math.round(totalItemsSold / 30)}</p>
+            </article>
+            <article className="slate-sales-stat-card slate-sales-stat-card-warning">
+              <span>Pending Payments</span>
+              <strong>{formatAmount(totalDueAmount)}</strong>
+              <p className="slate-sales-stat-meta slate-sales-stat-meta-danger">{highPriorityPending} high priority items</p>
+            </article>
+          </section>
+
+          <div className="slate-sales-toolbar">
+            <div className="slate-sales-toolbar-left">
+              <div className="slate-sales-search-wrap">
+                <FiSearch className="slate-sales-search-icon" />
+                <input
+                  type="text"
+                  placeholder="Search transactions, customers..."
+                  className="slate-sales-search-input"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
               </div>
+              <button
+                className="slate-sales-create-btn"
+                onClick={() => navigate('/create-sale')}
+              >
+                <FiPlus />
+                Create New Sale
+              </button>
             </div>
 
-            <div className="sales-div-6">
-              <div className="sales-div-7">
-                {loading ? (
-                  <div className="employee-loading">
-                    <div className="employee-spinner"></div>
-                    <div className="employee-loading-text">Loading sales...</div>
-                  </div>
-                ) : (
-                  <>
-                    <table className="sales-table">
-                      <thead>
-                        <tr>
-                          <th>Date</th>
-                          <th>Reference</th>
-                          <th>Added by</th>
-                          <th>Customer</th>
-                          <th>Grand Total</th>
-                          <th>Paid</th>
-                          <th>Due</th>
-                          <th>Payment Status</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {filteredSales.map((sale, index) => (
-                          <tr key={index}>
-                            <td>{new Date(sale.createdAt).toLocaleDateString()}</td>
-                            <td>{sale._id}</td>
-                            <td>{sale.createdBy?.name}</td>
-                            <td>{sale.customer.name}</td>
-                            <td>{sale.total}</td>
-                            <td>{sale.amountPaid}</td>
-                            <td>{sale.change}</td>
-                            <td><span className={`sales-status-badge ${sale.paymentStatus.toLowerCase()}`}>{sale.paymentStatus}</span></td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-
-                    <div className="sales-pagination-container">
-                      <div className="sales-pagination-controls">
-                        <button className="sales-pagination-button">Previous</button>
-                        <button className="sales-pagination-button">Next</button>
-                      </div>
-                      <span className="sales-page-info">Page 1 of 10</span>
-                    </div>
-                  </>
-                )}
-              </div>
+            <div className="slate-sales-actions">
+              <button
+                className="slate-sales-export-button pdf-button"
+                onClick={handlePdfExport}
+                disabled={loading}
+                style={{
+                  height: '48px',
+                  padding: '0 16px',
+                  borderRadius: '4px',
+                  border: 'none',
+                  background: 'rgba(240, 244, 247, 0.9)',
+                  color: '#566166',
+                  fontSize: '12px',
+                  fontWeight: 800,
+                  letterSpacing: '0.07em',
+                  textTransform: 'uppercase',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  cursor: loading ? 'not-allowed' : 'pointer',
+                  opacity: loading ? 0.6 : 1,
+                }}
+              >
+                <FaFilePdf /> PDF
+              </button>
+              <button
+                className="slate-sales-export-button excel-button"
+                onClick={handleExcelExport}
+                disabled={loading}
+                style={{
+                  height: '48px',
+                  padding: '0 16px',
+                  borderRadius: '4px',
+                  border: 'none',
+                  background: 'rgba(240, 244, 247, 0.9)',
+                  color: '#566166',
+                  fontSize: '12px',
+                  fontWeight: 800,
+                  letterSpacing: '0.07em',
+                  textTransform: 'uppercase',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  cursor: loading ? 'not-allowed' : 'pointer',
+                  opacity: loading ? 0.6 : 1,
+                }}
+              >
+                <FaFileExcel /> Excel
+              </button>
+              <span className="slate-sales-actions-divider" />
+              <SalesFilter onApplyFilters={handleApplyFilters} iconOnly />
             </div>
           </div>
-        </div>
+
+          <section className="slate-sales-table-panel">
+            {loading ? (
+              <div className="products-loading-container">
+                <div className="block-pulse">
+                  <div className="block rounded-sm"></div>
+                  <div className="block rounded-sm"></div>
+                  <div className="block rounded-sm"></div>
+                  <div className="block rounded-sm"></div>
+                  <div className="block rounded-sm"></div>
+                  <div className="block rounded-sm"></div>
+                  <div className="block rounded-sm"></div>
+                  <div className="block rounded-sm"></div>
+                  <div className="block rounded-sm"></div>
+                </div>
+              </div>
+            ) : (
+              <div className="slate-sales-table-wrap">
+                <table className="slate-sales-table">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Transaction Reference</th>
+                      <th>Customer</th>
+                      <th>Total Amount</th>
+                      <th>Paid Amount</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredSales.length > 0 ? (
+                      filteredSales.map((sale, index) => {
+                        const status = getSaleStatus(sale);
+                        const isUnpaid = status.className === 'unpaid';
+
+                        return (
+                        <tr
+                          key={sale._id || `${sale.createdAt}-${index}`}
+                          className={isUnpaid ? 'slate-sales-row-unpaid' : ''}
+                        >
+                          <td>
+                            <div className="slate-sales-date-cell">{formatDate(sale.createdAt)}</div>
+                            <div className="slate-sales-time-cell">{formatTime(sale.createdAt)}</div>
+                          </td>
+                          <td className="slate-sales-reference-cell">{sale._id || '-'}</td>
+                          <td>
+                            <div className="slate-sales-customer-cell">{sale.customer?.name || '-'}</div>
+                            <div className="slate-sales-customer-meta">{sale.customer?.phone || sale.customer?.email || ''}</div>
+                          </td>
+                          <td>{formatAmount(sale.total)}</td>
+                          <td>{formatAmount(sale.amountPaid)}</td>
+                          <td>
+                            <span className={`slate-sales-status-badge ${status.className}`}>
+                              {status.label}
+                            </span>
+                          </td>
+                        </tr>
+                      )})
+                    ) : (
+                      <tr>
+                        <td colSpan="6" className="slate-sales-empty-row">
+                          No sales found for the current search and filter selection.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </section>
+        </section>
       </div>
     </Layout>
   );

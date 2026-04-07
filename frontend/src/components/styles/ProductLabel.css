@@ -1,129 +1,283 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+
 .product-label-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  inset: 0;
+  background: rgba(42, 52, 57, 0.1);
+  backdrop-filter: blur(8px);
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   z-index: 3000;
+  padding: 12px;
+  font-family: 'Manrope', sans-serif;
 }
 
-.product-label-container {
-  background-color: white;
+.product-label-modal {
+  background: #ffffff;
+  width: min(100%, 620px);
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  width: 350px;
-  max-width: 90vw;
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.35);
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
-.product-label-header {
+.product-label-modal-header {
+  background: #f8fafc;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 16px;
-  border-bottom: 1px solid #e5e7eb;
+  padding: 0 18px;
+  height: 56px;
+  border-bottom: 1px solid rgba(169, 180, 185, 0.1);
 }
 
-.product-label-header h3 {
-  font-size: 18px;
-  font-weight: 600;
-  color: #111827;
+.product-label-title-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.product-label-title-group h3 {
   margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: #1e293b;
+}
+
+.product-label-title-icon {
+  color: #565e74;
 }
 
 .product-label-close {
-  background: none;
   border: none;
-  font-size: 20px;
-  color: #9ca3af;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  background: transparent;
+  color: #64748b;
   cursor: pointer;
-  padding: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .product-label-close:hover {
-  color: #6b7280;
+  background: #e2e8f0;
+  color: #334155;
 }
 
-.product-label-content-wrapper {
+.product-label-main {
   padding: 16px;
+  background: #f7f9fb;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  gap: 14px;
 }
 
-.product-label-content {
-  width: 204px;
-  height: 183px;
-  border: 1px solid #ccc;
+.product-label-preview-card {
+  background: #ffffff;
+  border: 1px solid rgba(169, 180, 185, 0.2);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+  padding: 24px;
+  text-align: center;
+  position: relative;
+}
+
+.product-label-version {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  opacity: 0.1;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+}
+
+.product-label-identification {
+  margin-bottom: 14px;
+}
+
+.product-label-caption {
+  margin: 0 0 4px;
+  color: #717c82;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+}
+
+.product-label-identification h2 {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  color: #0b0f10;
+}
+
+.product-label-price-chip {
+  background: #dae2fd;
+  border-radius: 4px;
+  display: inline-block;
+  padding: 8px 16px;
+  margin-bottom: 16px;
+}
+
+.product-label-price-caption {
+  margin: 0 0 2px;
+  color: #4a5167;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.product-label-price-value {
+  color: #4a5167;
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+
+.product-label-barcode-shell {
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid rgba(169, 180, 185, 0.1);
   padding: 10px;
-  box-sizing: border-box;
-}
-
-.product-label-content .product-name {
-  font-size: 14px;
-  font-weight: bold;
-  margin-bottom: 15px;
-  margin-top: 10px;
-  text-align: center;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.product-label-content .product-price {
-  font-size: 16px;
-  font-weight: bold;
-  text-align: center;
-  margin: 5px 0;
-}
-
-.product-label-content .barcode-container {
-  text-align: center;
-  margin: 15px 0 10px;
-  min-height: 60px; /* Ensure space is reserved even if image fails to load */
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
 }
 
-.product-label-content .barcode-container img {
-  max-width: 100%;
-  height: 60px;
-  display: block; /* Prevent inline display issues */
+.product-label-barcode-shell img {
+  width: 100%;
+  max-width: 280px;
+  height: 72px;
+  object-fit: contain;
 }
 
-.product-label-actions {
-  padding: 12px 16px;
+.product-label-barcode-text {
+  margin-top: 2px;
+  font-family: monospace;
+  font-size: 12px;
+  letter-spacing: 0.5em;
+  color: #0b0f10;
+  font-weight: 500;
+}
+
+.product-label-meta-row {
+  margin-top: 12px;
+  width: 100%;
   display: flex;
-  justify-content: center;
-  border-top: 1px solid #e5e7eb;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.product-label-meta-item p {
+  margin: 0;
+  color: #717c82;
+  font-size: 9px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+}
+
+.product-label-meta-item span {
+  margin-top: 2px;
+  display: inline-block;
+  color: #2a3439;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.product-label-meta-item.right {
+  text-align: right;
+}
+
+.product-label-footer-actions {
+  padding: 14px 16px;
+  background: #e1e9ee;
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 10px;
 }
 
 .product-label-print-btn {
-  background-color: #4f46e5;
-  color: white;
+  flex: 1;
+  background: #565e74;
+  color: #f7f7ff;
   border: none;
   border-radius: 4px;
-  padding: 8px 16px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  display: flex;
+  padding: 12px 20px;
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  transition: background-color 0.2s;
+  justify-content: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  box-shadow: 0 10px 20px -10px rgba(86, 94, 116, 0.45);
 }
 
 .product-label-print-btn:hover {
-  background-color: #4338ca;
+  background: #4a5268;
 }
 
-@media (max-width: 480px) {
-  .product-label-container {
-    width: 95vw;
+.product-label-print-btn span:last-child {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.product-label-cancel-btn {
+  border: none;
+  background: transparent;
+  color: #566166;
+  padding: 12px 20px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.product-label-cancel-btn:hover {
+  background: #d9e4ea;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+@media (max-width: 768px) {
+  .product-label-main {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .product-label-preview-card {
+    padding: 16px;
+  }
+
+  .product-label-identification h2 {
+    font-size: 24px;
+  }
+
+  .product-label-footer-actions {
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .product-label-print-btn,
+  .product-label-cancel-btn {
+    padding: 10px 14px;
   }
 }

@@ -3,9 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { salesAPI, productsAPI } from '../services/api';
 import './CreateSale.css';
-import { FaPlus, FaTrash } from 'react-icons/fa';
 import TransactionNotification from './TransactionNotification';
 import { useNotifications } from '../context/NotificationContext';
+
+const CUSTOMER_OPTIONS = ['Aiden Blackwell', 'Seraphina Vane', 'Julian Thorne'];
+
+const PAYMENT_OPTIONS = [
+    { value: 'card', label: 'Credit Card' },
+    { value: 'cash', label: 'Cash' },
+    { value: 'loan', label: 'Bank' },
+];
 
 const CreateSale = () => {
     const navigate = useNavigate();
@@ -256,226 +263,256 @@ const CreateSale = () => {
 
     return (
         <Layout title="Create New Sale">
-            <div className="sales-frame">
-                <div className="sales-div-2">
-                    <div className="create-sale-container">
-                        {/* Transaction notification */}
-                        <TransactionNotification
-                            show={notification.show}
-                            type="sale"
-                            data={notification.data}
-                            onClose={closeNotification}
-                        />
+            <main className="slate-sale-main">
+                <div className="slate-sale-shell">
+                    <TransactionNotification
+                        show={notification.show}
+                        type="sale"
+                        data={notification.data}
+                        onClose={closeNotification}
+                    />
 
-                        <h2 className="sales-text-2">Create New Sale</h2>
-
-                        {error && <div className="alert error">{error}</div>}
-                        {success && <div className="alert success">{success}</div>}
-
-                <form onSubmit={handleSubmit} className="create-sale-form">
-                    {/* Rest of your form remains the same */}
-                    {/* Row 1: Bill#, Customer */}
-                    <div className="form-row">
-                        <div className="form-group">
-                            <label htmlFor="billNumber">Bill Number*</label>
-                            <input
-                                type="number"
-                                id="billNumber"
-                                name="billNumber"
-                                value={formData.billNumber}
-                                onChange={handleInputChange}
-                                required
-                                readOnly
-                            />
+                    <header className="slate-sale-header">
+                        <div className="slate-sale-heading-wrap">
+                            <p className="products-text-2">New Transaction</p>
+                            <h1>Bill #{formData.billNumber || '—'}</h1>
                         </div>
-                        <div className="form-group">
-                            <label htmlFor="customerName">Customer Name</label>
-                            <input
-                                type="text"
-                                id="customerName"
-                                name="customerName"
-                                value={formData.customerName}
-                                onChange={handleInputChange}
-                                placeholder="Walk-in Customer"
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="customerPhone">Customer Phone</label>
-                            <input
-                                type="tel"
-                                id="customerPhone"
-                                name="customerPhone"
-                                value={formData.customerPhone}
-                                onChange={handleInputChange}
-                            />
-                        </div>
-                    </div>
 
-                    {/* Items Section */}
-                    <h2>Items</h2>
-                    <div className="items-section">
-                        {formData.items.map((item, index) => (
-                            <div key={index} className="item-row">
-                                <div className="form-group item-product">
-                                     <label>Product*</label>
+                        <div className="slate-customer-grid">
+                            <div className="slate-field-block">
+                                <label htmlFor="customerName">Customer Name</label>
+                                <div className="slate-ghost-input-wrap">
                                     <select
-                                        name="productId"
-                                        value={item.productId}
-                                        onChange={(e) => handleItemChange(index, e)}
-                                        required
+                                        id="customerName"
+                                        name="customerName"
+                                        value={formData.customerName}
+                                        onChange={handleInputChange}
                                     >
-                                        <option value="">Select Product</option>
-                                        {products.map(p => (
-                                            <option key={p._id} value={p._id}>
-                                                {p.name} ({p.barcode}) - ${p.price.toFixed(2)}
+                                        <option value="">Select Customer</option>
+                                        {CUSTOMER_OPTIONS.map((customer) => (
+                                            <option key={customer} value={customer}>
+                                                {customer}
                                             </option>
                                         ))}
                                     </select>
                                 </div>
-                                <div className="form-group item-qty">
-                                     <label>Qty*</label>
-                                    <input
-                                        type="number"
-                                        name="quantity"
-                                        min="1"
-                                        value={item.quantity}
-                                        onChange={(e) => handleItemChange(index, e)}
-                                        required
-                                    />
-                                </div>
-                                <div className="form-group item-price">
-                                     <label>Price*</label>
-                                    <input
-                                        type="number"
-                                        name="price"
-                                        min="0"
-                                        step="0.01"
-                                        value={item.price}
-                                        onChange={(e) => handleItemChange(index, e)}
-                                        required
-                                        readOnly
-                                    />
-                                </div>
-                                 <div className="form-group item-discount">
-                                     <label>Discount (%)</label>
-                                     <input
-                                          type="number"
-                                          name="productDiscountRate"
-                                          min="0"
-                                          max="100"
-                                          step="0.01"
-                                          value={item.productDiscountRate || 0}
-                                          onChange={(e) => handleItemChange(index, e)}
-                                          placeholder="0"
-                                     />
-                                 </div>
-                                <div className="form-group item-subtotal">
-                                    <label>Subtotal</label>
-                                    <span>${(item.price * (1-(item.productDiscountRate||0)/100) * item.quantity).toFixed(2)}</span>
-                                </div>
-
-                                <button
-                                    type="button"
-                                    onClick={() => removeItem(index)}
-                                    className="remove-item-button"
-                                    disabled={formData.items.length <= 1}
-                                >
-                                    <FaTrash />
-                                </button>
                             </div>
-                        ))}
-                        <button type="button" onClick={addItem} className="add-item-button">
-                            <FaPlus /> Add Item
-                        </button>
-                    </div>
 
-                    {/* Totals and Payment Section */}
-                     <div className="totals-payment-section">
-                          <div className="totals-summary">
-                              <h3>Summary</h3>
-                              <div className="summary-row"><span>Subtotal:</span> <span>${formData.subtotal.toFixed(2)}</span></div>
-                              <div className="summary-row">
-                                   <span>Order Discount:</span>
-                                   <input
-                                        type="number"
-                                        id="discount"
-                                        name="discount"
-                                        min="0"
-                                        step="0.01"
-                                        value={formData.discount}
+                            <div className="slate-field-block">
+                                <label htmlFor="customerPhone">Customer Phone</label>
+                                <div className="slate-ghost-input-wrap">
+                                    <input
+                                        type="tel"
+                                        id="customerPhone"
+                                        name="customerPhone"
+                                        value={formData.customerPhone}
                                         onChange={handleInputChange}
-                                        placeholder="0.00"
-                                   />
-                              </div>
-                              <div className="summary-row"><span>Tax (10%):</span> <span>${formData.tax.toFixed(2)}</span></div>
-                              <div className="summary-row total"><span>Total:</span> <span>${formData.total.toFixed(2)}</span></div>
-                          </div>
-
-                          <div className="payment-details">
-                               <h3>Payment</h3>
-                               <div className="form-group">
-                                   <label htmlFor="paymentMethod">Payment Method*</label>
-                                   <select
-                                       id="paymentMethod"
-                                       name="paymentMethod"
-                                       value={formData.paymentMethod}
-                                       onChange={handleInputChange}
-                                       required
-                                   >
-                                       <option value="cash">Cash</option>
-                                       <option value="card">Card</option>
-                                       <option value="loan">Loan</option>
-                                   </select>
-                               </div>
-                               <div className="form-group">
-                                   <label htmlFor="amountPaid">Amount Paid*</label>
-                                   <input
-                                       type="number"
-                                       id="amountPaid"
-                                       name="amountPaid"
-                                       min="0"
-                                       step="0.01"
-                                       value={formData.amountPaid}
-                                       onChange={handleInputChange}
-                                       required
-                                   />
-                               </div>
-                                <div className="form-group">
-                                    <label>Change:</label>
-                                    <span>${Math.max(0, formData.amountPaid - formData.total).toFixed(2)}</span>
+                                        placeholder="+1 (555) 000-0000"
+                                    />
                                 </div>
-                          </div>
-                     </div>
+                            </div>
+                        </div>
+                    </header>
 
-                    {/* Notes Section */}
-                    <div className="form-group form-group-full">
-                        <label htmlFor="notes">Notes</label>
-                        <textarea
-                            id="notes"
-                            name="notes"
-                            value={formData.notes}
-                            onChange={handleInputChange}
-                            rows="3"
-                        ></textarea>
-                    </div>
+                    {error && <div className="slate-alert error">{error}</div>}
+                    {success && <div className="slate-alert success">{success}</div>}
 
-                    {/* Submit Button */}
-                    <div className="form-actions">
-                        <button type="submit" disabled={loading} className="submit-button">
-                            {loading ? 'Creating Sale...' : 'Create Sale'}
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => navigate('/dashboard')}
-                            className="cancel-button"
-                        >
-                            Cancel
-                        </button>
-                    </div>
-                </form>
-                    </div>
+                    <form onSubmit={handleSubmit} className="slate-sale-form">
+                        <div className="slate-sale-grid">
+                            <section className="slate-items-column">
+                                <div className="slate-items-table-shell">
+                                    <table className="slate-items-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Product</th>
+                                                <th className="center">Qty</th>
+                                                <th className="right">Price</th>
+                                                <th className="right">Disc (%)</th>
+                                                <th className="right">Subtotal</th>
+                                                <th />
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {formData.items.map((item, index) => {
+                                                const lineSubtotal = item.price * (1 - (item.productDiscountRate || 0) / 100) * item.quantity;
+
+                                                return (
+                                                    <tr key={index} className={index === 1 ? 'active' : ''}>
+                                                        <td>
+                                                            <select
+                                                                name="productId"
+                                                                value={item.productId}
+                                                                onChange={(e) => handleItemChange(index, e)}
+                                                                required
+                                                            >
+                                                                <option value="">Select Product</option>
+                                                                {products.map((product) => (
+                                                                    <option key={product._id} value={product._id}>
+                                                                        {product.name}
+                                                                    </option>
+                                                                ))}
+                                                            </select>
+                                                        </td>
+                                                        <td className="center">
+                                                            <input
+                                                                type="number"
+                                                                name="quantity"
+                                                                min="1"
+                                                                value={item.quantity}
+                                                                onChange={(e) => handleItemChange(index, e)}
+                                                                required
+                                                                className="slate-small-input"
+                                                            />
+                                                        </td>
+                                                        <td className="right">${Number(item.price || 0).toFixed(2)}</td>
+                                                        <td className="right">
+                                                            <input
+                                                                type="number"
+                                                                name="productDiscountRate"
+                                                                min="0"
+                                                                max="100"
+                                                                step="0.01"
+                                                                value={item.productDiscountRate || 0}
+                                                                onChange={(e) => handleItemChange(index, e)}
+                                                                className="slate-small-input slate-small-input-right"
+                                                            />
+                                                        </td>
+                                                        <td className="right strong">${lineSubtotal.toFixed(2)}</td>
+                                                        <td className="right">
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => removeItem(index)}
+                                                                className="slate-delete-btn"
+                                                                disabled={formData.items.length <= 1}
+                                                                aria-label="Remove item"
+                                                            >
+                                                                <span className="material-symbols-outlined">delete_outline</span>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                );
+                                            })}
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <button type="button" onClick={addItem} className="slate-add-item-btn">
+                                    <span className="material-symbols-outlined">add</span>
+                                    Add Line Item
+                                </button>
+
+                                <div className="slate-notes-wrap">
+                                    <label htmlFor="notes">Transaction Notes</label>
+                                    <textarea
+                                        id="notes"
+                                        name="notes"
+                                        value={formData.notes}
+                                        onChange={handleInputChange}
+                                        rows="4"
+                                        placeholder="Enter special delivery instructions or material specifications..."
+                                    />
+                                </div>
+                            </section>
+
+                            <aside className="slate-summary-column">
+                                <div className="slate-summary-card">
+                                    <h2>Summary</h2>
+                                    <div className="slate-summary-list">
+                                        <div>
+                                            <span>Subtotal</span>
+                                            <strong>${formData.subtotal.toFixed(2)}</strong>
+                                        </div>
+                                        <div className="slate-discount-row">
+                                            <span>Order Discount</span>
+                                            <div className="slate-discount-input-wrap">
+                                                <input
+                                                    type="number"
+                                                    id="discount"
+                                                    name="discount"
+                                                    min="0"
+                                                    step="0.01"
+                                                    value={formData.discount}
+                                                    onChange={handleInputChange}
+                                                />
+                                                <strong className="error">-${Number(formData.discount || 0).toFixed(2)}</strong>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <span>Tax (10%)</span>
+                                            <strong>${formData.tax.toFixed(2)}</strong>
+                                        </div>
+                                        <div className="slate-total-due-row">
+                                            <span>Total Due</span>
+                                            <strong>${formData.total.toFixed(2)}</strong>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="slate-payment-card">
+                                    <h2>Payment</h2>
+
+                                    <div className="slate-payment-method-wrap">
+                                        <label>Method</label>
+                                        <div className="slate-method-buttons">
+                                            {PAYMENT_OPTIONS.map((method) => (
+                                                <button
+                                                    key={method.value}
+                                                    type="button"
+                                                    className={formData.paymentMethod === method.value ? 'active' : ''}
+                                                    onClick={() => {
+                                                        setFormData((prev) => ({ ...prev, paymentMethod: method.value }));
+                                                        setError(null);
+                                                        setSuccess(null);
+                                                    }}
+                                                >
+                                                    {method.label}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div className="slate-payment-amount-wrap">
+                                        <label htmlFor="amountPaid">Amount Paid</label>
+                                        <div className="slate-amount-input-shell">
+                                            <span>$</span>
+                                            <input
+                                                type="number"
+                                                id="amountPaid"
+                                                name="amountPaid"
+                                                min="0"
+                                                step="0.01"
+                                                value={formData.amountPaid}
+                                                onChange={handleInputChange}
+                                                required
+                                            />
+                                        </div>
+
+                                        <div className="slate-change-row">
+                                            <span>Change</span>
+                                            <strong>${Math.max(0, formData.amountPaid - formData.total).toFixed(2)}</strong>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="slate-sale-actions">
+                                    <button type="submit" disabled={loading} className="slate-complete-btn">
+                                        <span className="material-symbols-outlined">check_circle</span>
+                                        {loading ? 'Creating Sale...' : 'Complete & Create Sale'}
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        onClick={() => navigate('/dashboard')}
+                                        className="slate-cancel-btn"
+                                    >
+                                        Cancel Transaction
+                                    </button>
+                                </div>
+                            </aside>
+                        </div>
+                    </form>
                 </div>
-            </div>
+            </main>
         </Layout>
     );
 };

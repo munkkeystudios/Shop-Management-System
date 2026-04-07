@@ -38,8 +38,8 @@ const ModernDropdown = ({ title, children, isActive, headerColor = '#ffffff', cl
         <div className="sidebar-dropdown-title">
           {title}
         </div>
-        <span className={`sidebar-dropdown-icon ${isOpen ? 'open' : ''}`}>
-          {isOpen ? '▲' : '▼'}
+        <span className={`material-symbols-outlined sidebar-dropdown-icon ${isOpen ? 'open' : ''}`} aria-hidden="true">
+          expand_more
         </span>
       </div>
 

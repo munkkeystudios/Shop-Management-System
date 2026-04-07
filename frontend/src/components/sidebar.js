@@ -1,27 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { Nav } from 'react-bootstrap';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useSettings } from '../context/SettingsContext';
-import logoImage from '../images/logo-small.png';
-import { RiShoppingBag4Line } from "react-icons/ri";
-import { LuPackage, LuPackagePlus, LuPackageSearch } from "react-icons/lu";
-import { HiOutlineDocumentReport } from "react-icons/hi";
-import { FiUsers, FiUserPlus, FiSettings, FiUser, FiSliders, FiLogOut, FiChevronLeft, FiChevronRight, FiMenu } from "react-icons/fi";
-import { BsCartCheck } from "react-icons/bs";
-import { TbReportMoney } from "react-icons/tb";
-import { MdOutlineDisplaySettings } from 'react-icons/md';
-import { FaPlus, FaUpload } from "react-icons/fa";
 import { jwtDecode } from 'jwt-decode';
 import ModernDropdown, { ModernDropdownItem } from './ModernDropdown';
 import './styles/Sidebar.css';
 
+const SidebarIcon = ({ name }) => (
+    <span className="material-symbols-outlined sidebar-material-icon" aria-hidden="true">
+        {name}
+    </span>
+);
+
 // sidebar layout
 const SideBar = ({ children, isCollapsed }) => {
     return (
-        <Nav className={`flex-column sidebar-container ${isCollapsed ? 'sidebar-collapsed' : ''}`}>
+        <aside className={`sidebar-container ${isCollapsed ? 'sidebar-collapsed' : ''}`} aria-label="Sidebar">
             {children}
-        </Nav>
+        </aside>
     );
 };
 
@@ -47,12 +43,12 @@ const SideBarDropdown = ({ title, children, isActive }) => {
 // properties for each item in sidebar
 const SideBarItem = ({ title, onClick, isActive }) => {
     return (
-        <Nav.Item
+        <div
             onClick={onClick}
             className={`sidebar-nav-item ${isActive ? 'active' : ''}`}
         >
             {title}
-        </Nav.Item>
+        </div>
     );
 };
 
@@ -68,8 +64,8 @@ function ToolsSidebar({ isCollapsed }) {
     const location = useLocation();
     const [userRole, setUserRole] = useState(null);
 
-    // Get company logo and name from settings context
-    const companyName = settings?.companyName || 'FinTrack';
+    // Get company name from settings context
+    const companyName = settings?.companyName || 'SLATE PRECISION';
 
     // Get user role from token
     useEffect(() => {
@@ -100,25 +96,13 @@ function ToolsSidebar({ isCollapsed }) {
         console.log(`Clicked: ${item}`);
     };
 
-    const handleLogout = () => {
-        logout();
-        navigate('/login');
-    };
-
     return (
         <SideBar isCollapsed={isCollapsed}>
-            {/* Logo only - toggle button now in TopBar */}
+            {/* Template-style brand anchor */}
             {!isCollapsed && (
                 <div className="sidebar-header">
                     <Link to={isCashierOrHigher ? "/dashboard" : "/"} className="sidebar-logo-link">
-                        <div className="sidebar-logo-container">
-                            <img
-                                src={logoImage}
-                                alt="Logo"
-                                className="sidebar-logo"
-                            />
-                            <span className="sidebar-title">{companyName}</span>
-                        </div>
+                        <h1 className="sidebar-brand-title">{companyName}</h1>
                     </Link>
                 </div>
             )}
@@ -127,22 +111,22 @@ function ToolsSidebar({ isCollapsed }) {
             <div className="sidebar-menu-container">
                 {/* POS Primary Action (Cashier+) */}
                 {isCashierOrHigher && (
-                    <Nav.Item className={`sidebar-nav-item sidebar-pos-primary ${isPathActive('/pos') ? 'active' : ''}`}>
+                    <div className={`sidebar-nav-item sidebar-pos-primary ${isPathActive('/pos') ? 'active' : ''}`}>
                         <Link to="/pos" className="sidebar-link">
-                            <RiShoppingBag4Line size={16} />
+                            <SidebarIcon name="point_of_sale" />
                             <span className="sidebar-link-label">POS</span>
                         </Link>
-                    </Nav.Item>
+                    </div>
                 )}
 
                 {/* Dashboard (Cashier+) */}
                 {isCashierOrHigher && (
-                    <Nav.Item className={`sidebar-nav-item ${isPathActive('/dashboard') ? 'active' : ''}`}>
+                    <div className={`sidebar-nav-item ${isPathActive('/dashboard') ? 'active' : ''}`}>
                         <Link to="/dashboard" className="sidebar-link">
-                            <RiShoppingBag4Line size={16} />
+                            <SidebarIcon name="dashboard" />
                             <span className="sidebar-link-label">Dashboard</span>
                         </Link>
-                    </Nav.Item>
+                    </div>
                 )}
 
                 {/* Products Dropdown (Cashier+) */}
@@ -151,7 +135,7 @@ function ToolsSidebar({ isCollapsed }) {
                         isActive={isGroupActive(['/products', '/all_products', '/create_products', '/categories', '/brands'])}
                         title={
                             <div className="sidebar-link">
-                                <LuPackage size={16}/>
+                                <SidebarIcon name="inventory_2" />
                                 <span className="sidebar-link-label">Products</span>
                             </div>
                         }
@@ -162,7 +146,7 @@ function ToolsSidebar({ isCollapsed }) {
                                 onClick={() => handleItemClick("All Products")}
                             >
                                 <div className="sidebar-link">
-                                    <LuPackage size={16} />
+                                    <SidebarIcon name="inventory_2" />
                                     <span className="sidebar-link-label">All Products</span>
                                 </div>
                             </ModernDropdownItem>
@@ -175,7 +159,7 @@ function ToolsSidebar({ isCollapsed }) {
                                     onClick={() => handleItemClick("Create Product")}
                                 >
                                     <div className="sidebar-link">
-                                        <LuPackagePlus size={16} />
+                                        <SidebarIcon name="add_box" />
                                         <span className="sidebar-link-label">Create Product</span>
                                     </div>
                                 </ModernDropdownItem>
@@ -189,7 +173,7 @@ function ToolsSidebar({ isCollapsed }) {
                                     onClick={() => handleItemClick("Categories")}
                                 >
                                     <div className="sidebar-link">
-                                        <LuPackageSearch size={16} />
+                                        <SidebarIcon name="category" />
                                         <span className="sidebar-link-label">Categories</span>
                                     </div>
                                 </ModernDropdownItem>
@@ -203,7 +187,7 @@ function ToolsSidebar({ isCollapsed }) {
                                     onClick={() => handleItemClick("Brands")}
                                 >
                                     <div className="sidebar-link">
-                                        <LuPackageSearch size={16} />
+                                        <SidebarIcon name="loyalty" />
                                         <span className="sidebar-link-label">Brands</span>
                                     </div>
                                 </ModernDropdownItem>
@@ -218,7 +202,7 @@ function ToolsSidebar({ isCollapsed }) {
                         isActive={isGroupActive(['/employee-management', '/create-user'])}
                         title={
                             <div className="sidebar-link">
-                                <FiUsers size={16} />
+                                <SidebarIcon name="group" />
                                 <span className="sidebar-link-label">Employee Management</span>
                             </div>
                         }
@@ -229,7 +213,7 @@ function ToolsSidebar({ isCollapsed }) {
                                 onClick={() => handleItemClick("Manage Employees")}
                             >
                                 <div className="sidebar-link">
-                                    <FiUsers size={16} />
+                                    <SidebarIcon name="group" />
                                     <span className="sidebar-link-label">Manage Employees</span>
                                 </div>
                             </ModernDropdownItem>
@@ -240,7 +224,7 @@ function ToolsSidebar({ isCollapsed }) {
                                 onClick={() => handleItemClick("Create Employee")}
                             >
                                 <div className="sidebar-link">
-                                    <FiUserPlus size={16} />
+                                    <SidebarIcon name="person_add" />
                                     <span className="sidebar-link-label">Create Employee</span>
                                 </div>
                             </ModernDropdownItem>
@@ -259,7 +243,7 @@ function ToolsSidebar({ isCollapsed }) {
                         ])}
                         title={
                             <div className="sidebar-link">
-                                <BsCartCheck size={16}/>
+                                <SidebarIcon name="shopping_cart" />
                                 <span className="sidebar-link-label">Purchases</span>
                             </div>
                         }
@@ -270,7 +254,7 @@ function ToolsSidebar({ isCollapsed }) {
                                 onClick={() => handleItemClick("Suppliers")}
                             >
                                 <div className="sidebar-link">
-                                    <BsCartCheck size={16} />
+                                    <SidebarIcon name="local_shipping" />
                                     <span className="sidebar-link-label">Suppliers</span>
                                 </div>
                             </ModernDropdownItem>
@@ -282,7 +266,7 @@ function ToolsSidebar({ isCollapsed }) {
                                 onClick={() => handleItemClick("All Purchases")}
                             >
                                 <div className="sidebar-link">
-                                    <BsCartCheck size={16} />
+                                    <SidebarIcon name="receipt_long" />
                                     <span className="sidebar-link-label">All Purchases</span>
                                 </div>
                             </ModernDropdownItem>
@@ -294,7 +278,7 @@ function ToolsSidebar({ isCollapsed }) {
                                 onClick={() => handleItemClick("Create Purchase")}
                             >
                                 <div className="sidebar-link">
-                                    <BsCartCheck size={16} />
+                                    <SidebarIcon name="add_shopping_cart" />
                                     <span className="sidebar-link-label">Create Purchase</span>
                                 </div>
                             </ModernDropdownItem>
@@ -306,7 +290,7 @@ function ToolsSidebar({ isCollapsed }) {
                                 onClick={() => handleItemClick("Import Purchases")}
                             >
                                 <div className="sidebar-link">
-                                    <BsCartCheck size={16} />
+                                    <SidebarIcon name="upload" />
                                     <span className="sidebar-link-label">Import Purchases</span>
                                 </div>
                             </ModernDropdownItem>
@@ -320,7 +304,7 @@ function ToolsSidebar({ isCollapsed }) {
                         isActive={isGroupActive(['/sales', '/create-sale', '/import-sales']) && !isPathActive('/sales-report')}
                         title={
                             <div className="sidebar-link">
-                                <TbReportMoney size={16}/>
+                                <SidebarIcon name="receipt_long" />
                                 <span className="sidebar-link-label">Sales</span>
                             </div>
                         }
@@ -331,7 +315,7 @@ function ToolsSidebar({ isCollapsed }) {
                                 onClick={() => handleItemClick("All Sales")}
                             >
                                 <div className="sidebar-link">
-                                    <TbReportMoney size={16} />
+                                    <SidebarIcon name="receipt_long" />
                                     <span className="sidebar-link-label">All Sales</span>
                                 </div>
                             </ModernDropdownItem>
@@ -346,7 +330,7 @@ function ToolsSidebar({ isCollapsed }) {
                                     onClick={() => handleItemClick("Create Sale")}
                                 >
                                     <div className="sidebar-link">
-                                        <FaPlus size={14} />
+                                        <SidebarIcon name="add_circle" />
                                         <span className="sidebar-link-label">Create Sale</span>
                                     </div>
                                 </ModernDropdownItem>
@@ -360,7 +344,7 @@ function ToolsSidebar({ isCollapsed }) {
                                     onClick={() => handleItemClick("Import Sales")}
                                 >
                                     <div className="sidebar-link">
-                                        <FaUpload size={14} />
+                                        <SidebarIcon name="upload" />
                                         <span className="sidebar-link-label">Import Sales</span>
                                     </div>
                                 </ModernDropdownItem>
@@ -375,7 +359,7 @@ function ToolsSidebar({ isCollapsed }) {
                         isActive={isGroupActive(['/loans', '/create-loans'])}
                         title={
                             <div className="sidebar-link">
-                                <TbReportMoney size={16}/>
+                                <SidebarIcon name="payments" />
                                 <span className="sidebar-link-label">Loans</span>
                             </div>
                         }
@@ -387,7 +371,7 @@ function ToolsSidebar({ isCollapsed }) {
                                 onClick={() => handleItemClick("All Loans")}
                             >
                                 <div className="sidebar-link">
-                                    <TbReportMoney size={16} />
+                                    <SidebarIcon name="payments" />
                                     <span className="sidebar-link-label">All Loans</span>
                                 </div>
                             </ModernDropdownItem>
@@ -400,7 +384,7 @@ function ToolsSidebar({ isCollapsed }) {
                                 onClick={() => handleItemClick("Create Loans")}
                             >
                                 <div className="sidebar-link">
-                                    <FaPlus size={14} />
+                                    <SidebarIcon name="add_circle" />
                                     <span className="sidebar-link-label">Create Loans</span>
                                 </div>
                             </ModernDropdownItem>
@@ -410,22 +394,22 @@ function ToolsSidebar({ isCollapsed }) {
 
                 {/* Reports Link (Manager+) */}
                 {isManagerOrHigher && (
-                    <Nav.Item
+                    <div
                         className={`sidebar-nav-item ${isPathActive('/sales-report') ? 'active' : ''}`}
                         onClick={() => navigate('/sales-report')}
                     >
                         <div className="sidebar-link">
-                            <HiOutlineDocumentReport size={16} />
+                            <SidebarIcon name="analytics" />
                             <span className="sidebar-link-label">Reports</span>
                         </div>
-                    </Nav.Item>
+                    </div>
                 )}
 
                 {/* Settings Dropdown */}
                 <ModernDropdown
                     title={
                         <div className="sidebar-link">
-                            <FiSettings size={16}/>
+                            <SidebarIcon name="settings" />
                             <span className="sidebar-link-label">Settings</span>
                         </div>
                     }
@@ -437,7 +421,7 @@ function ToolsSidebar({ isCollapsed }) {
                             onClick={() => handleItemClick("User Settings")}
                         >
                             <div className="sidebar-link">
-                                <FiUser size={16} />
+                                <SidebarIcon name="account_circle" />
                                 <span className="sidebar-link-label">User Settings</span>
                             </div>
                         </ModernDropdownItem>
@@ -451,7 +435,7 @@ function ToolsSidebar({ isCollapsed }) {
                                 onClick={() => handleItemClick("Display Settings")}
                             >
                                 <div className="sidebar-link">
-                                    <MdOutlineDisplaySettings size={16} />
+                                    <SidebarIcon name="display_settings" />
                                     <span className="sidebar-link-label">Display Settings</span>
                                 </div>
                             </ModernDropdownItem>
@@ -466,7 +450,7 @@ function ToolsSidebar({ isCollapsed }) {
                                 onClick={() => handleItemClick("General Settings")}
                             >
                                 <div className="sidebar-link">
-                                    <FiSliders size={16} />
+                                    <SidebarIcon name="tune" />
                                     <span className="sidebar-link-label">General Settings</span>
                                 </div>
                             </ModernDropdownItem>
@@ -474,18 +458,10 @@ function ToolsSidebar({ isCollapsed }) {
                     )}
                 </ModernDropdown>
 
-                {/* Logout Link - below Settings */}
-                <Nav.Item
-                    onClick={handleLogout}
-                    className="sidebar-nav-item sidebar-logout"
-                >
-                    <div className="sidebar-link">
-                        <FiLogOut size={16} />
-                        <span className="sidebar-link-label">Logout</span>
-                    </div>
-                </Nav.Item>
             </div>
             )}
+
+            {/* Sidebar footer removed - profile moved to topbar */}
 
         </SideBar>
     );

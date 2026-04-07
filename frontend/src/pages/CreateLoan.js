@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { loansAPI } from '../services/api';
 import Layout from '../components/Layout';
 import { useNotifications } from '../context/NotificationContext';
+import './settings.css';
 import '../styles/create_loan.css';
 
 const CreateLoan = () => {
@@ -139,113 +140,142 @@ const CreateLoan = () => {
 
   return (
     <Layout title="Create Loan">
-      <div className="loan-container">
-        {successMessage && (
-          <div className="success-container">
-            <div className="success-message">{successMessage}</div>
+      <div className="slate-settings-page loan-page">
+        <div className="slate-settings-wrap loan-main-stage">
+          <div className="slate-main-header loan-context-header">
+            <h2>Create New Loan</h2>
+            <p className="loan-subheading">Enter high-precision transaction details for the architectural credit registry.</p>
           </div>
-        )}
-        
-        <div className="loan-form-container">
-          <h2 className="form-title">Create New Loan</h2>
-          
+
+          {successMessage && (
+            <div className="loan-success-banner" role="status">
+              {successMessage}
+            </div>
+          )}
+
           {errors.general && (
-            <div className="error-message-general">
+            <div className="loan-error-banner" role="alert">
               {errors.general}
             </div>
           )}
-          
-          <form onSubmit={handleSubmit} className="form-content">
-            <div className="form-field">
-              <input
-                type="number"
-                name="loanAmount"
-                placeholder="Enter Loan Amount"
-                value={formData.loanAmount}
-                onChange={handleChange}
-                className={errors.loanAmount ? "input-error" : ""}
-                autoComplete="off"
-              />
-              {errors.loanAmount && <p className="error-text">{errors.loanAmount}</p>}
-            </div>
-            
-            <div className="customer-section">
-              <h3 className="section-title">Customer Details</h3>
-            </div>
-            
-            <div className="form-row">
-              <div className="form-field">
+
+          <div className="loan-form-card">
+            <form onSubmit={handleSubmit} className="loan-form-grid">
+              <div className="loan-amount-section">
+                <label htmlFor="loanAmount">Loan Principal Amount</label>
+                <div className="loan-amount-input-wrap">
+                  <span className="currency-symbol">$</span>
+                  <input
+                    id="loanAmount"
+                    type="number"
+                    name="loanAmount"
+                    placeholder="0.00"
+                    value={formData.loanAmount}
+                    onChange={handleChange}
+                    className={errors.loanAmount ? 'input-error' : ''}
+                    autoComplete="off"
+                  />
+                </div>
+                {errors.loanAmount && <p className="error-text">{errors.loanAmount}</p>}
+                <p className="loan-amount-note">Architectural Note: Ensure principal matches station credit limits.</p>
+              </div>
+
+              <div className="loan-field-group">
+                <label htmlFor="customerName">Enter Customer Name</label>
                 <input
+                  id="customerName"
                   type="text"
                   name="customerName"
-                  placeholder="Enter Customer Name"
+                  placeholder="Full Legal Name"
                   value={formData.customerName}
                   onChange={handleChange}
-                  className={errors.customerName ? "input-error" : ""}
+                  className={`slate-input input-bottom-border ${errors.customerName ? 'slate-input-error' : ''}`}
                   autoComplete="off"
                 />
-                {errors.customerName && <p className="error-text">{errors.customerName}</p>}
+                {errors.customerName && <p className="slate-error-message">{errors.customerName}</p>}
               </div>
-              <div className="form-field">
+
+              <div className="loan-field-group">
+                <label htmlFor="customerEmail">Enter Customer Email</label>
                 <input
+                  id="customerEmail"
                   type="email"
                   name="customerEmail"
-                  placeholder="Enter Customer Email"
+                  placeholder="name@precision-retail.com"
                   value={formData.customerEmail}
                   onChange={handleChange}
-                  className={errors.customerEmail ? "input-error" : ""}
+                  className={`slate-input input-bottom-border ${errors.customerEmail ? 'slate-input-error' : ''}`}
                   autoComplete="off"
                 />
-                {errors.customerEmail && <p className="error-text">{errors.customerEmail}</p>}
+                {errors.customerEmail && <p className="slate-error-message">{errors.customerEmail}</p>}
               </div>
-            </div>
-            
-            <div className="form-row">
-              <div className="form-field">
+
+              <div className="loan-field-group">
+                <label htmlFor="customerPhone">Enter Customer Phone</label>
                 <input
+                  id="customerPhone"
                   type="text"
                   name="customerPhone"
-                  placeholder="Enter Customer Phone"
+                  placeholder="+1 (000) 000-0000"
                   value={formData.customerPhone}
                   onChange={handleChange}
-                  className={errors.customerPhone ? "input-error" : ""}
+                  className={`slate-input input-bottom-border ${errors.customerPhone ? 'slate-input-error' : ''}`}
                   autoComplete="off"
                 />
-                {errors.customerPhone && <p className="error-text">{errors.customerPhone}</p>}
+                {errors.customerPhone && <p className="slate-error-message">{errors.customerPhone}</p>}
               </div>
-              <div className="form-field">
+
+              <div className="loan-field-group">
+                <label htmlFor="customerAddress">Enter Customer Address</label>
                 <input
+                  id="customerAddress"
                   type="text"
                   name="customerAddress"
-                  placeholder="Enter Customer Address"
+                  placeholder="Architectural Physical Address"
                   value={formData.customerAddress}
                   onChange={handleChange}
-                  className={errors.customerAddress ? "input-error" : ""}
+                  className={`slate-input input-bottom-border ${errors.customerAddress ? 'slate-input-error' : ''}`}
                   autoComplete="off"
                 />
-                {errors.customerAddress && <p className="error-text">{errors.customerAddress}</p>}
+                {errors.customerAddress && <p className="slate-error-message">{errors.customerAddress}</p>}
               </div>
-            </div>
-            
-            <div className="form-field">
-              <textarea
-                rows={3}
-                name="notes"
-                placeholder="Enter any additional notes"
-                value={formData.notes}
-                onChange={handleChange}
-                autoComplete="off"
-              />
-            </div>
-            
-            <button 
-              type="submit" 
-              className="submit-button"
-              disabled={loading}
-            >
-              {loading ? 'Creating...' : 'Create Loan'}
-            </button>
-          </form>
+
+              <div className="loan-field-group full-width">
+                <label htmlFor="notes">Enter any additional notes</label>
+                <textarea
+                  id="notes"
+                  rows={3}
+                  name="notes"
+                  placeholder="Specify collateral, internal references, or payment schedule milestones..."
+                  value={formData.notes}
+                  onChange={handleChange}
+                  autoComplete="off"
+                />
+              </div>
+
+              <div className="loan-actions full-width">
+                <button
+                  type="submit"
+                  className="submit-button"
+                  disabled={loading}
+                >
+                  {loading ? 'Creating...' : 'Create Loan'}
+                </button>
+                <button
+                  type="button"
+                  className="discard-button"
+                  onClick={resetForm}
+                  disabled={loading}
+                >
+                  Discard
+                </button>
+                <div className="secure-note">
+                  <span className="material-symbols-outlined" aria-hidden="true">lock</span>
+                  Secure Slate Transaction
+                </div>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     </Layout>

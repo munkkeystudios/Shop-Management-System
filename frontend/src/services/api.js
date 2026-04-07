@@ -301,6 +301,10 @@ export const purchasesAPI = {
   getById: (id) => api.get(`/purchases/${id}`),
   exportPurchases: (format = 'csv') =>
     api.get(`/purchases/export?format=${format}`, { responseType: 'blob' }),
+  importPurchases: (formData) =>
+    api.post('/purchases/import', formData, { headers: { 'Content-Type': 'multipart/form-data' } }),
+  downloadImportTemplate: () =>
+    api.get('/import/purchases/sample', { responseType: 'blob' }),
 };
 
 // Categories API 

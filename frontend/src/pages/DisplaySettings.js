@@ -5,8 +5,6 @@ import { toast } from 'react-toastify';
 import { useAuth } from '../context/AuthContext';
 import { Navigate } from 'react-router-dom';
 import './settings.css';
-import ModernDropdown, { ModernDropdownItem } from '../components/ModernDropdown';
-import '../styles/dropdown.css';
 import { useNotifications } from '../context/NotificationContext';
 
 const DisplaySettings = () => {
@@ -15,7 +13,6 @@ const DisplaySettings = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [hasAccess, setHasAccess] = useState(false);
-  const [selectedDateFormat, setSelectedDateFormat] = useState(null);
 
   // Display settings state
   const [settings, setSettings] = useState({
@@ -200,6 +197,14 @@ const DisplaySettings = () => {
       return;
     }
 
+    if (['tableRowsPerPage', 'fontScale'].includes(name)) {
+      setSettings({
+        ...settings,
+        [name]: parseFloat(value)
+      });
+      return;
+    }
+
     setSettings({
       ...settings,
       [name]: value
@@ -262,443 +267,256 @@ const DisplaySettings = () => {
     }
   };
 
-  const handleDateFormatChange = (value, label) => {
-    setSelectedDateFormat(label);
-    setSettings({
-      ...settings,
-      dateFormat: value
-    });
-  };
-
   if (!hasAccess && !loading) {
     return <Navigate to="/dashboard" />;
   }
 
+  const currencySymbolMap = {
+    USD: '$',
+    EUR: '€',
+    GBP: '£',
+    JPY: '¥',
+    CAD: 'C$',
+    AUD: 'A$',
+    INR: '₹',
+    PKR: '₨'
+  };
+
+  const currencyLabel = currencyOptions.find(opt => opt.value === settings.currency)?.label || settings.currency;
+  const formattedPreview = `${settings.currencyPosition === 'before' ? `${currencySymbolMap[settings.currency] || '$'} ` : ''}${(1450).toFixed(settings.decimalPlaces).replace('.', settings.decimalSeparator).replace(/\B(?=(\d{3})+(?!\d))/g, settings.thousandsSeparator)}${settings.currencyPosition === 'after' ? ` ${currencySymbolMap[settings.currency] || '$'}` : ''}`;
+
   return (
     <Layout title="Display Settings">
-      <div className="settings-container">
+      <div className="ds-page">
         {loading ? (
-          <div className="loading-message">Loading display settings...</div>
+          <div className="products-loading-container">
+            <div className="block-pulse">
+              <div className="block rounded-sm"></div>
+              <div className="block rounded-sm"></div>
+              <div className="block rounded-sm"></div>
+              <div className="block rounded-sm"></div>
+              <div className="block rounded-sm"></div>
+              <div className="block rounded-sm"></div>
+              <div className="block rounded-sm"></div>
+              <div className="block rounded-sm"></div>
+              <div className="block rounded-sm"></div>
+            </div>
+          </div>
         ) : (
-          <div className="settings-sections-container">
-            {/* Date and Time */}
-            <div className="settings-section-card settings-header-card">
-              <div className="settings-header">
+          <div className="ds-wrap">
+            <div className="ds-head">
+              <div>
                 <h1>Display Settings</h1>
-                <p className="settings-description">
-                  Configure date formats, time formats, and other display preferences
-                </p>
+                <p className="settings-subheading">Configure terminal interface and localization preferences.</p>
               </div>
-              <h2>Date and Time</h2>
-              <form className="settings-form" onSubmit={handleSubmit}>
-                <div className="form-row">
-                  <div className="form-group">
+              <div className="ds-head-actions">
+                <button type="button" className="ds-btn ds-btn-tertiary" onClick={fetchSettings}>Discard</button>
+                <button type="button" className="ds-btn ds-btn-primary" onClick={handleSubmit} disabled={saving}>
+                  {saving ? 'Saving...' : 'Save Settings'}
+                </button>
+              </div>
+            </div>
+
+            <div className="ds-grid">
+              <section className="ds-card ds-date-time">
+                <div className="ds-title-row">
+                  <span className="material-symbols-outlined">schedule</span>
+                  <h2>Date and Time</h2>
+                </div>
+
+                <div className="ds-stack">
+                  <div className="ds-group">
                     <label>Date Format</label>
-                    <div style={{ width: '100%', position: 'relative' }}>
-                      <ModernDropdown
-                        title={
-                          <div style={{ width: '100%', justifyContent: 'space-between' }}>
-                            {selectedDateFormat || dateFormatOptions.find(opt => opt.value === settings.dateFormat)?.label || 'Select Date Format'}
-                          </div>
-                        }
-                      >
-                        {dateFormatOptions.map(option => (
-                          <ModernDropdownItem
-                            key={option.value}
-                            isActive={settings.dateFormat === option.value}
-                            onClick={() => handleDateFormatChange(option.value, option.label)}
-                          >
-                            {option.label}
-                          </ModernDropdownItem>
-                        ))}
-                      </ModernDropdown>
-                    </div>
-                    <div className="input-hint">
-                      Example: {new Date().toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: '2-digit',
-                        day: '2-digit'
-                      })}
-                    </div>
-                  </div>
-
-                  <div className="form-group">
-                    <label>Time Format</label>
-                    <div style={{ width: '100%', position: 'relative' }}>
-                      <ModernDropdown
-                        title={
-                          <div style={{ width: '100%', justifyContent: 'space-between' }}>
-                            {timeFormatOptions.find(opt => opt.value === settings.timeFormat)?.label || 'Select Time Format'}
-                          </div>
-                        }
-                      >
-                        {timeFormatOptions.map(option => (
-                          <ModernDropdownItem
-                            key={option.value}
-                            isActive={settings.timeFormat === option.value}
-                            onClick={() => handleInputChange({ target: { name: 'timeFormat', value: option.value } })}
-                          >
-                            {option.label}
-                          </ModernDropdownItem>
-                        ))}
-                      </ModernDropdown>
-                    </div>
-                    <div className="input-hint">
-                      Example: {settings.timeFormat === '12hour'
-                        ? new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
-                        : new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="form-group">
-                  <label>Timezone</label>
-                  <div style={{ width: '100%', position: 'relative' }}>
-                    <ModernDropdown
-                      title={
-                        <div style={{ width: '100%', justifyContent: 'space-between' }}>
-                          {timezoneOptions.find(opt => opt.value === settings.timezone)?.label || 'Select Timezone'}
-                        </div>
-                      }
-                    >
-                      {timezoneOptions.map(option => (
-                        <ModernDropdownItem
-                          key={option.value}
-                          isActive={settings.timezone === option.value}
-                          onClick={() => handleInputChange({ target: { name: 'timezone', value: option.value } })}
-                        >
-                          {option.label}
-                        </ModernDropdownItem>
+                    <select name="dateFormat" value={settings.dateFormat} onChange={handleInputChange} className="ds-control">
+                      {dateFormatOptions.map(option => (
+                        <option key={option.value} value={option.value}>{option.label}</option>
                       ))}
-                    </ModernDropdown>
+                    </select>
+                  </div>
+
+                  <div className="ds-group">
+                    <label>Time Format</label>
+                    <select name="timeFormat" value={settings.timeFormat} onChange={handleInputChange} className="ds-control">
+                      {timeFormatOptions.map(option => (
+                        <option key={option.value} value={option.value}>{option.label}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="ds-group">
+                    <label>Timezone</label>
+                    <select name="timezone" value={settings.timezone} onChange={handleInputChange} className="ds-control">
+                      {timezoneOptions.map(option => (
+                        <option key={option.value} value={option.value}>{option.label}</option>
+                      ))}
+                    </select>
                   </div>
                 </div>
 
-                <div className="form-actions">
-                  <button
-                    type="submit"
-                    className="save-button"
-                    disabled={saving}
-                  >
-                    {saving ? 'Saving...' : 'Save Settings'}
-                  </button>
-                </div>
-              </form>
-            </div>
+              </section>
 
-            {/* Currency and Number Formatting */}
-            <div className="settings-section-card">
-              <h2>Currency and Number Formatting</h2>
-              <form className="settings-form" onSubmit={handleSubmit}>
-                <div className="form-row">
-                  <div className="form-group">
-                    <label>Currency</label>
-                    <div style={{ width: '100%', position: 'relative' }}>
-                      <ModernDropdown
-                        title={
-                          <div style={{ width: '100%', justifyContent: 'space-between' }}>
-                            {currencyOptions.find(opt => opt.value === settings.currency)?.label || 'Select Currency'}
-                          </div>
-                        }
-                      >
+              <section className="ds-card ds-currency">
+                <div className="ds-title-row">
+                  <span className="material-symbols-outlined">payments</span>
+                  <h2>Currency and Number Formatting</h2>
+                </div>
+
+                <div className="ds-split-grid">
+                  <div className="ds-stack">
+                    <div className="ds-group">
+                      <label>Currency</label>
+                      <select name="currency" value={settings.currency} onChange={handleInputChange} className="ds-control">
                         {currencyOptions.map(option => (
-                          <ModernDropdownItem
-                            key={option.value}
-                            isActive={settings.currency === option.value}
-                            onClick={() => handleInputChange({ target: { name: 'currency', value: option.value } })}
-                          >
-                            {option.label}
-                          </ModernDropdownItem>
+                          <option key={option.value} value={option.value}>{option.label}</option>
                         ))}
-                      </ModernDropdown>
+                      </select>
                     </div>
-                  </div>
 
-                  <div className="form-group">
-                    <label>Currency Position</label>
-                    <div style={{ width: '100%', position: 'relative' }}>
-                      <ModernDropdown
-                        title={
-                          <div style={{ width: '100%', justifyContent: 'space-between' }}>
-                            {currencyPositionOptions.find(opt => opt.value === settings.currencyPosition)?.label || 'Select Position'}
-                          </div>
-                        }
-                      >
+                    <div className="ds-group">
+                      <label>Currency Position</label>
+                      <select name="currencyPosition" value={settings.currencyPosition} onChange={handleInputChange} className="ds-control">
                         {currencyPositionOptions.map(option => (
-                          <ModernDropdownItem
-                            key={option.value}
-                            isActive={settings.currencyPosition === option.value}
-                            onClick={() => handleInputChange({ target: { name: 'currencyPosition', value: option.value } })}
-                          >
-                            {option.label}
-                          </ModernDropdownItem>
+                          <option key={option.value} value={option.value}>{option.label}</option>
                         ))}
-                      </ModernDropdown>
+                      </select>
                     </div>
-                  </div>
-                </div>
 
-                <div className="form-row">
-                  <div className="form-group">
-                    <label>Decimal Separator</label>
-                    <div style={{ width: '100%', position: 'relative' }}>
-                      <ModernDropdown
-                        title={
-                          <div style={{ width: '100%', justifyContent: 'space-between' }}>
-                            {decimalSeparatorOptions.find(opt => opt.value === settings.decimalSeparator)?.label || 'Select Separator'}
-                          </div>
-                        }
-                      >
+                    <div className="ds-group">
+                      <label>Decimal Places</label>
+                      <input type="number" name="decimalPlaces" value={settings.decimalPlaces} onChange={handleInputChange} className="ds-control" min="0" max="4" />
+                    </div>
+
+                    <div className="ds-group">
+                      <label>Decimal Separator</label>
+                      <select name="decimalSeparator" value={settings.decimalSeparator} onChange={handleInputChange} className="ds-control">
                         {decimalSeparatorOptions.map(option => (
-                          <ModernDropdownItem
-                            key={option.value}
-                            isActive={settings.decimalSeparator === option.value}
-                            onClick={() => handleInputChange({ target: { name: 'decimalSeparator', value: option.value } })}
-                          >
-                            {option.label}
-                          </ModernDropdownItem>
+                          <option key={option.value} value={option.value}>{option.label}</option>
                         ))}
-                      </ModernDropdown>
+                      </select>
                     </div>
-                  </div>
 
-                  <div className="form-group">
-                    <label>Thousands Separator</label>
-                    <div style={{ width: '100%', position: 'relative' }}>
-                      <ModernDropdown
-                        title={
-                          <div style={{ width: '100%', justifyContent: 'space-between' }}>
-                            {thousandsSeparatorOptions.find(opt => opt.value === settings.thousandsSeparator)?.label || 'Select Separator'}
-                          </div>
-                        }
-                      >
+                    <div className="ds-group">
+                      <label>Thousands Separator</label>
+                      <select name="thousandsSeparator" value={settings.thousandsSeparator} onChange={handleInputChange} className="ds-control">
                         {thousandsSeparatorOptions.map(option => (
-                          <ModernDropdownItem
-                            key={option.value}
-                            isActive={settings.thousandsSeparator === option.value}
-                            onClick={() => handleInputChange({ target: { name: 'thousandsSeparator', value: option.value } })}
-                          >
-                            {option.label}
-                          </ModernDropdownItem>
+                          <option key={option.value} value={option.value}>{option.label}</option>
                         ))}
-                      </ModernDropdown>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="ds-stack">
+                    <div className="ds-group">
+                      <label>Currency</label>
+                      <select name="currency" value={settings.currency} onChange={handleInputChange} className="ds-control">
+                        {currencyOptions.map(option => (
+                          <option key={`secondary-${option.value}`} value={option.value}>{option.label}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="ds-preview">
+                      <p>Example Preview</p>
+                      <strong>{formattedPreview}</strong>
                     </div>
                   </div>
                 </div>
 
-                <div className="form-group">
-                  <label>Decimal Places</label>
-                  <input
-                    type="number"
-                    name="decimalPlaces"
-                    value={settings.decimalPlaces}
-                    onChange={handleInputChange}
-                    className="form-input"
-                    min="0"
-                    max="4"
-                  />
-                  <div className="input-hint">
-                    Example: {(1234.56789).toFixed(settings.decimalPlaces).replace('.', settings.decimalSeparator).replace(/\B(?=(\d{3})+(?!\d))/g, settings.thousandsSeparator)}
-                  </div>
+              </section>
+
+              <section className="ds-card ds-interface">
+                <div className="ds-title-row">
+                  <span className="material-symbols-outlined">desktop_windows</span>
+                  <h2>Interface Display Options</h2>
                 </div>
 
-                <div className="form-actions">
-                  <button
-                    type="submit"
-                    className="save-button"
-                    disabled={saving}
-                  >
-                    {saving ? 'Saving...' : 'Save Settings'}
-                  </button>
-                </div>
-              </form>
-            </div>
-
-            {/* Interface Display Options */}
-            <div className="settings-section-card">
-              <h2>Interface Display Options</h2>
-              <form className="settings-form" onSubmit={handleSubmit}>
-                <div className="form-row">
-                  <div className="form-group">
+                <div className="ds-two-col-grid">
+                  <div className="ds-group">
                     <label>Language</label>
-                    <div style={{ width: '100%', position: 'relative' }}>
-                      <ModernDropdown
-                        title={
-                          <div style={{ width: '100%', justifyContent: 'space-between' }}>
-                            {languageOptions.find(opt => opt.value === settings.language)?.label || 'Select Language'}
-                          </div>
-                        }
-                      >
-                        {languageOptions.map(option => (
-                          <ModernDropdownItem
-                            key={option.value}
-                            isActive={settings.language === option.value}
-                            onClick={() => handleInputChange({ target: { name: 'language', value: option.value } })}
-                          >
-                            {option.label}
-                          </ModernDropdownItem>
-                        ))}
-                      </ModernDropdown>
-                    </div>
+                    <select name="language" value={settings.language} onChange={handleInputChange} className="ds-control">
+                      {languageOptions.map(option => (
+                        <option key={option.value} value={option.value}>{option.label}</option>
+                      ))}
+                    </select>
                   </div>
 
-                  <div className="form-group">
+                  <div className="ds-group">
                     <label>Default Rows Per Page</label>
-                    <div style={{ width: '100%', position: 'relative' }}>
-                      <ModernDropdown
-                        title={
-                          <div style={{ width: '100%', justifyContent: 'space-between' }}>
-                            {rowsPerPageOptions.find(opt => opt.value === settings.tableRowsPerPage)?.label || 'Select Rows Per Page'}
-                          </div>
-                        }
-                      >
-                        {rowsPerPageOptions.map(option => (
-                          <ModernDropdownItem
-                            key={option.value}
-                            isActive={settings.tableRowsPerPage === option.value}
-                            onClick={() => handleInputChange({ target: { name: 'tableRowsPerPage', value: option.value } })}
-                          >
-                            {option.label}
-                          </ModernDropdownItem>
-                        ))}
-                      </ModernDropdown>
-                    </div>
+                    <select name="tableRowsPerPage" value={settings.tableRowsPerPage} onChange={handleInputChange} className="ds-control">
+                      {rowsPerPageOptions.map(option => (
+                        <option key={option.value} value={option.value}>{option.label}</option>
+                      ))}
+                    </select>
                   </div>
-                </div>
 
-                <div className="form-group">
-                  <div className="checkbox-group">
-                    <input
-                      type="checkbox"
-                      id="enable-dark-mode"
-                      name="enableDarkMode"
-                      checked={settings.enableDarkMode}
-                      onChange={handleInputChange}
-                      className="form-checkbox"
-                    />
-                    <label htmlFor="enable-dark-mode">Enable Dark Mode</label>
-                  </div>
-                </div>
-
-                <div className="form-row">
-                  <div className="form-group">
+                  <div className="ds-group">
                     <label>Color Scheme</label>
-                    <div style={{ width: '100%', position: 'relative' }}>
-                      <ModernDropdown
-                        title={
-                          <div style={{ width: '100%', justifyContent: 'space-between' }}>
-                            {colorSchemeOptions.find(opt => opt.value === settings.colorScheme)?.label || 'Select Color Scheme'}
-                          </div>
-                        }
-                      >
-                        {colorSchemeOptions.map(option => (
-                          <ModernDropdownItem
-                            key={option.value}
-                            isActive={settings.colorScheme === option.value}
-                            onClick={() => handleInputChange({ target: { name: 'colorScheme', value: option.value } })}
-                          >
-                            {option.label}
-                          </ModernDropdownItem>
-                        ))}
-                      </ModernDropdown>
-                    </div>
+                    <select name="colorScheme" value={settings.colorScheme} onChange={handleInputChange} className="ds-control">
+                      {colorSchemeOptions.map(option => (
+                        <option key={option.value} value={option.value}>{option.label}</option>
+                      ))}
+                    </select>
                   </div>
 
-                  <div className="form-group">
+                  <div className="ds-group">
                     <label>Font Size</label>
-                    <div style={{ width: '100%', position: 'relative' }}>
-                      <ModernDropdown
-                        title={
-                          <div style={{ width: '100%', justifyContent: 'space-between' }}>
-                            {fontScaleOptions.find(opt => opt.value === settings.fontScale)?.label || 'Select Font Size'}
-                          </div>
-                        }
-                      >
-                        {fontScaleOptions.map(option => (
-                          <ModernDropdownItem
-                            key={option.value}
-                            isActive={settings.fontScale === option.value}
-                            onClick={() => handleInputChange({ target: { name: 'fontScale', value: option.value } })}
-                          >
-                            {option.label}
-                          </ModernDropdownItem>
-                        ))}
-                      </ModernDropdown>
+                    <select name="fontScale" value={settings.fontScale} onChange={handleInputChange} className="ds-control">
+                      {fontScaleOptions.map(option => (
+                        <option key={option.value} value={option.value}>{option.label}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="ds-toggle-area">
+                    <label className="ds-check-row">
+                      <input type="checkbox" name="enableDarkMode" checked={settings.enableDarkMode} onChange={handleInputChange} />
+                      <span>Enable Dark Mode (System sync preferred)</span>
+                    </label>
+                    <label className="ds-check-row">
+                      <input type="checkbox" name="showGridLines" checked={settings.showGridLines} onChange={handleInputChange} />
+                      <span>Show Grid Lines in Tables</span>
+                    </label>
+                  </div>
+                </div>
+
+              </section>
+
+              <section className="ds-doc-stack">
+                <div className="ds-card ds-doc-format">
+                  <div className="ds-title-row">
+                    <span className="material-symbols-outlined">description</span>
+                    <h2>Document Formatting</h2>
+                  </div>
+
+                  <div className="ds-stack">
+                    <div className="ds-group">
+                      <label>Receipt Footer Text</label>
+                      <textarea
+                        name="receiptFooter"
+                        value={settings.receiptFooter}
+                        onChange={handleTextAreaChange}
+                        className="ds-textarea"
+                        rows="3"
+                        placeholder="Thank you for your business. Visit us again!"
+                      />
+                    </div>
+
+                    <div className="ds-group">
+                      <label>Default Invoice Notes</label>
+                      <textarea
+                        name="invoiceNotes"
+                        value={settings.invoiceNotes}
+                        onChange={handleTextAreaChange}
+                        className="ds-textarea"
+                        rows="3"
+                        placeholder="Terms: Net 30. Please include invoice number on all payments."
+                      />
                     </div>
                   </div>
                 </div>
-
-                <div className="form-group">
-                  <div className="checkbox-group">
-                    <input
-                      type="checkbox"
-                      id="show-grid-lines"
-                      name="showGridLines"
-                      checked={settings.showGridLines}
-                      onChange={handleInputChange}
-                      className="form-checkbox"
-                    />
-                    <label htmlFor="show-grid-lines">Show Grid Lines in Tables</label>
-                  </div>
-                </div>
-
-                <div className="form-actions">
-                  <button
-                    type="submit"
-                    className="save-button"
-                    disabled={saving}
-                  >
-                    {saving ? 'Saving...' : 'Save Settings'}
-                  </button>
-                </div>
-              </form>
+              </section>
             </div>
 
-            {/* Document Formatting */}
-            <div className="settings-section-card">
-              <h2>Document Formatting</h2>
-              <form className="settings-form" onSubmit={handleSubmit}>
-                <div className="form-group">
-                  <label>Receipt Footer Text</label>
-                  <textarea
-                    name="receiptFooter"
-                    value={settings.receiptFooter}
-                    onChange={handleTextAreaChange}
-                    className="form-textarea"
-                    rows="3"
-                    placeholder="Thank you for your business!"
-                  />
-                  <div className="input-hint">
-                    This text will appear at the bottom of all receipts
-                  </div>
-                </div>
-
-                <div className="form-group">
-                  <label>Default Invoice Notes</label>
-                  <textarea
-                    name="invoiceNotes"
-                    value={settings.invoiceNotes}
-                    onChange={handleTextAreaChange}
-                    className="form-textarea"
-                    rows="3"
-                    placeholder="Payment due within 30 days."
-                  />
-                  <div className="input-hint">
-                    These notes will be pre-filled on all new invoices
-                  </div>
-                </div>
-
-                <div className="form-actions">
-                  <button
-                    type="submit"
-                    className="save-button"
-                    disabled={saving}
-                  >
-                    {saving ? 'Saving...' : 'Save Settings'}
-                  </button>
-                </div>
-              </form>
-            </div>
           </div>
         )}
       </div>

@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap');
+
 /* Main Settings Container */
 .settings-container {
   width: 100%;
@@ -398,6 +400,619 @@
   box-shadow: 0 0 0 3px rgba(53, 126, 199, 0.2);
 }
 
+/* ===== General Settings (gs-*) template-focused styles to match code.html main area ===== */
+.gs-page {
+  padding: 32px;
+  min-height: calc(100vh - 64px);
+  background: transparent;
+  box-sizing: border-box;
+}
+
+.gs-main {
+  max-width: 1400px;
+  margin: 0 auto;
+  font-family: 'Manrope', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.gs-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.gs-header h1 {
+  font-size: 28px;
+  font-weight: 800;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+}
+
+.gs-header p {
+  margin: 6px 0 0 0;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.gs-save-top {
+  background-color: #4f46e5; /* primary */
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.gs-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 24px;
+}
+
+.gs-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 1px 2px rgba(16,24,40,0.04);
+}
+
+.gs-company { grid-column: span 12; }
+.gs-inventory { grid-column: span 12; }
+.gs-financial { grid-column: 1 / -1; }
+
+@media (min-width: 1024px) {
+  .gs-company { grid-column: span 7; }
+  .gs-inventory { grid-column: span 5; }
+  .gs-financial { grid-column: 1 / -1; }
+}
+
+.gs-section-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.gs-section-head h2 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #0f172a;
+}
+
+.gs-company-layout { display: flex; gap: 20px; align-items: flex-start; }
+.gs-logo-side { flex: 0 0 128px; display:flex; flex-direction:column; align-items:center; gap:12px; }
+.gs-logo-box {
+  width: 128px;
+  height: 128px;
+  border-radius: 8px;
+  background: #f8fafc;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  border: 1px solid rgba(148,163,184,0.12);
+}
+.gs-logo-image { max-width: 80%; max-height: 80%; object-fit: contain; }
+.gs-logo-actions { width: 100%; display:flex; flex-direction:column; gap:8px; }
+.gs-logo-actions button { font-size:12px; padding:8px 10px; border-radius:6px; border:1px solid rgba(15,23,42,0.06); background:#fff; cursor:pointer; }
+.gs-logo-actions-row { display:flex; gap:8px; }
+.gs-danger-mini { color:#ef4444; border-color: rgba(239,68,68,0.12); }
+
+.gs-form-col { flex:1; display:block; }
+.gs-input-group { margin-bottom: 14px; }
+.gs-input-group label { display:block; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.08em; color:#6b7280; margin-bottom:6px; }
+
+.gs-input, .gs-select, .gs-textarea {
+  width:100%;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid rgba(148,163,184,0.18);
+  padding: 12px 4px;
+  font-weight:600;
+  font-size:14px;
+  transition: border-color 0.12s ease, background 0.12s;
+}
+
+.gs-input:focus, .gs-select:focus, .gs-textarea:focus {
+  outline: none;
+  border-bottom-color: #4f46e5;
+  background: #fbfdff;
+}
+
+.gs-select { padding: 10px 4px; appearance: none; }
+.gs-textarea { border-bottom: 1px solid rgba(148,163,184,0.18); padding:10px 4px; }
+
+.gs-two-col { display:grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.gs-fiscal-row { display:grid; grid-template-columns: repeat(3, 1fr); gap:12px; align-items:start; }
+.gs-span-2 { grid-column: span 2; }
+
+.gs-inventory-box { padding: 12px; background:#fbfdff; border-radius:8px; border:1px solid rgba(148,163,184,0.06); }
+.gs-inventory-range input[type=range] { width:100%; }
+
+.gs-payments-grid { display:grid; grid-template-columns: 1fr 320px; gap:16px; }
+.gs-toggle-stack { display:flex; flex-direction:column; gap:8px; }
+.gs-toggle-card { display:flex; gap:12px; align-items:center; padding:12px; border-radius:8px; background:#fff; border:1px solid rgba(148,163,184,0.06); cursor:pointer; }
+.gs-toggle-card input { margin:0; width:18px; height:18px; }
+.gs-methods-panel label { display:block; font-size:12px; margin-bottom:8px; font-weight:700; }
+.gs-methods-grid { display:grid; grid-template-columns: repeat(1, 1fr); gap:8px; }
+.gs-method-item { display:flex; justify-content:space-between; align-items:center; padding:10px; border-radius:6px; border:1px solid rgba(148,163,184,0.06); }
+
+.gs-footer { margin-top:24px; padding-top:14px; border-top:1px solid rgba(15,23,42,0.04); display:flex; justify-content:space-between; align-items:center; }
+.gs-footer-actions button { padding:10px 14px; border-radius:8px; font-weight:700; }
+.gs-footer-actions button:first-child { background:transparent; border:1px solid rgba(15,23,42,0.06); color:#0f172a; }
+.gs-footer-actions button:last-child { background:#4f46e5; color:#fff; border:none; }
+
+@media (max-width: 1024px) {
+  .gs-grid { grid-template-columns: 1fr; }
+  .gs-payments-grid { grid-template-columns: 1fr; }
+  .gs-two-col { grid-template-columns: 1fr; }
+  .gs-fiscal-row { grid-template-columns: 1fr; }
+  .gs-logo-side { flex-direction:row; gap:12px; }
+}
+
+/* end gs block */
+
+/* -------------------------------------------------------------------------- */
+/* User Settings — Architectural Slate main canvas styling                    */
+/* -------------------------------------------------------------------------- */
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+.slate-settings-page {
+  min-height: calc(100vh - 80px);
+  background: #f7f9fb;
+  color: #2a3439;
+  padding: 32px;
+  font-family: 'Manrope', sans-serif;
+}
+
+.slate-settings-wrap {
+  max-width: 100%;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.slate-main-header {
+  padding-bottom: 0;
+  margin-bottom: 40px;
+}
+
+.slate-main-header h1 {
+  margin: 0;
+  font-size: 2.25rem;
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: #2a3439;
+}
+
+.slate-main-header p {
+  margin: 0.75rem 0 0;
+  color: #566166;
+  font-size: 1.125rem;
+  font-weight: 300;
+}
+
+/* Subheading style matching All Products 'Stock Overview' label for Settings page */
+.slate-main-header .settings-subheading {
+  /* Match create_user header paragraph spacing */
+  margin: 6px 0 0;
+  color: #565e74; /* slightly darker muted gray */
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+/* Also apply the same subheading style for display settings header */
+.ds-head .settings-subheading {
+  /* Match create_user header paragraph spacing */
+  margin: 6px 0 0;
+  color: #565e74; /* slightly darker muted gray */
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+.slate-settings-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 2rem;
+}
+
+.slate-col-left {
+  grid-column: span 12 / span 12;
+}
+
+.slate-col-right {
+  grid-column: span 12 / span 12;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.slate-card {
+  background: #ffffff;
+  padding: 2rem;
+  border: 1px solid rgba(169, 180, 185, 0.05);
+  box-shadow: 0 1px 2px rgba(42, 52, 57, 0.06);
+}
+
+.slate-section-title {
+  margin: 0 0 2.5rem;
+  padding-left: 1rem;
+  border-left: 2px solid #565e74;
+  color: #566166;
+  font-size: 0.75rem;
+  font-weight: 900;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+
+.slate-form-grid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  column-gap: 3rem;
+  row-gap: 2.5rem;
+}
+
+.slate-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.slate-field label {
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(86, 97, 102, 0.7);
+}
+
+.slate-input,
+.slate-select {
+  box-sizing: border-box;
+  width: 100%;
+  background: #f0f4f7;
+  color: #2a3439;
+  padding: 0.75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  font-weight: 500;
+  border-radius: 0;
+  border: none;
+  border-bottom: 1px solid rgba(169, 180, 185, 0.2);
+  outline: none;
+}
+
+.slate-select {
+  appearance: none;
+}
+
+.input-bottom-border {
+  border: none;
+  border-bottom: 1px solid rgba(169, 180, 185, 0.2);
+}
+
+.slate-settings-page .slate-input.input-bottom-border,
+.slate-settings-page .slate-select.input-bottom-border {
+  border: none !important;
+  border-bottom: 1px solid rgba(169, 180, 185, 0.2) !important;
+}
+
+.slate-input:focus,
+.slate-select:focus,
+.input-bottom-border:focus {
+  border-bottom: 1px solid #565e74;
+  outline: none;
+}
+
+.slate-settings-page .slate-input.input-bottom-border:focus,
+.slate-settings-page .slate-select.input-bottom-border:focus {
+  border-bottom: 1px solid #565e74 !important;
+  outline: none;
+}
+
+.slate-input.slate-input-error,
+.slate-select.slate-input-error {
+  border-bottom-color: #9f403d;
+}
+
+.slate-settings-page .slate-input.input-bottom-border.slate-input-error,
+.slate-settings-page .slate-select.input-bottom-border.slate-input-error {
+  border-bottom-color: #9f403d !important;
+}
+
+.slate-error-message {
+  margin-top: 0.1rem;
+  color: #9f403d;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.slate-actions-end {
+  margin-top: 2.8rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.slate-btn-primary {
+  border: none;
+  background: #565e74;
+  color: #f7f7ff;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.75rem 2rem;
+  box-shadow: 0 10px 24px rgba(86, 94, 116, 0.1);
+  cursor: pointer;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+
+.slate-btn-primary:hover:not(:disabled) {
+  background: #4a5268;
+}
+
+.slate-btn-primary:disabled,
+.slate-btn-outline:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.slate-stack-lg {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.slate-stack-md {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.slate-password-wrap {
+  position: relative;
+}
+
+.slate-password-toggle {
+  position: absolute;
+  right: 0.6rem;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: #566166;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  padding: 0;
+  opacity: 0.85;
+  cursor: pointer;
+}
+
+.slate-password-wrap .slate-input {
+  padding-right: 3rem;
+}
+
+.slate-password-toggle .material-symbols-outlined {
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+.slate-input-hint {
+  font-size: 0.72rem;
+  color: #566166;
+  line-height: 1.45;
+}
+
+.slate-btn-outline {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #565e74;
+  background: transparent;
+  color: #565e74;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.slate-btn-outline:hover:not(:disabled) {
+  background: #dae2fd;
+}
+
+.slate-toggle-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.8rem 0;
+}
+
+.slate-toggle-label {
+  display: block;
+  margin-bottom: 0.2rem;
+  color: #2a3439;
+  font-size: 0.69rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.slate-checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: #565e74;
+  margin-top: 0.2rem;
+  cursor: pointer;
+}
+
+.slate-integrity-box {
+  background: #dae2fd;
+  border: 1px solid rgba(86, 94, 116, 0.1);
+  padding: 1.5rem;
+}
+
+.slate-integrity-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.slate-integrity-head .material-symbols-outlined {
+  color: #565e74;
+  font-size: 1.3rem;
+}
+
+.slate-status-chip {
+  background: #ffffff;
+  color: #4a5268;
+  padding: 0.22rem 0.48rem;
+  text-transform: uppercase;
+  font-size: 0.625rem;
+  letter-spacing: 0.18em;
+  font-weight: 700;
+}
+
+.slate-integrity-box h4 {
+  margin: 0 0 0.5rem;
+  color: #4a5268;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.slate-integrity-box p {
+  margin: 0;
+  color: #4a5167;
+  font-size: 0.75rem;
+  line-height: 1.55;
+  opacity: 0.88;
+}
+
+.slate-danger-zone {
+  background: #f0f4f7;
+  border: 1px solid rgba(169, 180, 185, 0.05);
+  padding: 2rem;
+  margin-top: 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.slate-danger-zone h3 {
+  margin: 0 0 0.5rem;
+  color: #2a3439;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+
+.slate-danger-zone p {
+  margin: 0;
+  color: #566166;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.6875rem;
+  font-weight: 600;
+}
+
+.slate-danger-btn {
+  align-self: flex-start;
+  border: 1px solid #9f403d;
+  background: transparent;
+  color: #9f403d;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 0.62rem;
+  font-weight: 700;
+  padding: 0.64rem 1.4rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.slate-danger-btn:hover {
+  background: rgba(159, 64, 61, 0.06);
+}
+
+.slate-loading-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  background: #ffffff;
+  border: 1px solid rgba(169, 180, 185, 0.06);
+  color: #566166;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-weight: 700;
+}
+
+@media (min-width: 1024px) {
+  .slate-col-left {
+    grid-column: span 7 / span 7;
+  }
+
+  .slate-col-right {
+    grid-column: span 5 / span 5;
+  }
+
+  .slate-form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .slate-span-2 {
+    grid-column: span 2 / span 2;
+  }
+
+  .slate-danger-zone {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .slate-danger-btn {
+    align-self: auto;
+  }
+}
+
+@media (max-width: 767px) {
+  .slate-settings-page {
+    padding: 1rem;
+  }
+
+  .slate-card,
+  .slate-danger-zone {
+    padding: 1.2rem;
+  }
+}
+
 .upload-icon {
   display: flex;
   justify-content: center;
@@ -497,4 +1112,1857 @@
   display: inline-block;
   margin-right: 8px;
   vertical-align: middle;
+}
+
+/* FINAL OVERRIDE: preserve template bottom underline on UserSettings fields */
+.slate-settings-page input.slate-input.input-bottom-border,
+.slate-settings-page select.slate-select.input-bottom-border {
+  box-sizing: border-box !important;
+  height: 48px !important;
+  line-height: 1.2 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  padding-left: 0.75rem !important;
+  padding-right: 0.75rem !important;
+  background-color: #f0f4f7 !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-left: none !important;
+  border-bottom-width: 1px !important;
+  border-bottom-style: solid !important;
+  border-bottom-color: rgba(169, 180, 185, 0.2) !important;
+  box-shadow: inset 0 -1px 0 rgba(169, 180, 185, 0.2) !important;
+}
+
+.slate-settings-page input.slate-input.input-bottom-border:focus,
+.slate-settings-page select.slate-select.input-bottom-border:focus {
+  border-bottom-color: #565e74 !important;
+  box-shadow: inset 0 -1px 0 #565e74 !important;
+}
+
+.slate-settings-page input.slate-input.input-bottom-border.slate-input-error,
+.slate-settings-page select.slate-select.input-bottom-border.slate-input-error {
+  border-bottom-color: #9f403d !important;
+  box-shadow: inset 0 -1px 0 #9f403d !important;
+}
+
+.slate-settings-page .slate-password-wrap input.slate-input.input-bottom-border {
+  padding-right: 3rem !important;
+}
+
+/* -------------------------------------------------------------------------- */
+/* General Settings — Template-exact main canvas (excluding top/sidebar)      */
+/* -------------------------------------------------------------------------- */
+
+.gs-page {
+  min-height: calc(100vh - 80px);
+  background: #f7f9fb;
+  color: #2a3439;
+  padding: 32px;
+  font-family: 'Manrope', sans-serif;
+}
+
+.gs-main {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.gs-header {
+  margin-bottom: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 20px;
+}
+
+.gs-header h1 {
+  margin: 0;
+  font-size: 30px;
+  line-height: 1.1;
+  font-weight: 800;
+  color: #2a3439;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+}
+
+.gs-header p {
+  margin: 8px 0 0;
+  color: #566166;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.gs-save-top {
+  border: 0;
+  border-radius: 8px;
+  background: #565e74;
+  color: #f7f7ff;
+  height: 44px;
+  padding: 0 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  box-shadow: 0 1px 2px rgba(42, 52, 57, 0.1);
+  transition: opacity 0.2s ease;
+  cursor: pointer;
+}
+
+.gs-save-top:hover:not(:disabled) {
+  opacity: 0.92;
+}
+
+.gs-save-top:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.gs-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.gs-card {
+  border-radius: 12px;
+}
+
+.gs-company {
+  grid-column: span 12 / span 12;
+  background: #ffffff;
+  padding: 32px;
+  box-shadow: 0 1px 2px rgba(42, 52, 57, 0.08);
+}
+
+.gs-inventory {
+  grid-column: span 12 / span 12;
+  background: #e8eff3;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.gs-financial {
+  grid-column: span 12 / span 12;
+  background: #ffffff;
+  padding: 32px;
+  box-shadow: 0 1px 2px rgba(42, 52, 57, 0.08);
+}
+
+.gs-payments {
+  grid-column: span 12 / span 12;
+  background: #f0f4f7;
+  padding: 32px;
+  border: 1px solid rgba(169, 180, 185, 0.25);
+}
+
+.gs-section-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.gs-section-head .material-symbols-outlined {
+  color: #565e74;
+  font-size: 22px;
+}
+
+.gs-section-head h2 {
+  margin: 0;
+  color: #2a3439;
+  font-size: 15px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+}
+
+.gs-company-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.gs-logo-side {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.gs-logo-box {
+  width: 128px;
+  height: 128px;
+  border-radius: 8px;
+  background: #f0f4f7;
+  border: 1px solid rgba(169, 180, 185, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.gs-logo-box.drag-active {
+  border-color: #565e74;
+  box-shadow: 0 0 0 2px rgba(86, 94, 116, 0.15);
+}
+
+.gs-logo-box .material-symbols-outlined {
+  color: #717c82;
+  font-size: 34px;
+}
+
+.gs-logo-image {
+  width: 96px;
+  height: 96px;
+  object-fit: contain;
+}
+
+.gs-logo-actions {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.gs-logo-actions button {
+  border: 0;
+  border-radius: 6px;
+  min-height: 30px;
+  padding: 6px 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: #d5e3fc;
+  color: #455367;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.gs-logo-actions button:hover:not(:disabled) {
+  opacity: 0.85;
+}
+
+.gs-logo-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.gs-logo-actions-row {
+  display: flex;
+  gap: 8px;
+}
+
+.gs-logo-actions-row button {
+  flex: 1;
+  background: transparent;
+  border: 1px solid rgba(169, 180, 185, 0.35);
+  color: #566166;
+}
+
+.gs-logo-actions-row .gs-danger-mini {
+  border-color: rgba(159, 64, 61, 0.25);
+  color: #9f403d;
+}
+
+.gs-form-col {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+.gs-two-col {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+.gs-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.gs-input-group label,
+.gs-methods-panel > label,
+.gs-inventory-box > label {
+  display: block;
+  margin: 0;
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: #566166;
+}
+
+/* Company Information section exactness */
+.gs-company .gs-section-head {
+  margin-bottom: 32px;
+}
+
+.gs-company .gs-form-col {
+  gap: 24px;
+}
+
+.gs-company .gs-input-group {
+  margin-bottom: 0;
+}
+
+.gs-company .gs-input-group label {
+  margin-bottom: 4px;
+}
+
+.gs-company .gs-input {
+  height: auto !important;
+  padding: 8px 0 !important;
+  background: #e8eff3;
+  border-bottom: 1px solid rgba(169, 180, 185, 0.35);
+  font-weight: 700;
+}
+
+.gs-company .gs-input:focus {
+  background: #ffffff;
+  border-bottom-color: #565e74;
+}
+
+.gs-company .gs-two-col {
+  gap: 24px;
+}
+
+.gs-page .gs-input,
+.gs-page .gs-select,
+.gs-page .gs-textarea,
+.gs-page .gs-fiscal-row input {
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid rgba(169, 180, 185, 0.35);
+  border-radius: 0;
+  background: #f0f4f7;
+  color: #2a3439;
+  box-shadow: none;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.gs-page .gs-input,
+.gs-page .gs-select,
+.gs-page .gs-fiscal-row input {
+  height: 40px;
+  padding: 0 10px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.gs-page .gs-select {
+  font-weight: 600;
+}
+
+.gs-page .gs-input:focus,
+.gs-page .gs-select:focus,
+.gs-page .gs-textarea:focus,
+.gs-page .gs-fiscal-row input:focus {
+  border-bottom-color: #565e74;
+  background: #ffffff;
+}
+
+.gs-input-strong {
+  font-size: 30px !important;
+  font-weight: 900 !important;
+  line-height: 1;
+}
+
+.gs-center {
+  text-align: center;
+  font-weight: 700 !important;
+}
+
+.gs-textarea {
+  min-height: 96px;
+  resize: vertical;
+  padding: 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #566166;
+}
+
+.gs-inventory-box {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.gs-inventory-range {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.gs-inventory-range input[type="range"] {
+  flex: 1;
+  accent-color: #565e74;
+}
+
+.gs-inventory-range span {
+  width: 48px;
+  text-align: right;
+  font-size: 30px;
+  font-weight: 900;
+  color: #565e74;
+}
+
+.gs-inventory-box p {
+  margin: 16px 0 0;
+  font-size: 12px;
+  line-height: 1.6;
+  font-style: italic;
+  color: #566166;
+  opacity: 0.75;
+}
+
+.gs-secondary-btn {
+  margin-top: 24px;
+  width: 100%;
+  height: 48px;
+  border: 1px solid rgba(86, 94, 116, 0.28);
+  background: transparent;
+  color: #565e74;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.gs-secondary-btn:hover:not(:disabled) {
+  background: rgba(86, 94, 116, 0.06);
+}
+
+.gs-secondary-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.gs-financial-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+}
+
+.gs-fiscal-row {
+  margin-top: 40px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+}
+
+.gs-payments-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+}
+
+.gs-toggle-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.gs-toggle-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 8px;
+}
+
+.gs-toggle-card.gs-toggle-emphasis {
+  border-left: 4px solid #565e74;
+}
+
+.gs-toggle-card input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: #565e74;
+  cursor: pointer;
+}
+
+.gs-toggle-card strong {
+  display: block;
+  color: #2a3439;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.gs-toggle-card span {
+  display: block;
+  margin-top: 2px;
+  color: #566166;
+  font-size: 12px;
+}
+
+.gs-methods-panel {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.gs-methods-grid {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.gs-method-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px;
+  background: #f7f9fb;
+  border-radius: 6px;
+  border: 1px solid rgba(169, 180, 185, 0.2);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.gs-method-item:hover {
+  background: rgba(218, 226, 253, 0.35);
+}
+
+.gs-method-item > div {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.gs-method-item .material-symbols-outlined {
+  color: #717c82;
+}
+
+.gs-method-item span {
+  font-size: 14px;
+  font-weight: 700;
+  color: #2a3439;
+}
+
+.gs-method-item input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #565e74;
+  cursor: pointer;
+}
+
+.gs-loading {
+  min-height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border: 1px solid rgba(169, 180, 185, 0.2);
+  border-radius: 10px;
+  color: #566166;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.gs-footer {
+  margin-top: 48px;
+  padding: 40px 0;
+  border-top: 1px solid rgba(169, 180, 185, 0.24);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.gs-footer > div:first-child {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(86, 97, 102, 0.7);
+}
+
+.gs-footer-actions {
+  display: flex;
+  gap: 16px;
+}
+
+.gs-footer-actions button {
+  border: 0;
+  cursor: pointer;
+  transition: opacity 0.2s ease, color 0.2s ease;
+}
+
+.gs-footer-actions button:first-child {
+  background: transparent;
+  color: #566166;
+  height: 40px;
+  padding: 0 24px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.gs-footer-actions button:first-child:hover {
+  color: #2a3439;
+}
+
+.gs-footer-actions button:last-child {
+  background: #565e74;
+  color: #f7f7ff;
+  border-radius: 4px;
+  height: 48px;
+  padding: 0 32px;
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  box-shadow: 0 10px 24px rgba(86, 94, 116, 0.18);
+}
+
+.gs-footer-actions button:last-child:hover:not(:disabled) {
+  opacity: 0.92;
+}
+
+.gs-footer-actions button:last-child:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Final Company Information input overrides (must win over generic .gs-page input rules) */
+.gs-page .gs-company .gs-input-group {
+  margin-bottom: 0;
+}
+
+.gs-page .gs-company .gs-input-group label {
+  margin-bottom: 4px;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #566166;
+  transition: color 0.2s ease;
+}
+
+.gs-page .gs-company .gs-input-group:focus-within label {
+  color: #565e74;
+}
+
+.gs-page .gs-company .gs-input {
+  height: auto !important;
+  min-height: 0;
+  padding: 8px 0 !important;
+  border-radius: 0;
+  border: 0;
+  border-bottom: 1px solid rgba(169, 180, 185, 0.35);
+  background: #f0f4f7;
+  color: #2a3439;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: none;
+}
+
+.gs-page .gs-company .gs-input:focus {
+  border-bottom-color: #565e74;
+  background: #ffffff;
+}
+
+@media (min-width: 768px) {
+  .gs-company-layout {
+    flex-direction: row;
+  }
+
+  .gs-two-col {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .gs-financial-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .gs-methods-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .gs-company {
+    grid-column: span 7 / span 7;
+  }
+
+  .gs-inventory {
+    grid-column: span 5 / span 5;
+  }
+
+  .gs-financial-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .gs-fiscal-row {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .gs-span-2 {
+    grid-column: span 2 / span 2;
+  }
+
+  .gs-payments-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .gs-methods-panel {
+    grid-column: span 2 / span 2;
+  }
+
+  .gs-methods-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767px) {
+  .gs-page {
+    padding: 16px;
+  }
+
+  .gs-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .gs-save-top {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .gs-company,
+  .gs-inventory,
+  .gs-financial,
+  .gs-payments {
+    padding: 20px;
+  }
+
+  .gs-footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .gs-footer-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .gs-footer-actions button {
+    width: 100%;
+  }
+}
+
+/* ===== FINAL template-lock: Company Contact Info exact parity ===== */
+.gs-page .gs-main {
+  font-family: 'Manrope', sans-serif !important;
+}
+
+.gs-page .gs-company {
+  background: #ffffff !important;
+  padding: 32px !important;
+  border-radius: 12px !important;
+  box-shadow: 0 1px 2px rgba(42, 52, 57, 0.08) !important;
+}
+
+.gs-page .gs-company .gs-company-layout {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 40px !important;
+}
+
+@media (min-width: 768px) {
+  .gs-page .gs-company .gs-company-layout {
+    flex-direction: row !important;
+  }
+}
+
+.gs-page .gs-company .gs-form-col {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 24px !important;
+}
+
+.gs-page .gs-company .gs-two-col {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 24px !important;
+}
+
+@media (min-width: 768px) {
+  .gs-page .gs-company .gs-two-col {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+.gs-page .gs-company .gs-input-group {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0 !important;
+  margin: 0 !important;
+}
+
+.gs-page .gs-company .gs-input-group label {
+  margin: 0 0 4px 0 !important;
+  display: block !important;
+  font-size: 10px !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.14em !important;
+  text-transform: uppercase !important;
+  color: #566166 !important;
+  line-height: 1.2 !important;
+  transition: color 0.2s ease !important;
+}
+
+.gs-page .gs-company .gs-input-group:focus-within label {
+  color: #565e74 !important;
+}
+
+.gs-page .gs-company .gs-input {
+  width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  padding: 8px 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  border-bottom: 1px solid rgba(169, 180, 185, 0.35) !important;
+  background: #f0f4f7 !important;
+  color: #2a3439 !important;
+  box-shadow: none !important;
+  outline: none !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  line-height: 1.25 !important;
+  transition: border-color 0.2s ease, background-color 0.2s ease !important;
+}
+
+.gs-page .gs-company .gs-input::placeholder {
+  color: #566166 !important;
+  opacity: 1 !important;
+  font-weight: 600 !important;
+}
+
+.gs-page .gs-company .gs-input:focus {
+  border-bottom-color: #565e74 !important;
+  background: #ffffff !important;
+}
+
+/* ===== FINAL template-lock: General Settings button radii ===== */
+/* Tailwind config in template: rounded = 0.125rem (2px), rounded-lg = 0.25rem (4px) */
+.gs-page button {
+  border-radius: 2px !important;
+}
+
+/* rounded-lg buttons in template */
+.gs-page .gs-save-top,
+.gs-page .gs-secondary-btn {
+  border-radius: 4px !important;
+}
+
+/* Discard button has no rounded utility in template */
+.gs-page .gs-footer-actions button:first-child {
+  border-radius: 0 !important;
+}
+
+/* Final commit uses rounded (default token) */
+.gs-page .gs-footer-actions button:last-child {
+  border-radius: 2px !important;
+}
+
+/* ===== FINAL parity lock: match Create Products input contract (cp-input-arch) ===== */
+.gs-page .gs-input,
+.gs-page .gs-select,
+.gs-page .gs-textarea,
+.gs-page .gs-fiscal-row input {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  background-color: #f0f4f7 !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-left: none !important;
+  border-bottom-width: 1px !important;
+  border-bottom-style: solid !important;
+  border-bottom-color: rgba(169, 180, 185, 0.2) !important;
+  box-shadow: inset 0 -1px 0 rgba(169, 180, 185, 0.2) !important;
+  border-radius: 0 !important;
+  color: #2a3439 !important;
+  padding: 0.75rem !important;
+  font-size: 1rem !important;
+  line-height: 1.5 !important;
+  font-weight: 500 !important;
+  transition: border-color 0.2s ease !important;
+}
+
+.gs-page input.gs-input,
+.gs-page select.gs-select,
+.gs-page .gs-fiscal-row input {
+  height: 48px !important;
+  line-height: 1.2 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.gs-page select.gs-select {
+  font-size: 1rem !important;
+  padding-left: 0.75rem !important;
+  padding-right: 0.75rem !important;
+  cursor: pointer !important;
+}
+
+.gs-page select.gs-select option {
+  font-family: 'Manrope', sans-serif !important;
+  color: #2a3439 !important;
+}
+
+.gs-page .gs-input::placeholder,
+.gs-page .gs-textarea::placeholder {
+  color: #7f8a90 !important;
+}
+
+.gs-page .gs-input:focus,
+.gs-page .gs-select:focus,
+.gs-page .gs-textarea:focus,
+.gs-page .gs-fiscal-row input:focus {
+  outline: none !important;
+  border-bottom-color: #565e74 !important;
+  box-shadow: inset 0 -1px 0 #565e74 !important;
+}
+
+.gs-page textarea.gs-textarea {
+  resize: none !important;
+  min-height: 116px !important;
+}
+
+/* ===== CONTACT INFO explicit parity lock (wins old .gs-company overrides) ===== */
+.gs-page .gs-company .gs-input,
+.gs-page .gs-company .gs-two-col .gs-input,
+.gs-page .gs-company input.gs-input {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  background-color: #f0f4f7 !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-left: none !important;
+  border-bottom-width: 1px !important;
+  border-bottom-style: solid !important;
+  border-bottom-color: rgba(169, 180, 185, 0.2) !important;
+  box-shadow: inset 0 -1px 0 rgba(169, 180, 185, 0.2) !important;
+  border-radius: 0 !important;
+  color: #2a3439 !important;
+  padding: 0.75rem !important;
+  font-size: 1rem !important;
+  line-height: 1.5 !important;
+  font-weight: 500 !important;
+  height: 48px !important;
+  min-height: 48px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  transition: border-color 0.2s ease !important;
+}
+
+.gs-page .gs-company .gs-input::placeholder {
+  color: #7f8a90 !important;
+}
+
+.gs-page .gs-company .gs-input:focus,
+.gs-page .gs-company .gs-two-col .gs-input:focus {
+  outline: none !important;
+  border-bottom-color: #565e74 !important;
+  box-shadow: inset 0 -1px 0 #565e74 !important;
+}
+
+/* ===== Match all_products card radius for General Settings ===== */
+.gs-page .gs-card,
+.gs-page .gs-company,
+.gs-page .gs-inventory,
+.gs-page .gs-financial,
+.gs-page .gs-payments,
+.gs-page .gs-inventory-box,
+.gs-page .gs-methods-panel,
+.gs-page .gs-toggle-card,
+.gs-page .gs-method-item,
+.gs-page .gs-logo-box {
+  border-radius: 4px !important;
+}
+
+/* ===== FINAL typography parity: General Settings = User Settings ===== */
+.gs-page {
+  font-family: 'Manrope', sans-serif !important;
+}
+
+.gs-page .material-symbols-outlined {
+  font-family: 'Material Symbols Outlined' !important;
+}
+
+.gs-page .gs-header h1 {
+  margin: 0 !important;
+  font-size: 2.25rem !important;
+  line-height: 1.1 !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em !important;
+  text-transform: uppercase !important;
+  color: #2a3439 !important;
+}
+
+.gs-page .gs-header p {
+  margin: 0.75rem 0 0 !important;
+  color: #566166 !important;
+  font-size: 1.125rem !important;
+  font-weight: 300 !important;
+}
+
+.gs-page .gs-section-head h2 {
+  margin: 0 !important;
+  color: #566166 !important;
+  font-size: 0.75rem !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.3em !important;
+  text-transform: uppercase !important;
+}
+
+.gs-page .gs-input-group label,
+.gs-page .gs-methods-panel > label,
+.gs-page .gs-inventory-box label {
+  font-size: 0.625rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase !important;
+  color: rgba(86, 97, 102, 0.7) !important;
+}
+
+.gs-page .gs-save-top,
+.gs-page .gs-secondary-btn,
+.gs-page .gs-footer-actions button,
+.gs-page .gs-logo-actions button {
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.2em !important;
+  text-transform: uppercase !important;
+}
+
+.gs-page .gs-inventory-box p,
+.gs-page .gs-toggle-card span,
+.gs-page .gs-method-item span,
+.gs-page .gs-footer {
+  color: #566166 !important;
+  font-size: 0.75rem !important;
+  line-height: 1.45 !important;
+}
+
+.gs-page .gs-footer {
+  border-top: none !important;
+  padding-top: 0 !important;
+  justify-content: flex-end !important;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Display Settings — Template transplant (main canvas only)                  */
+/* -------------------------------------------------------------------------- */
+
+.ds-page {
+  min-height: calc(100vh - 80px);
+  background: #f7f9fb;
+  padding: 32px;
+  font-family: 'Manrope', sans-serif;
+  color: #2a3439;
+}
+
+.ds-wrap {
+  max-width: 1152px;
+  margin: 0 auto;
+}
+
+.ds-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 40px;
+}
+
+.ds-head h1 {
+  margin: 0 0 4px;
+  font-size: 30px;
+  font-weight: 300;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+}
+
+.ds-head p {
+  margin: 0;
+  color: #566166;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.ds-head-actions,
+.ds-footer-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.ds-btn {
+  border: 0;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.ds-btn-tertiary {
+  padding: 8px 24px;
+  background: transparent;
+  color: #565e74;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 2px;
+}
+
+.ds-btn-tertiary:hover {
+  background: #e8eff3;
+}
+
+.ds-btn-primary {
+  padding: 8px 32px;
+  background: #565e74;
+  color: #f7f7ff;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(42, 52, 57, 0.12);
+}
+
+.ds-btn-primary:hover:not(:disabled) {
+  background: #4a5268;
+}
+
+.ds-btn-primary:disabled,
+.ds-btn-sync:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ds-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.ds-card {
+  padding: 24px;
+  background: #ffffff;
+  border-radius: 4px;
+  box-shadow: 0 1px 2px rgba(42, 52, 57, 0.06);
+}
+
+.ds-date-time {
+  grid-column: span 12;
+  background: #f0f4f7;
+  border-bottom: 1px solid rgba(169, 180, 185, 0.2);
+}
+
+.ds-currency {
+  grid-column: span 12;
+  background: #ffffff;
+  border-bottom: 1px solid rgba(169, 180, 185, 0.2);
+}
+
+.ds-interface {
+  grid-column: span 12;
+  background: #f0f4f7;
+}
+
+.ds-doc-stack {
+  grid-column: span 12;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.ds-doc-format {
+  background: #d9e4ea;
+  border-bottom: 1px solid rgba(169, 180, 185, 0.2);
+}
+
+.ds-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.ds-title-row .material-symbols-outlined {
+  color: #565e74;
+  font-size: 20px;
+}
+
+.ds-title-row h2 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ds-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.ds-group label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #566166;
+  text-transform: uppercase;
+}
+
+.ds-control,
+.ds-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  background: transparent;
+  border-top: 0;
+  border-right: 0;
+  border-left: 0;
+  border-bottom: 1px solid rgba(169, 180, 185, 0.2);
+  padding: 8px 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: #2a3439;
+  outline: none;
+  border-radius: 0;
+}
+
+.ds-control:focus,
+.ds-textarea:focus {
+  border-bottom-color: #565e74;
+}
+
+.ds-textarea {
+  background: #ffffff;
+  padding: 8px 12px;
+}
+
+.ds-split-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+}
+
+.ds-two-col-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px 32px;
+}
+
+.ds-preview {
+  margin-top: 4px;
+  padding: 12px;
+  background: #f7f9fb;
+  border-radius: 4px;
+}
+
+.ds-preview p {
+  margin: 0 0 4px;
+  font-size: 10px;
+  color: #566166;
+  text-transform: uppercase;
+}
+
+.ds-preview strong {
+  font-size: 30px;
+  font-weight: 300;
+  color: #565e74;
+  letter-spacing: -0.02em;
+}
+
+.ds-toggle-area {
+  grid-column: 1 / -1;
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ds-check-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.ds-check-row input {
+  width: 16px;
+  height: 16px;
+  accent-color: #565e74;
+}
+
+.ds-check-row span {
+  font-size: 14px;
+  font-weight: 500;
+  color: #566166;
+}
+
+.ds-printer-card {
+  background: #e8eff3;
+  border-radius: 4px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.ds-printer-icon {
+  width: 48px;
+  height: 48px;
+  background: #565e74;
+  color: #f7f7ff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 2px;
+}
+
+.ds-printer-card p {
+  margin: 0 0 2px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.ds-printer-card small {
+  color: #566166;
+  font-size: 10px;
+}
+
+.ds-footer-bar {
+  margin-top: 48px;
+  background: #dae2fd;
+  padding: 24px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.ds-footer-meta {
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.ds-footer-meta p {
+  margin: 0 0 4px;
+  font-size: 10px;
+  font-weight: 700;
+  color: rgba(74, 81, 103, 0.7);
+  text-transform: uppercase;
+}
+
+.ds-footer-meta strong {
+  font-size: 14px;
+  color: #4a5167;
+}
+
+.ds-btn-subtle {
+  padding: 8px 24px;
+  background: transparent;
+  color: #4a5167;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 2px;
+}
+
+.ds-btn-subtle:hover {
+  background: rgba(74, 81, 103, 0.1);
+}
+
+.ds-btn-sync {
+  padding: 12px 40px;
+  background: #565e74;
+  color: #f7f7ff;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: 0 8px 22px rgba(42, 52, 57, 0.14);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ds-btn-sync:hover:not(:disabled) {
+  background: #4a5268;
+}
+
+.ds-loading {
+  min-height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border-radius: 8px;
+  border: 1px solid rgba(169, 180, 185, 0.2);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #566166;
+}
+
+@media (min-width: 768px) {
+  .ds-date-time {
+    grid-column: span 4;
+  }
+
+  .ds-currency {
+    grid-column: span 8;
+  }
+
+  .ds-interface {
+    grid-column: span 7;
+  }
+
+  .ds-doc-stack {
+    grid-column: span 5;
+  }
+
+  .ds-split-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 32px;
+  }
+
+  .ds-two-col-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767px) {
+  .ds-page {
+    padding: 16px;
+  }
+
+  .ds-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .ds-head-actions,
+  .ds-footer-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .ds-head-actions .ds-btn,
+  .ds-footer-actions .ds-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ===== DisplaySettings parity with all_products page ===== */
+.ds-page {
+  background-color: #f7f9fb !important;
+  min-height: calc(100vh - 80px) !important;
+  padding: 32px !important;
+}
+
+.ds-wrap {
+  max-width: 100% !important;
+  margin: 0 auto !important;
+}
+
+/* all_products-style boxed inputs */
+.ds-control,
+.ds-textarea {
+  background-color: #f0f4f7 !important;
+  border: none !important;
+  border-radius: 4px !important;
+  box-shadow: rgba(15, 23, 42, 0.06) 0px 1px 2px !important;
+  color: #2a3439 !important;
+  font-size: 14px !important;
+  outline: none !important;
+}
+
+.ds-control {
+  height: 40px !important;
+  padding: 8px 16px !important;
+  line-height: 22px !important;
+}
+
+.ds-textarea {
+  padding: 8px 16px !important;
+}
+
+.ds-control:focus,
+.ds-textarea:focus {
+  border: none !important;
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.25) !important;
+}
+
+/* all_products-style card radius */
+.ds-card,
+.ds-date-time,
+.ds-currency,
+.ds-interface,
+.ds-doc-format,
+.ds-printer-card,
+.ds-preview,
+.ds-footer-bar {
+  border-radius: 4px !important;
+}
+
+/* ===== ABSOLUTE FINAL LOCK: all_products parity for DisplaySettings ===== */
+.ds-page .ds-wrap .ds-card,
+.ds-page .ds-wrap .ds-date-time,
+.ds-page .ds-wrap .ds-currency,
+.ds-page .ds-wrap .ds-interface,
+.ds-page .ds-wrap .ds-doc-format,
+.ds-page .ds-wrap .ds-printer-card,
+.ds-page .ds-wrap .ds-preview,
+.ds-page .ds-wrap .ds-footer-bar {
+  border-radius: 4px !important;
+}
+
+.ds-page .ds-wrap .ds-control,
+.ds-page .ds-wrap .ds-textarea {
+  background-color: #f0f4f7 !important;
+  border: none !important;
+  border-radius: 4px !important;
+  box-shadow: rgba(15, 23, 42, 0.06) 0px 1px 2px !important;
+  outline: none !important;
+  color: #2a3439 !important;
+  font-size: 14px !important;
+}
+
+.ds-page .ds-wrap .ds-control {
+  height: 40px !important;
+  min-height: 40px !important;
+  padding: 8px 16px !important;
+  line-height: 22px !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+}
+
+.ds-page .ds-wrap .ds-textarea {
+  padding: 8px 16px !important;
+}
+
+.ds-page .ds-wrap .ds-control:focus,
+.ds-page .ds-wrap .ds-textarea:focus {
+  border: none !important;
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.25) !important;
+}
+
+/* ===== Typography parity lock: DisplaySettings = Profile(Settings slate-*) ===== */
+.ds-page,
+.ds-page * {
+  font-family: 'Manrope', sans-serif !important;
+}
+
+.ds-page .material-symbols-outlined {
+  font-family: 'Material Symbols Outlined' !important;
+  font-weight: normal !important;
+  font-style: normal !important;
+  line-height: 1 !important;
+  letter-spacing: normal !important;
+  text-transform: none !important;
+  display: inline-block !important;
+  white-space: nowrap !important;
+  direction: ltr !important;
+  -webkit-font-feature-settings: 'liga' !important;
+  font-feature-settings: 'liga' !important;
+  -webkit-font-smoothing: antialiased !important;
+}
+
+.ds-page .ds-head h1 {
+  font-size: 2.25rem !important;
+  line-height: 1.1 !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em !important;
+  text-transform: uppercase !important;
+  color: #2a3439 !important;
+}
+
+.ds-page .ds-head p {
+  margin-top: 0.75rem !important;
+  font-size: 1.125rem !important;
+  font-weight: 300 !important;
+  color: #566166 !important;
+}
+
+/* Strong override to make subheadings match All Products 'Stock Overview' label
+   This needs !important because earlier parity locks apply !important to .ds-page .ds-head p */
+.ds-page .ds-head .settings-subheading {
+  margin: 6px 0 0 !important;
+  color: #565e74 !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase !important;
+  font-size: 12px !important;
+}
+
+/* Apply the same Stock Overview label style to General Settings header
+   Use a strong selector with !important near the parity-lock region so it overrides other rules. */
+.gs-header .settings-subheading {
+  /* Match create_user header paragraph spacing */
+  margin: 6px 0 0;
+  color: #565e74;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+.gs-page .gs-header .settings-subheading {
+  margin: 6px 0 0 !important;
+  color: #565e74 !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase !important;
+  font-size: 12px !important;
+}
+
+.ds-page .ds-title-row h2 {
+  font-size: 0.75rem !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.3em !important;
+  text-transform: uppercase !important;
+  color: #566166 !important;
+}
+
+.ds-page .ds-group label {
+  font-size: 0.625rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase !important;
+  color: rgba(86, 97, 102, 0.7) !important;
+}
+
+.ds-page .ds-control,
+.ds-page .ds-textarea {
+  font-size: 1rem !important;
+  line-height: 1.5 !important;
+  font-weight: 500 !important;
+  color: #2a3439 !important;
+}
+
+.ds-page .ds-check-row span {
+  color: #2a3439 !important;
+  font-size: 0.69rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.2em !important;
+  text-transform: uppercase !important;
+}
+
+.ds-page .ds-preview p {
+  font-size: 0.625rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.18em !important;
+  text-transform: uppercase !important;
+  color: #566166 !important;
+}
+
+.ds-page .ds-preview strong {
+  font-size: 1.875rem !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.05em !important;
+  color: #2a3439 !important;
+}
+
+.ds-page .ds-btn {
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.2em !important;
+  text-transform: uppercase !important;
+}
+
+/* ===== FINAL parity: DisplaySettings inputs + save button = Profile Settings ===== */
+.ds-page .ds-wrap .ds-control,
+.ds-page .ds-wrap .ds-textarea {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  background: #f0f4f7 !important;
+  color: #2a3439 !important;
+  padding: 0.75rem !important;
+  font-size: 1rem !important;
+  line-height: 1.5 !important;
+  font-weight: 500 !important;
+  border-radius: 0 !important;
+  border: none !important;
+  border-bottom: 1px solid rgba(169, 180, 185, 0.2) !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.ds-page .ds-wrap .ds-control {
+  height: 48px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.ds-page .ds-wrap .ds-control:focus,
+.ds-page .ds-wrap .ds-textarea:focus {
+  border-bottom: 1px solid #565e74 !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.ds-page .ds-wrap .ds-btn-primary {
+  border: none !important;
+  background: #565e74 !important;
+  color: #f7f7ff !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.2em !important;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  padding: 0.75rem 2rem !important;
+  border-radius: 0 !important;
+  box-shadow: 0 10px 24px rgba(86, 94, 116, 0.1) !important;
+  cursor: pointer !important;
+  transition: background-color 0.2s ease, opacity 0.2s ease !important;
+}
+
+.ds-page .ds-wrap .ds-btn-primary:hover:not(:disabled) {
+  background: #4a5268 !important;
+}
+
+/* ===== FINAL focus parity: same underline behavior as Profile Settings ===== */
+.ds-page .ds-wrap input.ds-control:focus,
+.ds-page .ds-wrap select.ds-control:focus,
+.ds-page .ds-wrap textarea.ds-textarea:focus,
+.ds-page .ds-wrap input.ds-control:focus-visible,
+.ds-page .ds-wrap select.ds-control:focus-visible,
+.ds-page .ds-wrap textarea.ds-textarea:focus-visible {
+  border: none !important;
+  border-bottom: 1px solid #565e74 !important;
+  box-shadow: none !important;
+  outline: none !important;
+  background: #f0f4f7 !important;
+}
+
+/* ===== FINAL card radius parity: DisplaySettings = all_products card style ===== */
+.ds-page .ds-wrap .ds-card,
+.ds-page .ds-wrap .ds-date-time,
+.ds-page .ds-wrap .ds-currency,
+.ds-page .ds-wrap .ds-interface,
+.ds-page .ds-wrap .ds-doc-format,
+.ds-page .ds-wrap .ds-preview,
+.ds-page .ds-wrap .ds-loading {
+  border-radius: 4px !important;
+}
+
+/* ===== FINAL card radius parity: UserSettings = all_products card style ===== */
+.slate-settings-page .slate-card,
+.slate-settings-page .slate-integrity-box,
+.slate-settings-page .slate-danger-zone,
+.slate-settings-page .slate-loading-message {
+  border-radius: 4px !important;
+}
+
+/* ===== FINAL discard parity: match Create Sale cancel button ===== */
+.gs-page .gs-footer-actions button:first-child,
+.ds-page .ds-wrap .ds-btn-tertiary {
+  border: none !important;
+  background: transparent !important;
+  color: #566166 !important;
+  padding: 14px !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.13em !important;
+  text-transform: uppercase !important;
+  border-radius: 0 !important;
+  transition: color 0.2s ease !important;
+}
+
+.gs-page .gs-footer-actions button:first-child:hover,
+.ds-page .ds-wrap .ds-btn-tertiary:hover:not(:disabled) {
+  color: #9f403d !important;
+  background: transparent !important;
+}
+
+/* ===== FINAL parity: all UserSettings buttons use 4px radius ===== */
+.slate-settings-page button {
+  border-radius: 4px !important;
+}
+
+/* ===== FINAL parity: all GeneralSettings + DisplaySettings buttons use 4px radius ===== */
+.gs-page button,
+.ds-page button,
+.gs-page .gs-footer-actions button:first-child,
+.gs-page .gs-footer-actions button:last-child,
+.ds-page .ds-wrap .ds-btn-primary,
+.ds-page .ds-wrap .ds-btn-tertiary,
+.ds-page .ds-wrap .ds-btn-subtle,
+.ds-page .ds-wrap .ds-btn-sync {
+  border-radius: 4px !important;
+}
+
+/* Premium Loading Styles */
+.products-loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffffff;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50; 
+  border-radius: 4px;
+}
+
+.block-pulse {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.block {
+  width: 32px;
+  height: 32px;
+  background-color: #565e74;
+  animation: pulse-slate 1.5s infinite ease-in-out;
+}
+
+.block:nth-child(2) { animation-delay: 0.1s; }
+.block:nth-child(3) { animation-delay: 0.2s; }
+.block:nth-child(4) { animation-delay: 0.3s; }
+.block:nth-child(5) { animation-delay: 0.4s; }
+.block:nth-child(6) { animation-delay: 0.5s; }
+.block:nth-child(7) { animation-delay: 0.6s; }
+.block:nth-child(8) { animation-delay: 0.7s; }
+.block:nth-child(9) { animation-delay: 0.8s; }
+
+@keyframes pulse-slate {
+  0%, 100% { opacity: 0.1; transform: scale(0.95); }
+  50% { opacity: 1; transform: scale(1); }
 }

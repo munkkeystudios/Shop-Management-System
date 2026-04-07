@@ -1,17 +1,16 @@
-
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { salesAPI } from '../services/api'; // Assuming salesAPI will have import function
+import { suppliersAPI } from '../services/api';
 import '../styles/importSale.css';
 import { useNotifications } from '../context/NotificationContext';
 
-const ImportSale = () => {
+const ImportSupplier = () => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
-    const [importResults, setImportResults] = useState(null); // To show detailed results
+    const [importResults, setImportResults] = useState(null);
     const fileInputRef = useRef(null);
     const navigate = useNavigate();
     const { addNotification } = useNotifications();
@@ -19,7 +18,6 @@ const ImportSale = () => {
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            // Basic validation for file type (more robust in backend)
             const allowedTypes = ['text/csv', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
             if (allowedTypes.includes(file.type) || file.name.endsWith('.csv') || file.name.endsWith('.xls') || file.name.endsWith('.xlsx')) {
                 setSelectedFile(file);
@@ -43,8 +41,7 @@ const ImportSale = () => {
         e.stopPropagation();
         if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
             const file = e.dataTransfer.files[0];
-            // Trigger the same validation as handleFileChange
-             handleFileChange({ target: { files: [file] } });
+            handleFileChange({ target: { files: [file] } });
             e.dataTransfer.clearData();
         }
     };
@@ -64,77 +61,90 @@ const ImportSale = () => {
         setError('');
         setSuccess('');
         setImportResults(null);
+
         const formData = new FormData();
         formData.append('file', selectedFile);
 
         try {
-            // Assuming an importSales function exists in salesAPI
-            const response = await salesAPI.importSales(formData);
+            const response = await suppliersAPI.importSuppliers(formData);
 
             if (response.data.success) {
-                const successCount = response.data.successCount;
+                const successCount = response.data.successCount || 0;
 
-                // Add notification
                 addNotification(
                     'import',
-                    `Successfully imported ${successCount} ${successCount === 1 ? 'sale' : 'sales'}`
+                    `Successfully imported ${successCount} ${successCount === 1 ? 'supplier' : 'suppliers'}`
                 );
 
-                setSuccess(response.data.message);
+                setSuccess(response.data.message || 'Suppliers imported successfully.');
                 setImportResults({
-                     totalProcessed: response.data.totalProcessed,
-                     successCount: successCount,
-                     errorCount: response.data.errorCount,
-                     errors: response.data.errors || []
-                 });
-                 setSelectedFile(null); // Clear file input after successful import
-                 if (fileInputRef.current) {
-                     fileInputRef.current.value = ""; // Reset file input visually
-                 }
+                    totalProcessed: response.data.totalProcessed || 0,
+                    successCount,
+                    errorCount: response.data.errorCount || 0,
+                    errors: response.data.errors || []
+                });
+
+                setSelectedFile(null);
+                if (fileInputRef.current) {
+                    fileInputRef.current.value = '';
+                }
             } else {
                 setError(response.data.message || 'Import failed.');
-                setImportResults({ // Show errors even if overall success is false
-                     totalProcessed: response.data.totalProcessed || 0,
-                     successCount: response.data.successCount || 0,
-                     errorCount: response.data.errorCount || 0,
-                     errors: response.data.errors || []
-                 });
+                setImportResults({
+                    totalProcessed: response.data.totalProcessed || 0,
+                    successCount: response.data.successCount || 0,
+                    errorCount: response.data.errorCount || 0,
+                    errors: response.data.errors || []
+                });
             }
         } catch (err) {
-            console.error('Import error:', err.response || err);
+            console.error('Supplier import error:', err.response || err);
             setError(err.response?.data?.message || 'An error occurred during import.');
-            // Set results even on catch if the server might have sent partial data
-             if (err.response?.data) {
-                 setImportResults({
-                     totalProcessed: err.response.data.totalProcessed || 0,
-                     successCount: err.response.data.successCount || 0,
-                     errorCount: err.response.data.errorCount || 0,
-                     errors: err.response.data.errors || []
-                 });
-             }
+
+            if (err.response?.data) {
+                setImportResults({
+                    totalProcessed: err.response.data.totalProcessed || 0,
+                    successCount: err.response.data.successCount || 0,
+                    errorCount: err.response.data.errorCount || 0,
+                    errors: err.response.data.errors || []
+                });
+            }
         } finally {
             setLoading(false);
         }
     };
 
     const handleDiscard = () => {
-        navigate('/sales'); // Navigate back to sales list or dashboard
+        navigate('/supplier');
     };
 
-    const downloadExample = () => {
-        // Trigger backend download endpoint
-        window.location.href = '/api/import/sales/sample';
+    const downloadExample = async () => {
+        try {
+            const response = await suppliersAPI.downloadImportTemplate();
+            const blob = new Blob([response.data], { type: 'application/octet-stream' });
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'sample_suppliers_import.csv');
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            setTimeout(() => window.URL.revokeObjectURL(url), 1000);
+        } catch (err) {
+            console.error('Template download error:', err);
+            setError('Unable to download sample template.');
+        }
     };
 
     return (
-        <Layout title="Import Sales">
+        <Layout title="Import Suppliers">
             <div className="import-sales-page">
                 <main className="import-sales-main">
                     <header className="import-sales-header">
-                        <h1>Import Sales Data</h1>
-                        <p className="import-sales-subheading">
-                            Streamline your workflow by uploading bulk transaction records. Our system validates every entry
-                            against architectural standards to ensure data integrity across your terminal ecosystem.
+                        <h1>Import Supplier Data</h1>
+                        <p>
+                            Streamline onboarding by uploading bulk supplier records. Our system validates each row
+                            against registry standards to maintain clean procurement data.
                         </p>
                     </header>
 
@@ -152,8 +162,8 @@ const ImportSale = () => {
                                     <span className="material-symbols-outlined import-sales-card-icon" aria-hidden="true">description</span>
                                     <h3>Sample Template</h3>
                                     <p>
-                                        Download our standardized CSV template to ensure your sales data is formatted correctly for the
-                                        terminal import.
+                                        Download our standardized supplier template to ensure your vendor data is
+                                        correctly formatted for import.
                                     </p>
                                 </div>
                                 <button type="button" className="import-sales-primary-btn" onClick={downloadExample}>
@@ -165,10 +175,10 @@ const ImportSale = () => {
                             <section className="import-sales-card import-sales-requirements-card">
                                 <h3>Required Fields</h3>
                                 <ul>
-                                    <li><span className="dot" />Transaction ID (UUID)</li>
-                                    <li><span className="dot" />SKU / Product Code</li>
-                                    <li><span className="dot" />Quantity (Integer)</li>
-                                    <li><span className="dot" />Timestamp (ISO 8601)</li>
+                                    <li><span className="dot" />Supplier Name</li>
+                                    <li><span className="dot" />Contact Number</li>
+                                    <li><span className="dot" />Address</li>
+                                    <li><span className="dot" />Email (Optional)</li>
                                 </ul>
                             </section>
                         </div>
@@ -240,7 +250,7 @@ const ImportSale = () => {
                                         Cancel
                                     </button>
                                     <button type="submit" className="import-btn" disabled={loading || !selectedFile}>
-                                        {loading ? 'Processing...' : 'Import Sales'}
+                                        {loading ? 'Processing...' : 'Import Suppliers'}
                                     </button>
                                 </footer>
                             </form>
@@ -252,29 +262,32 @@ const ImportSale = () => {
                             <span className="material-symbols-outlined" aria-hidden="true">info</span>
                             <div>
                                 <h4>Automatic Validation</h4>
-                                <p>Records are cross-checked with active inventory lists instantly.</p>
+                                <p>Supplier records are validated for required contact and address structure.</p>
                             </div>
                         </div>
                         <div className="status-card">
                             <span className="material-symbols-outlined" aria-hidden="true">history</span>
                             <div>
-                                <h4>Terminal Logging</h4>
-                                <p>All imports are logged under Terminal ID: 0822 for audit trails.</p>
+                                <h4>Registry Logging</h4>
+                                <p>All supplier imports are tracked for procurement and audit visibility.</p>
                             </div>
                         </div>
                         <div className="status-card">
                             <span className="material-symbols-outlined" aria-hidden="true">security</span>
                             <div>
                                 <h4>Secure Transfer</h4>
-                                <p>Data is encrypted using bank-grade protocols during ingestion.</p>
+                                <p>Uploads are protected during transit with encrypted ingestion workflows.</p>
                             </div>
                         </div>
                     </div>
 
+                    <div className="import-sales-bg-mark" aria-hidden="true">
+                        <span className="material-symbols-outlined">architecture</span>
+                    </div>
                 </main>
             </div>
         </Layout>
     );
 };
 
-export default ImportSale;
+export default ImportSupplier;

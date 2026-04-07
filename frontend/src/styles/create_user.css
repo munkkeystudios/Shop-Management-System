@@ -1,154 +1,326 @@
-.user-container {
-  padding: 20px;
-  background-color: #f8f9fa; /* Match other management pages */
-  min-height: 100vh;
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+
+.create-user-page {
+  min-height: calc(100vh - 80px);
+  background: #f7f9fb;
+  padding: 0;
+  font-family: 'Manrope', sans-serif;
+  color: #2a3439;
 }
-  
-  .breadcrumb {
-    display: flex;
-    align-items: center;
-    margin-bottom: 16px;
-    font-size: 14px;
+
+.create-user-shell {
+  max-width: 100%;
+  width: 100%;
+  margin: 0 auto;
+  padding: 32px;
+}
+
+.create-user-banner {
+  max-width: 100%;
+  margin: 0 0 16px;
+  padding: 12px 14px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.create-user-banner.success {
+  background: #e7f5eb;
+  color: #1f5e2e;
+}
+
+.create-user-banner.error {
+  background: #ffe9e8;
+  color: #752121;
+}
+
+.create-user-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.create-user-header h1 {
+  margin: 0;
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+.create-user-header p {
+  margin: 6px 0 0;
+  color: #566166;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  font-weight: 700;
+}
+
+.save-user-top-btn,
+.save-user-btn {
+  border: none;
+  background: #565e74;
+  color: #f7f7ff;
+  padding: 10px 24px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+
+.save-user-top-btn:hover,
+.save-user-btn:hover {
+  background: #4a5268;
+}
+
+.save-user-top-btn:disabled,
+.save-user-btn:disabled,
+.cancel-user-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.create-user-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 32px;
+}
+
+.identity-card,
+.security-card {
+  grid-column: span 8;
+  background: #f0f4f7;
+  border-radius: 4px;
+  padding: 32px;
+}
+
+.assignment-column {
+  grid-column: span 4;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.assignment-card {
+  background: #e8eff3;
+  border-radius: 4px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.security-status-card {
+  background: #dae2fd;
+  border-radius: 4px;
+  padding: 24px;
+}
+
+.card-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.card-title-row .material-symbols-outlined {
+  font-size: 16px;
+  color: #565e74;
+}
+
+.card-title-row h2 {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #566166;
+}
+
+.identity-fields-grid,
+.security-fields-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 32px 28px;
+}
+
+.slate-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.slate-field label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.13em;
+  color: rgba(86, 97, 102, 0.8);
+}
+
+.slate-input,
+.slate-select {
+  box-sizing: border-box;
+  width: 100%;
+  background: #f0f4f7;
+  color: #2a3439;
+  padding: 0.75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  font-weight: 500;
+  border-radius: 0;
+  border: none;
+  border-bottom: 1px solid rgba(169, 180, 185, 0.2);
+  outline: none;
+}
+
+.slate-select {
+  appearance: none;
+}
+
+.input-bottom-border {
+  border: none;
+  border-bottom: 1px solid rgba(169, 180, 185, 0.2);
+}
+
+.slate-input:focus,
+.slate-select:focus,
+.input-bottom-border:focus {
+  border-bottom: 1px solid #565e74;
+  outline: none;
+}
+
+.slate-input.slate-input-error,
+.slate-select.slate-input-error {
+  border-bottom-color: #9f403d;
+}
+
+.error-text {
+  margin: 0;
+  color: #9f403d;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.security-note {
+  margin-top: 20px;
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+}
+
+.security-note-line {
+  width: 4px;
+  background: rgba(86, 94, 116, 0.2);
+  border-radius: 2px;
+}
+
+.security-note p {
+  margin: 0;
+  color: #566166;
+  font-size: 12px;
+  font-style: italic;
+  line-height: 1.6;
+  max-width: 760px;
+}
+
+.status-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  color: #4a5167;
+}
+
+.status-chip {
+  background: #4a5167;
+  color: #ccd4ee;
+  border-radius: 4px;
+  padding: 2px 8px;
+}
+
+.create-user-actions-mobile {
+  display: none;
+}
+
+.cancel-user-btn {
+  border: none;
+  background: transparent;
+  color: #566166;
+  padding: 14px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  border-radius: 4px;
+  transition: color 0.2s ease;
+  cursor: pointer;
+}
+
+.cancel-user-btn:hover {
+  color: #9f403d;
+}
+
+@media (max-width: 1100px) {
+  .identity-card,
+  .security-card,
+  .assignment-column {
+    grid-column: span 12;
   }
-  
-  .breadcrumb-arrow {
-    margin: 0 8px;
-    font-size: 10px;
+
+  .create-user-header {
+    flex-direction: column;
+    align-items: flex-start;
   }
-  
-  .current-page {
-    color: #666;
+}
+
+@media (max-width: 768px) {
+  .create-user-page {
+    padding: 0;
   }
-  
-  .user-form-container {
-    background-color: #ffffff;
-    border-radius: 8px; /* Match Brands / Employee cards */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  .create-user-shell {
+    padding: 16px 16px 88px;
+  }
+
+  .create-user-header h1 {
+    font-size: 28px;
+  }
+
+  .identity-fields-grid,
+  .security-fields-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .identity-card,
+  .security-card,
+  .assignment-card,
+  .security-status-card {
     padding: 20px;
   }
 
-  .form-title {
-    font-size: 24px; /* Match other page titles */
-    font-weight: 600;
-    margin-bottom: 24px;
-    color: #212529;
+  .save-user-top-btn {
+    display: none;
   }
-  
-  .form-content {
+
+  .create-user-actions-mobile {
     display: flex;
     flex-direction: column;
-    gap: 8px; /* Reduced from 16px */
+    gap: 12px;
+    margin-top: 24px;
   }
-  
-  .form-row {
-    display: flex;
-    gap: 8px; 
-    margin: 0;
-    width: 100%;
-  }
-  
-  .form-field {
-    flex: 1;
-    min-width: 250px;
-    padding: 0;
-    margin-bottom: 12px; 
-    position: relative;
-  }
-  
-  input,
-  select {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #dee2e6;
-  border-radius: 4px;
-  font-size: 14px;
-  outline: none;
-  transition: border-color 0.2s;
-  height: 40px;
-  box-sizing: border-box;
-}
 
-input:focus,
-select:focus {
-  border-color: #4f46e5; /* Indigo focus to match global inputs */
-  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.25);
-}
-  
-  .input-error, .select-error {
-    border-color: #e74c3c;
-  }
-  
-  .select-container {
-    position: relative;
+  .save-user-btn,
+  .cancel-user-btn {
     width: 100%;
+    text-align: center;
   }
-  
-  .select-arrow {
-    position: absolute;
-    right: 12px; 
-    top: 50%;
-    transform: translateY(-50%);
-    pointer-events: none;
-  }
-  
-  select {
-    appearance: none;
-    padding-right: 30px;
-    background-color: white;
-  }
-  
-  .error-text {
-    color: #e74c3c;
-    font-size: 12px;
-    position: absolute;
-    left: 0;
-    margin-top: 2px; 
-  }
-  
-  .error-message-general {
-    background-color: #fde8e8;
-    color: #e53e3e;
-    padding: 12px;
-    border-radius: 4px;
-    margin-bottom: 16px;
-    font-size: 14px;
-  }
-  
-  .submit-button {
-  background-color: #4f46e5; /* Match primary indigo buttons */
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 10px 24px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  width: fit-content;
-  margin-top: 4px;
 }
-
-.submit-button:hover {
-  background-color: #4338ca;
-}
-  
-  .submit-button:disabled {
-    background-color: #6c757d;
-    cursor: not-allowed;
-  }
-  
-  .form-content > .form-field {
-    margin-bottom: 12px; 
-  }
-  
-  @media (max-width: 768px) {
-    .form-row {
-      flex-direction: column;
-      gap: 24px; 
-    }
-    
-    .form-field {
-      width: 100%;
-      margin-bottom: 0; 
-    }
-  }

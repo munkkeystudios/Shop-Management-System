@@ -1,3 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+
+.all-products-actions-cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2px;
+}
+
+.all-products-action-btn {
+  padding: 5px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: #64748b;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.all-products-action-btn:hover {
+  background: #e8eff3;
+  color: #334155;
+}
+
+.all-products-action-btn-delete:hover {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
 .products-main-container {
   display: flex;
   width: 100%;
@@ -12,7 +45,7 @@
 
 .products-div-2 {
   background-color: white;
-  border-radius: 8px;
+  border-radius: 4px;
   padding: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -267,7 +300,9 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -276,7 +311,7 @@
 
 .products-modal-container {
   background-color: white;
-  border-radius: 8px;
+  border-radius: 4px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   max-width: 90vw;
   max-height: 90vh;
@@ -294,6 +329,15 @@
   width: 380px;
 }
 
+.products-modal-container.delete {
+  width: min(100%, 520px);
+  max-height: 94vh;
+  border-radius: 4px;
+  border: 1px solid rgba(169, 180, 185, 0.1);
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.35);
+  overflow: hidden;
+}
+
 /* Modal Header */
 .products-modal-header {
   display: grid;
@@ -301,8 +345,7 @@
   align-items: center;
   padding: 16px;
   border-bottom: 1px solid #e5e7eb;
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
+  border-radius: 4px;
   gap: 12px;
   position: relative;
 }
@@ -323,11 +366,36 @@
 }
 
 /* Override for delete modal title */
-.products-modal-container.details:has(.products-delete-modal-body) .products-modal-title {
+.products-modal-container.delete .products-modal-title {
   position: static;
   text-align: left;
   transform: none;
   left: auto;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #2a3439;
+}
+
+.products-modal-container.delete .products-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 20px;
+  background: #f0f4f7;
+  border-bottom: 1px solid rgba(169, 180, 185, 0.2);
+}
+
+.products-modal-container.delete .products-modal-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  color: #64748b;
+}
+
+.products-modal-container.delete .products-modal-close:hover {
+  background: #e8eff3;
+  color: #334155;
 }
 
 .products-modal-close {
@@ -368,7 +436,7 @@
 /* Product Details */
 .products-modal-details {
   padding: 0;
-  border-radius: 8px;
+  border-radius: 4px;
   overflow: hidden;
   border: 1px solid #e5e7eb;
   margin: 8px 12px;
@@ -462,53 +530,65 @@
 /* Delete Modal Content Styling */
 .products-delete-modal-body {
   padding: 20px;
-  border-top: 1px solid #e5e7eb;
+  background: #ffffff;
 }
 
 .products-delete-modal-message {
-  font-size: 14px;
-  color: #6b7280;
-  line-height: 1.6;
-  margin: 0 0 20px 0;
+  font-size: 15px;
+  color: #566166;
+  line-height: 1.65;
+  margin: 0 0 18px 0;
   text-align: left;
 }
 
 .products-delete-modal-buttons {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   justify-content: flex-end;
 }
 
 .products-delete-modal-btn {
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 500;
+  padding: 10px 18px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
   cursor: pointer;
   transition: all 0.2s ease;
-  border: 1px solid #d1d5db;
+  border: 1px solid transparent;
 }
 
 .products-delete-modal-btn.cancel {
-  background-color: #f3f4f6;
-  color: #374151;
-  border-color: #d1d5db;
+  border: none !important;
+  background: transparent !important;
+  color: #566166 !important;
+  padding: 14px !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.13em !important;
+  text-transform: uppercase !important;
+  border-radius: 0 !important;
+  cursor: pointer !important;
+  transition: color 0.2s ease !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .products-delete-modal-btn.cancel:hover {
-  background-color: #f9fafb;
-  border-color: #9ca3af;
+  color: #9f403d !important;
+  background: transparent !important;
 }
 
 .products-delete-modal-btn.delete {
-  background-color: transparent;
-  color: #dc2626;
-  border-color: #dc2626;
+  background-color: #9f403d;
+  color: #fff7f6;
+  border-color: #9f403d;
 }
 
 .products-delete-modal-btn.delete:hover {
-  background-color: #fef2f2;
-  border-color: #dc2626;
+  background-color: #8a302e;
+  border-color: #8a302e;
 }
 
 @media (max-width: 768px) {
@@ -518,8 +598,50 @@
   }
 
   .products-modal-container.delete {
-    width: 90%;
+    width: 95%;
   }
 }
 
-/* End of modal styles */
+
+/* Square Loading Animation */
+.products-loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffffff;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50; /* Lower z-index to stay below TopBar/Sidebar if they are fixed */
+}
+
+.block-pulse {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.block {
+  width: 32px;
+  height: 32px;
+  background-color: #565e74;
+  animation: pulse-slate 1.5s infinite ease-in-out;
+}
+
+.block:nth-child(2) { animation-delay: 0.1s; }
+.block:nth-child(3) { animation-delay: 0.2s; }
+.block:nth-child(4) { animation-delay: 0.3s; }
+.block:nth-child(5) { animation-delay: 0.4s; }
+.block:nth-child(6) { animation-delay: 0.5s; }
+.block:nth-child(7) { animation-delay: 0.6s; }
+.block:nth-child(8) { animation-delay: 0.7s; }
+.block:nth-child(9) { animation-delay: 0.8s; }
+
+@keyframes pulse-slate {
+  0%, 100% { opacity: 0.1; transform: scale(0.95); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+/* End of loading animation */

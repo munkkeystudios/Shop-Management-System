@@ -1,6 +1,7 @@
 
 
 import React, { useState, useEffect } from 'react';
+import './purchase_filter.css';
 import axios from 'axios';
 import { X } from 'lucide-react';
 
@@ -40,6 +41,11 @@ const PurchaseFilter = ({ isOpen, onClose, onApplyFilters }) => {
 
   const handleApplyFilters = (e) => {
     e.preventDefault();
+    // submit via shared apply handler
+    applyFilters();
+  };
+
+  const applyFilters = () => {
     onApplyFilters(filterValues);
     onClose();
   };
@@ -125,16 +131,16 @@ const PurchaseFilter = ({ isOpen, onClose, onApplyFilters }) => {
             />
           </div>
         </div>
-
-        <div className="filter-actions">
-          <button type="button" className="reset-filter" onClick={handleResetFilters}>
-            Reset
-          </button>
-          <button type="submit" className="apply-filter">
-            Apply Filters
-          </button>
-        </div>
       </form>
+
+      <div className="filter-actions">
+        <button type="button" className="reset-filter" onClick={handleResetFilters}>
+          Reset
+        </button>
+        <button type="button" className="apply-filter" onClick={applyFilters}>
+          Apply Filters
+        </button>
+      </div>
     </div>
   );
 };
