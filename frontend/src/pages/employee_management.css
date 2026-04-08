@@ -336,6 +336,12 @@
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.08em;
+  /* ensure consistent centering/height across pages */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 72px;
+  line-height: 1;
 }
 
 .employee-status-badge.completed {

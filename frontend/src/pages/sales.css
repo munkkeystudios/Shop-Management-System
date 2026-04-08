@@ -522,8 +522,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 94px;
-  padding: 6px 12px;
+  /* slightly narrower by default so badges don't feel oversized */
+  min-width: 72px;
+  padding: 6px 10px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
