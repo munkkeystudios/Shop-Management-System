@@ -9,7 +9,21 @@ const ProtectedRoute = ({ children, requiredRole }) => {
   const location = useLocation();
 
   if (loading) {
-    return <div className="flex justify-center items-center h-screen">Loading...</div>;
+    return (
+      <div className="premium-loading-overlay">
+        <div className="square-grid-pulse">
+          <div className="pulse-square"></div>
+          <div className="pulse-square"></div>
+          <div className="pulse-square"></div>
+          <div className="pulse-square"></div>
+          <div className="pulse-square"></div>
+          <div className="pulse-square"></div>
+          <div className="pulse-square"></div>
+          <div className="pulse-square"></div>
+          <div className="pulse-square"></div>
+        </div>
+      </div>
+    );
   }
 
   if (!isAuthenticated()) {

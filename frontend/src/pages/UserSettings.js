@@ -284,6 +284,7 @@ const UserSettings = () => {
   const handleNotificationChange = async (e) => {
     const { name, checked } = e.target;
     const notificationType = name.split('.')[1];
+    const previousValue = profile.notificationPreferences[notificationType];
 
     // Update local state
     setProfile({
@@ -315,7 +316,8 @@ const UserSettings = () => {
       setProfile(prevProfile => ({
         ...prevProfile,
         notificationPreferences: {
-          ...prevProfile.notificationPreferences
+          ...prevProfile.notificationPreferences,
+          [notificationType]: previousValue
         }
       }));
     }
@@ -323,237 +325,285 @@ const UserSettings = () => {
 
   return (
     <Layout title="User Settings">
-      <div className="settings-container">
+      <div className="slate-settings-page">
         {loading ? (
-          <div className="loading-message">Loading your profile...</div>
+          <div className="products-loading-container">
+            <div className="block-pulse">
+              <div className="block rounded-sm"></div>
+              <div className="block rounded-sm"></div>
+              <div className="block rounded-sm"></div>
+              <div className="block rounded-sm"></div>
+              <div className="block rounded-sm"></div>
+              <div className="block rounded-sm"></div>
+              <div className="block rounded-sm"></div>
+              <div className="block rounded-sm"></div>
+              <div className="block rounded-sm"></div>
+            </div>
+          </div>
         ) : (
-          <div className="settings-sections-container">
-            {/* Personal Information */}
-            <div className="settings-section-card settings-header-card">
-              <div className="settings-header">
-                <h1>User Settings</h1>
-                <p className="settings-description">
-                  Manage your personal information, password, and notification preferences
-                </p>
+          <div className="slate-settings-wrap">
+            <header className="slate-main-header">
+              <h1>Profile Settings</h1>
+              <p className="settings-subheading">Update your architectural profile and security credentials.</p>
+            </header>
+
+            <div className="slate-settings-grid">
+              <section className="slate-col-left">
+                <div className="slate-card">
+                  <h3 className="slate-section-title">Personal Information</h3>
+                  <form className="slate-form" onSubmit={handleProfileSubmit}>
+                    <div className="slate-form-grid">
+                      <div className="slate-field">
+                        <label htmlFor="firstName">First Name</label>
+                        <input
+                          id="firstName"
+                          type="text"
+                          name="firstName"
+                          value={profile.firstName}
+                          onChange={handleInputChange}
+                          className={`slate-input input-bottom-border ${errors.firstName ? 'slate-input-error' : ''}`}
+                        />
+                        {errors.firstName && <div className="slate-error-message">{errors.firstName}</div>}
+                      </div>
+
+                      <div className="slate-field">
+                        <label htmlFor="lastName">Last Name</label>
+                        <input
+                          id="lastName"
+                          type="text"
+                          name="lastName"
+                          value={profile.lastName}
+                          onChange={handleInputChange}
+                          className={`slate-input input-bottom-border ${errors.lastName ? 'slate-input-error' : ''}`}
+                        />
+                        {errors.lastName && <div className="slate-error-message">{errors.lastName}</div>}
+                      </div>
+
+                      <div className="slate-field slate-span-2">
+                        <label htmlFor="email">Email Address</label>
+                        <input
+                          id="email"
+                          type="email"
+                          name="email"
+                          value={profile.email}
+                          onChange={handleInputChange}
+                          className={`slate-input input-bottom-border ${errors.email ? 'slate-input-error' : ''}`}
+                        />
+                        {errors.email && <div className="slate-error-message">{errors.email}</div>}
+                      </div>
+
+                      <div className="slate-field">
+                        <label htmlFor="phone">Phone Number</label>
+                        <input
+                          id="phone"
+                          type="tel"
+                          name="phone"
+                          value={profile.phone}
+                          onChange={handleInputChange}
+                          className={`slate-input input-bottom-border ${errors.phone ? 'slate-input-error' : ''}`}
+                          placeholder="+1 (123) 456-7890"
+                        />
+                        {errors.phone && <div className="slate-error-message">{errors.phone}</div>}
+                      </div>
+
+                      <div className="slate-field">
+                        <label htmlFor="jobTitle">Job Title</label>
+                        <input
+                          id="jobTitle"
+                          type="text"
+                          name="jobTitle"
+                          value={profile.jobTitle}
+                          onChange={handleInputChange}
+                          className="slate-input input-bottom-border"
+                        />
+                      </div>
+
+                      <div className="slate-field slate-span-2">
+                        <label htmlFor="preferredLanguage">Preferred Language</label>
+                        <select
+                          id="preferredLanguage"
+                          name="preferredLanguage"
+                          value={profile.preferredLanguage}
+                          onChange={handleInputChange}
+                          className="slate-select input-bottom-border"
+                        >
+                          {languageOptions.map(option => (
+                            <option key={option.value} value={option.value}>
+                              {option.label}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="slate-actions-end">
+                      <button
+                        type="submit"
+                        className="slate-btn-primary"
+                        disabled={saving}
+                      >
+                        {saving ? 'Saving...' : 'Save Changes'}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </section>
+
+              <div className="slate-col-right">
+                <section className="slate-card">
+                  <h3 className="slate-section-title">Change Password</h3>
+                  <form className="slate-form" onSubmit={handlePasswordSubmit}>
+                    <div className="slate-stack-lg">
+                      <div className="slate-field">
+                        <label htmlFor="currentPassword">Current Password</label>
+                        <div className="slate-password-wrap">
+                          <input
+                            id="currentPassword"
+                            type={passwordVisible.current ? 'text' : 'password'}
+                            name="currentPassword"
+                            value={passwordData.currentPassword}
+                            onChange={handlePasswordChange}
+                            className={`slate-input input-bottom-border ${errors.currentPassword ? 'slate-input-error' : ''}`}
+                            placeholder="••••••••••••"
+                          />
+                          <button
+                            type="button"
+                            className="slate-password-toggle"
+                            onClick={() => togglePasswordVisibility('current')}
+                            aria-label={passwordVisible.current ? 'Hide current password' : 'Show current password'}
+                          >
+                            <span className="material-symbols-outlined">
+                              {passwordVisible.current ? 'visibility_off' : 'visibility'}
+                            </span>
+                          </button>
+                        </div>
+                        {errors.currentPassword && <div className="slate-error-message">{errors.currentPassword}</div>}
+                      </div>
+
+                      <div className="slate-field">
+                        <label htmlFor="newPassword">New Password</label>
+                        <div className="slate-password-wrap">
+                          <input
+                            id="newPassword"
+                            type={passwordVisible.new ? 'text' : 'password'}
+                            name="newPassword"
+                            value={passwordData.newPassword}
+                            onChange={handlePasswordChange}
+                            className={`slate-input input-bottom-border ${errors.newPassword ? 'slate-input-error' : ''}`}
+                            placeholder="••••••••••••"
+                          />
+                          <button
+                            type="button"
+                            className="slate-password-toggle"
+                            onClick={() => togglePasswordVisibility('new')}
+                            aria-label={passwordVisible.new ? 'Hide new password' : 'Show new password'}
+                          >
+                            <span className="material-symbols-outlined">
+                              {passwordVisible.new ? 'visibility_off' : 'visibility'}
+                            </span>
+                          </button>
+                        </div>
+                        {errors.newPassword && <div className="slate-error-message">{errors.newPassword}</div>}
+                      </div>
+
+                      <div className="slate-field">
+                        <label htmlFor="confirmPassword">Confirm New Password</label>
+                        <div className="slate-password-wrap">
+                          <input
+                            id="confirmPassword"
+                            type={passwordVisible.confirm ? 'text' : 'password'}
+                            name="confirmPassword"
+                            value={passwordData.confirmPassword}
+                            onChange={handlePasswordChange}
+                            className={`slate-input input-bottom-border ${errors.confirmPassword ? 'slate-input-error' : ''}`}
+                            placeholder="••••••••••••"
+                          />
+                          <button
+                            type="button"
+                            className="slate-password-toggle"
+                            onClick={() => togglePasswordVisibility('confirm')}
+                            aria-label={passwordVisible.confirm ? 'Hide confirm password' : 'Show confirm password'}
+                          >
+                            <span className="material-symbols-outlined">
+                              {passwordVisible.confirm ? 'visibility_off' : 'visibility'}
+                            </span>
+                          </button>
+                        </div>
+                        {errors.confirmPassword && <div className="slate-error-message">{errors.confirmPassword}</div>}
+                      </div>
+
+                      <div className="slate-input-hint">
+                        Password must be at least 8 characters and include uppercase, lowercase, and numbers.
+                      </div>
+
+                      <button
+                        type="submit"
+                        className="slate-btn-outline"
+                        disabled={saving}
+                      >
+                        {saving ? 'Saving...' : 'Update Password'}
+                      </button>
+                    </div>
+                  </form>
+                </section>
+
+                <section className="slate-card">
+                  <h3 className="slate-section-title">Notification Preferences</h3>
+                  <form className="slate-form slate-stack-md">
+                    <div className="slate-toggle-row">
+                      <div>
+                        <label htmlFor="email-notifications" className="slate-toggle-label">Email Notifications</label>
+                        <div className="slate-input-hint">Receive notifications about important updates via email.</div>
+                      </div>
+                      <input
+                        type="checkbox"
+                        name="notifications.email"
+                        id="email-notifications"
+                        checked={profile.notificationPreferences.email}
+                        onChange={handleNotificationChange}
+                        className="slate-checkbox"
+                      />
+                    </div>
+
+                    <div className="slate-toggle-row">
+                      <div>
+                        <label htmlFor="browser-notifications" className="slate-toggle-label">Browser Notifications</label>
+                        <div className="slate-input-hint">Receive notifications in your browser while using the application.</div>
+                      </div>
+                      <input
+                        type="checkbox"
+                        name="notifications.browser"
+                        id="browser-notifications"
+                        checked={profile.notificationPreferences.browser}
+                        onChange={handleNotificationChange}
+                        className="slate-checkbox"
+                      />
+                    </div>
+                  </form>
+                </section>
+
+                <section className="slate-integrity-box">
+                  <div className="slate-integrity-head">
+                    <span className="material-symbols-outlined">verified_user</span>
+                    <span className="slate-status-chip">Active Account</span>
+                  </div>
+                  <h4>Account Integrity</h4>
+                  <p>
+                    Your account is secured with two-factor authentication. Last login activity is continuously monitored.
+                  </p>
+                </section>
               </div>
-              <h2>Personal Information</h2>
-              <form className="settings-form" onSubmit={handleProfileSubmit}>
-                <div className="form-row">
-                  <div className="form-group">
-                    <label>First Name</label>
-                    <input
-                      type="text"
-                      name="firstName"
-                      value={profile.firstName}
-                      onChange={handleInputChange}
-                      className={`form-input ${errors.firstName ? 'input-error' : ''}`}
-                    />
-                    {errors.firstName && <div className="error-message">{errors.firstName}</div>}
-                  </div>
-
-                  <div className="form-group">
-                    <label>Last Name</label>
-                    <input
-                      type="text"
-                      name="lastName"
-                      value={profile.lastName}
-                      onChange={handleInputChange}
-                      className={`form-input ${errors.lastName ? 'input-error' : ''}`}
-                    />
-                    {errors.lastName && <div className="error-message">{errors.lastName}</div>}
-                  </div>
-                </div>
-
-                <div className="form-group">
-                  <label>Email Address</label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={profile.email}
-                    onChange={handleInputChange}
-                    className={`form-input ${errors.email ? 'input-error' : ''}`}
-                  />
-                  {errors.email && <div className="error-message">{errors.email}</div>}
-                </div>
-
-                <div className="form-row">
-                  <div className="form-group">
-                    <label>Phone Number</label>
-                    <input
-                      type="tel"
-                      name="phone"
-                      value={profile.phone}
-                      onChange={handleInputChange}
-                      className={`form-input ${errors.phone ? 'input-error' : ''}`}
-                      placeholder="+1 (123) 456-7890"
-                    />
-                    {errors.phone && <div className="error-message">{errors.phone}</div>}
-                  </div>
-
-                  <div className="form-group">
-                    <label>Job Title</label>
-                    <input
-                      type="text"
-                      name="jobTitle"
-                      value={profile.jobTitle}
-                      onChange={handleInputChange}
-                      className="form-input"
-                    />
-                  </div>
-                </div>
-
-                <div className="form-group">
-                  <label>Preferred Language</label>
-                  <select
-                    name="preferredLanguage"
-                    value={profile.preferredLanguage}
-                    onChange={handleInputChange}
-                    className="form-select"
-                  >
-                    {languageOptions.map(option => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="form-actions">
-                  <button
-                    type="submit"
-                    className="save-button"
-                    disabled={saving}
-                  >
-                    {saving ? 'Saving...' : 'Save Profile'}
-                  </button>
-                </div>
-              </form>
             </div>
 
-            {/* Password */}
-            <div className="settings-section-card">
-              <h2>Change Password</h2>
-              <form className="settings-form" onSubmit={handlePasswordSubmit}>
-                <div className="form-group">
-                  <label>Current Password</label>
-                  <div className="password-input-container">
-                    <input
-                      type={passwordVisible.current ? 'text' : 'password'}
-                      name="currentPassword"
-                      value={passwordData.currentPassword}
-                      onChange={handlePasswordChange}
-                      className={`form-input ${errors.currentPassword ? 'input-error' : ''}`}
-                    />
-                    <button
-                      type="button"
-                      className="password-toggle-button"
-                      onClick={() => togglePasswordVisibility('current')}
-                    >
-                      {passwordVisible.current ? 'Hide' : 'Show'}
-                    </button>
-                  </div>
-                  {errors.currentPassword && <div className="error-message">{errors.currentPassword}</div>}
-                </div>
-
-                <div className="form-row">
-                  <div className="form-group">
-                    <label>New Password</label>
-                    <div className="password-input-container">
-                      <input
-                        type={passwordVisible.new ? 'text' : 'password'}
-                        name="newPassword"
-                        value={passwordData.newPassword}
-                        onChange={handlePasswordChange}
-                        className={`form-input ${errors.newPassword ? 'input-error' : ''}`}
-                      />
-                      <button
-                        type="button"
-                        className="password-toggle-button"
-                        onClick={() => togglePasswordVisibility('new')}
-                      >
-                        {passwordVisible.new ? 'Hide' : 'Show'}
-                      </button>
-                    </div>
-                    {errors.newPassword && <div className="error-message">{errors.newPassword}</div>}
-                  </div>
-
-                  <div className="form-group">
-                    <label>Confirm New Password</label>
-                    <div className="password-input-container">
-                      <input
-                        type={passwordVisible.confirm ? 'text' : 'password'}
-                        name="confirmPassword"
-                        value={passwordData.confirmPassword}
-                        onChange={handlePasswordChange}
-                        className={`form-input ${errors.confirmPassword ? 'input-error' : ''}`}
-                      />
-                      <button
-                        type="button"
-                        className="password-toggle-button"
-                        onClick={() => togglePasswordVisibility('confirm')}
-                      >
-                        {passwordVisible.confirm ? 'Hide' : 'Show'}
-                      </button>
-                    </div>
-                    {errors.confirmPassword && <div className="error-message">{errors.confirmPassword}</div>}
-                  </div>
-                </div>
-
-                <div className="input-hint">
-                  Password must be at least 8 characters and include uppercase, lowercase, and numbers
-                </div>
-
-                <div className="form-actions">
-                  <button
-                    type="submit"
-                    className="save-button"
-                    disabled={saving}
-                  >
-                    {saving ? 'Saving...' : 'Change Password'}
-                  </button>
-                </div>
-              </form>
-            </div>
-
-            {/* Notification Preferences */}
-            <div className="settings-section-card">
-              <h2>Notification Preferences</h2>
-              <form className="settings-form">
-                <div className="form-group">
-                  <div className="checkbox-group">
-                    <input
-                      type="checkbox"
-                      name="notifications.email"
-                      id="email-notifications"
-                      checked={profile.notificationPreferences.email}
-                      onChange={handleNotificationChange}
-                      className="form-checkbox"
-                    />
-                    <label htmlFor="email-notifications">Email Notifications</label>
-                    <div className="input-hint">
-                      Receive notifications about important updates via email
-                    </div>
-                  </div>
-                </div>
-
-                <div className="form-group">
-                  <div className="checkbox-group">
-                    <input
-                      type="checkbox"
-                      name="notifications.browser"
-                      id="browser-notifications"
-                      checked={profile.notificationPreferences.browser}
-                      onChange={handleNotificationChange}
-                      className="form-checkbox"
-                    />
-                    <label htmlFor="browser-notifications">Browser Notifications</label>
-                    <div className="input-hint">
-                      Receive notifications in your browser while using the application
-                    </div>
-                  </div>
-                </div>
-              </form>
-            </div>
+            <section className="slate-danger-zone">
+              <div>
+                <h3>Danger Zone</h3>
+                <p>Permanently delete your account and all architectural assets.</p>
+              </div>
+              <button type="button" className="slate-danger-btn">
+                Delete Account
+              </button>
+            </section>
           </div>
         )}
       </div>

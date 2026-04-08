@@ -1,0 +1,60 @@
+.sales-report-root {
+  /* Ensure template primary is used inside this page when build CSS defines a different primary */
+  --page-primary: #565e74;
+}
+
+/* Override common utility classes that may be defined by global/build CSS */
+.sales-report-root .text-primary { color: var(--page-primary) !important; }
+.sales-report-root .bg-primary { background-color: var(--page-primary) !important; }
+.sales-report-root .border-primary { border-color: var(--page-primary) !important; }
+.sales-report-root .text-primary-dim { color: #4a5268 !important; }
+
+/* Buttons and cards radius / color safety */
+.sales-report-root button, .sales-report-root .pos-button { border-radius: 4px !important; }
+
+/* Specific override for pos button that may come from global topbar styles */
+.sales-report-root .topbar-pos-button { background-color: var(--page-primary) !important; color: #f7f7ff !important; }
+
+/* Make sure decoration elements that relied on .bg-surface-container-highest keep intended color */
+.sales-report-root .bg-surface-container-highest { background-color: #d9e4ea !important; }
+
+/* Ensure links in this page using utility classes show template color */
+.sales-report-root a { color: var(--page-primary) !important; }
+.sales-report-root a:hover { color: #4a5268 !important; }
+
+/* Page spacing: content padding is provided by the inner <section> in the page component */
+
+/* Cards, tables and panels should have 4px radius to match products page */
+.sales-report-root .bg-surface-container-lowest,
+.sales-report-root .bg-surface-container-low,
+.sales-report-root .bg-surface-container-highest,
+.sales-report-root .bg-surface-container,
+.sales-report-root .data-table-card,
+.sales-report-root .data-table,
+.sales-report-root table,
+.sales-report-root thead,
+.sales-report-root tbody,
+.sales-report-root .stat-card {
+  border-radius: 4px !important;
+  overflow: hidden;
+}
+
+/* Ensure table wrapper shows rounded corners */
+.sales-report-root .overflow-x-auto {
+  border-radius: 4px !important;
+  overflow: hidden;
+}
+
+/* Make sure small UI elements also get 4px radius */
+.sales-report-root .material-symbols-outlined,
+.sales-report-root .pos-chip,
+.sales-report-root input,
+.sales-report-root select,
+.sales-report-root textarea {
+  border-radius: 4px !important;
+}
+
+/* Buttons: ensure consistent color and radius */
+.sales-report-root button {
+  border-radius: 4px !important;
+}

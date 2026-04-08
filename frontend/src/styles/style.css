@@ -144,7 +144,7 @@ button, input, select {
     color: white;
     border: none;
     padding: 8px 16px;
-    border-radius: 6px;
+    border-radius: var(--border-radius);
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
@@ -193,6 +193,15 @@ button, input, select {
     box-shadow: var(--shadow-light);
     padding: var(--card-padding);
     overflow: hidden; /* Contain content */
+}
+
+/* Ensure data tables and buttons use the 4px radius from the design tokens */
+.data-table-card, .data-table, .data-table-card .card-header, button, .pos-button, .stat-card {
+    border-radius: var(--border-radius);
+}
+
+.data-table {
+    overflow: hidden; /* keep rounded corners visible */
 }
 
 .card-header {

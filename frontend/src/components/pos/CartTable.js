@@ -1,60 +1,43 @@
 import React from 'react';
-import { Table } from 'react-bootstrap';
-import { FiTrash2 } from 'react-icons/fi';
-import QuantityButton from './quantitybutton.js';
 import '../styles/CartTable.css'; 
 
-const CartTable = ({ cartItems, handleQuantityChange, handleRemoveItem }) => {
+const CartTable = ({ cartItems, handleRemoveItem, currencySymbol }) => {
+  if (!cartItems || cartItems.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <p className="text-gray-500">Your cart is empty.</p>
+      </div>
+    );
+  }
+
   return (
-    <Table className="cart-table">
-      <thead>
-        <tr>
-          <th width="320">Items</th>
-          <th width="120">Price</th>
-          <th width="80">Qty</th>
-          <th width="140">Subtotal</th>
-          <th width="40">
-            <FiTrash2 />
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        {cartItems.map(item => {
-          const discountedPrice = item.price * (1 - item.discount / 100);
-          
-          return (
-            <tr key={item.id} className="cart-item-row">
-              <td>
-                <div className="product-container">
-                  <div className="product-info">
-                    <div className="product-name">{item.name}</div>
-                  </div>
-                </div>
-              </td>
-              <td>${item.price.toFixed(2)}</td>
-              <td>
-                <div className="quantity-container">
-                  <QuantityButton
-                    key={item.id}
-                    item={item}
-                    handleQuantityChange={handleQuantityChange}
-                    handleRemoveItem={handleRemoveItem}  // Add this prop
-                  />
-                </div>
-              </td>
-              <td>${item.subtotal.toFixed(2)}</td>
-              <td>
-                <FiTrash2
-                  className="delete-icon"
-                  onClick={() => handleRemoveItem(item.id)}
-                />
-              </td>
-            </tr>
-          );
-        })}
-        {cartItems.length === 0 && null}
-      </tbody>
-    </Table>
+    <div className="space-y-4">
+      {cartItems.map(item => {
+        return (
+          <div key={item.id} className="flex items-center justify-between group py-1">
+            <div className="flex items-center space-x-4">
+              <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center text-gray-600 font-bold text-xs">
+                x{item.quantity}
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-gray-900">{item.name}</h4>
+              </div>
+            </div>
+            <div className="text-right">
+              <p className="text-sm font-bold text-gray-900">
+                {currencySymbol}{(item.subtotal).toFixed(2)}
+              </p>
+              <button 
+                className="text-[10px] font-bold text-red-500 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity"
+                onClick={() => handleRemoveItem(item.id)}
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+        );
+      })}
+    </div>
   );
 };
 

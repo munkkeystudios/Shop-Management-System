@@ -1,29 +1,124 @@
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+
 :root {
-  /* Modern Professional Palette */
-  --color-bg-main: #f8fafc; /* Light Slate */
-  --color-bg-card: #ffffff; /* Pure White */
-  --color-primary: #4f46e5; /* Indigo */
-  --color-primary-soft: #6366f1; /* Sidebar accent */
-  --color-text-primary: #1e293b; /* Deep Slate */
-  --color-success: #10b981; /* High stock / success */
-  --color-warning: #f59e0b; /* Low stock / warning */
-  --color-danger: #ef4444; /* Critical / error */
-  --color-border-subtle: #e2e8f0;
-  --transition-fast: 0.2s ease-in-out;
+  /* Tailwind Design System Tokens from template */
+  --color-primary: #565e74;
+  --color-on-secondary: #f8f8ff;
+  --color-inverse-primary: #dae2fd;
+  --color-primary-fixed-dim: #ccd4ee;
+  --color-secondary-container: #d5e3fc;
+  --color-surface-bright: #f7f9fb;
+  --color-error: #9f403d;
+  --color-tertiary-container: #dcddfe;
+  --color-inverse-surface: #0b0f10;
+  --color-error-container: #fe8983;
+  --color-surface-container: #e8eff3;
+  --color-tertiary-fixed-dim: #cecfef;
+  --color-on-tertiary-container: #4c4e69;
+  --color-on-secondary-fixed: #324053;
+  --color-on-surface-variant: #566166;
+  --color-error-dim: #4e0309;
+  --color-on-background: #2a3439;
+  --color-on-primary-fixed: #373f54;
+  --color-surface-dim: #cfdce3;
+  --color-primary-dim: #4a5268;
+  --color-on-error: #fff7f6;
+  --color-inverse-on-surface: #9a9d9f;
+  --color-secondary-fixed: #d5e3fc;
+  --color-on-error-container: #752121;
+  --color-on-surface: #2a3439;
+  --color-secondary: #526074;
+  --color-on-secondary-container: #455367;
+  --color-tertiary: #5b5d78;
+  --color-on-primary-container: #4a5167;
+  --color-surface-tint: #565e74;
+  --color-surface-container-highest: #d9e4ea;
+  --color-primary-container: #dae2fd;
+  --color-on-primary-fixed-variant: #535b71;
+  --color-surface-container-high: #e1e9ee;
+  --color-tertiary-fixed: #dcddfe;
+  --color-surface-container-low: #f0f4f7;
+  --color-secondary-dim: #465468;
+  --color-surface-container-lowest: #ffffff;
+  --color-tertiary-dim: #4f516c;
+  --color-background: #f7f9fb;
+  --color-secondary-fixed-dim: #c7d5ed;
+  --color-on-secondary-fixed-variant: #4e5c71;
+  --color-surface-variant: #d9e4ea;
+  --color-on-tertiary-fixed: #393c55;
+  --color-on-primary: #f7f7ff;
+  --color-primary-fixed: #dae2fd;
+  --color-on-tertiary-fixed-variant: #565873;
+  --color-outline: #717c82;
+  --color-surface: #f7f9fb;
+  --color-on-tertiary: #fbf8ff;
+  --color-outline-variant: #a9b4b9;
+  /* Compatibility tokens used elsewhere in legacy styles */
+  --primary-color: var(--color-primary);
+  --search-bg: #ffffff;
+  --border-color: #e6eef3;
+  --card-bg: #ffffff;
+  --card-padding: 16px;
+  --border-radius: 4px;
 }
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: var(--color-bg-main);
-  color: var(--color-text-primary);
+  background-color: var(--color-surface);
+  color: var(--color-on-surface);
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+/* Global Premium Loading Animation */
+.premium-loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.square-grid-pulse {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.pulse-square {
+  width: 32px;
+  height: 32px;
+  background-color: #565e74;
+  border-radius: 4px;
+  animation: square-pulse-anim 1.5s infinite ease-in-out;
+}
+
+.pulse-square:nth-child(2) { animation-delay: 0.1s; }
+.pulse-square:nth-child(3) { animation-delay: 0.2s; }
+.pulse-square:nth-child(4) { animation-delay: 0.3s; }
+.pulse-square:nth-child(5) { animation-delay: 0.4s; }
+.pulse-square:nth-child(6) { animation-delay: 0.5s; }
+.pulse-square:nth-child(7) { animation-delay: 0.6s; }
+.pulse-square:nth-child(8) { animation-delay: 0.7s; }
+.pulse-square:nth-child(9) { animation-delay: 0.8s; }
+
+@keyframes square-pulse-anim {
+  0%, 100% {
+    opacity: 0.1;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }

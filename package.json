@@ -40,5 +40,10 @@
     "react-router-dom": "^7.5.1",
     "react-toastify": "^11.0.5",
     "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.27",
+    "postcss": "^8.5.8",
+    "tailwindcss": "^4.2.2"
   }
 }

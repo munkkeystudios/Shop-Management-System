@@ -1,0 +1,156 @@
+﻿/* Styles adapted from SalesFilter.css to match the All Sales filter popup */
+
+.filter-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 332px;
+  border-radius: 12px;
+  border: 1px solid #d9e4ea;
+  background: #ffffff;
+  box-shadow: 0 14px 28px rgba(11, 15, 16, 0.15);
+  z-index: 1000;
+  overflow: hidden;
+}
+
+/* Stronger override to avoid global .filter-dropdown/.filter-form rules from other pages */
+.filter-dropdown {
+  padding: 0 !important;
+  margin: 0 !important;
+  box-sizing: border-box;
+}
+
+.filter-header {
+  padding: 12px 14px;
+  border-bottom: 1px solid #e8eff3;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f7f9fb;
+}
+
+.filter-header h3 {
+  margin: 0;
+  color: #2a3439;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* The purchase filter uses a <form class="filter-form">; ensure it has the same inner padding as Sales */
+.filter-dropdown > .filter-form {
+  padding: 14px;
+  box-sizing: border-box;
+}
+
+.filter-item {
+  margin-bottom: 14px;
+}
+
+.filter-item label {
+  display: block;
+  color: #717c82;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.filter-body .row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.filter-body input,
+.filter-body select {
+  height: 36px;
+  padding: 0 10px;
+  border-radius: 8px;
+  border: 1px solid #d9e4ea;
+}
+
+.filter-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px; /* match Sales footer top/bottom and side padding */
+  margin: 0;
+  width: 100%;
+  box-sizing: border-box;
+  border-top: 1px solid #e8eff3;
+  background: #f7f9fb;
+  gap: 8px;
+}
+
+
+/* Buttons: match Sales filter popup styles exactly */
+.filter-actions .reset-filter,
+.filter-actions .apply-filter,
+.filter-dropdown .reset-filter,
+.filter-dropdown .apply-filter {
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.filter-actions .reset-filter,
+.filter-dropdown .reset-filter {
+  border: 1px solid #d9e4ea;
+  background: #ffffff;
+  color: #566166;
+}
+
+.filter-actions .reset-filter:hover,
+.filter-dropdown .reset-filter:hover {
+  background: #f0f4f7;
+}
+
+/* Stronger specificity to beat global rules that set a green apply color */
+.filter-dropdown .filter-form .apply-filter,
+.filter-dropdown .apply-filter {
+  background: #565e74 !important;
+  border: 1px solid #565e74 !important;
+  color: #f7f7ff !important;
+}
+
+.filter-dropdown .filter-form .apply-filter:hover,
+.filter-dropdown .apply-filter:hover {
+  background: #4a5268 !important;
+}
+
+/* More specific selector to override other pages' .filter-form .apply-filter (e.g., all_purchases.css) */
+.filter-form .apply-filter {
+  background: #565e74;
+  border: 1px solid #565e74;
+  color: #f7f7ff;
+}
+
+.amount-range {
+  display: flex;
+  gap: 12px;
+}
+
+.form-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+@media (max-width: 576px) {
+  .filter-dropdown {
+    width: 280px;
+    right: -70px;
+  }
+
+  .amount-range {
+    flex-direction: column;
+  }
+}

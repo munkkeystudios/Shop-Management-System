@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import '../styles/Auth.css';
 import logoImage from '../images/logo-small.png';
-import loginBgImage from '../images/Gemini_Generated_Image_fmlbtzfmlbtzfmlb.png';
+import dashboardImage from '../images/dashboard.png';
 import axios from 'axios';
-import { FiEye, FiMail, FiLock, FiLogIn } from 'react-icons/fi';
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
   const { login, error, loading } = useAuth();
   const navigate = useNavigate();
   const [companyInfo, setCompanyInfo] = useState({
@@ -58,37 +56,48 @@ const Login = () => {
   };
 
   return (
-    <div className="auth-container login-page">
-      <div className="auth-card-right">
-        <div className="form-content">
-          <div className="logo-container-top">
-            <div className="logo">
-              <img src={companyInfo.logo} alt="Company Logo" />
-            </div>
-            <h1>{companyInfo.name}</h1>
-          </div>
+    <main className="slate-auth-page login-page">
+      <section
+        className="slate-auth-left"
+        style={{ backgroundImage: `linear-gradient(180deg, rgba(51, 65, 85, 0.94) 0%, rgba(11, 15, 16, 0.94) 100%), url(${dashboardImage})` }}
+      >
+        <div className="slate-auth-grid-overlay" aria-hidden="true" />
 
-          <div className="auth-header">
-            <h2>Login</h2>
-            <p>Login to your account!</p>
-          </div>
+        <div className="slate-auth-left-top">
+          <div className="slate-auth-hero-copy" aria-hidden="true" />
+        </div>
+
+        {/* Removed system metrics per request (Node Status / Latency / Security) */}
+      </section>
+
+      <section className="slate-auth-right">
+        <div className="slate-auth-right-inner">
+          <header className="slate-auth-header">
+            <div className="slate-auth-header-brand">
+              {companyInfo.logo ? (
+                <img src={companyInfo.logo} alt={companyInfo.name || 'FinTrack'} className="slate-auth-header-logo" />
+              ) : (
+                <span className="material-symbols-outlined slate-auth-header-logo">terminal</span>
+              )}
+              <h2 className="slate-auth-header-title">{companyInfo.name || 'FinTrack'}</h2>
+            </div>
+            <p>Enter credentials to unlock system</p>
+          </header>
 
           {error && (
-            <div className="error-message">
-              {error}
-            </div>
+            <div className="slate-auth-error" role="alert">{error}</div>
           )}
 
-          <form className="login-form" onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label htmlFor="username">Email Address <span className="required">*</span></label>
-              <div className="input-with-icon">
-                <FiMail className="input-icon" />
+          <form className="slate-auth-form" onSubmit={handleSubmit}>
+            <div className="slate-auth-field">
+              <label htmlFor="username">Operator ID / Email</label>
+              <div className="slate-auth-input-wrap">
+                <span className="material-symbols-outlined">person</span>
                 <input
                   type="text"
                   id="username"
                   name="username"
-                  placeholder="user@username.com"
+                  placeholder="Username"
                   required
                   autoComplete="off"
                   value={username}
@@ -96,44 +105,73 @@ const Login = () => {
                 />
               </div>
             </div>
-            <div className="form-group">
-              <label htmlFor="password">Password <span className="required">*</span></label>
-              <div className="input-with-icon">
-                <FiLock className="input-icon" />
+            <div className="slate-auth-field">
+              <label htmlFor="password">Security Passcode</label>
+              <div className="slate-auth-input-wrap">
+                <span className="material-symbols-outlined">lock</span>
                 <input
-                  type={showPassword ? "text" : "password"}
+                  type={showPassword ? 'text' : 'password'}
                   id="password"
                   name="password"
-                  placeholder="***********"
+                  placeholder="••••••••"
                   required
                   autoComplete="off"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
-                <FiEye
-                  className="password-toggle"
+                <button
+                  type="button"
+                  className="slate-auth-visibility-btn"
                   onClick={() => setShowPassword(!showPassword)}
-                />
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  <span className="material-symbols-outlined">{showPassword ? 'visibility_off' : 'visibility'}</span>
+                </button>
               </div>
             </div>
 
-            <div className="form-group login-button-wrapper">
+            {/* Remember session checkbox removed per UI update */}
+
+            <div className="slate-auth-submit-wrap">
                 <button
                   type="submit"
                   disabled={loading}
-                  className="submit-button login-submit-button"
+                  className="slate-auth-submit-btn"
                 >
-                  <span>{loading ? "Signing in..." : "Sign In"}</span>
-                  <FiLogIn className="button-icon" />
+                  <span className="material-symbols-outlined">{loading ? 'hourglass_top' : 'login'}</span>
+                  {loading ? 'Logging in...' : 'Login'}
                 </button>
-            </div>
+              </div>
           </form>
-        </div>
-      </div>
 
-      <div className="auth-card-left">
-      </div>
-    </div>
+          <div className="slate-auth-alt">
+            <div className="slate-auth-alt-divider">
+              <div />
+              <span>Alternative Access</span>
+              <div />
+            </div>
+
+            <div className="slate-auth-alt-grid">
+              <button type="button">
+                <span className="material-symbols-outlined">fingerprint</span>
+                <span>Biometric</span>
+              </button>
+              <button type="button">
+                <span className="material-symbols-outlined">credit_card</span>
+                <span>Card Swipe</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Desktop footer removed per design request (ALL SYSTEMS OPERATIONAL / V2.4.0-STABLE) */}
+      </section>
+
+      <footer className="slate-auth-footer-mobile">
+        <span>System Status: Online</span>
+        <span>Terminal: POS-08-NYC</span>
+      </footer>
+    </main>
   );
 };
 

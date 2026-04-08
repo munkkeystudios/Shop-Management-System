@@ -42,11 +42,12 @@ const EmployeeFilter = ({ onApplyFilters }) => {
   return (
     <div className="employee-filter-container">
       <button 
-        className={`employee-filter-button ${activeFilters > 0 ? 'active' : ''}`} 
+        className={`employee-filter-button filter-action ${activeFilters > 0 ? 'active' : ''}`} 
         onClick={toggleFilter}
+        aria-label="Filter employees"
+        title="Filter"
       >
-        <FaFilter /> 
-        Filter
+        <FaFilter />
         {activeFilters > 0 && (
           <span className="filter-badge">{activeFilters}</span>
         )}

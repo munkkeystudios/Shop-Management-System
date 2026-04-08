@@ -49,7 +49,7 @@
   }
 
   .search-input:focus {
-    border-color: #00b359;
+    border-color: #565e74;
   }
 
   .action-buttons {
@@ -77,8 +77,8 @@
   }
 
   .filter-btn.active {
-    border-color: #00b359;
-    color: #00b359;
+    border-color: #565e74;
+    color: #565e74;
   }
 
   .create-btn {
@@ -87,7 +87,7 @@
     gap: 5px;
     padding: 8px 12px;
     border-radius: 4px;
-    background-color: #00b359;
+    background-color: #565e74;
     color: white;
     border: none;
     cursor: pointer;
@@ -96,7 +96,7 @@
   }
 
   .create-btn:hover {
-    background-color: #009e4f;
+    background-color: #4a5268;
   }
 
   .error-message {
@@ -112,7 +112,7 @@
 
   .table-container {
     background-color: white;
-    border-radius: 8px;
+    border-radius: 4px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     overflow-x: auto;
     margin-bottom: 20px;
@@ -138,9 +138,12 @@
   }
 
   .purchases-table th {
-    background-color: #f9f9f9;
-    font-weight: 600;
-    color: #555;
+    background-color: #f9fafb;
+    font-weight: 500;
+    font-size: 0.8rem;
+    color: #6b7280;
+    text-transform: uppercase;
+    border-bottom: 1px solid #e5e7eb;
     position: sticky;
     top: 0;
     z-index: 10;
@@ -240,7 +243,7 @@
     top: 100px;
     right: 0;
     background-color: white;
-    border-radius: 8px;
+    border-radius: 4px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     padding: 15px;
     width: 280px;
@@ -356,6 +359,47 @@
   align-items: center;
 }
 
+/* Premium Loading Styles */
+.products-loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffffff;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50; 
+}
+
+.block-pulse {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.block {
+  width: 32px;
+  height: 32px;
+  background-color: #565e74;
+  animation: pulse-slate 1.5s infinite ease-in-out;
+}
+
+.block:nth-child(2) { animation-delay: 0.1s; }
+.block:nth-child(3) { animation-delay: 0.2s; }
+.block:nth-child(4) { animation-delay: 0.3s; }
+.block:nth-child(5) { animation-delay: 0.4s; }
+.block:nth-child(6) { animation-delay: 0.5s; }
+.block:nth-child(7) { animation-delay: 0.6s; }
+.block:nth-child(8) { animation-delay: 0.7s; }
+.block:nth-child(9) { animation-delay: 0.8s; }
+
+@keyframes pulse-slate {
+  0%, 100% { opacity: 0.1; transform: scale(0.95); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
 /* Buttons base */
 .filter-btn, .pdf-btn, .excel-btn {
   display: flex;
@@ -396,4 +440,22 @@
 
 .pdf-btn:hover {
   background-color: #b71c1c; 
+}
+
+.all-products-action-btn {
+  padding: 5px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: #64748b;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.all_products-action-btn:hover {
+  background: #e8eff3;
+  color: #334155;
 }

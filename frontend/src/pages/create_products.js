@@ -1,11 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Layout from '../components/Layout';
-import { Card, Alert } from 'react-bootstrap';
 import { useNotifications } from '../context/NotificationContext';
 import "../styles/topbar.css";
 import "../styles/product_page.css";
-import ModernDropdown, { ModernDropdownItem } from '../components/ModernDropdown';
-import '../styles/dropdown.css';
+
+const CATEGORY_OPTIONS = [
+  { value: '67f65d2951c326c002d6f0ac', label: 'Casual Wear' },
+  { value: '67f65d2951c326c002d6f0ad', label: 'Formal Wear' },
+  { value: '67f65d2951c326c002d6f0ae', label: 'Sportswear' }
+];
+
+const SUPPLIER_OPTIONS = [
+  { value: '67f662e851c326c002d6f0b3', label: 'Best Supplies Co.' },
+  { value: '67f662e851c326c002d6f0b4', label: 'Urban Styles Apparel' },
+  { value: '67f662e851c326c002d6f0b5', label: 'Classic Tailors Ltd.' }
+];
+
+const TAX_OPTIONS = [
+  { value: '15', label: 'Standard Rate (15%)' },
+  { value: '5', label: 'Reduced Rate (5%)' },
+  { value: '0', label: 'Zero Rated (0%)' }
+];
 
 
 const getInitialState = () => ({
@@ -34,6 +49,11 @@ const getInitialState = () => ({
 
 
 const isValidObjectId = (id) => /^[0-9a-fA-F]{24}$/.test(id);
+
+const getLabelByValue = (options, value) => {
+  const item = options.find((option) => option.value === value);
+  return item ? item.label : 'Not selected';
+};
 
 const CreateProducts = () => {
   const [formData, setFormData] = useState(getInitialState());
@@ -203,9 +223,6 @@ const CreateProducts = () => {
     }
   };
 
-
-  const requiredStar = <span style={{ color: 'red' }}>*</span>;
-
   const handleImageClick = () => {
     fileInputRef.current.click();
   };
@@ -219,207 +236,398 @@ const CreateProducts = () => {
     }));
   };
 
+  const handleQuantityDelta = (delta) => {
+    setFormData((prevData) => {
+      const current = parseInt(prevData.quantity, 10);
+      const safeCurrent = Number.isNaN(current) ? 0 : current;
+      const next = Math.max(0, safeCurrent + delta);
+      return {
+        ...prevData,
+        quantity: String(next)
+      };
+    });
+  };
+
+  const parsedSalePrice = parseFloat(formData.salePrice);
+  const parsedQuantity = parseInt(formData.quantity, 10);
+  const parsedTaxRate = parseFloat(formData.gst);
+
+  const inventoryValue = (!Number.isNaN(parsedSalePrice) ? parsedSalePrice : 0) *
+    (!Number.isNaN(parsedQuantity) ? parsedQuantity : 0);
+  const skuStatus = formData.sku ? 'READY' : 'PENDING';
+  const taxDisplay = !Number.isNaN(parsedTaxRate) ? `${parsedTaxRate.toFixed(2)}%` : '0.00%';
+
+  const requiredStar = <span className="required-star">*</span>;
+
   return (
     <Layout title="Create Product">
-      <div className="create-products-page">
-        <Card className="create-products-card">
-          <Card.Header>
-            <span className="create-products-title">Create New Product</span>
-          </Card.Header>
-          <Card.Body>
-            {error && <Alert variant="danger" onClose={() => setError('')} dismissible>{error}</Alert>}
-            {success && <Alert variant="success" onClose={() => setSuccess('')} dismissible>{success}</Alert>}
+      <div className="create-product-template">
+        <header className="cp-header">
+          <div>
+            <h1 className="cp-title">Create Product</h1>
+          </div>
 
-            <form onSubmit={handleSubmit} className="product-form">
-              <div className="form-grid">
-                 <div className="form-group">
-                  <label htmlFor="title">Title {requiredStar}</label>
-                  <input type="text" id="title" name="title" value={formData.title} onChange={handleChange} placeholder="Product Name" required />
-                </div>
-                 <div className="form-group">
-                  <label htmlFor="sku">SKU / Barcode {requiredStar}</label>
-                  <input type="text" id="sku" name="sku" value={formData.sku} onChange={handleChange} placeholder="Unique Barcode" required />
-                </div>
+          <div className="cp-header-actions">
+            <button
+              type="button"
+              className="cp-btn cp-btn-ghost"
+              onClick={handleDiscard}
+              disabled={isLoading}
+            >
+              Discard
+            </button>
+            <button
+              type="submit"
+              form="create-product-form"
+              className="cp-btn cp-btn-primary"
+              disabled={isLoading}
+            >
+              {isLoading ? 'Saving...' : 'Save & Submit'}
+            </button>
+          </div>
+        </header>
 
-                 <div className="form-group">
-                  <label htmlFor="category">Category {requiredStar}</label>
-                  <div style={{ width: '100%', position: 'relative' }}>
-                    <ModernDropdown
-                      title={
-                        <div style={{ width: '100%', justifyContent: 'space-between' }}>
-                          {formData.category ? 
-                            (formData.category === "67f65d2951c326c002d6f0ac" ? "Casual Wear" : 
-                             formData.category === "67f65d2951c326c002d6f0ad" ? "Formal Wear" : 
-                             formData.category === "67f65d2951c326c002d6f0ae" ? "Sportswear" : "Select Category")
-                            : "Select Category"}
-                        </div>
-                      }
-                    >
-                      <ModernDropdownItem
-                        isActive={formData.category === ""}
-                        onClick={() => handleChange({ target: { name: 'category', value: '' } })}
-                      >
-                        Select Category
-                      </ModernDropdownItem>
-                      <ModernDropdownItem
-                        isActive={formData.category === "67f65d2951c326c002d6f0ac"}
-                        onClick={() => handleChange({ target: { name: 'category', value: '67f65d2951c326c002d6f0ac' } })}
-                      >
-                        Casual Wear
-                      </ModernDropdownItem>
-                      <ModernDropdownItem
-                        isActive={formData.category === "67f65d2951c326c002d6f0ad"}
-                        onClick={() => handleChange({ target: { name: 'category', value: '67f65d2951c326c002d6f0ad' } })}
-                      >
-                        Formal Wear
-                      </ModernDropdownItem>
-                      <ModernDropdownItem
-                        isActive={formData.category === "67f65d2951c326c002d6f0ae"}
-                        onClick={() => handleChange({ target: { name: 'category', value: '67f65d2951c326c002d6f0ae' } })}
-                      >
-                        Sportswear
-                      </ModernDropdownItem>
-                    </ModernDropdown>
-                  </div>
+        {error && (
+          <div className="cp-alert cp-alert-error" role="alert">
+            <span>{error}</span>
+            <button type="button" onClick={() => setError('')} aria-label="Dismiss error">✕</button>
+          </div>
+        )}
+        {success && (
+          <div className="cp-alert cp-alert-success" role="status">
+            <span>{success}</span>
+            <button type="button" onClick={() => setSuccess('')} aria-label="Dismiss success">✕</button>
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} id="create-product-form" className="cp-form">
+          <div className="cp-grid">
+            <div className="cp-main-column">
+              <section className="cp-panel">
+                <div className="cp-panel-head">
+                  <div className="cp-panel-accent" />
+                  <h2>Section 01: General Information</h2>
                 </div>
 
-                 <div className="form-group">
-                  <label htmlFor="supplier">Supplier {requiredStar}</label>
-                  <div style={{ width: '100%', position: 'relative' }}>
-                    <ModernDropdown
-                      title={
-                        <div style={{ width: '100%', justifyContent: 'space-between' }}>
-                          {formData.supplier ? 
-                            (formData.supplier === "67f662e851c326c002d6f0b3" ? "Best Supplies Co." : 
-                             formData.supplier === "67f662e851c326c002d6f0b4" ? "Urban Styles Apparel" : 
-                             formData.supplier === "67f662e851c326c002d6f0b5" ? "Classic Tailors Ltd." : "Select Supplier")
-                            : "Select Supplier"}
-                        </div>
-                      }
-                    >
-                      <ModernDropdownItem
-                        isActive={formData.supplier === ""}
-                        onClick={() => handleChange({ target: { name: 'supplier', value: '' } })}
-                      >
-                        Select Supplier
-                      </ModernDropdownItem>
-                      <ModernDropdownItem
-                        isActive={formData.supplier === "67f662e851c326c002d6f0b3"}
-                        onClick={() => handleChange({ target: { name: 'supplier', value: '67f662e851c326c002d6f0b3' } })}
-                      >
-                        Best Supplies Co.
-                      </ModernDropdownItem>
-                      <ModernDropdownItem
-                        isActive={formData.supplier === "67f662e851c326c002d6f0b4"}
-                        onClick={() => handleChange({ target: { name: 'supplier', value: '67f662e851c326c002d6f0b4' } })}
-                      >
-                        Urban Styles Apparel
-                      </ModernDropdownItem>
-                      <ModernDropdownItem
-                        isActive={formData.supplier === "67f662e851c326c002d6f0b5"}
-                        onClick={() => handleChange({ target: { name: 'supplier', value: '67f662e851c326c002d6f0b5' } })}
-                      >
-                        Classic Tailors Ltd.
-                      </ModernDropdownItem>
-                    </ModernDropdown>
-                  </div>
-                </div>
-                
-
-                {/* Note Section */}
-                <div className="form-group form-group-span-2">
-                  <label htmlFor="description"> Description</label>
-                  <textarea
-                    id="description"
-                    name="description"
-                    value={formData.description}
-                    onChange={handleChange}
-                    placeholder="Add details, care instructions, etc."
-                  ></textarea>
-                </div>
-
-
-                <div className="form-group form-group-span-2">
-                  <label>Product Image</label>
-                  <div 
-                    className="upload-image-container" 
-                    onClick={handleImageClick}
-                  >
-                    {imagePreview ? (
-                      <div className="image-preview-container">
-                        <img 
-                          src={imagePreview} 
-                          alt="Product Preview" 
-                          className="image-preview" 
-                        />
-                        <button 
-                          type="button"
-                          className="remove-image-btn"
-                          onClick={handleRemoveImage}
-                        >
-                          ✕
-                        </button>
-                      </div>
-                    ) : (
-                      <>
-                        <div className="upload-icon">📁</div>
-                        <div className="upload-text">
-                          <strong>Click to upload</strong> or drag and drop your product image
-                        </div>
-                      </>
-                    )}
+                <div className="cp-fields-grid">
+                  <div className="cp-field cp-field-span-2">
+                    <label htmlFor="title">Title {requiredStar}</label>
                     <input
-                      type="file"
-                      ref={fileInputRef}
-                      id="productImageInput"
-                      name="productImage"
-                      accept="image/*"
-                      onChange={handleFileChange}
-                      style={{ display: 'none' }}
+                      type="text"
+                      id="title"
+                      name="title"
+                      className="cp-input-arch"
+                      value={formData.title}
+                      onChange={handleChange}
+                      placeholder="e.g. Industrial Steel Beam - Grade A"
+                      required
+                    />
+                  </div>
+
+                  <div className="cp-field">
+                    <label htmlFor="sku">SKU / Barcode {requiredStar}</label>
+                    <input
+                      type="text"
+                      id="sku"
+                      name="sku"
+                      className="cp-input-arch"
+                      value={formData.sku}
+                      onChange={handleChange}
+                      placeholder="ST-9982-BLK"
+                      required
+                    />
+                  </div>
+
+                  <div className="cp-field">
+                    <label htmlFor="category">Category {requiredStar}</label>
+                    <select
+                      id="category"
+                      name="category"
+                      className="cp-input-arch cp-select"
+                      value={formData.category}
+                      onChange={handleChange}
+                      required
+                    >
+                      <option value="">Select Category</option>
+                      {CATEGORY_OPTIONS.map((option) => (
+                        <option key={option.value} value={option.value}>{option.label}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="cp-field">
+                    <label htmlFor="supplier">Supplier {requiredStar}</label>
+                    <select
+                      id="supplier"
+                      name="supplier"
+                      className="cp-input-arch cp-select"
+                      value={formData.supplier}
+                      onChange={handleChange}
+                      required
+                    >
+                      <option value="">Select Supplier</option>
+                      {SUPPLIER_OPTIONS.map((option) => (
+                        <option key={option.value} value={option.value}>{option.label}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="cp-field cp-field-span-2">
+                    <label htmlFor="description">Description</label>
+                    <textarea
+                      id="description"
+                      name="description"
+                      className="cp-input-arch"
+                      value={formData.description}
+                      onChange={handleChange}
+                      placeholder="Enter technical specifications and product details..."
+                      rows="4"
                     />
                   </div>
                 </div>
+              </section>
 
-                <div className="form-group">
-                  <label htmlFor="salePrice">Sale Price {requiredStar}</label>
-                  <input type="number" id="salePrice" name="salePrice" value={formData.salePrice} onChange={handleChange} placeholder="0.00" required min="0" step="0.01" />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="purchasePrice">Purchase Price (Cost)</label>
-                  <input type="number" id="purchasePrice" name="purchasePrice" value={formData.purchasePrice} onChange={handleChange} placeholder="0.00" min="0" step="0.01" />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="discountRate">Discount Rate (%)</label>
-                  <input type="number" id="discountRate" name="discountRate" value={formData.discountRate} onChange={handleChange} placeholder="0" min="0" max="100" step="0.01" />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="discountAmount">Discount Amount</label>
-                  <input type="number" id="discountAmount" name="discountAmount" value={formData.discountAmount} onChange={handleChange} placeholder="0.00" min="0" step="0.01" />
-                </div>
-                 <div className="form-group">
-                  <label htmlFor="quantity">Quantity {requiredStar}</label>
-                  <input type="number" id="quantity" name="quantity" value={formData.quantity} onChange={handleChange} placeholder="0" required min="0" step="1" />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="gst">Tax Rate (%)</label>
-                  <input type="number" id="gst" name="gst" value={formData.gst} onChange={handleChange} placeholder="e.g., 0" min="0" step="0.01"/>
-                </div>
-                <div className="form-group">
-                  <label htmlFor="stockAlert">Min. Stock Alert</label>
-                  <input type="number" id="stockAlert" name="stockAlert" value={formData.stockAlert} onChange={handleChange} placeholder="e.g., 5" min="0" step="1"/>
+              <section className="cp-panel">
+                <div className="cp-panel-head">
+                  <div className="cp-panel-accent" />
+                  <h2>Section 03: Financials</h2>
                 </div>
 
+                <div className="cp-financial-grid">
+                  <div className="cp-field cp-field-span-2">
+                    <label htmlFor="salePrice">Sale Price {requiredStar}</label>
+                    <div className="cp-money-wrap">
+                      <span>$</span>
+                      <input
+                        type="number"
+                        id="salePrice"
+                        name="salePrice"
+                        className="cp-input-arch"
+                        value={formData.salePrice}
+                        onChange={handleChange}
+                        placeholder="0.00"
+                        min="0"
+                        step="0.01"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="cp-field cp-field-span-2">
+                    <label htmlFor="purchasePrice">Purchase Price (Cost)</label>
+                    <div className="cp-money-wrap">
+                      <span>$</span>
+                      <input
+                        type="number"
+                        id="purchasePrice"
+                        name="purchasePrice"
+                        className="cp-input-arch"
+                        value={formData.purchasePrice}
+                        onChange={handleChange}
+                        placeholder="0.00"
+                        min="0"
+                        step="0.01"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="cp-field">
+                    <label htmlFor="discountRate">Discount Rate (%)</label>
+                    <input
+                      type="number"
+                      id="discountRate"
+                      name="discountRate"
+                      className="cp-input-arch"
+                      value={formData.discountRate}
+                      onChange={handleChange}
+                      placeholder="0"
+                      min="0"
+                      max="100"
+                      step="0.01"
+                    />
+                  </div>
+
+                  <div className="cp-field">
+                    <label htmlFor="discountAmount">Discount Amount</label>
+                    <input
+                      type="number"
+                      id="discountAmount"
+                      name="discountAmount"
+                      className="cp-input-arch"
+                      value={formData.discountAmount}
+                      onChange={handleChange}
+                      placeholder="0.00"
+                      min="0"
+                      step="0.01"
+                    />
+                  </div>
+
+                  <div className="cp-field cp-field-span-2">
+                    <label htmlFor="gst">Tax Rate (%)</label>
+                    <select
+                      id="gst"
+                      name="gst"
+                      className="cp-input-arch cp-select"
+                      value={formData.gst}
+                      onChange={handleChange}
+                    >
+                      <option value="">Select Tax Rate</option>
+                      {TAX_OPTIONS.map((option) => (
+                        <option key={option.value} value={option.value}>{option.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              </section>
+            </div>
+
+            <div className="cp-side-column">
+              <section className="cp-panel">
+                <div className="cp-panel-head">
+                  <div className="cp-panel-accent" />
+                  <h2>Section 02: Visual</h2>
+                </div>
+
+                <div
+                  className="cp-upload-area"
+                  onClick={handleImageClick}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      handleImageClick();
+                    }
+                  }}
+                >
+                  {imagePreview ? (
+                    <div className="cp-image-preview-wrap">
+                      <img src={imagePreview} alt="Product Preview" className="cp-image-preview" />
+                      <button
+                        type="button"
+                        className="cp-remove-image-btn"
+                        onClick={handleRemoveImage}
+                        aria-label="Remove image"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      <span className="material-symbols-outlined">cloud_upload</span>
+                      <p className="cp-upload-title">Drag and drop image</p>
+                      <p className="cp-upload-subtitle">JPG, PNG, WEBP (Max 5MB)</p>
+                    </>
+                  )}
+
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    id="productImageInput"
+                    name="productImage"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    style={{ display: 'none' }}
+                  />
+                </div>
+              </section>
+
+              <section className="cp-panel">
+                <div className="cp-panel-head">
+                  <div className="cp-panel-accent" />
+                  <h2>Section 04: Inventory</h2>
+                </div>
+
+                <div className="cp-inventory-stack">
+                  <div className="cp-field">
+                    <label htmlFor="quantity">Quantity {requiredStar}</label>
+                    <div className="cp-quantity-wrap">
+                      <button type="button" onClick={() => handleQuantityDelta(-1)}>
+                        <span className="material-symbols-outlined">remove</span>
+                      </button>
+                      <input
+                        type="number"
+                        id="quantity"
+                        name="quantity"
+                        className="cp-input-arch"
+                        value={formData.quantity}
+                        onChange={handleChange}
+                        placeholder="0"
+                        min="0"
+                        step="1"
+                        required
+                      />
+                      <button type="button" onClick={() => handleQuantityDelta(1)}>
+                        <span className="material-symbols-outlined">add</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="cp-field">
+                    <label htmlFor="stockAlert">Min. Stock Alert</label>
+                    <input
+                      type="number"
+                      id="stockAlert"
+                      name="stockAlert"
+                      className="cp-input-arch"
+                      value={formData.stockAlert}
+                      onChange={handleChange}
+                      placeholder="e.g. 10"
+                      min="0"
+                      step="1"
+                    />
+                    <p className="cp-help-text">System will notify when stock falls below this value.</p>
+                  </div>
+                </div>
+              </section>
+
+              <div className="cp-summary-box">
+                <h3>Summary Preview</h3>
+                <div className="cp-summary-list">
+                  <div>
+                    <span>SKU Status:</span>
+                    <strong className={skuStatus === 'READY' ? 'cp-status-ready' : 'cp-status-pending'}>{skuStatus}</strong>
+                  </div>
+                  <div>
+                    <span>Tax Applied:</span>
+                    <strong>{taxDisplay}</strong>
+                  </div>
+                  <div>
+                    <span>Inventory Value:</span>
+                    <strong>${inventoryValue.toFixed(2)}</strong>
+                  </div>
+                  <div>
+                    <span>Supplier:</span>
+                    <strong>{getLabelByValue(SUPPLIER_OPTIONS, formData.supplier)}</strong>
+                  </div>
+                  <div>
+                    <span>Category:</span>
+                    <strong>{getLabelByValue(CATEGORY_OPTIONS, formData.category)}</strong>
+                  </div>
+                </div>
               </div>
+            </div>
+          </div>
 
-              <div className="form-buttons">
-                <button type="button" className="btn btn-discard" onClick={handleDiscard} disabled={isLoading}>Discard</button>
-                <button type="submit" className="btn btn-submit" disabled={isLoading}>
-                  {isLoading ? 'Saving...' : 'Save & Submit'}
-                </button>
-              </div>
-            </form>
-          </Card.Body>
-        </Card>
+          <footer className="cp-footer-actions">
+            <p>All fields marked with * are mandatory for system synchronization.</p>
+            <button
+              type="button"
+              className="cp-btn cp-btn-ghost"
+              onClick={handleDiscard}
+              disabled={isLoading}
+            >
+              Discard Changes
+            </button>
+            <button
+              type="submit"
+              className="cp-btn cp-btn-primary cp-btn-wide"
+              disabled={isLoading}
+            >
+              {isLoading ? 'Saving...' : 'Save & Submit Product'}
+            </button>
+          </footer>
+        </form>
       </div>
     </Layout>
   );

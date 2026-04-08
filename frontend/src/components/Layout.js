@@ -13,7 +13,7 @@ const Layout = ({ children, title }) => {
   return (
     <div className="layout-container">
       <Sidebar isCollapsed={isSidebarCollapsed} />
-      <div className="layout-content">
+      <div className={`layout-content ${isSidebarCollapsed ? 'sidebar-hidden' : 'sidebar-visible'}`}>
         <TopBar onMenuToggle={toggleSidebar} isSidebarCollapsed={isSidebarCollapsed} />
         <main className="main-content">
           {children}
